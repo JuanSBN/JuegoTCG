@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "juegotcg-dev",
+    "dev": "juegotcg-dev"
+  }
+}

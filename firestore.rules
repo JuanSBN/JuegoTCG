@@ -1,0 +1,52 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 7. Reglas de Seguridad de Firestore (TDD)
+    
+    // Los usuarios pueden leer su propio documento, no escribir softCurrency ni packsAvailable directamente
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+    
+    // Catálogos públicos de solo lectura
+    match /cardsCatalog/{cardId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    match /albums/{albumId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    match /packs/{packId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Historial de transacciones: solo lectura para el dueño
+    match /transactions/{transactionId} {
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+    
+    // Data Packs de la comunidad: lectura pública solo si están aprobados
+    match /dataPacks/{packId} {
+      allow read: if resource.data.status == 'aprobado' || (request.auth != null && resource.data.uploaderUid == request.auth.uid);
+      allow write: if false;
+    }
+    
+    // Ofertas de intercambio: lectura solo para participantes
+    match /tradeOffers/{tradeId} {
+      allow read: if request.auth != null && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      allow write: if false;
+    }
+    
+    // Idempotencia: acceso denegado directo al cliente (solo Cloud Functions con Admin SDK)
+    match /processedRequests/{requestId} {
+      allow read, write: if false;
+    }
+  }
+}
