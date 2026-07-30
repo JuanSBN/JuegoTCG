@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Firestore Database Schema - Juego TCG Futbol",
+  "version": "0.1",
+  "collections": {
+    "users": {
+      "description": "Perfil de jugador, inventario básico y estado de sobres",
+      "fields": {
+        "uid": { "type": "string", "description": "ID de Firebase Auth (Clave Primaria)" },
+        "displayName": { "type": "string", "description": "Nombre visible del jugador" },
+        "friendCode": { "type": "string", "description": "Código corto para agregar amigos" },
+        "softCurrency": { "type": "number", "description": "Moneda del juego (Solo Cloud Functions escribe)" },
+        "packsAvailable": { "type": "number", "description": "Sobres disponibles para abrir" },
+        "lastFreePackClaim": { "type": "timestamp", "description": "Cooldown de sobres gratis" },
+        "fcmToken": { "type": "string", "description": "Token de notificaciones FCM" },
+        "notificationsEnabled": { "type": "boolean", "description": "Preferencia de notificaciones" },
+        "createdAt": { "type": "timestamp", "description": "Fecha de registro" }
+      },
+      "subcollections": {
+        "userCollection": {
+          "description": "Cartas obtenidas por el usuario",
+          "fields": {
+            "cardId": { "type": "string", "description": "Referencia a cardsCatalog" },
+            "quantity": { "type": "number", "description": "Copias en posesión" },
+            "dateObtained": { "type": "timestamp", "description": "Fecha de primera obtención" }
+          }
+        }
+      }
+    },
+    "cardsCatalog": {
+      "description": "Catálogo maestro de cartas genéricas",
+      "fields": {
+        "cardId": { "type": "string", "description": "ID único de la carta" },
+        "name": { "type": "string", "description": "Nombre genérico del jugador" },
+        "team": { "type": "string", "description": "Equipo genérico" },
+        "position": { "type": "string", "description": "Delantero / Mediocampista / Defensor / Portero" },
+        "rarity": { "type": "string", "description": "comun / poco_comun / rara / super_rara / holo" },
+        "albumId": { "type": "string", "description": "Álbum al que pertenece" },
+        "artAssetPath": { "type": "string", "description": "Ruta del arte base" }
+      }
+    },
+    "albums": {
+      "description": "Colecciones y sets temáticos",
+      "fields": {
+        "albumId": { "type": "string", "description": "ID único del álbum" },
+        "name": { "type": "string", "description": "Nombre del álbum" },
+        "type": { "type": "string", "description": "liga / torneo / seleccion / evento" },
+        "cardIds": { "type": "array<string>", "description": "Lista de cartas que componen el álbum" },
+        "rewardOnComplete": { "type": "map", "description": "Recompensa al completar (monedas, marcos)" },
+        "active": { "type": "boolean", "description": "Estado de disponibilidad (eventos rotativos)" }
+      }
+    },
+    "packs": {
+      "description": "Catálogo de sobres y probabilidades",
+      "fields": {
+        "packId": { "type": "string", "description": "ID único del sobre" },
+        "name": { "type": "string", "description": "Nombre del sobre" },
+        "albumId": { "type": "string", "description": "Álbum que contiene" },
+        "rarityWeights": { "type": "map", "description": "Probabilidades por rareza (RNG ponderado)" },
+        "costType": { "type": "string", "description": "gratis_tiempo / gratis_anuncio / moneda" },
+        "costAmount": { "type": "number", "description": "Costo en moneda" }
+      }
+    },
+    "transactions": {
+      "description": "Log inmutable de operaciones económicas",
+      "fields": {
+        "transactionId": { "type": "string", "description": "ID único" },
+        "userId": { "type": "string", "description": "Jugador involucrado" },
+        "type": { "type": "string", "description": "abrir_sobre / vender_carta / comprar_moneda / ver_anuncio" },
+        "details": { "type": "map", "description": "Datos específicos" },
+        "timestamp": { "type": "timestamp", "description": "Momento exacto" }
+      }
+    },
+    "dataPacks": {
+      "description": "Contenido UGC subido por la comunidad",
+      "fields": {
+        "packId": { "type": "string", "description": "ID único del pack" },
+        "uploaderUid": { "type": "string", "description": "Usuario creador" },
+        "name": { "type": "string", "description": "Nombre del pack" },
+        "playerCount": { "type": "number", "description": "Cantidad de jugadores incluidos" },
+        "playerOverrides": { "type": "map", "description": "cardId -> { realPlayerName, externalPhotoUrl }" },
+        "status": { "type": "string", "description": "pendiente / aprobado / reportado / retirado" },
+        "reportCount": { "type": "number", "description": "Reportes recibidos" }
+      }
+    },
+    "tradeOffers": {
+      "description": "Intercambios directos 1 a 1 entre amigos",
+      "fields": {
+        "tradeId": { "type": "string", "description": "ID único de oferta" },
+        "fromUid": { "type": "string", "description": "Quien propone" },
+        "toUid": { "type": "string", "description": "A quien propone" },
+        "offeredCardId": { "type": "string", "description": "Carta ofrecida" },
+        "offeredQty": { "type": "number", "description": "Cantidad ofrecida" },
+        "requestedCardId": { "type": "string", "description": "Carta solicitada" },
+        "requestedQty": { "type": "number", "description": "Cantidad solicitada" },
+        "status": { "type": "string", "description": "pendiente / aceptado / rechazado / cancelado / expirado" },
+        "expiresAt": { "type": "timestamp", "description": "Fecha de caducidad" }
+      }
+    },
+    "processedRequests": {
+      "description": "Control de idempotencia (Server-only)",
+      "fields": {
+        "idempotencyKey": { "type": "string", "description": "UUID de intento del cliente (ID Doc)" },
+        "userId": { "type": "string", "description": "Jugador solicitante" },
+        "functionName": { "type": "string", "description": "openPack / claimFreePack / purchaseCoins" },
+        "result": { "type": "map", "description": "Resultado cached" },
+        "createdAt": { "type": "timestamp", "description": "Fecha para rotación 48h" }
+      }
+    }
+  }
+}
