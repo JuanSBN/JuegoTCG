@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Firestore Database Schema - Juego TCG Futbol",
-  "version": "0.1",
+  "version": "0.2",
   "collections": {
     "users": {
       "description": "Perfil de jugador, inventario básico y estado de sobres",
@@ -34,7 +34,7 @@
         "name": { "type": "string", "description": "Nombre genérico del jugador" },
         "team": { "type": "string", "description": "Equipo genérico" },
         "position": { "type": "string", "description": "Delantero / Mediocampista / Defensor / Portero" },
-        "rarity": { "type": "string", "description": "comun / poco_comun / rara / super_rara / holo" },
+        "rarity": { "type": "string", "description": "comun / especial / epica / legendaria / mitica / full_art (mitica y full_art son holográficas)" },
         "albumId": { "type": "string", "description": "Álbum al que pertenece" },
         "artAssetPath": { "type": "string", "description": "Ruta del arte base" }
       }
@@ -56,7 +56,7 @@
         "packId": { "type": "string", "description": "ID único del sobre" },
         "name": { "type": "string", "description": "Nombre del sobre" },
         "albumId": { "type": "string", "description": "Álbum que contiene" },
-        "rarityWeights": { "type": "map", "description": "Probabilidades por rareza (RNG ponderado)" },
+        "rarityWeights": { "type": "map", "description": "Probabilidades por rareza (comun: 55%, especial: 25%, epica: 12%, legendaria: 5%, mitica: 2%, full_art: 1%)" },
         "costType": { "type": "string", "description": "gratis_tiempo / gratis_anuncio / moneda" },
         "costAmount": { "type": "number", "description": "Costo en moneda" }
       }

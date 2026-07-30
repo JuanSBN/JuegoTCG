@@ -23,10 +23,11 @@ namespace JuegoTCG.Packs
         public int costAmount;
 
         [Header("Pesos de Rareza (RNG % Ponderado)")]
-        [Range(0f, 100f)] public float comunWeight = 60f;
-        [Range(0f, 100f)] public float pocoComunWeight = 25f;
-        [Range(0f, 100f)] public float raraWeight = 10f;
-        [Range(0f, 100f)] public float superRaraWeight = 4f;
-        [Range(0f, 100f)] public float holoWeight = 1f;
+        [Range(0f, 100f)] public float comunWeight = 55f;
+        [Range(0f, 100f)] public float especialWeight = 25f;
+        [Range(0f, 100f)] public float epicaWeight = 12f;
+        [Range(0f, 100f)] public float legendariaWeight = 5f;
+        [Range(0f, 100f)] public float miticaWeight = 2f;
+        [Range(0f, 100f)] public float fullArtWeight = 1f;
     }
 }
