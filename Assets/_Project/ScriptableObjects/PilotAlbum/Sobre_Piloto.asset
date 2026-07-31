@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c187365c9333fa41875a73cce02482b, type: 3}
   m_Name: Sobre_Piloto
   packId: pack_piloto_gratis
-  packName: Sobre Piloto Liga
+  packName: Sobre Estrella Piloto
   albumId: album_piloto_liga
   cardsPerPack: 5
   costType: 0

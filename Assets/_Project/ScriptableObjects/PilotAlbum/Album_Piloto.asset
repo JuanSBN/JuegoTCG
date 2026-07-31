@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0ece9a56138057419a374a7f4efa42c, type: 3}
   m_Name: Album_Piloto
   albumId: album_piloto_liga
-  albumName: Liga Genérica Piloto
+  albumName: Álbum Estrella Piloto
   albumType: 0
   active: 1
   cards: []

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
-  m_Name: card_06_Gabriel_Medina
-  cardId: card_06
-  playerName: Gabriel Medina
+  m_Name: card_01_Vozhina
+  cardId: card_01
+  playerName: Vozhina
   teamName: FC Piloto
-  position: Delantero
-  rarity: 1
+  position: Defensor
+  rarity: 0
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}

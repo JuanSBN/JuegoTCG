@@ -14,16 +14,17 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/Generar Álbum Piloto")]
         public static void BuildPilotAlbum()
         {
-            if (!Directory.Exists(FolderPath))
+            if (Directory.Exists(FolderPath))
             {
-                Directory.CreateDirectory(FolderPath);
-                AssetDatabase.Refresh();
+                Directory.Delete(FolderPath, true);
             }
+            Directory.CreateDirectory(FolderPath);
+            AssetDatabase.Refresh();
 
             // 1. Crear Álbum
             AlbumData album = ScriptableObject.CreateInstance<AlbumData>();
             album.albumId = "album_piloto_liga";
-            album.albumName = "Liga Genérica Piloto";
+            album.albumName = "Álbum Estrella Piloto";
             album.albumType = AlbumType.Liga;
             album.rewardCoins = 500;
             album.active = true;
@@ -31,19 +32,19 @@ namespace JuegoTCG.EditorTools
             string albumPath = $"{FolderPath}/Album_Piloto.asset";
             AssetDatabase.CreateAsset(album, albumPath);
 
-            // 2. Definición de 10 Cartas de Prueba distribuidas por las 6 rarezas
+            // 2. 10 Cartas de Prueba según la selección del usuario
             var pilotCardsData = new (string id, string name, string team, string pos, Rarity rarity)[]
             {
-                ("card_01", "Mateo Silva", "FC Piloto", "Portero", Rarity.Comun),
-                ("card_02", "Lucas Gómez", "FC Piloto", "Defensor", Rarity.Comun),
-                ("card_03", "Carlos Pérez", "FC Piloto", "Defensor", Rarity.Comun),
-                ("card_04", "Daniel Torres", "FC Piloto", "Mediocampista", Rarity.Comun),
-                ("card_05", "Andrés Ríos", "FC Piloto", "Mediocampista", Rarity.Comun),
-                ("card_06", "Gabriel Medina", "FC Piloto", "Delantero", Rarity.Especial),
-                ("card_07", "Santiago Benítez", "FC Piloto", "Delantero", Rarity.Especial),
-                ("card_08", "Valentín Morales", "FC Piloto", "Mediocampista", Rarity.Epica),
-                ("card_09", "Esteban Castro", "FC Piloto", "Delantero", Rarity.Legendaria),
-                ("card_10", "Álvaro Leyenda", "FC Piloto", "Delantero Estrella", Rarity.Mitica)
+                ("card_01", "Vozhina", "FC Piloto", "Defensor", Rarity.Comun),
+                ("card_02", "Balogun", "FC Piloto", "Delantero", Rarity.Comun),
+                ("card_03", "Diomandé", "FC Piloto", "Defensor", Rarity.Comun),
+                ("card_04", "James Rodríguez", "FC Piloto", "Mediocampista", Rarity.Comun),
+                ("card_05", "Luis Díaz", "FC Piloto", "Extremo", Rarity.Especial),
+                ("card_06", "Erling Haaland", "FC Piloto", "Delantero", Rarity.Especial),
+                ("card_07", "Cristiano Ronaldo", "FC Piloto", "Delantero", Rarity.Epica),
+                ("card_08", "Lionel Messi", "FC Piloto", "Mediocampista", Rarity.Legendaria),
+                ("card_09", "Kylian Mbappé", "FC Piloto", "Delantero", Rarity.Legendaria),
+                ("card_10", "Lamine Yamal", "FC Piloto", "Extremo Estrella", Rarity.Mitica)
             };
 
             foreach (var data in pilotCardsData)
@@ -66,7 +67,7 @@ namespace JuegoTCG.EditorTools
             // 3. Crear Sobre Piloto
             PackData pack = ScriptableObject.CreateInstance<PackData>();
             pack.packId = "pack_piloto_gratis";
-            pack.packName = "Sobre Piloto Liga";
+            pack.packName = "Sobre Estrella Piloto";
             pack.albumId = album.albumId;
             pack.cardsPerPack = 5;
             pack.costType = CostType.GratisTiempo;
@@ -86,7 +87,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Álbum Piloto, 10 Cartas y Sobre generados con éxito en Assets/_Project/ScriptableObjects/PilotAlbum/!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Álbum Piloto actualizado con los jugadores solicitados (Lamine Yamal, Messi, Mbappé, Cristiano, Haaland, Luis Díaz, James, Vozhina, Balogun, Diomandé) en Assets/_Project/ScriptableObjects/PilotAlbum/!</color>");
         }
     }
 }

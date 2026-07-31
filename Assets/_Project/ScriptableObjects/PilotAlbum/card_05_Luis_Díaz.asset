@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
-  m_Name: card_09_Esteban_Castro
-  cardId: card_09
-  playerName: Esteban Castro
+  m_Name: card_05_Luis_Díaz
+  cardId: card_05
+  playerName: Luis Díaz
   teamName: FC Piloto
-  position: Delantero
-  rarity: 3
+  position: Extremo
+  rarity: 1
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}

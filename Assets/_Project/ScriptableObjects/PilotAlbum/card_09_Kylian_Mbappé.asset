@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
-  m_Name: card_10_Álvaro_Leyenda
-  cardId: card_10
-  playerName: Álvaro Leyenda
+  m_Name: card_09_Kylian_Mbappé
+  cardId: card_09
+  playerName: Kylian Mbappé
   teamName: FC Piloto
-  position: Delantero Estrella
-  rarity: 4
+  position: Delantero
+  rarity: 3
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}

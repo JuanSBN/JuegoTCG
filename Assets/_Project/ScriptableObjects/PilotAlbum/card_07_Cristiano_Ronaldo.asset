@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
-  m_Name: card_03_Carlos_Pérez
-  cardId: card_03
-  playerName: Carlos Pérez
+  m_Name: card_07_Cristiano_Ronaldo
+  cardId: card_07
+  playerName: Cristiano Ronaldo
   teamName: FC Piloto
-  position: Defensor
-  rarity: 0
+  position: Delantero
+  rarity: 2
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}
