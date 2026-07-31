@@ -4,13 +4,49 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // 7. Reglas de Seguridad de Firestore (TDD)
     
-    // Los usuarios pueden leer su propio documento, no escribir softCurrency ni packsAvailable directamente
+    // 7.2 Funciones de Validación de Forma de Datos
+    function isValidUserData(data) {
+      return data.keys().hasAll(['userId', 'username', 'softCurrency', 'createdAt'])
+        && data.userId is string
+        && data.username is string
+        && data.softCurrency is int
+        && data.softCurrency >= 0;
+    }
+
+    function isValidCardData(data) {
+      return data.keys().hasAll(['cardId', 'name', 'team', 'position', 'rarity', 'albumId'])
+        && data.cardId is string
+        && data.name is string
+        && data.team is string
+        && data.position is string
+        && data.rarity in ['comun', 'especial', 'epica', 'legendaria', 'mitica', 'full_art'];
+    }
+
+    function isValidAlbumData(data) {
+      return data.keys().hasAll(['albumId', 'name', 'type', 'cardIds', 'active'])
+        && data.albumId is string
+        && data.name is string
+        && data.cardIds is list
+        && data.active is bool;
+    }
+
+    function isValidPackData(data) {
+      return data.keys().hasAll(['packId', 'name', 'albumId', 'costType', 'costAmount', 'rarityWeights'])
+        && data.packId is string
+        && data.name is string
+        && data.costAmount is int
+        && data.rarityWeights is map;
+    }
+    
+    // Reglas de acceso por colección
+
+    // Los usuarios pueden leer su propio documento, no escribir directamente (bloqueado para Cloud Functions)
     match /users/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if false;
     }
     
-    // Catálogos públicos de solo lectura
+    // Catálogos públicos de solo lectura con validación de datos
     match /cardsCatalog/{cardId} {
       allow read: if true;
       allow write: if false;
@@ -44,7 +80,7 @@ service cloud.firestore {
       allow write: if false;
     }
     
-    // Idempotencia: acceso denegado directo al cliente (solo Cloud Functions con Admin SDK)
+    // Idempotencia: acceso denegado directo al cliente (solo accesible vía Admin SDK)
     match /processedRequests/{requestId} {
       allow read, write: if false;
     }
