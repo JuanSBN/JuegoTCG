@@ -47,7 +47,7 @@ namespace JuegoTCG.EditorTools
             GameObject prefabGO = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (prefabGO != null)
             {
-                string instancePath = PrefabUtility.GetPrefabAssetAbsolutePath(prefabGO);
+                string instancePath = AssetDatabase.GetAssetPath(prefabGO);
                 GameObject contents = PrefabUtility.LoadPrefabContents(instancePath);
 
                 CardDisplay display = contents.GetComponent<CardDisplay>();
