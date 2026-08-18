@@ -434,6 +434,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1664033715958214179}
   - component: {fileID: 4323820593024750267}
+  - component: {fileID: 5727204326450830907}
   m_Layer: 0
   m_Name: CardPrefab
   m_TagString: Untagged
@@ -490,6 +491,21 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 2a89c6d7166430641b49f80a84ac2cd8, type: 3}
   - {fileID: 21300000, guid: 8ab77af7592605c48b2e119ccdb7dcb3, type: 3}
   - {fileID: 21300000, guid: ae059fc1520988141a79cb933243639f, type: 3}
+  holographicMaterial: {fileID: 2100000, guid: 2762669e5811fe642b144f42155222c1, type: 2}
+--- !u!114 &5727204326450830907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2690767984623384086}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27ac9d8f50a27544aa0a8d4e68126b73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JuegoTCG.Cards.HolographicTilt
+  cardImage: {fileID: 0}
+  holoMaterial: {fileID: 0}
 --- !u!1 &4304964182022693998
 GameObject:
   m_ObjectHideFlags: 0
