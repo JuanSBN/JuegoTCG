@@ -26,6 +26,11 @@ namespace JuegoTCG.Cards
 
         public CardData CardData => cardData;
 
+        private void Awake()
+        {
+            EnsureHolographicMaterial();
+        }
+
         private void Start()
         {
             if (cardData != null)
@@ -37,12 +42,31 @@ namespace JuegoTCG.Cards
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            EnsureHolographicMaterial();
             if (cardData != null)
             {
                 SetCard(cardData);
             }
         }
 #endif
+
+        private void EnsureHolographicMaterial()
+        {
+            if (holographicMaterial == null)
+            {
+#if UNITY_EDITOR
+                holographicMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Materials/HolographicFoilMaterial.mat");
+#endif
+                if (holographicMaterial == null)
+                {
+                    Shader holoShader = Shader.Find("Shader Graphs/HolographicFoilShader");
+                    if (holoShader != null)
+                    {
+                        holographicMaterial = new Material(holoShader);
+                    }
+                }
+            }
+        }
 
         public void SetCard(CardData data)
         {
@@ -80,6 +104,8 @@ namespace JuegoTCG.Cards
 
             // Apply Holographic Foil Material only to Mitica and FullArt rarities (GDD 5.2)
             bool isHolo = (data.rarity == Rarity.Mitica || data.rarity == Rarity.FullArt);
+            
+            EnsureHolographicMaterial();
             Material targetMat = isHolo ? holographicMaterial : null;
 
             if (frameImage != null) frameImage.material = targetMat;
