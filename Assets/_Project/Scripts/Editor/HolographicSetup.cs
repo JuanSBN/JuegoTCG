@@ -11,6 +11,7 @@ namespace JuegoTCG.EditorTools
         private const string MaterialsFolder = "Assets/_Project/Materials";
         private const string ShadersFolder = "Assets/_Project/Shaders";
         private const string PrefabPath = "Assets/_Project/Prefabs/Cards/CardPrefab.prefab";
+        private const string ShaderPath = "Assets/_Project/Shaders/HolographicFoilShader.shadergraph";
 
         [MenuItem("JuegoTCG/Configurar Material Holográfico")]
         public static void SetupHolographicMaterial()
@@ -24,11 +25,25 @@ namespace JuegoTCG.EditorTools
             string matPath = $"{MaterialsFolder}/HolographicFoilMaterial.mat";
             Material holoMat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
 
-            // Find Holographic Shader Graph
-            Shader holoShader = Shader.Find("Shader Graphs/HolographicFoilShader");
+            // 1. Try loading Shader directly via AssetDatabase
+            Shader holoShader = AssetDatabase.LoadAssetAtPath<Shader>(ShaderPath);
+
+            // 2. Fallback to Shader.Find
+            if (holoShader == null)
+            {
+                holoShader = Shader.Find("Shader Graphs/HolographicFoilShader");
+            }
+
+            // 3. Fallback to Universal Render Pipeline Sprite Unlit
             if (holoShader == null)
             {
                 holoShader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit");
+            }
+
+            // 4. Ultimate fallback to Sprites/Default
+            if (holoShader == null)
+            {
+                holoShader = Shader.Find("Sprites/Default");
             }
 
             if (holoMat == null)
