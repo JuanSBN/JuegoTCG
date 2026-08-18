@@ -21,6 +21,9 @@ namespace JuegoTCG.Cards
         [Header("Frame Sprites (Order: Comun, Especial, Epica, Legendaria, Mitica, FullArt)")]
         [SerializeField] private Sprite[] rarityFrames;
 
+        [Header("Holographic Effects (Mitica & FullArt)")]
+        [SerializeField] private Material holographicMaterial;
+
         public CardData CardData => cardData;
 
         private void Start()
@@ -73,6 +76,20 @@ namespace JuegoTCG.Cards
                 {
                     frameImage.sprite = rarityFrames[index];
                 }
+            }
+
+            // Apply Holographic Foil Material only to Mitica and FullArt rarities (GDD 5.2)
+            bool isHolo = (data.rarity == Rarity.Mitica || data.rarity == Rarity.FullArt);
+            Material targetMat = isHolo ? holographicMaterial : null;
+
+            if (frameImage != null) frameImage.material = targetMat;
+            if (playerArtImage != null) playerArtImage.material = targetMat;
+
+            // Enable/disable HolographicTilt component
+            var tiltComp = GetComponent<HolographicTilt>();
+            if (tiltComp != null)
+            {
+                tiltComp.enabled = isHolo;
             }
         }
     }
