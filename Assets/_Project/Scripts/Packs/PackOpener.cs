@@ -58,7 +58,7 @@ namespace JuegoTCG.Packs
         {
             if (packCounterText != null)
             {
-                packCounterText.text = $"★ {remainingPacks} sobres";
+                packCounterText.text = $"{remainingPacks} sobres";
             }
         }
 
@@ -113,7 +113,7 @@ namespace JuegoTCG.Packs
         {
             isBusy = true;
 
-            // 1. Rip Flash Effect (Destello blanco rápido)
+            // 1. Rip Flash Effect
             if (flashOverlay != null)
             {
                 flashOverlay.gameObject.SetActive(true);
@@ -128,7 +128,7 @@ namespace JuegoTCG.Packs
                 }
             }
 
-            // Generate 5 Cards via Weighted RNG (con soporte para toggle de prueba)
+            // Generate 5 Cards via Weighted RNG
             generatedCards.Clear();
             bool forceHolo = (forceHoloToggle != null && forceHoloToggle.isOn);
 
@@ -254,7 +254,7 @@ namespace JuegoTCG.Packs
             {
                 bool isHolo = (currentCard != null && (currentCard.rarity == Rarity.Epica || currentCard.rarity == Rarity.Legendaria || currentCard.rarity == Rarity.Mitica || currentCard.rarity == Rarity.FullArt));
                 tiltHintText.gameObject.SetActive(isHolo);
-                if (isHolo) tiltHintText.text = "✦ Mueve el ratón / dedo sobre la carta para ver el efecto holográfico";
+                if (isHolo) tiltHintText.text = "Mueve el ratón / dedo sobre la carta para ver el efecto holográfico";
             }
         }
 
@@ -301,7 +301,7 @@ namespace JuegoTCG.Packs
 
             ClearSummaryCards();
 
-            // Calculate Best Rarity for Subtitle (like in HTML prototype)
+            // Calculate Best Rarity for Subtitle
             Rarity bestRarity = Rarity.Comun;
             foreach (var c in generatedCards)
             {

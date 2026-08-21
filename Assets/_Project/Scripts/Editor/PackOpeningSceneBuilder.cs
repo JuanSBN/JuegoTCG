@@ -76,7 +76,7 @@ namespace JuegoTCG.EditorTools
             toggleLabelRect.anchorMax = Vector2.one;
             toggleLabelRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI toggleTMP = toggleLabelGO.AddComponent<TextMeshProUGUI>();
-            toggleTMP.text = "★ Forzar Holo (Prueba)";
+            toggleTMP.text = "Forzar Holo (Prueba)";
             toggleTMP.fontSize = 20;
             toggleTMP.color = new Color(0.96f, 0.65f, 0.14f);
 
@@ -88,7 +88,7 @@ namespace JuegoTCG.EditorTools
             counterRect.anchorMax = new Vector2(1, 1);
             counterRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI counterTMP = counterGO.AddComponent<TextMeshProUGUI>();
-            counterTMP.text = "★ 5 sobres";
+            counterTMP.text = "5 sobres";
             counterTMP.fontSize = 22;
             counterTMP.fontStyle = FontStyles.Bold;
             counterTMP.alignment = TextAlignmentOptions.Right;
@@ -200,7 +200,7 @@ namespace JuegoTCG.EditorTools
             tiltHintRect.anchorMax = new Vector2(0.95f, 0.08f);
             tiltHintRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI tiltHintTMP = tiltHintGO.AddComponent<TextMeshProUGUI>();
-            tiltHintTMP.text = "✦ Mueve el ratón / dedo sobre la carta para ver el efecto holográfico";
+            tiltHintTMP.text = "Mueve el ratón / dedo sobre la carta para ver el efecto holográfico";
             tiltHintTMP.fontSize = 18;
             tiltHintTMP.alignment = TextAlignmentOptions.Center;
             tiltHintTMP.color = new Color(0.96f, 0.65f, 0.14f);
@@ -337,7 +337,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada fielmente al prototipo HTML!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada sin caracteres unicode faltantes!</color>");
         }
     }
 }
