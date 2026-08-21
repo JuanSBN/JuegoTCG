@@ -48,24 +48,34 @@ namespace JuegoTCG.EditorTools
             openerGO.transform.SetParent(canvasGO.transform, false);
             PackOpener opener = openerGO.AddComponent<PackOpener>();
 
-            // 1. Closed Pack UI
-            GameObject closedPackGO = new GameObject("ClosedPackUI");
-            closedPackGO.transform.SetParent(canvasGO.transform, false);
-            RectTransform packRect = closedPackGO.AddComponent<RectTransform>();
-            packRect.sizeDelta = new Vector2(400, 560);
-            Image packImg = closedPackGO.AddComponent<Image>();
+            // ----------------------------------------------------
+            // 1. Closed Pack View
+            // ----------------------------------------------------
+            GameObject closedViewGO = new GameObject("ClosedPackView");
+            closedViewGO.transform.SetParent(canvasGO.transform, false);
+            RectTransform closedRect = closedViewGO.AddComponent<RectTransform>();
+            closedRect.anchorMin = Vector2.zero;
+            closedRect.anchorMax = Vector2.one;
+            closedRect.sizeDelta = Vector2.zero;
+
+            // Pack Card Graphic
+            GameObject packCardGO = new GameObject("PackGraphic");
+            packCardGO.transform.SetParent(closedViewGO.transform, false);
+            RectTransform packRect = packCardGO.AddComponent<RectTransform>();
+            packRect.sizeDelta = new Vector2(440, 620);
+            Image packImg = packCardGO.AddComponent<Image>();
             packImg.color = new Color(0.09f, 0.14f, 0.23f);
 
             // Button trigger for opening pack
-            Button packBtn = closedPackGO.AddComponent<Button>();
+            Button packBtn = packCardGO.AddComponent<Button>();
             UnityEditor.Events.UnityEventTools.AddPersistentListener(packBtn.onClick, opener.OnClickOpenPack);
 
             // Closed Pack Text Label
             GameObject labelGO = new GameObject("OpenLabel");
-            labelGO.transform.SetParent(closedPackGO.transform, false);
+            labelGO.transform.SetParent(packCardGO.transform, false);
             RectTransform labelRect = labelGO.AddComponent<RectTransform>();
-            labelRect.anchorMin = new Vector2(0, 0.1f);
-            labelRect.anchorMax = new Vector2(1, 0.3f);
+            labelRect.anchorMin = new Vector2(0.05f, 0.12f);
+            labelRect.anchorMax = new Vector2(0.95f, 0.32f);
             labelRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI labelTMP = labelGO.AddComponent<TextMeshProUGUI>();
             labelTMP.text = "TOCAR PARA ABRIR SOBRE";
@@ -74,15 +84,117 @@ namespace JuegoTCG.EditorTools
             labelTMP.alignment = TextAlignmentOptions.Center;
             labelTMP.color = new Color(0.96f, 0.65f, 0.14f); // Gold
 
-            // 2. Card Container
-            GameObject containerGO = new GameObject("CardContainer");
-            containerGO.transform.SetParent(canvasGO.transform, false);
-            RectTransform containerRect = containerGO.AddComponent<RectTransform>();
-            containerRect.anchorMin = Vector2.zero;
-            containerRect.anchorMax = Vector2.one;
-            containerRect.sizeDelta = Vector2.zero;
+            // ----------------------------------------------------
+            // 2. Reveal View (Single Card Centered)
+            // ----------------------------------------------------
+            GameObject revealViewGO = new GameObject("RevealView");
+            revealViewGO.transform.SetParent(canvasGO.transform, false);
+            RectTransform revealRect = revealViewGO.AddComponent<RectTransform>();
+            revealRect.anchorMin = Vector2.zero;
+            revealRect.anchorMax = Vector2.one;
+            revealRect.sizeDelta = Vector2.zero;
+            revealViewGO.SetActive(false);
 
-            // 3. Flash Overlay
+            // Single Card Container (Centered)
+            GameObject singleContainerGO = new GameObject("SingleCardContainer");
+            singleContainerGO.transform.SetParent(revealViewGO.transform, false);
+            RectTransform singleContainerRect = singleContainerGO.AddComponent<RectTransform>();
+            singleContainerRect.anchorMin = Vector2.zero;
+            singleContainerRect.anchorMax = Vector2.one;
+            singleContainerRect.sizeDelta = Vector2.zero;
+
+            // Fullscreen Button for Reveal Click Gesture
+            Button revealBtn = revealViewGO.AddComponent<Button>();
+            UnityEditor.Events.UnityEventTools.AddPersistentListener(revealBtn.onClick, opener.OnClickCardInReveal);
+
+            // Hint Text
+            GameObject hintGO = new GameObject("RevealHintText");
+            hintGO.transform.SetParent(revealViewGO.transform, false);
+            RectTransform hintRect = hintGO.AddComponent<RectTransform>();
+            hintRect.anchorMin = new Vector2(0.1f, 0.08f);
+            hintRect.anchorMax = new Vector2(0.9f, 0.15f);
+            hintRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI hintTMP = hintGO.AddComponent<TextMeshProUGUI>();
+            hintTMP.text = "Toca la pantalla para revelar la siguiente carta";
+            hintTMP.fontSize = 22;
+            hintTMP.alignment = TextAlignmentOptions.Center;
+            hintTMP.color = new Color(0.8f, 0.85f, 0.95f);
+
+            // ----------------------------------------------------
+            // 3. Summary View (Straight Cards Row)
+            // ----------------------------------------------------
+            GameObject summaryViewGO = new GameObject("SummaryView");
+            summaryViewGO.transform.SetParent(canvasGO.transform, false);
+            RectTransform summaryRect = summaryViewGO.AddComponent<RectTransform>();
+            summaryRect.anchorMin = Vector2.zero;
+            summaryRect.anchorMax = Vector2.one;
+            summaryRect.sizeDelta = Vector2.zero;
+            summaryViewGO.SetActive(false);
+
+            // Title
+            GameObject titleGO = new GameObject("SummaryTitle");
+            titleGO.transform.SetParent(summaryViewGO.transform, false);
+            RectTransform titleRect = titleGO.AddComponent<RectTransform>();
+            titleRect.anchorMin = new Vector2(0.1f, 0.82f);
+            titleRect.anchorMax = new Vector2(0.9f, 0.92f);
+            titleRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI titleTMP = titleGO.AddComponent<TextMeshProUGUI>();
+            titleTMP.text = "SOBRE COMPLETO";
+            titleTMP.fontSize = 42;
+            titleTMP.fontStyle = FontStyles.Bold;
+            titleTMP.alignment = TextAlignmentOptions.Center;
+            titleTMP.color = Color.white;
+
+            // Subtitle
+            GameObject subGO = new GameObject("SummarySubtitle");
+            subGO.transform.SetParent(summaryViewGO.transform, false);
+            RectTransform subRect = subGO.AddComponent<RectTransform>();
+            subRect.anchorMin = new Vector2(0.1f, 0.77f);
+            subRect.anchorMax = new Vector2(0.9f, 0.83f);
+            subRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI subTMP = subGO.AddComponent<TextMeshProUGUI>();
+            subTMP.text = "Revisa lo que conseguiste";
+            subTMP.fontSize = 24;
+            subTMP.alignment = TextAlignmentOptions.Center;
+            subTMP.color = new Color(0.7f, 0.75f, 0.85f);
+
+            // Summary Cards Container (Centered Row)
+            GameObject summaryContainerGO = new GameObject("SummaryCardContainer");
+            summaryContainerGO.transform.SetParent(summaryViewGO.transform, false);
+            RectTransform summaryContainerRect = summaryContainerGO.AddComponent<RectTransform>();
+            summaryContainerRect.anchorMin = new Vector2(0.05f, 0.25f);
+            summaryContainerRect.anchorMax = new Vector2(0.95f, 0.72f);
+            summaryContainerRect.sizeDelta = Vector2.zero;
+
+            // Restart Button "ABRIR OTRO SOBRE"
+            GameObject openAnotherBtnGO = new GameObject("OpenAnotherButton");
+            openAnotherBtnGO.transform.SetParent(summaryViewGO.transform, false);
+            RectTransform btnRect = openAnotherBtnGO.AddComponent<RectTransform>();
+            btnRect.anchorMin = new Vector2(0.2f, 0.08f);
+            btnRect.anchorMax = new Vector2(0.8f, 0.16f);
+            btnRect.sizeDelta = Vector2.zero;
+            Image btnImg = openAnotherBtnGO.AddComponent<Image>();
+            btnImg.color = new Color(0.96f, 0.65f, 0.14f); // Gold
+
+            Button openAnotherBtn = openAnotherBtnGO.AddComponent<Button>();
+            UnityEditor.Events.UnityEventTools.AddPersistentListener(openAnotherBtn.onClick, opener.ResetToClosedView);
+
+            GameObject btnTextGO = new GameObject("BtnText");
+            btnTextGO.transform.SetParent(openAnotherBtnGO.transform, false);
+            RectTransform btnTextRect = btnTextGO.AddComponent<RectTransform>();
+            btnTextRect.anchorMin = Vector2.zero;
+            btnTextRect.anchorMax = Vector2.one;
+            btnTextRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI btnTMP = btnTextGO.AddComponent<TextMeshProUGUI>();
+            btnTMP.text = "ABRIR OTRO SOBRE";
+            btnTMP.fontSize = 26;
+            btnTMP.fontStyle = FontStyles.Bold;
+            btnTMP.alignment = TextAlignmentOptions.Center;
+            btnTMP.color = new Color(0.04f, 0.07f, 0.12f);
+
+            // ----------------------------------------------------
+            // 4. Flash Overlay (Global Top)
+            // ----------------------------------------------------
             GameObject flashGO = new GameObject("FlashOverlay");
             flashGO.transform.SetParent(canvasGO.transform, false);
             RectTransform flashRect = flashGO.AddComponent<RectTransform>();
@@ -109,9 +221,12 @@ namespace JuegoTCG.EditorTools
 
             // Assign Serialized Properties on PackOpener
             SerializedObject so = new SerializedObject(opener);
-            so.FindProperty("closedPackUI").objectReferenceValue = closedPackGO;
+            so.FindProperty("closedPackView").objectReferenceValue = closedViewGO;
+            so.FindProperty("revealView").objectReferenceValue = revealViewGO;
+            so.FindProperty("summaryView").objectReferenceValue = summaryViewGO;
             so.FindProperty("flashOverlay").objectReferenceValue = flashImg;
-            so.FindProperty("cardContainer").objectReferenceValue = containerRect;
+            so.FindProperty("singleCardContainer").objectReferenceValue = singleContainerRect;
+            so.FindProperty("summaryCardContainer").objectReferenceValue = summaryContainerRect;
             so.FindProperty("cardPrefab").objectReferenceValue = cardPrefab;
 
             SerializedProperty catalogProp = so.FindProperty("cardCatalog");
@@ -130,7 +245,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity creada exitosamente en Assets/_Project/Scenes/PackOpeningScene.unity!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity actualizada con cartas rectas y revelado individual!</color>");
         }
     }
 }
