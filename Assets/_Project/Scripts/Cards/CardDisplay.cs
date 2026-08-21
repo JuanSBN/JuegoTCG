@@ -11,7 +11,6 @@ namespace JuegoTCG.Cards
         [SerializeField] private CardData cardData;
 
         [Header("UI Components")]
-        [SerializeField] private Image backgroundImage;
         [SerializeField] private Image frameImage;
         [SerializeField] private Image playerArtImage;
         [SerializeField] private TMP_Text nameText;
@@ -79,12 +78,6 @@ namespace JuegoTCG.Cards
             if (positionText != null) positionText.text = data.position;
             if (rarityText != null) rarityText.text = data.rarity.ToString().ToUpper();
 
-            // Set Card Background color based on rarity (like in HTML prototype)
-            if (backgroundImage != null)
-            {
-                backgroundImage.color = GetRarityBackgroundColor(data.rarity);
-            }
-
             // Set player photo if available
             if (playerArtImage != null)
             {
@@ -109,41 +102,20 @@ namespace JuegoTCG.Cards
                 }
             }
 
-            // Apply Holographic Foil Material for Epica, Legendaria, Mitica and FullArt (GDD 5.2 / Prototipo)
+            // Apply Holographic Foil Material for Epica, Legendaria, Mitica and FullArt
             bool isHolo = (data.rarity == Rarity.Epica || data.rarity == Rarity.Legendaria || data.rarity == Rarity.Mitica || data.rarity == Rarity.FullArt);
             
             EnsureHolographicMaterial();
             Material targetMat = isHolo ? holographicMaterial : null;
 
             if (frameImage != null) frameImage.material = targetMat;
-            if (backgroundImage != null) backgroundImage.material = targetMat;
+            if (playerArtImage != null) playerArtImage.material = targetMat;
 
             // Enable/disable HolographicTilt component
             var tiltComp = GetComponent<HolographicTilt>();
             if (tiltComp != null)
             {
                 tiltComp.enabled = isHolo;
-            }
-        }
-
-        private Color GetRarityBackgroundColor(Rarity rarity)
-        {
-            switch (rarity)
-            {
-                case Rarity.Comun:
-                    return new Color(0.12f, 0.16f, 0.22f); // Dark Slate Blue
-                case Rarity.Especial:
-                    return new Color(0.08f, 0.22f, 0.15f); // Deep Emerald
-                case Rarity.Epica:
-                    return new Color(0.20f, 0.10f, 0.32f); // Deep Purple
-                case Rarity.Legendaria:
-                    return new Color(0.32f, 0.22f, 0.06f); // Warm Gold / Amber
-                case Rarity.Mitica:
-                    return new Color(0.32f, 0.08f, 0.12f); // Deep Crimson
-                case Rarity.FullArt:
-                    return new Color(0.15f, 0.08f, 0.28f); // Cosmic Violet
-                default:
-                    return new Color(0.10f, 0.12f, 0.18f);
             }
         }
     }

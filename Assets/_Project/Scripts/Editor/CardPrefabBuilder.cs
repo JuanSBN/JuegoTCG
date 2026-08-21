@@ -30,16 +30,6 @@ namespace JuegoTCG.EditorTools
             CardDisplay display = rootGO.AddComponent<CardDisplay>();
             rootGO.AddComponent<HolographicTilt>();
 
-            // 0. Card Background (Fondo sólido/degradado para que no se vea el cielo transparente)
-            GameObject bgGO = new GameObject("CardBackground");
-            bgGO.transform.SetParent(rootGO.transform, false);
-            RectTransform bgRect = bgGO.AddComponent<RectTransform>();
-            bgRect.anchorMin = Vector2.zero;
-            bgRect.anchorMax = Vector2.one;
-            bgRect.sizeDelta = Vector2.zero;
-            Image bgImg = bgGO.AddComponent<Image>();
-            bgImg.color = new Color(0.08f, 0.12f, 0.18f); // Deep pitch blue
-
             // 1. Frame Image (Marco de rareza PNG)
             GameObject frameGO = new GameObject("FrameImage");
             frameGO.transform.SetParent(rootGO.transform, false);
@@ -143,7 +133,6 @@ namespace JuegoTCG.EditorTools
 
             // Assign Fields to SerializedObject of CardDisplay
             SerializedObject so = new SerializedObject(display);
-            so.FindProperty("backgroundImage").objectReferenceValue = bgImg;
             so.FindProperty("frameImage").objectReferenceValue = frameImg;
             so.FindProperty("playerArtImage").objectReferenceValue = artImg;
             so.FindProperty("nameText").objectReferenceValue = nameTMP;
@@ -167,7 +156,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡CardPrefab.prefab actualizado con capa de fondo y material holográfico!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡CardPrefab.prefab actualizado con el marco limpio original!</color>");
         }
     }
 }
