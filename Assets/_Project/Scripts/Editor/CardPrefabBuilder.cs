@@ -28,8 +28,19 @@ namespace JuegoTCG.EditorTools
             rootRect.sizeDelta = new Vector2(360, 480);
 
             CardDisplay display = rootGO.AddComponent<CardDisplay>();
+            rootGO.AddComponent<HolographicTilt>();
 
-            // 1. Frame Image (Background)
+            // 0. Card Background (Fondo sólido/degradado para que no se vea el cielo transparente)
+            GameObject bgGO = new GameObject("CardBackground");
+            bgGO.transform.SetParent(rootGO.transform, false);
+            RectTransform bgRect = bgGO.AddComponent<RectTransform>();
+            bgRect.anchorMin = Vector2.zero;
+            bgRect.anchorMax = Vector2.one;
+            bgRect.sizeDelta = Vector2.zero;
+            Image bgImg = bgGO.AddComponent<Image>();
+            bgImg.color = new Color(0.08f, 0.12f, 0.18f); // Deep pitch blue
+
+            // 1. Frame Image (Marco de rareza PNG)
             GameObject frameGO = new GameObject("FrameImage");
             frameGO.transform.SetParent(rootGO.transform, false);
             RectTransform frameRect = frameGO.AddComponent<RectTransform>();
@@ -38,7 +49,7 @@ namespace JuegoTCG.EditorTools
             frameRect.sizeDelta = Vector2.zero;
             Image frameImg = frameGO.AddComponent<Image>();
 
-            // 2. Player Art Image (Center Artwork)
+            // 2. Player Art Image (Foto del Jugador)
             GameObject artGO = new GameObject("PlayerArtImage");
             artGO.transform.SetParent(rootGO.transform, false);
             RectTransform artRect = artGO.AddComponent<RectTransform>();
@@ -77,7 +88,7 @@ namespace JuegoTCG.EditorTools
             footerRect.anchorMax = new Vector2(0.76f, 0.16f);
             footerRect.sizeDelta = Vector2.zero;
 
-            // Team Name Text (Nombre del Equipo Centrado Arriba en la Placa)
+            // Team Name Text
             GameObject teamGO = new GameObject("TeamNameText");
             teamGO.transform.SetParent(footerGO.transform, false);
             RectTransform teamRect = teamGO.AddComponent<RectTransform>();
@@ -91,7 +102,7 @@ namespace JuegoTCG.EditorTools
             teamTMP.alignment = TextAlignmentOptions.Center;
             teamTMP.color = new Color(0.1f, 0.1f, 0.1f);
 
-            // Position Text (Posición a la izquierda)
+            // Position Text
             GameObject posGO = new GameObject("PositionText");
             posGO.transform.SetParent(footerGO.transform, false);
             RectTransform posRect = posGO.AddComponent<RectTransform>();
@@ -105,7 +116,7 @@ namespace JuegoTCG.EditorTools
             posTMP.alignment = TextAlignmentOptions.Center;
             posTMP.color = new Color(0.15f, 0.15f, 0.35f);
 
-            // Rarity Text (Rareza a la derecha)
+            // Rarity Text
             GameObject rarityGO = new GameObject("RarityText");
             rarityGO.transform.SetParent(footerGO.transform, false);
             RectTransform rarityRect = rarityGO.AddComponent<RectTransform>();
@@ -127,14 +138,19 @@ namespace JuegoTCG.EditorTools
                 frames[i] = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             }
 
+            // Load Holographic Material
+            Material holoMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Materials/HolographicFoilMaterial.mat");
+
             // Assign Fields to SerializedObject of CardDisplay
             SerializedObject so = new SerializedObject(display);
+            so.FindProperty("backgroundImage").objectReferenceValue = bgImg;
             so.FindProperty("frameImage").objectReferenceValue = frameImg;
             so.FindProperty("playerArtImage").objectReferenceValue = artImg;
             so.FindProperty("nameText").objectReferenceValue = nameTMP;
             so.FindProperty("teamText").objectReferenceValue = teamTMP;
             so.FindProperty("positionText").objectReferenceValue = posTMP;
             so.FindProperty("rarityText").objectReferenceValue = rarityTMP;
+            so.FindProperty("holographicMaterial").objectReferenceValue = holoMat;
 
             SerializedProperty framesProp = so.FindProperty("rarityFrames");
             framesProp.arraySize = 6;
@@ -151,7 +167,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡CardPrefab.prefab creado con éxito en Assets/_Project/Prefabs/Cards/CardPrefab.prefab!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡CardPrefab.prefab actualizado con capa de fondo y material holográfico!</color>");
         }
     }
 }

@@ -18,7 +18,10 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/Generar Escena de Apertura de Sobres")]
         public static void BuildPackOpeningScene()
         {
-            // Create new scene
+            // 1. Rebuild CardPrefab with CardBackground first
+            CardPrefabBuilder.BuildCardPrefab();
+
+            // 2. Create new scene
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // Camera
@@ -48,6 +51,49 @@ namespace JuegoTCG.EditorTools
             openerGO.transform.SetParent(canvasGO.transform, false);
             PackOpener opener = openerGO.AddComponent<PackOpener>();
 
+            // Top Bar
+            GameObject topBarGO = new GameObject("TopBar");
+            topBarGO.transform.SetParent(canvasGO.transform, false);
+            RectTransform topBarRect = topBarGO.AddComponent<RectTransform>();
+            topBarRect.anchorMin = new Vector2(0.05f, 0.92f);
+            topBarRect.anchorMax = new Vector2(0.95f, 0.98f);
+            topBarRect.sizeDelta = Vector2.zero;
+
+            // Force Holo Toggle (Pruebas)
+            GameObject toggleGO = new GameObject("ForceHoloToggle");
+            toggleGO.transform.SetParent(topBarGO.transform, false);
+            RectTransform toggleRect = toggleGO.AddComponent<RectTransform>();
+            toggleRect.anchorMin = new Vector2(0, 0);
+            toggleRect.anchorMax = new Vector2(0.45f, 1);
+            toggleRect.sizeDelta = Vector2.zero;
+            Toggle toggle = toggleGO.AddComponent<Toggle>();
+            toggle.isOn = true; // Por defecto activado para pruebas visuales inmediatas
+
+            GameObject toggleLabelGO = new GameObject("Label");
+            toggleLabelGO.transform.SetParent(toggleGO.transform, false);
+            RectTransform toggleLabelRect = toggleLabelGO.AddComponent<RectTransform>();
+            toggleLabelRect.anchorMin = Vector2.zero;
+            toggleLabelRect.anchorMax = Vector2.one;
+            toggleLabelRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI toggleTMP = toggleLabelGO.AddComponent<TextMeshProUGUI>();
+            toggleTMP.text = "★ Forzar Holo (Prueba)";
+            toggleTMP.fontSize = 20;
+            toggleTMP.color = new Color(0.96f, 0.65f, 0.14f);
+
+            // Pack Counter Text
+            GameObject counterGO = new GameObject("PackCounter");
+            counterGO.transform.SetParent(topBarGO.transform, false);
+            RectTransform counterRect = counterGO.AddComponent<RectTransform>();
+            counterRect.anchorMin = new Vector2(0.55f, 0);
+            counterRect.anchorMax = new Vector2(1, 1);
+            counterRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI counterTMP = counterGO.AddComponent<TextMeshProUGUI>();
+            counterTMP.text = "★ 5 sobres";
+            counterTMP.fontSize = 22;
+            counterTMP.fontStyle = FontStyles.Bold;
+            counterTMP.alignment = TextAlignmentOptions.Right;
+            counterTMP.color = new Color(0.96f, 0.65f, 0.14f);
+
             // ----------------------------------------------------
             // 1. Closed Pack View
             // ----------------------------------------------------
@@ -62,7 +108,7 @@ namespace JuegoTCG.EditorTools
             GameObject packCardGO = new GameObject("PackGraphic");
             packCardGO.transform.SetParent(closedViewGO.transform, false);
             RectTransform packRect = packCardGO.AddComponent<RectTransform>();
-            packRect.sizeDelta = new Vector2(440, 620);
+            packRect.sizeDelta = new Vector2(460, 640);
             Image packImg = packCardGO.AddComponent<Image>();
             packImg.color = new Color(0.09f, 0.14f, 0.23f);
 
@@ -75,17 +121,30 @@ namespace JuegoTCG.EditorTools
             labelGO.transform.SetParent(packCardGO.transform, false);
             RectTransform labelRect = labelGO.AddComponent<RectTransform>();
             labelRect.anchorMin = new Vector2(0.05f, 0.12f);
-            labelRect.anchorMax = new Vector2(0.95f, 0.32f);
+            labelRect.anchorMax = new Vector2(0.95f, 0.28f);
             labelRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI labelTMP = labelGO.AddComponent<TextMeshProUGUI>();
-            labelTMP.text = "TOCAR PARA ABRIR SOBRE";
-            labelTMP.fontSize = 28;
+            labelTMP.text = "TOCA PARA ABRIR";
+            labelTMP.fontSize = 30;
             labelTMP.fontStyle = FontStyles.Bold;
             labelTMP.alignment = TextAlignmentOptions.Center;
             labelTMP.color = new Color(0.96f, 0.65f, 0.14f); // Gold
 
+            // Subtitle
+            GameObject subLabelGO = new GameObject("SubLabel");
+            subLabelGO.transform.SetParent(packCardGO.transform, false);
+            RectTransform subLabelRect = subLabelGO.AddComponent<RectTransform>();
+            subLabelRect.anchorMin = new Vector2(0.05f, 0.04f);
+            subLabelRect.anchorMax = new Vector2(0.95f, 0.12f);
+            subLabelRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI subLabelTMP = subLabelGO.AddComponent<TextMeshProUGUI>();
+            subLabelTMP.text = "Sobre estándar · 5 cartas";
+            subLabelTMP.fontSize = 18;
+            subLabelTMP.alignment = TextAlignmentOptions.Center;
+            subLabelTMP.color = new Color(0.65f, 0.7f, 0.8f);
+
             // ----------------------------------------------------
-            // 2. Reveal View (Single Card Centered)
+            // 2. Reveal View (Single Card Centered + Progress Dots)
             // ----------------------------------------------------
             GameObject revealViewGO = new GameObject("RevealView");
             revealViewGO.transform.SetParent(canvasGO.transform, false);
@@ -94,6 +153,19 @@ namespace JuegoTCG.EditorTools
             revealRect.anchorMax = Vector2.one;
             revealRect.sizeDelta = Vector2.zero;
             revealViewGO.SetActive(false);
+
+            // Progress Dots Container
+            GameObject progressGO = new GameObject("ProgressDotsContainer");
+            progressGO.transform.SetParent(revealViewGO.transform, false);
+            RectTransform progressRect = progressGO.AddComponent<RectTransform>();
+            progressRect.anchorMin = new Vector2(0.3f, 0.86f);
+            progressRect.anchorMax = new Vector2(0.7f, 0.90f);
+            progressRect.sizeDelta = Vector2.zero;
+            HorizontalLayoutGroup hlg = progressGO.AddComponent<HorizontalLayoutGroup>();
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.spacing = 16f;
+            hlg.childControlWidth = false;
+            hlg.childControlHeight = false;
 
             // Single Card Container (Centered)
             GameObject singleContainerGO = new GameObject("SingleCardContainer");
@@ -107,18 +179,31 @@ namespace JuegoTCG.EditorTools
             Button revealBtn = revealViewGO.AddComponent<Button>();
             UnityEditor.Events.UnityEventTools.AddPersistentListener(revealBtn.onClick, opener.OnClickCardInReveal);
 
-            // Hint Text
-            GameObject hintGO = new GameObject("RevealHintText");
-            hintGO.transform.SetParent(revealViewGO.transform, false);
-            RectTransform hintRect = hintGO.AddComponent<RectTransform>();
-            hintRect.anchorMin = new Vector2(0.1f, 0.08f);
-            hintRect.anchorMax = new Vector2(0.9f, 0.15f);
-            hintRect.sizeDelta = Vector2.zero;
-            TextMeshProUGUI hintTMP = hintGO.AddComponent<TextMeshProUGUI>();
-            hintTMP.text = "Toca la pantalla para revelar la siguiente carta";
-            hintTMP.fontSize = 22;
-            hintTMP.alignment = TextAlignmentOptions.Center;
-            hintTMP.color = new Color(0.8f, 0.85f, 0.95f);
+            // Continue Hint Text
+            GameObject continueHintGO = new GameObject("ContinueHintText");
+            continueHintGO.transform.SetParent(revealViewGO.transform, false);
+            RectTransform continueHintRect = continueHintGO.AddComponent<RectTransform>();
+            continueHintRect.anchorMin = new Vector2(0.1f, 0.08f);
+            continueHintRect.anchorMax = new Vector2(0.9f, 0.13f);
+            continueHintRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI continueHintTMP = continueHintGO.AddComponent<TextMeshProUGUI>();
+            continueHintTMP.text = "Toca la pantalla para revelar la siguiente carta";
+            continueHintTMP.fontSize = 22;
+            continueHintTMP.alignment = TextAlignmentOptions.Center;
+            continueHintTMP.color = new Color(0.85f, 0.88f, 0.95f);
+
+            // Tilt Hint Text (Holographic notice)
+            GameObject tiltHintGO = new GameObject("TiltHintText");
+            tiltHintGO.transform.SetParent(revealViewGO.transform, false);
+            RectTransform tiltHintRect = tiltHintGO.AddComponent<RectTransform>();
+            tiltHintRect.anchorMin = new Vector2(0.05f, 0.03f);
+            tiltHintRect.anchorMax = new Vector2(0.95f, 0.08f);
+            tiltHintRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI tiltHintTMP = tiltHintGO.AddComponent<TextMeshProUGUI>();
+            tiltHintTMP.text = "✦ Mueve el ratón / dedo sobre la carta para ver el efecto holográfico";
+            tiltHintTMP.fontSize = 18;
+            tiltHintTMP.alignment = TextAlignmentOptions.Center;
+            tiltHintTMP.color = new Color(0.96f, 0.65f, 0.14f);
 
             // ----------------------------------------------------
             // 3. Summary View (Straight Cards Row)
@@ -149,8 +234,8 @@ namespace JuegoTCG.EditorTools
             GameObject subGO = new GameObject("SummarySubtitle");
             subGO.transform.SetParent(summaryViewGO.transform, false);
             RectTransform subRect = subGO.AddComponent<RectTransform>();
-            subRect.anchorMin = new Vector2(0.1f, 0.77f);
-            subRect.anchorMax = new Vector2(0.9f, 0.83f);
+            subRect.anchorMin = new Vector2(0.05f, 0.77f);
+            subRect.anchorMax = new Vector2(0.95f, 0.83f);
             subRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI subTMP = subGO.AddComponent<TextMeshProUGUI>();
             subTMP.text = "Revisa lo que conseguiste";
@@ -224,9 +309,16 @@ namespace JuegoTCG.EditorTools
             so.FindProperty("closedPackView").objectReferenceValue = closedViewGO;
             so.FindProperty("revealView").objectReferenceValue = revealViewGO;
             so.FindProperty("summaryView").objectReferenceValue = summaryViewGO;
-            so.FindProperty("flashOverlay").objectReferenceValue = flashImg;
+            so.FindProperty("packCounterText").objectReferenceValue = counterTMP;
+            so.FindProperty("forceHoloToggle").objectReferenceValue = toggle;
+            so.FindProperty("progressDotsContainer").objectReferenceValue = progressRect;
             so.FindProperty("singleCardContainer").objectReferenceValue = singleContainerRect;
+            so.FindProperty("continueHintText").objectReferenceValue = continueHintTMP;
+            so.FindProperty("tiltHintText").objectReferenceValue = tiltHintTMP;
+            so.FindProperty("summarySubtitleText").objectReferenceValue = subTMP;
             so.FindProperty("summaryCardContainer").objectReferenceValue = summaryContainerRect;
+            so.FindProperty("openAnotherButton").objectReferenceValue = openAnotherBtn;
+            so.FindProperty("flashOverlay").objectReferenceValue = flashImg;
             so.FindProperty("cardPrefab").objectReferenceValue = cardPrefab;
 
             SerializedProperty catalogProp = so.FindProperty("cardCatalog");
@@ -245,7 +337,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity actualizada con cartas rectas y revelado individual!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada fielmente al prototipo HTML!</color>");
         }
     }
 }

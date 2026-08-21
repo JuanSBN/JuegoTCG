@@ -5,8 +5,8 @@ Shader "Shader Graphs/HolographicFoilShader"
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1,1,1,1)
         _TiltPos ("Tilt Position", Vector) = (0,0,0,0)
-        _HoloSpeed ("Holo Speed", Float) = 1.0
-        _HoloIntensity ("Holo Intensity", Float) = 0.55
+        _HoloIntensity ("Holo Intensity", Range(0, 1)) = 0.65
+        _ShimmerSpeed ("Shimmer Speed", Float) = 1.5
     }
 
     SubShader
@@ -23,7 +23,7 @@ Shader "Shader Graphs/HolographicFoilShader"
         Cull Off
         Lighting Off
         ZWrite Off
-        Blend One OneMinusSrcAlpha
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {
@@ -49,8 +49,8 @@ Shader "Shader Graphs/HolographicFoilShader"
             fixed4 _Color;
             sampler2D _MainTex;
             float4 _TiltPos;
-            float _HoloSpeed;
             float _HoloIntensity;
+            float _ShimmerSpeed;
 
             v2f vert(appdata_t IN)
             {
@@ -61,7 +61,7 @@ Shader "Shader Graphs/HolographicFoilShader"
                 return OUT;
             }
 
-            fixed3 Rainbow(float t)
+            fixed3 RainbowSpectrum(float t)
             {
                 t = frac(t);
                 fixed3 c;
@@ -73,17 +73,21 @@ Shader "Shader Graphs/HolographicFoilShader"
 
             fixed4 frag(v2f IN) : SV_Target
             {
-                fixed4 c = tex2D(_MainTex, IN.texcoord) * IN.color;
+                fixed4 texColor = tex2D(_MainTex, IN.texcoord) * IN.color;
+
+                // 1. Interactive Rainbow Foil (Follows UV + Time + Mouse/Tilt)
+                float foilCoord = (IN.texcoord.x + IN.texcoord.y) * 1.8 + _Time.y * 0.35 + (_TiltPos.x + _TiltPos.y) * 0.8;
+                fixed3 foilColor = RainbowSpectrum(foilCoord);
+
+                // 2. Animated Diagonal Shimmer Sweep (Like in HTML prototype)
+                float shimmerLine = frac((IN.texcoord.x + IN.texcoord.y * 0.8) - _Time.y * _ShimmerSpeed * 0.5);
+                float shimmer = smoothstep(0.0, 0.15, shimmerLine) * smoothstep(0.3, 0.15, shimmerLine);
+                fixed3 shimmerColor = fixed3(1.0, 0.95, 0.8) * shimmer * 0.8;
+
+                // Blend holographic foil + shimmer into sprite texture
+                fixed3 finalRGB = texColor.rgb + (foilColor * 0.7 + shimmerColor) * _HoloIntensity;
                 
-                // Calculate rainbow spectrum gradient animated by time & mouse tilt
-                float t = IN.texcoord.x * 1.5 + IN.texcoord.y * 1.5 + _Time.y * 0.4 + _TiltPos.x * 0.5 + _TiltPos.y * 0.5;
-                fixed3 holo = Rainbow(t);
-                
-                // Blend holographic rainbow shine over texture
-                c.rgb = lerp(c.rgb, c.rgb + holo * _HoloIntensity, c.a * 0.45);
-                
-                c.rgb *= c.a;
-                return c;
+                return fixed4(finalRGB, texColor.a);
             }
             ENDCG
         }
