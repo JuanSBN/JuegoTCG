@@ -138,7 +138,7 @@ namespace JuegoTCG.EditorTools
             toggleTMP.fontSize = 20;
             toggleTMP.color = new Color(0.96f, 0.65f, 0.14f);
 
-            // Pack Counter Pill Badge (Crisp Gold Border + Translucent Fill like HTML)
+            // Pack Counter Pill Badge (Crisp Bordered Capsule with full rounded caps)
             GameObject counterBadgeGO = new GameObject("PackCounterBadge");
             counterBadgeGO.transform.SetParent(topBarGO.transform, false);
             RectTransform counterBadgeRect = counterBadgeGO.AddComponent<RectTransform>();
@@ -146,7 +146,7 @@ namespace JuegoTCG.EditorTools
             counterBadgeRect.anchorMax = new Vector2(1f, 0.5f);
             counterBadgeRect.pivot = new Vector2(1f, 0.5f);
             counterBadgeRect.anchoredPosition = new Vector2(0, 0);
-            counterBadgeRect.sizeDelta = new Vector2(180, 48);
+            counterBadgeRect.sizeDelta = new Vector2(170, 44);
 
             Image badgeImg = counterBadgeGO.AddComponent<Image>();
             badgeImg.sprite = (pillBorderedSprite != null) ? pillBorderedSprite : pillSprite;
@@ -157,7 +157,7 @@ namespace JuegoTCG.EditorTools
             HorizontalLayoutGroup badgeLayout = counterBadgeGO.AddComponent<HorizontalLayoutGroup>();
             badgeLayout.childAlignment = TextAnchor.MiddleCenter;
             badgeLayout.spacing = 8f;
-            badgeLayout.padding = new RectOffset(16, 16, 6, 6);
+            badgeLayout.padding = new RectOffset(16, 16, 4, 4);
             badgeLayout.childControlWidth = false;
             badgeLayout.childControlHeight = false;
 
@@ -165,7 +165,7 @@ namespace JuegoTCG.EditorTools
             GameObject badgeStarGO = new GameObject("BadgeStar");
             badgeStarGO.transform.SetParent(counterBadgeGO.transform, false);
             RectTransform badgeStarRect = badgeStarGO.AddComponent<RectTransform>();
-            badgeStarRect.sizeDelta = new Vector2(20, 20);
+            badgeStarRect.sizeDelta = new Vector2(18, 18);
             Image badgeStarImg = badgeStarGO.AddComponent<Image>();
             badgeStarImg.sprite = starSprite;
             badgeStarImg.color = new Color(1f, 0.85f, 0.45f);
@@ -174,10 +174,10 @@ namespace JuegoTCG.EditorTools
             GameObject counterGO = new GameObject("PackCounterText");
             counterGO.transform.SetParent(counterBadgeGO.transform, false);
             RectTransform counterRect = counterGO.AddComponent<RectTransform>();
-            counterRect.sizeDelta = new Vector2(105, 30);
+            counterRect.sizeDelta = new Vector2(95, 28);
             TextMeshProUGUI counterTMP = counterGO.AddComponent<TextMeshProUGUI>();
             counterTMP.text = "5 sobres";
-            counterTMP.fontSize = 20;
+            counterTMP.fontSize = 19;
             counterTMP.fontStyle = FontStyles.Bold;
             counterTMP.alignment = TextAlignmentOptions.MidlineLeft;
             counterTMP.color = new Color(1f, 0.88f, 0.55f);
@@ -206,7 +206,7 @@ namespace JuegoTCG.EditorTools
             packBorderImg.type = Image.Type.Sliced;
             packBorderImg.color = new Color(0.96f, 0.65f, 0.14f, 0.55f);
 
-            // Pack Inner Body (Dark Blue Gradient)
+            // Pack Inner Body (Dark Blue Gradient with Mask so rays never overflow!)
             GameObject packInnerGO = new GameObject("PackInner");
             packInnerGO.transform.SetParent(packBorderGO.transform, false);
             RectTransform packInnerRect = packInnerGO.AddComponent<RectTransform>();
@@ -219,7 +219,11 @@ namespace JuegoTCG.EditorTools
             packInnerImg.type = Image.Type.Sliced;
             packInnerImg.color = new Color(0.086f, 0.137f, 0.231f); // #16233B
 
-            // Pack Rotating Conic Rays
+            // Mask on inner body to clip rays inside the rounded card!
+            Mask packMask = packInnerGO.AddComponent<Mask>();
+            packMask.showMaskGraphic = true;
+
+            // Pack Rotating Conic Rays (Masked inside the pack!)
             GameObject raysGO = new GameObject("PackRays");
             raysGO.transform.SetParent(packInnerGO.transform, false);
             RectTransform raysRect = raysGO.AddComponent<RectTransform>();
@@ -502,7 +506,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada con badge dorado nítido y cápsula perfecta!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada con máscara de rayos y cápsula ultra redondeada!</color>");
         }
     }
 }

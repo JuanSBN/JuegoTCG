@@ -18,8 +18,8 @@ namespace JuegoTCG.EditorTools
             }
 
             CreateCircleSprite($"{UIPath}/ui_circle.png", 128);
-            CreatePillSprite($"{UIPath}/ui_pill.png", 128, 128, 62f, false);
-            CreatePillSprite($"{UIPath}/ui_pill_bordered.png", 128, 128, 62f, true);
+            CreatePillSprite($"{UIPath}/ui_pill.png", 64, 64, 30f, false);
+            CreatePillSprite($"{UIPath}/ui_pill_bordered.png", 64, 64, 30f, true);
             CreateRoundedRectSprite($"{UIPath}/ui_rounded_card.png", 360, 500, 36);
             CreateRoundedRectSprite($"{UIPath}/ui_rounded_pack.png", 440, 620, 44);
             CreateStarSprite($"{UIPath}/ui_star.png", 256);
@@ -29,7 +29,7 @@ namespace JuegoTCG.EditorTools
 
             AssetDatabase.Refresh();
 
-            // Set Texture Importer Settings with 9-Slice Sprite Borders
+            // Set Texture Importer Settings with exact 9-Slice Sprite Borders
             string[] files = Directory.GetFiles(UIPath, "*.png");
             foreach (var file in files)
             {
@@ -46,7 +46,7 @@ namespace JuegoTCG.EditorTools
                     // Set 9-slice borders so shapes never stretch or distort
                     if (assetPath.Contains("ui_pill"))
                     {
-                        importer.spriteBorder = new Vector4(62, 62, 62, 62);
+                        importer.spriteBorder = new Vector4(30, 30, 30, 30);
                     }
                     else if (assetPath.Contains("ui_rounded_card"))
                     {
@@ -89,10 +89,10 @@ namespace JuegoTCG.EditorTools
             Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
             float centerX = width * 0.5f;
             float centerY = height * 0.5f;
-            float borderWidth = 3.5f;
+            float borderWidth = 2.5f;
 
-            Color goldFill = new Color(1f, 0.85f, 0.45f, 0.22f);
-            Color goldBorder = new Color(1f, 0.88f, 0.55f, 0.90f);
+            Color goldFill = new Color(1f, 0.85f, 0.45f, 0.18f);
+            Color goldBorder = new Color(1f, 0.88f, 0.55f, 0.85f);
 
             for (int y = 0; y < height; y++)
             {
