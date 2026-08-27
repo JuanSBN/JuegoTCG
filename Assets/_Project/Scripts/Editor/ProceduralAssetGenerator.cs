@@ -18,7 +18,8 @@ namespace JuegoTCG.EditorTools
             }
 
             CreateCircleSprite($"{UIPath}/ui_circle.png", 128);
-            CreatePillSprite($"{UIPath}/ui_pill.png", 128, 128, 62f);
+            CreatePillSprite($"{UIPath}/ui_pill.png", 128, 128, 62f, false);
+            CreatePillSprite($"{UIPath}/ui_pill_bordered.png", 128, 128, 62f, true);
             CreateRoundedRectSprite($"{UIPath}/ui_rounded_card.png", 360, 500, 36);
             CreateRoundedRectSprite($"{UIPath}/ui_rounded_pack.png", 440, 620, 44);
             CreateStarSprite($"{UIPath}/ui_star.png", 256);
@@ -83,11 +84,15 @@ namespace JuegoTCG.EditorTools
             Object.DestroyImmediate(tex);
         }
 
-        private static void CreatePillSprite(string path, int width, int height, float radius)
+        private static void CreatePillSprite(string path, int width, int height, float radius, bool withBorder)
         {
             Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
             float centerX = width * 0.5f;
             float centerY = height * 0.5f;
+            float borderWidth = 3.5f;
+
+            Color goldFill = new Color(1f, 0.85f, 0.45f, 0.22f);
+            Color goldBorder = new Color(1f, 0.88f, 0.55f, 0.90f);
 
             for (int y = 0; y < height; y++)
             {
@@ -97,8 +102,22 @@ namespace JuegoTCG.EditorTools
                     float py = y + 0.5f;
 
                     float dist = Vector2.Distance(new Vector2(px, py), new Vector2(centerX, centerY));
-                    float alpha = Mathf.Clamp01(radius - dist + 1f);
-                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                    float alphaOuter = Mathf.Clamp01(radius - dist + 1f);
+
+                    if (withBorder)
+                    {
+                        float innerRadius = radius - borderWidth;
+                        float alphaInner = Mathf.Clamp01(innerRadius - dist + 1f);
+                        float borderAlpha = Mathf.Clamp01(alphaOuter - alphaInner);
+
+                        Color pixelColor = Color.Lerp(goldFill * alphaInner, goldBorder, borderAlpha);
+                        pixelColor.a = Mathf.Max(goldFill.a * alphaInner, goldBorder.a * borderAlpha);
+                        tex.SetPixel(x, y, pixelColor);
+                    }
+                    else
+                    {
+                        tex.SetPixel(x, y, new Color(1f, 1f, 1f, alphaOuter));
+                    }
                 }
             }
             tex.Apply();
@@ -138,8 +157,8 @@ namespace JuegoTCG.EditorTools
                     tex.SetPixel(x, y, clear);
 
             Vector2 center = new Vector2(size * 0.5f, size * 0.5f);
-            float rOuter = size * 0.46f;
-            float rInner = size * 0.19f;
+            float rOuter = size * 0.44f;
+            float rInner = size * 0.18f;
             int points = 5;
 
             Vector2[] starPoly = new Vector2[points * 2];

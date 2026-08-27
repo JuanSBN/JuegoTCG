@@ -28,6 +28,7 @@ namespace JuegoTCG.EditorTools
 
             // Load UI Sprites
             Sprite pillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_pill.png");
+            Sprite pillBorderedSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_pill_bordered.png");
             Sprite roundedPackSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rounded_pack.png");
             Sprite starSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_star.png");
             Sprite raysSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rays.png");
@@ -137,7 +138,7 @@ namespace JuegoTCG.EditorTools
             toggleTMP.fontSize = 20;
             toggleTMP.color = new Color(0.96f, 0.65f, 0.14f);
 
-            // Pack Counter Pill Badge (Perfect 9-Sliced Capsule)
+            // Pack Counter Pill Badge (Crisp Gold Border + Translucent Fill like HTML)
             GameObject counterBadgeGO = new GameObject("PackCounterBadge");
             counterBadgeGO.transform.SetParent(topBarGO.transform, false);
             RectTransform counterBadgeRect = counterBadgeGO.AddComponent<RectTransform>();
@@ -145,38 +146,41 @@ namespace JuegoTCG.EditorTools
             counterBadgeRect.anchorMax = new Vector2(1f, 0.5f);
             counterBadgeRect.pivot = new Vector2(1f, 0.5f);
             counterBadgeRect.anchoredPosition = new Vector2(0, 0);
-            counterBadgeRect.sizeDelta = new Vector2(210, 52);
-            Image badgeImg = counterBadgeGO.AddComponent<Image>();
-            badgeImg.sprite = pillSprite;
-            badgeImg.type = Image.Type.Sliced;
-            badgeImg.color = new Color(0.96f, 0.65f, 0.14f, 0.22f);
+            counterBadgeRect.sizeDelta = new Vector2(180, 48);
 
-            // Star Icon inside badge (Centered and un-distorted)
+            Image badgeImg = counterBadgeGO.AddComponent<Image>();
+            badgeImg.sprite = (pillBorderedSprite != null) ? pillBorderedSprite : pillSprite;
+            badgeImg.type = Image.Type.Sliced;
+            badgeImg.color = Color.white;
+
+            // Auto-layout inside badge
+            HorizontalLayoutGroup badgeLayout = counterBadgeGO.AddComponent<HorizontalLayoutGroup>();
+            badgeLayout.childAlignment = TextAnchor.MiddleCenter;
+            badgeLayout.spacing = 8f;
+            badgeLayout.padding = new RectOffset(16, 16, 6, 6);
+            badgeLayout.childControlWidth = false;
+            badgeLayout.childControlHeight = false;
+
+            // Star Icon inside badge
             GameObject badgeStarGO = new GameObject("BadgeStar");
             badgeStarGO.transform.SetParent(counterBadgeGO.transform, false);
             RectTransform badgeStarRect = badgeStarGO.AddComponent<RectTransform>();
-            badgeStarRect.anchorMin = new Vector2(0f, 0.5f);
-            badgeStarRect.anchorMax = new Vector2(0f, 0.5f);
-            badgeStarRect.pivot = new Vector2(0.5f, 0.5f);
-            badgeStarRect.anchoredPosition = new Vector2(24, 0);
-            badgeStarRect.sizeDelta = new Vector2(22, 22);
+            badgeStarRect.sizeDelta = new Vector2(20, 20);
             Image badgeStarImg = badgeStarGO.AddComponent<Image>();
             badgeStarImg.sprite = starSprite;
-            badgeStarImg.color = new Color(0.96f, 0.65f, 0.14f);
+            badgeStarImg.color = new Color(1f, 0.85f, 0.45f);
 
+            // Text inside badge
             GameObject counterGO = new GameObject("PackCounterText");
             counterGO.transform.SetParent(counterBadgeGO.transform, false);
             RectTransform counterRect = counterGO.AddComponent<RectTransform>();
-            counterRect.anchorMin = new Vector2(0f, 0f);
-            counterRect.anchorMax = new Vector2(1f, 1f);
-            counterRect.offsetMin = new Vector2(44, 0);
-            counterRect.offsetMax = new Vector2(-12, 0);
+            counterRect.sizeDelta = new Vector2(105, 30);
             TextMeshProUGUI counterTMP = counterGO.AddComponent<TextMeshProUGUI>();
             counterTMP.text = "5 sobres";
             counterTMP.fontSize = 20;
             counterTMP.fontStyle = FontStyles.Bold;
-            counterTMP.alignment = TextAlignmentOptions.Center;
-            counterTMP.color = new Color(0.96f, 0.65f, 0.14f);
+            counterTMP.alignment = TextAlignmentOptions.MidlineLeft;
+            counterTMP.color = new Color(1f, 0.88f, 0.55f);
 
             // ----------------------------------------------------
             // 1. Closed Pack View
@@ -498,7 +502,7 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada con bordes redondeados perfectos!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada con badge dorado nítido y cápsula perfecta!</color>");
         }
     }
 }
