@@ -20,27 +20,28 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/Generar Escena de Apertura de Sobres")]
         public static void BuildPackOpeningScene()
         {
-            // 1. Ensure UI sprites & CardPrefab are built
+            // 1. Ensure all procedural UI sprites are generated and up-to-date
             ProceduralAssetGenerator.GenerateUISprites();
+
+            // 2. Rebuild CardPrefab
             CardPrefabBuilder.BuildCardPrefab();
 
-            Sprite roundedPackSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rounded_pack.png");
-            Sprite roundedCardSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rounded_card.png");
+            // Load UI Sprites
             Sprite pillSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_pill.png");
-            Sprite circleSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_circle.png");
+            Sprite roundedPackSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rounded_pack.png");
             Sprite starSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_star.png");
             Sprite raysSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rays.png");
             Sprite stadiumBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/bg_stadium.png");
             Sprite stadiumLinesSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/bg_stadium_lines.png");
 
-            // 2. Create new scene
+            // 3. Create new scene
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // Camera
             GameObject camGO = new GameObject("Main Camera");
             Camera cam = camGO.AddComponent<Camera>();
             cam.clearFlags = CameraClearFlags.SolidColor;
-            cam.backgroundColor = new Color(0.04f, 0.07f, 0.12f); // Deep pitch blue #0B1220
+            cam.backgroundColor = new Color(0.043f, 0.070f, 0.125f); // Deep pitch blue #0B1220
             cam.orthographic = true;
             camGO.AddComponent<AudioListener>();
 
@@ -51,11 +52,10 @@ namespace JuegoTCG.EditorTools
             CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080, 1920);
-            scaler.matchWidthOrHeight = 0f; // Match Width (100% stable on all mobile vertical aspect ratios)
             canvasGO.AddComponent<GraphicRaycaster>();
 
-            // Particle Burst System Component
-            GameObject particleSystemGO = new GameObject("UIParticleBurstSystem");
+            // Global UI Particle Burst System (Topmost layer for sparkly reveals)
+            GameObject particleSystemGO = new GameObject("UIParticleSystem");
             particleSystemGO.transform.SetParent(canvasGO.transform, false);
             RectTransform particleRect = particleSystemGO.AddComponent<RectTransform>();
             particleRect.anchorMin = Vector2.zero;
@@ -137,7 +137,7 @@ namespace JuegoTCG.EditorTools
             toggleTMP.fontSize = 20;
             toggleTMP.color = new Color(0.96f, 0.65f, 0.14f);
 
-            // Pack Counter Pill Badge (Rounded pill badge with Star Sprite)
+            // Pack Counter Pill Badge (Perfect 9-Sliced Capsule)
             GameObject counterBadgeGO = new GameObject("PackCounterBadge");
             counterBadgeGO.transform.SetParent(topBarGO.transform, false);
             RectTransform counterBadgeRect = counterBadgeGO.AddComponent<RectTransform>();
@@ -145,21 +145,21 @@ namespace JuegoTCG.EditorTools
             counterBadgeRect.anchorMax = new Vector2(1f, 0.5f);
             counterBadgeRect.pivot = new Vector2(1f, 0.5f);
             counterBadgeRect.anchoredPosition = new Vector2(0, 0);
-            counterBadgeRect.sizeDelta = new Vector2(230, 58);
+            counterBadgeRect.sizeDelta = new Vector2(210, 52);
             Image badgeImg = counterBadgeGO.AddComponent<Image>();
             badgeImg.sprite = pillSprite;
             badgeImg.type = Image.Type.Sliced;
-            badgeImg.color = new Color(0.96f, 0.65f, 0.14f, 0.18f);
+            badgeImg.color = new Color(0.96f, 0.65f, 0.14f, 0.22f);
 
-            // Star Icon inside badge
+            // Star Icon inside badge (Centered and un-distorted)
             GameObject badgeStarGO = new GameObject("BadgeStar");
             badgeStarGO.transform.SetParent(counterBadgeGO.transform, false);
             RectTransform badgeStarRect = badgeStarGO.AddComponent<RectTransform>();
             badgeStarRect.anchorMin = new Vector2(0f, 0.5f);
             badgeStarRect.anchorMax = new Vector2(0f, 0.5f);
-            badgeStarRect.pivot = new Vector2(0f, 0.5f);
-            badgeStarRect.anchoredPosition = new Vector2(16, 0);
-            badgeStarRect.sizeDelta = new Vector2(32, 32);
+            badgeStarRect.pivot = new Vector2(0.5f, 0.5f);
+            badgeStarRect.anchoredPosition = new Vector2(24, 0);
+            badgeStarRect.sizeDelta = new Vector2(22, 22);
             Image badgeStarImg = badgeStarGO.AddComponent<Image>();
             badgeStarImg.sprite = starSprite;
             badgeStarImg.color = new Color(0.96f, 0.65f, 0.14f);
@@ -169,11 +169,11 @@ namespace JuegoTCG.EditorTools
             RectTransform counterRect = counterGO.AddComponent<RectTransform>();
             counterRect.anchorMin = new Vector2(0f, 0f);
             counterRect.anchorMax = new Vector2(1f, 1f);
-            counterRect.offsetMin = new Vector2(50, 0);
-            counterRect.offsetMax = new Vector2(-10, 0);
+            counterRect.offsetMin = new Vector2(44, 0);
+            counterRect.offsetMax = new Vector2(-12, 0);
             TextMeshProUGUI counterTMP = counterGO.AddComponent<TextMeshProUGUI>();
             counterTMP.text = "5 sobres";
-            counterTMP.fontSize = 22;
+            counterTMP.fontSize = 20;
             counterTMP.fontStyle = FontStyles.Bold;
             counterTMP.alignment = TextAlignmentOptions.Center;
             counterTMP.color = new Color(0.96f, 0.65f, 0.14f);
@@ -208,48 +208,56 @@ namespace JuegoTCG.EditorTools
             RectTransform packInnerRect = packInnerGO.AddComponent<RectTransform>();
             packInnerRect.anchorMin = Vector2.zero;
             packInnerRect.anchorMax = Vector2.one;
-            packInnerRect.sizeDelta = new Vector2(-10, -10);
+            packInnerRect.offsetMin = new Vector2(6, 6);
+            packInnerRect.offsetMax = new Vector2(-6, -6);
             Image packInnerImg = packInnerGO.AddComponent<Image>();
             packInnerImg.sprite = roundedPackSprite;
             packInnerImg.type = Image.Type.Sliced;
-            packInnerImg.color = new Color(0.09f, 0.14f, 0.23f);
+            packInnerImg.color = new Color(0.086f, 0.137f, 0.231f); // #16233B
 
-            // Pack Rays Effect (Rotating 16-ray circular pattern)
+            // Pack Rotating Conic Rays
             GameObject raysGO = new GameObject("PackRays");
             raysGO.transform.SetParent(packInnerGO.transform, false);
             RectTransform raysRect = raysGO.AddComponent<RectTransform>();
-            raysRect.sizeDelta = new Vector2(460, 460);
-            raysRect.anchoredPosition = Vector2.zero;
+            raysRect.anchorMin = Vector2.zero;
+            raysRect.anchorMax = Vector2.one;
+            raysRect.sizeDelta = Vector2.zero;
             Image raysImg = raysGO.AddComponent<Image>();
             raysImg.sprite = raysSprite;
-            raysImg.color = new Color(1f, 1f, 1f, 0.85f);
+            raysImg.color = Color.white;
+            raysImg.raycastTarget = false;
 
-            // Pack Central Gold Star
-            GameObject starGO = new GameObject("PackStar");
+            // Pack Gold Star in Center
+            GameObject starGO = new GameObject("PackCenterStar");
             starGO.transform.SetParent(packInnerGO.transform, false);
             RectTransform starRect = starGO.AddComponent<RectTransform>();
+            starRect.anchorMin = new Vector2(0.5f, 0.5f);
+            starRect.anchorMax = new Vector2(0.5f, 0.5f);
+            starRect.pivot = new Vector2(0.5f, 0.5f);
             starRect.sizeDelta = new Vector2(160, 160);
-            starRect.anchoredPosition = Vector2.zero;
             Image starImg = starGO.AddComponent<Image>();
             starImg.sprite = starSprite;
-            starImg.color = Color.white;
+            starImg.color = new Color(1f, 0.85f, 0.45f);
 
             // Button trigger for opening pack
             Button packBtn = packBorderGO.AddComponent<Button>();
             UnityEditor.Events.UnityEventTools.AddPersistentListener(packBtn.onClick, opener.OnClickOpenPack);
 
-            // Closed Pack Text Label
+            // Pack Idle Animation Visuals Component
+            PackIdleVisuals visuals = closedViewGO.AddComponent<PackIdleVisuals>();
+
+            // Closed Pack CTA Label
             GameObject labelGO = new GameObject("OpenLabel");
             labelGO.transform.SetParent(closedViewGO.transform, false);
             RectTransform labelRect = labelGO.AddComponent<RectTransform>();
             labelRect.anchorMin = new Vector2(0.5f, 0.5f);
             labelRect.anchorMax = new Vector2(0.5f, 0.5f);
             labelRect.pivot = new Vector2(0.5f, 0.5f);
-            labelRect.anchoredPosition = new Vector2(0, -310);
-            labelRect.sizeDelta = new Vector2(800, 60);
+            labelRect.anchoredPosition = new Vector2(0, -290);
+            labelRect.sizeDelta = new Vector2(600, 50);
             TextMeshProUGUI labelTMP = labelGO.AddComponent<TextMeshProUGUI>();
             labelTMP.text = "TOCA PARA ABRIR";
-            labelTMP.fontSize = 34;
+            labelTMP.fontSize = 32;
             labelTMP.fontStyle = FontStyles.Bold;
             labelTMP.alignment = TextAlignmentOptions.Center;
             labelTMP.color = Color.white;
@@ -261,21 +269,20 @@ namespace JuegoTCG.EditorTools
             subLabelRect.anchorMin = new Vector2(0.5f, 0.5f);
             subLabelRect.anchorMax = new Vector2(0.5f, 0.5f);
             subLabelRect.pivot = new Vector2(0.5f, 0.5f);
-            subLabelRect.anchoredPosition = new Vector2(0, -365);
-            subLabelRect.sizeDelta = new Vector2(800, 40);
+            subLabelRect.anchoredPosition = new Vector2(0, -335);
+            subLabelRect.sizeDelta = new Vector2(600, 40);
             TextMeshProUGUI subLabelTMP = subLabelGO.AddComponent<TextMeshProUGUI>();
             subLabelTMP.text = "Sobre estándar · 5 cartas";
             subLabelTMP.fontSize = 20;
             subLabelTMP.alignment = TextAlignmentOptions.Center;
-            subLabelTMP.color = new Color(0.65f, 0.7f, 0.8f);
+            subLabelTMP.color = new Color(0.60f, 0.65f, 0.72f);
 
-            // Add PackIdleVisuals component
-            PackIdleVisuals idleComp = closedViewGO.AddComponent<PackIdleVisuals>();
-            SerializedObject soIdle = new SerializedObject(idleComp);
-            soIdle.FindProperty("packTransform").objectReferenceValue = packRect;
-            soIdle.FindProperty("raysTransform").objectReferenceValue = raysRect;
-            soIdle.FindProperty("ctaText").objectReferenceValue = labelTMP;
-            soIdle.ApplyModifiedProperties();
+            // Assign PackIdleVisuals fields
+            SerializedObject soVisuals = new SerializedObject(visuals);
+            soVisuals.FindProperty("packTransform").objectReferenceValue = packRect;
+            soVisuals.FindProperty("raysTransform").objectReferenceValue = raysRect;
+            soVisuals.FindProperty("ctaText").objectReferenceValue = labelTMP;
+            soVisuals.ApplyModifiedProperties();
 
             // ----------------------------------------------------
             // 2. Reveal View (Single Card Centered + Progress Dots)
@@ -288,7 +295,7 @@ namespace JuegoTCG.EditorTools
             revealRect.sizeDelta = Vector2.zero;
             revealViewGO.SetActive(false);
 
-            // Progress Dots Container (Well separated at the top)
+            // Progress Dots Container
             GameObject progressGO = new GameObject("ProgressDotsContainer");
             progressGO.transform.SetParent(revealViewGO.transform, false);
             RectTransform progressRect = progressGO.AddComponent<RectTransform>();
@@ -296,10 +303,10 @@ namespace JuegoTCG.EditorTools
             progressRect.anchorMax = new Vector2(0.5f, 1f);
             progressRect.pivot = new Vector2(0.5f, 1f);
             progressRect.anchoredPosition = new Vector2(0, -135);
-            progressRect.sizeDelta = new Vector2(300, 40);
+            progressRect.sizeDelta = new Vector2(300, 30);
             HorizontalLayoutGroup hlg = progressGO.AddComponent<HorizontalLayoutGroup>();
             hlg.childAlignment = TextAnchor.MiddleCenter;
-            hlg.spacing = 24f;
+            hlg.spacing = 18f;
             hlg.childControlWidth = false;
             hlg.childControlHeight = false;
 
@@ -311,7 +318,7 @@ namespace JuegoTCG.EditorTools
             singleContainerRect.anchorMax = new Vector2(0.5f, 0.5f);
             singleContainerRect.pivot = new Vector2(0.5f, 0.5f);
             singleContainerRect.anchoredPosition = new Vector2(0, 30);
-            singleContainerRect.sizeDelta = new Vector2(380, 530);
+            singleContainerRect.sizeDelta = new Vector2(500, 680);
 
             // Fullscreen Button for Reveal Click Gesture
             Button revealBtn = revealViewGO.AddComponent<Button>();
@@ -324,16 +331,31 @@ namespace JuegoTCG.EditorTools
             continueHintRect.anchorMin = new Vector2(0.5f, 0.5f);
             continueHintRect.anchorMax = new Vector2(0.5f, 0.5f);
             continueHintRect.pivot = new Vector2(0.5f, 0.5f);
-            continueHintRect.anchoredPosition = new Vector2(0, -325);
-            continueHintRect.sizeDelta = new Vector2(800, 48);
+            continueHintRect.anchoredPosition = new Vector2(0, -360);
+            continueHintRect.sizeDelta = new Vector2(800, 40);
             TextMeshProUGUI continueHintTMP = continueHintGO.AddComponent<TextMeshProUGUI>();
             continueHintTMP.text = "Toca la carta para revelar";
             continueHintTMP.fontSize = 22;
             continueHintTMP.alignment = TextAlignmentOptions.Center;
-            continueHintTMP.color = new Color(0.85f, 0.88f, 0.95f);
+            continueHintTMP.color = new Color(0.60f, 0.65f, 0.72f);
+
+            // Tilt Hint Text (Holographic notice)
+            GameObject tiltHintGO = new GameObject("TiltHintText");
+            tiltHintGO.transform.SetParent(revealViewGO.transform, false);
+            RectTransform tiltHintRect = tiltHintGO.AddComponent<RectTransform>();
+            tiltHintRect.anchorMin = new Vector2(0.5f, 0.5f);
+            tiltHintRect.anchorMax = new Vector2(0.5f, 0.5f);
+            tiltHintRect.pivot = new Vector2(0.5f, 0.5f);
+            tiltHintRect.anchoredPosition = new Vector2(0, -400);
+            tiltHintRect.sizeDelta = new Vector2(800, 40);
+            TextMeshProUGUI tiltHintTMP = tiltHintGO.AddComponent<TextMeshProUGUI>();
+            tiltHintTMP.text = "Mueve el ratón / dedo sobre la carta para ver el efecto";
+            tiltHintTMP.fontSize = 18;
+            tiltHintTMP.alignment = TextAlignmentOptions.Center;
+            tiltHintTMP.color = new Color(0.96f, 0.65f, 0.14f);
 
             // ----------------------------------------------------
-            // 3. Summary View (Portrait 3+2 Grid)
+            // 3. Summary View (Straight Cards Row)
             // ----------------------------------------------------
             GameObject summaryViewGO = new GameObject("SummaryView");
             summaryViewGO.transform.SetParent(screenGO.transform, false);
@@ -351,10 +373,10 @@ namespace JuegoTCG.EditorTools
             titleRect.anchorMax = new Vector2(0.5f, 1f);
             titleRect.pivot = new Vector2(0.5f, 1f);
             titleRect.anchoredPosition = new Vector2(0, -115);
-            titleRect.sizeDelta = new Vector2(900, 60);
+            titleRect.sizeDelta = new Vector2(900, 55);
             TextMeshProUGUI titleTMP = titleGO.AddComponent<TextMeshProUGUI>();
             titleTMP.text = "SOBRE COMPLETO";
-            titleTMP.fontSize = 44;
+            titleTMP.fontSize = 38;
             titleTMP.fontStyle = FontStyles.Bold;
             titleTMP.alignment = TextAlignmentOptions.Center;
             titleTMP.color = Color.white;
@@ -366,11 +388,11 @@ namespace JuegoTCG.EditorTools
             subRect.anchorMin = new Vector2(0.5f, 1f);
             subRect.anchorMax = new Vector2(0.5f, 1f);
             subRect.pivot = new Vector2(0.5f, 1f);
-            subRect.anchoredPosition = new Vector2(0, -175);
+            subRect.anchoredPosition = new Vector2(0, -170);
             subRect.sizeDelta = new Vector2(900, 40);
             TextMeshProUGUI subTMP = subGO.AddComponent<TextMeshProUGUI>();
             subTMP.text = "Revisa lo que conseguiste";
-            subTMP.fontSize = 24;
+            subTMP.fontSize = 22;
             subTMP.alignment = TextAlignmentOptions.Center;
             subTMP.color = new Color(0.7f, 0.75f, 0.85f);
 
@@ -384,15 +406,15 @@ namespace JuegoTCG.EditorTools
             summaryContainerRect.anchoredPosition = new Vector2(0, 0);
             summaryContainerRect.sizeDelta = new Vector2(1000, 1000);
 
-            // Restart Button "ABRIR OTRO SOBRE" in Gold Pill
+            // Restart Button "ABRIR OTRO SOBRE" in Perfect Semicircular Gold Pill
             GameObject openAnotherBtnGO = new GameObject("OpenAnotherButton");
             openAnotherBtnGO.transform.SetParent(summaryViewGO.transform, false);
             RectTransform btnRect = openAnotherBtnGO.AddComponent<RectTransform>();
             btnRect.anchorMin = new Vector2(0.5f, 0f);
             btnRect.anchorMax = new Vector2(0.5f, 0f);
             btnRect.pivot = new Vector2(0.5f, 0f);
-            btnRect.anchoredPosition = new Vector2(0, 75);
-            btnRect.sizeDelta = new Vector2(560, 96);
+            btnRect.anchoredPosition = new Vector2(0, 80);
+            btnRect.sizeDelta = new Vector2(520, 88);
             Image btnImg = openAnotherBtnGO.AddComponent<Image>();
             btnImg.sprite = pillSprite;
             btnImg.type = Image.Type.Sliced;
@@ -409,7 +431,7 @@ namespace JuegoTCG.EditorTools
             btnTextRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI btnTMP = btnTextGO.AddComponent<TextMeshProUGUI>();
             btnTMP.text = "ABRIR OTRO SOBRE";
-            btnTMP.fontSize = 28;
+            btnTMP.fontSize = 26;
             btnTMP.fontStyle = FontStyles.Bold;
             btnTMP.alignment = TextAlignmentOptions.Center;
             btnTMP.color = new Color(0.04f, 0.07f, 0.12f);
@@ -451,9 +473,9 @@ namespace JuegoTCG.EditorTools
             so.FindProperty("packCounterText").objectReferenceValue = counterTMP;
             so.FindProperty("forceHoloToggle").objectReferenceValue = toggle;
             so.FindProperty("progressDotsContainer").objectReferenceValue = progressRect;
-            so.FindProperty("dotSprite").objectReferenceValue = circleSprite;
             so.FindProperty("singleCardContainer").objectReferenceValue = singleContainerRect;
             so.FindProperty("continueHintText").objectReferenceValue = continueHintTMP;
+            so.FindProperty("tiltHintText").objectReferenceValue = tiltHintTMP;
             so.FindProperty("summarySubtitleText").objectReferenceValue = subTMP;
             so.FindProperty("summaryCardContainer").objectReferenceValue = summaryContainerRect;
             so.FindProperty("openAnotherButton").objectReferenceValue = openAnotherBtn;
@@ -476,10 +498,8 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada con estética idéntica al prototipo HTML!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Escena PackOpeningScene.unity regenerada con bordes redondeados perfectos!</color>");
         }
     }
 }
 #endif
-
-
