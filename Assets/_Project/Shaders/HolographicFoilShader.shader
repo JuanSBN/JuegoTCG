@@ -68,26 +68,40 @@ Shader "Shader Graphs/HolographicFoilShader"
                 c.r = saturate(abs(t * 6.0 - 3.0) - 1.0);
                 c.g = saturate(2.0 - abs(t * 6.0 - 2.0));
                 c.b = saturate(2.0 - abs(t * 6.0 - 4.0));
-                return c;
+                // Golden highlight boost
+                c += fixed3(0.2, 0.12, 0.0) * (1.0 - abs(t - 0.5) * 2.0);
+                return saturate(c);
             }
 
             fixed4 frag(v2f IN) : SV_Target
             {
                 fixed4 texColor = tex2D(_MainTex, IN.texcoord) * IN.color;
 
-                // 1. Interactive Rainbow Foil (Follows UV + Time + Mouse/Tilt)
-                float foilCoord = (IN.texcoord.x + IN.texcoord.y) * 1.8 + _Time.y * 0.35 + (_TiltPos.x + _TiltPos.y) * 0.8;
+                if (texColor.a < 0.02)
+                {
+                    return fixed4(0, 0, 0, 0);
+                }
+
+                // 1. Silky Smooth Rainbow Foil (reacts smoothly to mouse/tilt & time)
+                float tiltFactor = (_TiltPos.x * 1.5 + _TiltPos.y * 1.5);
+                float foilCoord = (IN.texcoord.x * 1.2 + IN.texcoord.y * 0.8) * 1.5 + _Time.y * 0.25 + tiltFactor;
                 fixed3 foilColor = RainbowSpectrum(foilCoord);
 
-                // 2. Animated Diagonal Shimmer Sweep (Like in HTML prototype)
-                float shimmerLine = frac((IN.texcoord.x + IN.texcoord.y * 0.8) - _Time.y * _ShimmerSpeed * 0.5);
-                float shimmer = smoothstep(0.0, 0.15, shimmerLine) * smoothstep(0.3, 0.15, shimmerLine);
-                fixed3 shimmerColor = fixed3(1.0, 0.95, 0.8) * shimmer * 0.8;
+                // 2. Dual Smooth Diagonal Shimmer Sweeps (No noise, pure smooth glow waves)
+                float sweep1 = frac((IN.texcoord.x + IN.texcoord.y * 0.85) * 1.1 - _Time.y * _ShimmerSpeed * 0.55 + tiltFactor * 0.4);
+                float shimmer1 = smoothstep(0.0, 0.12, sweep1) * smoothstep(0.24, 0.12, sweep1);
 
-                // Blend holographic foil + shimmer into sprite texture
-                fixed3 finalRGB = texColor.rgb + (foilColor * 0.7 + shimmerColor) * _HoloIntensity;
-                
-                return fixed4(finalRGB, texColor.a);
+                float sweep2 = frac((IN.texcoord.x * 0.85 - IN.texcoord.y * 1.1) * 0.9 - _Time.y * _ShimmerSpeed * 0.3 - tiltFactor * 0.4);
+                float shimmer2 = smoothstep(0.0, 0.08, sweep2) * smoothstep(0.18, 0.08, sweep2);
+
+                fixed3 glintColor = fixed3(1.0, 0.95, 0.8) * shimmer1 * 0.85 + fixed3(0.75, 0.9, 1.0) * shimmer2 * 0.65;
+
+                // 3. Clean Screen Blend (Pure smooth colors, zero pixelated noise)
+                fixed3 holoGlow = (foilColor * 1.3 + glintColor) * _HoloIntensity;
+                fixed3 screenBlend = 1.0 - (1.0 - texColor.rgb) * (1.0 - holoGlow * 0.7);
+                fixed3 finalRGB = screenBlend + glintColor * 0.4;
+
+                return fixed4(saturate(finalRGB), texColor.a);
             }
             ENDCG
         }

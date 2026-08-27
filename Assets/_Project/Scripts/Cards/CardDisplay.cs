@@ -10,21 +10,29 @@ namespace JuegoTCG.Cards
         [Header("Card Data")]
         [SerializeField] private CardData cardData;
 
-        [Header("UI Components")]
+        [Header("Faces")]
+        [SerializeField] private GameObject frontContainer;
+        [SerializeField] private GameObject backContainer;
+
+        [Header("Frame & Artwork")]
         [SerializeField] private Image frameImage;
+        [SerializeField] private Sprite[] rarityFrames; // Index maps to (int)Rarity
         [SerializeField] private Image playerArtImage;
+        [SerializeField] private GameObject placeholderAvatar;
+        [SerializeField] private TMP_Text playerInitialsText;
+
+        [Header("Typography")]
         [SerializeField] private TMP_Text nameText;
         [SerializeField] private TMP_Text teamText;
         [SerializeField] private TMP_Text positionText;
         [SerializeField] private TMP_Text rarityText;
 
-        [Header("Frame Sprites (Order: Comun, Especial, Epica, Legendaria, Mitica, FullArt)")]
-        [SerializeField] private Sprite[] rarityFrames;
-
         [Header("Holographic Effects")]
         [SerializeField] private Material holographicMaterial;
+        private Material holoInstance;
 
         public CardData CardData => cardData;
+        public bool IsShowingBack => backContainer != null && backContainer.activeSelf;
 
         private void Awake()
         {
@@ -68,55 +76,108 @@ namespace JuegoTCG.Cards
             }
         }
 
+        public void ShowBack(bool showBack)
+        {
+            if (backContainer != null) backContainer.SetActive(showBack);
+            if (frontContainer != null) frontContainer.SetActive(!showBack);
+        }
+
         public void SetCard(CardData data)
         {
             if (data == null) return;
             cardData = data;
 
+            // 1. Set Frame according to Rarity
+            int rarityIndex = (int)data.rarity;
+            if (frameImage != null && rarityFrames != null && rarityIndex >= 0 && rarityIndex < rarityFrames.Length)
+            {
+                if (rarityFrames[rarityIndex] != null)
+                {
+                    frameImage.sprite = rarityFrames[rarityIndex];
+                }
+            }
+
+            // 2. Player Artwork vs Placeholder
+            if (data.defaultArt != null)
+            {
+                if (playerArtImage != null)
+                {
+                    playerArtImage.sprite = data.defaultArt;
+                    playerArtImage.preserveAspect = true;
+                    playerArtImage.gameObject.SetActive(true);
+                }
+                if (placeholderAvatar != null) placeholderAvatar.SetActive(false);
+            }
+            else
+            {
+                if (playerArtImage != null) playerArtImage.gameObject.SetActive(false);
+                if (placeholderAvatar != null) placeholderAvatar.SetActive(true);
+                if (playerInitialsText != null)
+                {
+                    playerInitialsText.text = GetInitials(data.playerName);
+                }
+            }
+
+            // 3. Texts
             if (nameText != null) nameText.text = data.playerName;
             if (teamText != null) teamText.text = data.teamName;
             if (positionText != null) positionText.text = data.position;
-            if (rarityText != null) rarityText.text = data.rarity.ToString().ToUpper();
+            if (rarityText != null) rarityText.text = GetRarityName(data.rarity);
 
-            // Set player photo if available
-            if (playerArtImage != null)
-            {
-                if (data.defaultArt != null)
-                {
-                    playerArtImage.sprite = data.defaultArt;
-                    playerArtImage.gameObject.SetActive(true);
-                }
-                else
-                {
-                    playerArtImage.gameObject.SetActive(false);
-                }
-            }
-
-            // Set frame sprite by rarity enum index
-            int index = (int)data.rarity;
-            if (frameImage != null && rarityFrames != null && index >= 0 && index < rarityFrames.Length)
-            {
-                if (rarityFrames[index] != null)
-                {
-                    frameImage.sprite = rarityFrames[index];
-                }
-            }
-
-            // Apply Holographic Foil Material for Epica, Legendaria, Mitica and FullArt
+            // 4. Holographic Foil Material for high rarities (Epica, Legendaria, Mitica, FullArt)
             bool isHolo = (data.rarity == Rarity.Epica || data.rarity == Rarity.Legendaria || data.rarity == Rarity.Mitica || data.rarity == Rarity.FullArt);
-            
             EnsureHolographicMaterial();
-            Material targetMat = isHolo ? holographicMaterial : null;
 
-            if (frameImage != null) frameImage.material = targetMat;
-            if (playerArtImage != null) playerArtImage.material = targetMat;
-
-            // Enable/disable HolographicTilt component
-            var tiltComp = GetComponent<HolographicTilt>();
-            if (tiltComp != null)
+            if (isHolo && holographicMaterial != null)
             {
-                tiltComp.enabled = isHolo;
+                if (holoInstance == null)
+                {
+                    holoInstance = Instantiate(holographicMaterial);
+                }
+
+                if (frameImage != null) frameImage.material = holoInstance;
+                if (playerArtImage != null) playerArtImage.material = holoInstance;
+
+                HolographicTilt tilt = GetComponent<HolographicTilt>();
+                if (tilt != null)
+                {
+                    tilt.SetTargetMaterial(holoInstance);
+                }
             }
+            else
+            {
+                if (frameImage != null) frameImage.material = null;
+                if (playerArtImage != null) playerArtImage.material = null;
+
+                HolographicTilt tilt = GetComponent<HolographicTilt>();
+                if (tilt != null)
+                {
+                    tilt.SetTargetMaterial(null);
+                }
+            }
+        }
+
+        private static string GetRarityName(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Comun: return "COMUN";
+                case Rarity.Especial: return "ESPECIAL";
+                case Rarity.Epica: return "EPICA";
+                case Rarity.Legendaria: return "LEGENDARIA";
+                case Rarity.Mitica: return "MITICA";
+                case Rarity.FullArt: return "FULL ART";
+                default: return "COMUN";
+            }
+        }
+
+        private static string GetInitials(string fullName)
+        {
+            if (string.IsNullOrEmpty(fullName)) return "FC";
+            string[] parts = fullName.Trim().Split(' ');
+            if (parts.Length == 1) return parts[0].Length >= 2 ? parts[0].Substring(0, 2).ToUpper() : parts[0].ToUpper();
+            return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
         }
     }
 }
+

@@ -11,7 +11,17 @@ namespace JuegoTCG.EditorTools
     public static class CardPrefabBuilder
     {
         private const string PrefabFolderPath = "Assets/_Project/Prefabs/Cards";
-        private const string FramesFolderPath = "Assets/_Project/Art/CardFrames";
+        private const string UIPath = "Assets/_Project/Art/UI";
+
+        private static readonly string[] FrameGuids = new string[]
+        {
+            "4edcac4ad7f822e4aa7b10b2dd755926", // Comun
+            "586794b59d6595341aa4a2f2b59209ce", // Especial
+            "ab60ad89df16072448c901abb76cbe3a", // Epica
+            "2a89c6d7166430641b49f80a84ac2cd8", // Legendaria
+            "8ab77af7592605c48b2e119ccdb7dcb3", // Mitica
+            "ae059fc1520988141a79cb933243639f"  // Full Art
+        };
 
         [MenuItem("JuegoTCG/Generar Prefab de Carta")]
         public static void BuildCardPrefab()
@@ -22,60 +32,117 @@ namespace JuegoTCG.EditorTools
                 AssetDatabase.Refresh();
             }
 
+            ProceduralAssetGenerator.GenerateUISprites();
+
+            Sprite roundedCardSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rounded_card.png");
+            Sprite circleSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_circle.png");
+            Sprite starSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_star.png");
+
+            // Load CardFrames using GUIDs
+            Sprite[] frames = new Sprite[6];
+            for (int i = 0; i < 6; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(FrameGuids[i]);
+                frames[i] = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            }
+
             // Create Root GameObject
             GameObject rootGO = new GameObject("CardPrefab");
             RectTransform rootRect = rootGO.AddComponent<RectTransform>();
-            rootRect.sizeDelta = new Vector2(360, 480);
+            rootRect.sizeDelta = new Vector2(360, 500);
 
             CardDisplay display = rootGO.AddComponent<CardDisplay>();
             rootGO.AddComponent<HolographicTilt>();
 
-            // 1. Frame Image (Marco de rareza PNG)
+            // ----------------------------------------------------
+            // FRONT CONTAINER
+            // ----------------------------------------------------
+            GameObject frontGO = new GameObject("FrontContainer");
+            frontGO.transform.SetParent(rootGO.transform, false);
+            RectTransform frontRect = frontGO.AddComponent<RectTransform>();
+            frontRect.anchorMin = Vector2.zero;
+            frontRect.anchorMax = Vector2.one;
+            frontRect.sizeDelta = Vector2.zero;
+
+            // 1. Dark Card Background base (Deep sleek background)
+            GameObject bgBaseGO = new GameObject("CardBaseBackground");
+            bgBaseGO.transform.SetParent(frontGO.transform, false);
+            RectTransform bgBaseRect = bgBaseGO.AddComponent<RectTransform>();
+            bgBaseRect.anchorMin = Vector2.zero;
+            bgBaseRect.anchorMax = Vector2.one;
+            bgBaseRect.sizeDelta = Vector2.zero;
+            Image bgBaseImg = bgBaseGO.AddComponent<Image>();
+            bgBaseImg.sprite = roundedCardSprite;
+            bgBaseImg.type = Image.Type.Sliced;
+            bgBaseImg.color = new Color(0.05f, 0.08f, 0.13f); // #0D1421
+
+            // 2. Player Photo Image (Inside the frame)
+            GameObject photoGO = new GameObject("PlayerArtImage");
+            photoGO.transform.SetParent(frontGO.transform, false);
+            RectTransform photoRect = photoGO.AddComponent<RectTransform>();
+            photoRect.anchorMin = new Vector2(0.05f, 0.18f);
+            photoRect.anchorMax = new Vector2(0.95f, 0.95f);
+            photoRect.sizeDelta = Vector2.zero;
+            Image photoImg = photoGO.AddComponent<Image>();
+            photoImg.preserveAspect = true;
+            photoGO.SetActive(false);
+
+            // 3. Placeholder Avatar (When no photo is set)
+            GameObject placeholderGO = new GameObject("PlaceholderAvatar");
+            placeholderGO.transform.SetParent(frontGO.transform, false);
+            RectTransform placeholderRect = placeholderGO.AddComponent<RectTransform>();
+            placeholderRect.anchorMin = new Vector2(0.5f, 0.5f);
+            placeholderRect.anchorMax = new Vector2(0.5f, 0.5f);
+            placeholderRect.pivot = new Vector2(0.5f, 0.5f);
+            placeholderRect.anchoredPosition = new Vector2(0, 45);
+            placeholderRect.sizeDelta = new Vector2(110, 110);
+            Image avatarCircleImg = placeholderGO.AddComponent<Image>();
+            avatarCircleImg.sprite = circleSprite;
+            avatarCircleImg.color = new Color(0.12f, 0.18f, 0.28f);
+
+            GameObject initialsGO = new GameObject("PlayerInitialsText");
+            initialsGO.transform.SetParent(placeholderGO.transform, false);
+            RectTransform initialsRect = initialsGO.AddComponent<RectTransform>();
+            initialsRect.anchorMin = Vector2.zero;
+            initialsRect.anchorMax = Vector2.one;
+            initialsRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI initialsTMP = initialsGO.AddComponent<TextMeshProUGUI>();
+            initialsTMP.text = "LY";
+            initialsTMP.fontSize = 40;
+            initialsTMP.fontStyle = FontStyles.Bold;
+            initialsTMP.alignment = TextAlignmentOptions.Center;
+            initialsTMP.color = Color.white;
+
+            // 4. Frame Image (Rendered on top of the art so borders & box frame the picture)
             GameObject frameGO = new GameObject("FrameImage");
-            frameGO.transform.SetParent(rootGO.transform, false);
+            frameGO.transform.SetParent(frontGO.transform, false);
             RectTransform frameRect = frameGO.AddComponent<RectTransform>();
             frameRect.anchorMin = Vector2.zero;
             frameRect.anchorMax = Vector2.one;
             frameRect.sizeDelta = Vector2.zero;
             Image frameImg = frameGO.AddComponent<Image>();
+            if (frames[0] != null) frameImg.sprite = frames[0];
 
-            // 2. Player Art Image (Foto del Jugador)
-            GameObject artGO = new GameObject("PlayerArtImage");
-            artGO.transform.SetParent(rootGO.transform, false);
-            RectTransform artRect = artGO.AddComponent<RectTransform>();
-            artRect.anchorMin = new Vector2(0.08f, 0.18f);
-            artRect.anchorMax = new Vector2(0.92f, 0.82f);
-            artRect.sizeDelta = Vector2.zero;
-            Image artImg = artGO.AddComponent<Image>();
-
-            // 3. Header Container (Player Name)
-            GameObject headerGO = new GameObject("HeaderContainer");
-            headerGO.transform.SetParent(rootGO.transform, false);
-            RectTransform headerRect = headerGO.AddComponent<RectTransform>();
-            headerRect.anchorMin = new Vector2(0.05f, 0.84f);
-            headerRect.anchorMax = new Vector2(0.95f, 0.96f);
-            headerRect.sizeDelta = Vector2.zero;
-
-            // Player Name Text
+            // 5. Player Name Text (Top Header of card)
             GameObject nameGO = new GameObject("PlayerNameText");
-            nameGO.transform.SetParent(headerGO.transform, false);
+            nameGO.transform.SetParent(frontGO.transform, false);
             RectTransform nameRect = nameGO.AddComponent<RectTransform>();
-            nameRect.anchorMin = Vector2.zero;
-            nameRect.anchorMax = Vector2.one;
+            nameRect.anchorMin = new Vector2(0.06f, 0.84f);
+            nameRect.anchorMax = new Vector2(0.94f, 0.96f);
             nameRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI nameTMP = nameGO.AddComponent<TextMeshProUGUI>();
-            nameTMP.text = "Nombre Jugador";
+            nameTMP.text = "Lamine Yamal";
             nameTMP.fontSize = 24;
             nameTMP.fontStyle = FontStyles.Bold;
             nameTMP.alignment = TextAlignmentOptions.Center;
             nameTMP.color = Color.white;
 
-            // 4. Footer Container (Ajustado perfectamente dentro de la placa inferior)
+            // 6. Footer Information (Fits inside the frame's bottom box)
             GameObject footerGO = new GameObject("FooterContainer");
-            footerGO.transform.SetParent(rootGO.transform, false);
+            footerGO.transform.SetParent(frontGO.transform, false);
             RectTransform footerRect = footerGO.AddComponent<RectTransform>();
-            footerRect.anchorMin = new Vector2(0.24f, 0.025f);
-            footerRect.anchorMax = new Vector2(0.76f, 0.16f);
+            footerRect.anchorMin = new Vector2(0.22f, 0.02f);
+            footerRect.anchorMax = new Vector2(0.78f, 0.16f);
             footerRect.sizeDelta = Vector2.zero;
 
             // Team Name Text
@@ -86,7 +153,7 @@ namespace JuegoTCG.EditorTools
             teamRect.anchorMax = new Vector2(1f, 0.95f);
             teamRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI teamTMP = teamGO.AddComponent<TextMeshProUGUI>();
-            teamTMP.text = "Equipo FC";
+            teamTMP.text = "FC Piloto";
             teamTMP.fontSize = 15;
             teamTMP.fontStyle = FontStyles.Bold;
             teamTMP.alignment = TextAlignmentOptions.Center;
@@ -114,27 +181,71 @@ namespace JuegoTCG.EditorTools
             rarityRect.anchorMax = new Vector2(0.98f, 0.48f);
             rarityRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI rarityTMP = rarityGO.AddComponent<TextMeshProUGUI>();
-            rarityTMP.text = "RARA";
+            rarityTMP.text = "COMUN";
             rarityTMP.fontSize = 11;
             rarityTMP.fontStyle = FontStyles.Bold;
             rarityTMP.alignment = TextAlignmentOptions.Center;
             rarityTMP.color = new Color(0.45f, 0.1f, 0.0f);
 
-            // Load and assign frame sprites from Assets/_Project/Art/CardFrames
-            Sprite[] frames = new Sprite[6];
-            string[] frameFileNames = { "Común.png", "Especial.png", "Epica.png", "Legendaria.png", "Mitica.png", "Full Art.png" };
-            for (int i = 0; i < frameFileNames.Length; i++) {
-                string path = $"{FramesFolderPath}/{frameFileNames[i]}";
-                frames[i] = AssetDatabase.LoadAssetAtPath<Sprite>(path);
-            }
+            // ----------------------------------------------------
+            // BACK CONTAINER (Reverso con estrella dorada para 3D flip)
+            // ----------------------------------------------------
+            GameObject backGO = new GameObject("BackContainer");
+            backGO.transform.SetParent(rootGO.transform, false);
+            RectTransform backRect = backGO.AddComponent<RectTransform>();
+            backRect.anchorMin = Vector2.zero;
+            backRect.anchorMax = Vector2.one;
+            backRect.sizeDelta = Vector2.zero;
+
+            // Back Border
+            GameObject backBorderGO = new GameObject("BackBorder");
+            backBorderGO.transform.SetParent(backGO.transform, false);
+            RectTransform backBorderRect = backBorderGO.AddComponent<RectTransform>();
+            backBorderRect.anchorMin = Vector2.zero;
+            backBorderRect.anchorMax = Vector2.one;
+            backBorderRect.sizeDelta = Vector2.zero;
+            Image backBorderImg = backBorderGO.AddComponent<Image>();
+            backBorderImg.sprite = roundedCardSprite;
+            backBorderImg.type = Image.Type.Sliced;
+            backBorderImg.color = new Color(0.96f, 0.65f, 0.14f, 0.45f);
+
+            // Back Inner Body
+            GameObject backInnerGO = new GameObject("BackInner");
+            backInnerGO.transform.SetParent(backBorderGO.transform, false);
+            RectTransform backInnerRect = backInnerGO.AddComponent<RectTransform>();
+            backInnerRect.anchorMin = Vector2.zero;
+            backInnerRect.anchorMax = Vector2.one;
+            backInnerRect.sizeDelta = new Vector2(-8, -8);
+            Image backInnerImg = backInnerGO.AddComponent<Image>();
+            backInnerImg.sprite = roundedCardSprite;
+            backInnerImg.type = Image.Type.Sliced;
+            backInnerImg.color = new Color(0.08f, 0.13f, 0.22f);
+
+            // Back Star Sprite
+            GameObject starGO = new GameObject("BackStar");
+            starGO.transform.SetParent(backInnerGO.transform, false);
+            RectTransform starRect = starGO.AddComponent<RectTransform>();
+            starRect.anchorMin = new Vector2(0.5f, 0.5f);
+            starRect.anchorMax = new Vector2(0.5f, 0.5f);
+            starRect.pivot = new Vector2(0.5f, 0.5f);
+            starRect.sizeDelta = new Vector2(130, 130);
+            Image backStarImg = starGO.AddComponent<Image>();
+            backStarImg.sprite = starSprite;
+            backStarImg.color = Color.white;
+
+            backGO.SetActive(false);
 
             // Load Holographic Material
             Material holoMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Materials/HolographicFoilMaterial.mat");
 
             // Assign Fields to SerializedObject of CardDisplay
             SerializedObject so = new SerializedObject(display);
+            so.FindProperty("frontContainer").objectReferenceValue = frontGO;
+            so.FindProperty("backContainer").objectReferenceValue = backGO;
             so.FindProperty("frameImage").objectReferenceValue = frameImg;
-            so.FindProperty("playerArtImage").objectReferenceValue = artImg;
+            so.FindProperty("playerArtImage").objectReferenceValue = photoImg;
+            so.FindProperty("placeholderAvatar").objectReferenceValue = placeholderGO;
+            so.FindProperty("playerInitialsText").objectReferenceValue = initialsTMP;
             so.FindProperty("nameText").objectReferenceValue = nameTMP;
             so.FindProperty("teamText").objectReferenceValue = teamTMP;
             so.FindProperty("positionText").objectReferenceValue = posTMP;
@@ -143,7 +254,8 @@ namespace JuegoTCG.EditorTools
 
             SerializedProperty framesProp = so.FindProperty("rarityFrames");
             framesProp.arraySize = 6;
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 6; i++)
+            {
                 framesProp.GetArrayElementAtIndex(i).objectReferenceValue = frames[i];
             }
             so.ApplyModifiedProperties();
@@ -156,8 +268,10 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡CardPrefab.prefab actualizado con el marco limpio original!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡CardPrefab.prefab recreado con los marcos oficiales de CardFrames por encima del arte!</color>");
         }
     }
 }
 #endif
+
+
