@@ -103,7 +103,7 @@ namespace JuegoTCG.Cards
                 if (playerArtImage != null)
                 {
                     playerArtImage.sprite = data.defaultArt;
-                    playerArtImage.preserveAspect = true;
+                    playerArtImage.preserveAspect = false;
                     playerArtImage.gameObject.SetActive(true);
                 }
                 if (placeholderAvatar != null) placeholderAvatar.SetActive(false);
@@ -119,14 +119,39 @@ namespace JuegoTCG.Cards
             }
 
             // 3. Texts
-            if (nameText != null) nameText.text = data.playerName;
+            if (nameText != null)
+            {
+                nameText.text = data.playerName;
+                nameText.fontStyle = FontStyles.Bold;
+                nameText.outlineColor = new Color32(0, 0, 0, 180);
+                nameText.outlineWidth = 0.08f;
+
+                if (nameText.fontMaterial != null)
+                {
+                    nameText.fontMaterial.EnableKeyword("OUTLINE_ON");
+                    nameText.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, new Color(0f, 0f, 0f, 0.70f));
+                    nameText.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.08f);
+
+                    nameText.fontMaterial.EnableKeyword("UNDERLAY_ON");
+                    nameText.fontMaterial.SetColor(ShaderUtilities.ID_UnderlayColor, new Color(0f, 0f, 0f, 0.85f));
+                    nameText.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, 2.0f);
+                    nameText.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, -3.0f);
+                    nameText.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlaySoftness, 0.35f);
+                    nameText.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlayDilate, 0.0f);
+                }
+            }
             if (teamText != null) teamText.text = data.teamName;
             if (positionText != null) positionText.text = data.position;
             if (rarityText != null) rarityText.text = GetRarityName(data.rarity);
 
-            // 4. Holographic Foil Material for high rarities (Epica, Legendaria, Mitica, FullArt)
+            // 4. Holographic Foil Material only for Card Frame (never for player photo!)
             bool isHolo = (data.rarity == Rarity.Epica || data.rarity == Rarity.Legendaria || data.rarity == Rarity.Mitica || data.rarity == Rarity.FullArt);
             EnsureHolographicMaterial();
+
+            if (playerArtImage != null)
+            {
+                playerArtImage.material = null; // Always keep photo clean and natural without foil distortion
+            }
 
             if (isHolo && holographicMaterial != null)
             {
@@ -136,7 +161,6 @@ namespace JuegoTCG.Cards
                 }
 
                 if (frameImage != null) frameImage.material = holoInstance;
-                if (playerArtImage != null) playerArtImage.material = holoInstance;
 
                 HolographicTilt tilt = GetComponent<HolographicTilt>();
                 if (tilt != null)
@@ -147,7 +171,6 @@ namespace JuegoTCG.Cards
             else
             {
                 if (frameImage != null) frameImage.material = null;
-                if (playerArtImage != null) playerArtImage.material = null;
 
                 HolographicTilt tilt = GetComponent<HolographicTilt>();
                 if (tilt != null)

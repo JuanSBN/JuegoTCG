@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: card_10
   playerName: Lamine Yamal
-  teamName: FC Piloto
-  position: Extremo Estrella
+  teamName: FC Barca
+  position: Extremo Derecho
   rarity: 4
   albumId: album_piloto_liga
   defaultArt: {fileID: 21300000, guid: 70fc04af2266de144afd416e097966de, type: 3}

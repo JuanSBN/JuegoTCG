@@ -20,8 +20,15 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/Generar Escena de Apertura de Sobres")]
         public static void BuildPackOpeningScene()
         {
+            if (EditorApplication.isPlaying)
+            {
+                EditorUtility.DisplayDialog("JuegoTCG", "Por favor sal del modo Play (detén la ejecución) antes de generar la escena.", "Entendido");
+                return;
+            }
+
             // 1. Ensure all procedural UI sprites are generated and up-to-date
             ProceduralAssetGenerator.GenerateUISprites();
+            AssetDatabase.Refresh();
 
             // 2. Rebuild CardPrefab
             CardPrefabBuilder.BuildCardPrefab();
@@ -53,6 +60,7 @@ namespace JuegoTCG.EditorTools
             CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080, 1920);
+            scaler.matchWidthOrHeight = 0.5f;
             canvasGO.AddComponent<GraphicRaycaster>();
 
             // Global UI Particle Burst System (Topmost layer for sparkly reveals)
@@ -138,7 +146,7 @@ namespace JuegoTCG.EditorTools
             toggleTMP.fontSize = 20;
             toggleTMP.color = new Color(0.96f, 0.65f, 0.14f);
 
-            // Pack Counter Pill Badge (Crisp Bordered Capsule with full rounded caps)
+            // Pack Counter Pill Badge (Mathematical Vector Capsule)
             GameObject counterBadgeGO = new GameObject("PackCounterBadge");
             counterBadgeGO.transform.SetParent(topBarGO.transform, false);
             RectTransform counterBadgeRect = counterBadgeGO.AddComponent<RectTransform>();
@@ -148,10 +156,11 @@ namespace JuegoTCG.EditorTools
             counterBadgeRect.anchoredPosition = new Vector2(0, 0);
             counterBadgeRect.sizeDelta = new Vector2(170, 44);
 
-            Image badgeImg = counterBadgeGO.AddComponent<Image>();
-            badgeImg.sprite = (pillBorderedSprite != null) ? pillBorderedSprite : pillSprite;
-            badgeImg.type = Image.Type.Sliced;
-            badgeImg.color = Color.white;
+            RoundedRectGraphic badgeG = counterBadgeGO.AddComponent<RoundedRectGraphic>();
+            badgeG.IsCapsule = true;
+            badgeG.color = new Color(0.961f, 0.651f, 0.137f, 0.12f);
+            badgeG.BorderWidth = 1.2f;
+            badgeG.BorderColor = new Color(0.961f, 0.651f, 0.137f, 0.35f);
 
             // Auto-layout inside badge
             HorizontalLayoutGroup badgeLayout = counterBadgeGO.AddComponent<HorizontalLayoutGroup>();

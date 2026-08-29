@@ -35,6 +35,12 @@ namespace JuegoTCG.EditorTools
             ProceduralAssetGenerator.GenerateUISprites();
             SetupPlayerPhotos();
 
+            ConfigureFontImporters();
+            AssetDatabase.Refresh();
+
+            TMP_FontAsset momoTMPFont = GetOrCreateTMPFont("MomoTrustDisplay-Regular");
+            TMP_FontAsset dmSansTMPFont = GetOrCreateTMPFont("DMSans-Bold");
+
             Sprite roundedCardSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rounded_card.png");
             Sprite circleSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_circle.png");
             Sprite starSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_star.png");
@@ -65,7 +71,7 @@ namespace JuegoTCG.EditorTools
             frontRect.anchorMax = Vector2.one;
             frontRect.sizeDelta = Vector2.zero;
 
-            // 1. Dark Card Background base (Deep sleek background)
+            // 1. Dark Card Background base with Mask (Clips full-bleed player photo to card corners)
             GameObject bgBaseGO = new GameObject("CardBaseBackground");
             bgBaseGO.transform.SetParent(frontGO.transform, false);
             RectTransform bgBaseRect = bgBaseGO.AddComponent<RectTransform>();
@@ -77,26 +83,29 @@ namespace JuegoTCG.EditorTools
             bgBaseImg.type = Image.Type.Sliced;
             bgBaseImg.color = new Color(0.05f, 0.08f, 0.13f); // #0D1421
 
-            // 2. Player Photo Image (Inside the frame)
+            Mask cardMask = bgBaseGO.AddComponent<Mask>();
+            cardMask.showMaskGraphic = true;
+
+            // 2. Player Photo Image (Spans the ENTIRE card, clipped by card mask)
             GameObject photoGO = new GameObject("PlayerArtImage");
-            photoGO.transform.SetParent(frontGO.transform, false);
+            photoGO.transform.SetParent(bgBaseGO.transform, false);
             RectTransform photoRect = photoGO.AddComponent<RectTransform>();
-            photoRect.anchorMin = new Vector2(0.05f, 0.18f);
-            photoRect.anchorMax = new Vector2(0.95f, 0.95f);
+            photoRect.anchorMin = Vector2.zero;
+            photoRect.anchorMax = Vector2.one;
             photoRect.sizeDelta = Vector2.zero;
             Image photoImg = photoGO.AddComponent<Image>();
-            photoImg.preserveAspect = true;
+            photoImg.preserveAspect = false; // Fills entire card space
             photoGO.SetActive(false);
 
             // 3. Placeholder Avatar (When no photo is set)
             GameObject placeholderGO = new GameObject("PlaceholderAvatar");
-            placeholderGO.transform.SetParent(frontGO.transform, false);
+            placeholderGO.transform.SetParent(bgBaseGO.transform, false);
             RectTransform placeholderRect = placeholderGO.AddComponent<RectTransform>();
             placeholderRect.anchorMin = new Vector2(0.5f, 0.5f);
             placeholderRect.anchorMax = new Vector2(0.5f, 0.5f);
             placeholderRect.pivot = new Vector2(0.5f, 0.5f);
             placeholderRect.anchoredPosition = new Vector2(0, 45);
-            placeholderRect.sizeDelta = new Vector2(110, 110);
+            placeholderRect.sizeDelta = new Vector2(130, 130);
             Image avatarCircleImg = placeholderGO.AddComponent<Image>();
             avatarCircleImg.sprite = circleSprite;
             avatarCircleImg.color = new Color(0.12f, 0.18f, 0.28f);
@@ -108,8 +117,9 @@ namespace JuegoTCG.EditorTools
             initialsRect.anchorMax = Vector2.one;
             initialsRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI initialsTMP = initialsGO.AddComponent<TextMeshProUGUI>();
+            if (momoTMPFont != null) initialsTMP.font = momoTMPFont;
             initialsTMP.text = "LY";
-            initialsTMP.fontSize = 40;
+            initialsTMP.fontSize = 44;
             initialsTMP.fontStyle = FontStyles.Bold;
             initialsTMP.alignment = TextAlignmentOptions.Center;
             initialsTMP.color = Color.white;
@@ -124,26 +134,47 @@ namespace JuegoTCG.EditorTools
             Image frameImg = frameGO.AddComponent<Image>();
             if (frames[0] != null) frameImg.sprite = frames[0];
 
-            // 5. Player Name Text (Top Header of card)
+            // 5. Player Name Text (Positioned at bottom, above club info box, with Momo Trust Display, subtle outline, and soft drop shadow)
             GameObject nameGO = new GameObject("PlayerNameText");
             nameGO.transform.SetParent(frontGO.transform, false);
             RectTransform nameRect = nameGO.AddComponent<RectTransform>();
-            nameRect.anchorMin = new Vector2(0.06f, 0.84f);
-            nameRect.anchorMax = new Vector2(0.94f, 0.96f);
+            nameRect.anchorMin = new Vector2(0.04f, 0.16f);
+            nameRect.anchorMax = new Vector2(0.96f, 0.28f);
             nameRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI nameTMP = nameGO.AddComponent<TextMeshProUGUI>();
+            if (momoTMPFont != null) nameTMP.font = momoTMPFont;
             nameTMP.text = "Lamine Yamal";
-            nameTMP.fontSize = 24;
+            nameTMP.fontSize = 32;
             nameTMP.fontStyle = FontStyles.Bold;
             nameTMP.alignment = TextAlignmentOptions.Center;
-            nameTMP.color = Color.white;
+            nameTMP.outlineColor = new Color32(0, 0, 0, 180);
+            nameTMP.outlineWidth = 0.08f;
+
+            if (nameTMP.fontMaterial != null)
+            {
+                nameTMP.fontMaterial.EnableKeyword("OUTLINE_ON");
+                nameTMP.fontMaterial.SetColor(ShaderUtilities.ID_OutlineColor, new Color(0f, 0f, 0f, 0.70f));
+                nameTMP.fontMaterial.SetFloat(ShaderUtilities.ID_OutlineWidth, 0.08f);
+
+                nameTMP.fontMaterial.EnableKeyword("UNDERLAY_ON");
+                nameTMP.fontMaterial.SetColor(ShaderUtilities.ID_UnderlayColor, new Color(0f, 0f, 0f, 0.85f));
+                nameTMP.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, 2.0f);
+                nameTMP.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, -3.0f);
+                nameTMP.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlaySoftness, 0.35f);
+                nameTMP.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlayDilate, 0.0f);
+            }
+
+            // Soft natural drop shadow
+            Shadow nameShadow = nameGO.AddComponent<Shadow>();
+            nameShadow.effectColor = new Color(0f, 0f, 0f, 0.80f);
+            nameShadow.effectDistance = new Vector2(2f, -3f);
 
             // 6. Footer Information (Fits inside the frame's bottom box)
             GameObject footerGO = new GameObject("FooterContainer");
             footerGO.transform.SetParent(frontGO.transform, false);
             RectTransform footerRect = footerGO.AddComponent<RectTransform>();
-            footerRect.anchorMin = new Vector2(0.22f, 0.02f);
-            footerRect.anchorMax = new Vector2(0.78f, 0.16f);
+            footerRect.anchorMin = new Vector2(0.20f, 0.02f);
+            footerRect.anchorMax = new Vector2(0.80f, 0.15f);
             footerRect.sizeDelta = Vector2.zero;
 
             // Team Name Text
@@ -154,7 +185,8 @@ namespace JuegoTCG.EditorTools
             teamRect.anchorMax = new Vector2(1f, 0.95f);
             teamRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI teamTMP = teamGO.AddComponent<TextMeshProUGUI>();
-            teamTMP.text = "FC Piloto";
+            if (dmSansTMPFont != null) teamTMP.font = dmSansTMPFont;
+            teamTMP.text = "FC Barca";
             teamTMP.fontSize = 15;
             teamTMP.fontStyle = FontStyles.Bold;
             teamTMP.alignment = TextAlignmentOptions.Center;
@@ -165,10 +197,11 @@ namespace JuegoTCG.EditorTools
             posGO.transform.SetParent(footerGO.transform, false);
             RectTransform posRect = posGO.AddComponent<RectTransform>();
             posRect.anchorMin = new Vector2(0.02f, 0.08f);
-            posRect.anchorMax = new Vector2(0.48f, 0.48f);
+            posRect.anchorMax = new Vector2(0.55f, 0.48f);
             posRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI posTMP = posGO.AddComponent<TextMeshProUGUI>();
-            posTMP.text = "Delantero";
+            if (dmSansTMPFont != null) posTMP.font = dmSansTMPFont;
+            posTMP.text = "Extremo Derecho";
             posTMP.fontSize = 11;
             posTMP.fontStyle = FontStyles.Bold;
             posTMP.alignment = TextAlignmentOptions.Center;
@@ -178,11 +211,12 @@ namespace JuegoTCG.EditorTools
             GameObject rarityGO = new GameObject("RarityText");
             rarityGO.transform.SetParent(footerGO.transform, false);
             RectTransform rarityRect = rarityGO.AddComponent<RectTransform>();
-            rarityRect.anchorMin = new Vector2(0.52f, 0.08f);
+            rarityRect.anchorMin = new Vector2(0.58f, 0.08f);
             rarityRect.anchorMax = new Vector2(0.98f, 0.48f);
             rarityRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI rarityTMP = rarityGO.AddComponent<TextMeshProUGUI>();
-            rarityTMP.text = "COMUN";
+            if (dmSansTMPFont != null) rarityTMP.font = dmSansTMPFont;
+            rarityTMP.text = "MITICA";
             rarityTMP.fontSize = 11;
             rarityTMP.fontStyle = FontStyles.Bold;
             rarityTMP.alignment = TextAlignmentOptions.Center;
@@ -307,6 +341,46 @@ namespace JuegoTCG.EditorTools
                     }
                 }
             }
+        }
+
+        private const string FontPath = "Assets/_Project/Art/Fonts";
+
+        private static void ConfigureFontImporters()
+        {
+            if (!Directory.Exists(FontPath)) return;
+            string[] fontFiles = Directory.GetFiles(FontPath, "*.ttf");
+            foreach (var file in fontFiles)
+            {
+                string assetPath = file.Replace('\\', '/');
+                TrueTypeFontImporter importer = AssetImporter.GetAtPath(assetPath) as TrueTypeFontImporter;
+                if (importer != null && !importer.includeFontData)
+                {
+                    importer.includeFontData = true;
+                    importer.SaveAndReimport();
+                }
+            }
+        }
+
+        private static TMP_FontAsset GetOrCreateTMPFont(string fontName)
+        {
+            Font font = AssetDatabase.LoadAssetAtPath<Font>($"{FontPath}/{fontName}.ttf");
+            if (font != null)
+            {
+                try
+                {
+                    TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(font);
+                    if (fontAsset != null)
+                    {
+                        fontAsset.name = $"{fontName} SDF";
+                        return fontAsset;
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogWarning($"[JuegoTCG] Creación dinámica de fuente {fontName}: {ex.Message}");
+                }
+            }
+            return TMP_Settings.defaultFontAsset;
         }
     }
 }
