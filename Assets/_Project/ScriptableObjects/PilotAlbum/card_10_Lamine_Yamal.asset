@@ -11,10 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
   m_Name: card_10_Lamine_Yamal
+  m_EditorClassIdentifier: 
   cardId: card_10
   playerName: Lamine Yamal
   teamName: FC Piloto
   position: Extremo Estrella
   rarity: 4
   albumId: album_piloto_liga
-  defaultArt: {fileID: 0}
+  defaultArt: {fileID: 21300000, guid: 70fc04af2266de144afd416e097966de, type: 3}

@@ -33,6 +33,7 @@ namespace JuegoTCG.EditorTools
             }
 
             ProceduralAssetGenerator.GenerateUISprites();
+            SetupPlayerPhotos();
 
             Sprite roundedCardSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_rounded_card.png");
             Sprite circleSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_circle.png");
@@ -269,6 +270,43 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.Refresh();
 
             Debug.Log("<color=green>[JuegoTCG] ¡CardPrefab.prefab recreado con los marcos oficiales de CardFrames por encima del arte!</color>");
+        }
+
+        public static void SetupPlayerPhotos()
+        {
+            string laminePath = "Assets/_Project/Art/PlayerPhotos/Lamine Yamal.png";
+            if (File.Exists(laminePath))
+            {
+                TextureImporter importer = AssetImporter.GetAtPath(laminePath) as TextureImporter;
+                if (importer != null)
+                {
+                    if (importer.textureType != TextureImporterType.Sprite || importer.spriteImportMode != SpriteImportMode.Single)
+                    {
+                        importer.textureType = TextureImporterType.Sprite;
+                        importer.spriteImportMode = SpriteImportMode.Single;
+                        importer.mipmapEnabled = false;
+                        importer.alphaIsTransparency = true;
+                        importer.filterMode = FilterMode.Bilinear;
+                        importer.SaveAndReimport();
+                    }
+                }
+
+                Sprite lamineSprite = AssetDatabase.LoadAssetAtPath<Sprite>(laminePath);
+                if (lamineSprite != null)
+                {
+                    string cardAssetPath = "Assets/_Project/ScriptableObjects/PilotAlbum/card_10_Lamine_Yamal.asset";
+                    CardData lamineCard = AssetDatabase.LoadAssetAtPath<CardData>(cardAssetPath);
+                    if (lamineCard != null)
+                    {
+                        SerializedObject cardSO = new SerializedObject(lamineCard);
+                        cardSO.FindProperty("defaultArt").objectReferenceValue = lamineSprite;
+                        cardSO.ApplyModifiedProperties();
+                        EditorUtility.SetDirty(lamineCard);
+                        AssetDatabase.SaveAssets();
+                        Debug.Log("<color=cyan>[JuegoTCG] Foto oficial de Lamine Yamal asignada exitosamente a card_10_Lamine_Yamal.asset</color>");
+                    }
+                }
+            }
         }
     }
 }

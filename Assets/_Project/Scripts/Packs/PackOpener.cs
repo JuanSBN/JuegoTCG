@@ -170,18 +170,24 @@ namespace JuegoTCG.Packs
             for (int i = 0; i < 5; i++)
             {
                 bool isLastSlot = (i == 4);
-                Rarity rarity;
-                if (isLastSlot && forceHolo)
+                CardData card = null;
+
+                if (isLastSlot)
                 {
-                    rarity = Rarity.Mitica;
-                }
-                else
-                {
-                    rarity = WeightedRNG.GetRandomRarity();
+                    // Climax slot: Guarantee Lamine Yamal card so the photo card can be tested
+                    card = cardCatalog.Find(c => c != null && (c.cardId == "card_10" || c.playerName.Contains("Lamine")));
                 }
 
-                CardData card = WeightedRNG.SelectRandomCardByRarity(rarity, cardCatalog);
-                generatedCards.Add(card);
+                if (card == null)
+                {
+                    Rarity rarity = (isLastSlot && forceHolo) ? Rarity.Mitica : WeightedRNG.GetRandomRarity();
+                    card = WeightedRNG.SelectRandomCardByRarity(rarity, cardCatalog);
+                }
+
+                if (card != null)
+                {
+                    generatedCards.Add(card);
+                }
             }
 
             if (closedPackView != null) closedPackView.SetActive(false);
