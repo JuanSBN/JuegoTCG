@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* ── Profile screen scrollbar (same spec as card grid) ──────────────── */
+.profile-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 118, 38, 0.28) transparent;
+}
+.profile-scroll::-webkit-scrollbar { width: 11px; }
+.profile-scroll::-webkit-scrollbar-track { background: transparent; }
+.profile-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 118, 38, 0.22);
+  border-radius: 999px;
+  border: 4px solid transparent;
+  border-right-width: 6px;
+  background-clip: padding-box;
+  transition: background 0.25s ease;
+}
+.profile-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(155, 125, 42, 0.55);
+  background-clip: padding-box;
+}
+
+/* ── Card grid custom scrollbar ─────────────────────────────────────── */
+.card-grid-scroll {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 125, 42, 0.35) transparent;
+}
+
+.card-grid-scroll::-webkit-scrollbar {
+  width: 11px; /* total lane width; thumb is narrower via border trick */
+}
+
+.card-grid-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-grid-scroll::-webkit-scrollbar-thumb {
+  /* Muted/desaturated gold — utility, not hierarchy */
+  background: rgba(148, 118, 38, 0.28);
+  border-radius: 999px;
+  /* 4px transparent border on left, 6px on right → floats away from device edge */
+  border: 4px solid transparent;
+  border-right-width: 6px;
+  background-clip: padding-box;
+  transition: background 0.25s ease;
+}
+
+/* More visible while hovering (implies scrolling intent) */
+.card-grid-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(155, 125, 42, 0.58);
+  background-clip: padding-box;
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Engage in a dynamic trading card game experience focused on collectible football cards, featuring special events, missions, and a vibrant community.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
