@@ -1,0 +1,137 @@
+﻿PLAN DE ACCION
+Juego de Coleccion de Cartas de Futbol
+Checklist de implementacion por fases
+Version 0.1 - Companero de implementacion del GDD y el TDD
+Enfoque: rebanada vertical, expandir por fases
+Como usar este documento
+Cada fase tiene un objetivo claro y una lista de tareas de alto nivel. El detalle de implementacion (codigo especifico, configuracion exacta) se resuelve al momento con ayuda de Antigravity/Gemini, apoyandose en las definiciones ya hechas en el GDD y el TDD. Las fases estan ordenadas para que cada una entregue algo funcional antes de pasar a la siguiente, en vez de construir todo el backend o todo el arte de una sola vez.
+Principio guia: prioriza tener un ciclo completo minimo funcionando (una carta, un sobre, de principio a fin) antes de expandir a mas contenido, mas cartas o mas funciones sociales.
+Fase 0 - Preparacion del entorno
+Objetivo de la fase: tener las herramientas y cuentas listas antes de escribir la primera linea de codigo.
+☐  Crear proyecto de Firebase para desarrollo (separado del de produccion, ver TDD seccion 8).
+☐  Habilitar Authentication, Cloud Firestore y Cloud Functions en el proyecto de Firebase (esto crea la instancia de base de datos vacia, sin ninguna coleccion todavia - eso se hace en la Fase 1).
+☐  Habilitar tambien App Check, Crashlytics y Cloud Messaging desde el inicio (TDD secciones 2.7, 2.8 y 2.10) - mas facil integrarlos ahora que anadirlos despues.
+☐  Crear repositorio en GitHub (privado) y habilitar Git LFS antes del primer commit.
+☐  Crear el proyecto en Unity 6.3 LTS con URP y el 2D Renderer (ver TDD seccion 1 y 2.1).
+☐  Crear la estructura de carpetas dentro de Assets/ segun el TDD (seccion 3).
+☐  Configurar el tablero Kanban (Notion o Trello) con las fases de este documento como columnas o etiquetas.
+☐  Conectar Antigravity al proyecto de Firebase y al repositorio.
+Ver: TDD secciones 1, 2.1, 3 y 8.
+Fase 1 - Esquema de datos y ScriptableObjects
+Objetivo de la fase: tener la estructura de datos lista para que el resto de fases tengan sobre que construir.
+☐  Firestore no tiene esquema fijo: una coleccion no existe hasta que se escribe el primer documento en ella. En esta fase, escribir un script de 'seed' (o agregar 2-3 documentos de prueba desde la consola) para materializar las colecciones del esquema del TDD (seccion 5): users, cardsCatalog, albums, packs, transactions, dataPacks.
+☐  Escribir una primera version basica de las Firestore Rules (TDD seccion 7), aunque sea restrictiva por defecto, incluyendo la validacion de forma (tipos y campos obligatorios) para users desde el inicio (TDD seccion 7.2).
+☐  Crear en Unity los ScriptableObjects: CardData, AlbumData, PackData, reflejando los mismos campos del esquema de Firestore.
+☐  Definir el album piloto: elegir cuantas cartas tendra el primer album de prueba y su distribucion de rareza (ver GDD seccion 14, proximos pasos).
+☐  Cargar datos de prueba (5-10 cartas) directamente como ScriptableObjects locales, sin depender aun de Firestore, para poder avanzar en paralelo con el arte y el shader.
+☐  Definir la nomenclatura y tematica de los sobres del album piloto (ej. por liga, torneo o pack tematico), junto con la distribucion de rareza ya contemplada, para que el nombre del sobre comunique valor de un vistazo antes de abrirlo.
+Ver: TDD secciones 3 y 5, GDD seccion 5.2 y 5.3.
+Fase 2 - Arte de cartas: de Canva a Unity
+Objetivo de la fase: tener el prefab de Carta armado y mostrando datos de prueba en pantalla.
+☐  Disenar en Canva la plantilla/marco vacio de cada rareza (comun, especial, epica, legendaria, mitica, full art).
+☐  Exportar cada plantilla como PNG con fondo transparente en las zonas de foto y texto, a 2x el tamano final en pantalla.
+☐  Importar las plantillas a Unity como Sprite (2D/UI), con compresion ASTC.
+☐  Armar el prefab de Carta combinando en capas: marco, foto del jugador, y texto generado desde CardData.
+☐  Verificar que el prefab se vea correcto usando los datos de prueba de la Fase 1.
+Ver: TDD seccion 2.2.
+Fase 3 - Shader holografico
+Objetivo de la fase: llevar el efecto validado en el prototipo HTML a un shader real de Unity.
+☐  Revisar el prototipo HTML ya validado (tilt + brillo que sigue el dedo) como referencia de comportamiento esperado.
+☐  Construir en Shader Graph un material que reciba una posicion (x, y) como parametro y desplace un degradado tipo foil/arcoiris en respuesta.
+☐  Conectar el input tactil (arrastre del dedo) para actualizar esos parametros del shader en tiempo real.
+☐  Aplicar el shader unicamente a las cartas de rareza Mitica y Full Art, dejando el resto sin el efecto (por rendimiento y para que se sienta especial, ver GDD seccion 5.2).
+☐  Probar el rendimiento del shader en un dispositivo Android de gama media/baja.
+Ver: TDD secciones 1 y 2.1.
+Fase 4 - Apertura de sobres (cliente, con datos simulados)
+Objetivo de la fase: tener el ciclo completo de apertura funcionando en Unity, todavia sin backend real.
+☐  Recrear en Unity la secuencia validada en el prototipo HTML: sobre cerrado, apertura, revelado de 5 cartas una por una, resumen final.
+☐  Implementar el generador de rareza ponderado (RNG) en C#, usando las probabilidades del GDD (seccion 5.2), funcionando localmente por ahora.
+☐  Conectar el shader holografico de la Fase 3 a las cartas reveladas que correspondan.
+☐  Anadir la variacion aleatoria en el angulo del abanico de cartas (ver TDD seccion 2.1, imperfeccion intencional).
+☐  Probar el ciclo completo con datos simulados y ajustar tiempos/animaciones segun se sienta.
+Ver: TDD seccion 2.1, GDD seccion 4 y 5.2.
+Fase 4.5 - Sistema de misiones
+Objetivo de la fase: tener un sistema de misiones basico funcionando, con progreso cuantificado visible en el menu, antes de pasar a la logica economica del servidor.
+☐  Definir los tipos de mision del MVP (diarias, de progreso o ambas) y sus recompensas, alineadas con la economia ya definida en el GDD.
+☐  Crear la coleccion userMissions en Firestore para registrar el progreso de cada jugador por mision.
+☐  Implementar claimMissionReward(), validando idempotencyKey y que la mision este realmente completada del lado del servidor antes de acreditar la recompensa.
+☐  Mostrar el progreso cuantificado de cada mision (ej. '2/5 completadas') directamente en el boton de Misiones del menu, en vez de solo un indicador de notificacion.
+Ver: GDD seccion 8 (economia), TDD secciones 2.6 y 5.9.
+Fase 5 - Backend: Cloud Functions de economia
+Objetivo de la fase: mover toda la logica economica al servidor, sin que el cliente pueda manipularla.
+☐  Implementar el mecanismo de idempotencia (coleccion processedRequests) ANTES de escribir openPack, claimFreePack o purchaseCoins - es mas facil construirlo desde el inicio que anadirlo despues (TDD seccion 2.6).
+☐  Implementar openPack() primero: valida idempotencyKey, valida el sobre disponible, genera las cartas con el mismo RNG ponderado pero del lado del servidor, descuenta el sobre, registra la transaccion.
+☐  Implementar claimFreePack(), validando idempotencyKey y el tiempo de espera en el servidor, no en el reloj del dispositivo.
+☐  Implementar watchAdReward(), validando el callback del SDK de anuncios.
+☐  Implementar purchaseCoins(), validando idempotencyKey y el recibo contra Google Play Billing antes de acreditar moneda.
+☐  Implementar cleanupProcessedRequests() como funcion programada.
+☐  Implementar getActiveEvents(), que devuelva el timestamp real de cierre de cada evento especial activo calculado en el servidor, para que el countdown mostrado en el menu no dependa del reloj del dispositivo.
+☐  Aplicar la verificacion de App Check en todas las funciones de esta fase antes de desplegarlas (TDD seccion 2.7).
+☐  Escribir las Firestore Rules definitivas para bloquear escritura directa del cliente sobre moneda e inventario (TDD seccion 7).
+☐  Desplegar todo al proyecto de Firebase de desarrollo y probar cada funcion de forma aislada, incluyendo el caso de reintento con la misma idempotencyKey.
+Ver: TDD secciones 2.6, 5.9, 6 y 7.
+Fase 6 - Integracion cliente-servidor
+Objetivo de la fase: reemplazar los datos simulados de la Fase 4 por las llamadas reales al backend de la Fase 5.
+☐  Integrar Firebase Authentication en Unity (login de Google/email o anonimo).
+☐  Solicitar permiso de notificaciones y guardar el token de FCM en el usuario (TDD seccion 2.8).
+☐  Registrar los primeros eventos de Analytics (pack_opened, card_obtained) siguiendo el catalogo del TDD (seccion 2.9).
+☐  Reemplazar el generador de rareza local por la llamada real a openPack(), generando una idempotencyKey (UUID) por cada intento del lado del cliente y reutilizando la MISMA clave si la llamada se reintenta (TDD seccion 2.6).
+☐  Conectar la lectura de datos del jugador (moneda, sobres disponibles) a Firestore en tiempo real.
+☐  Probar el ciclo completo de principio a fin: login, reclamar o comprar sobre, abrirlo, ver las cartas, y que la coleccion quede guardada.
+☐  Probar casos limite: sin conexion, sin sobres disponibles, doble toque rapido en el boton de abrir (evitar dobles aperturas).
+Ver: TDD secciones 2.6, 2.8, 2.9 y 6.
+Fase 7 - Album y perfil
+Objetivo de la fase: darle proposito a las cartas coleccionadas mas alla de solo tenerlas.
+☐  Construir la pantalla de Album: cuadricula de cartas, marcando cuales tiene el jugador y cuales le faltan.
+☐  Implementar la logica de recompensa al completar un album (Cloud Function o trigger de Firestore).
+☐  Construir la pantalla de Perfil con el armador de '11 ideal' usando las mejores cartas del jugador.
+☐  Permitir personalizacion visual basica del perfil (marco, fondo).
+Ver: GDD secciones 5.3 y 7, TDD seccion 5.4.
+Fase 8 - Sistema social
+Objetivo de la fase: el motor de retencion principal del juego, segun el GDD.
+☐  Implementar agregar amigos por codigo.
+☐  Implementar la comparacion de albumes entre amigos (vista lado a lado).
+☐  Implementar el ranking por poder de coleccion.
+☐  Implementar proposeTrade(), acceptTrade() y cancelTrade() como transaccion atomica de Firestore - el intercambio directo ya esta confirmado para el MVP, con el diseno anti-fraude resuelto en el TDD (seccion 2.5).
+☐  Escribir las Firestore Rules de tradeOffers (TDD seccion 7) antes de exponer la funcion en el cliente.
+☐  Probar especificamente el caso limite: aceptar un intercambio cuando una de las cartas ya no esta disponible, y confirmar que ninguna carta se mueve.
+☐  Confirmar que proposeTrade() envie la notificacion push correspondiente y registre el evento trade_proposed de Analytics (TDD secciones 2.8 y 2.9).
+Ver: GDD seccion 7, TDD secciones 2.5, 2.8, 2.9, 5.8, 6 y 7.
+Fase 8.5 - Mercado de cartas entre jugadores
+Objetivo de la fase: reemplazar la venta de duplicados al sistema por un mercado real entre jugadores, donde cualquiera puede publicar una carta duplicada a un precio libre y otro jugador comprarla directamente.
+☐  Crear la coleccion marketListings en Firestore (TDD seccion 5.8b).
+☐  Implementar listCardForSale(), reservando la cantidad publicada desde userCollection al crear el listado (TDD seccion 2.11).
+☐  Implementar buyListedCard() como transaccion atomica: revalida que el listado siga activo, descuenta moneda del comprador, acredita el 100% al vendedor sin comision, y mueve la carta.
+☐  Implementar cancelListing() y updateListingPrice(), ambas restringidas al vendedor original del listado.
+☐  Escribir las Firestore Rules de marketListings para bloquear escritura directa del cliente sobre precio, status y propiedad de la carta reservada.
+☐  Construir la pantalla de 'Vender duplicados' como mercado: cuadricula de duplicados propios para publicar, mas la vista de listados de otros jugadores disponibles para comprar, con filtro por rareza.
+☐  Probar el caso limite de dos compradores intentando comprar el mismo listado casi al mismo tiempo, confirmando que solo el primero tiene exito y el segundo falla limpiamente.
+Ver: GDD seccion 7.1 y 8.3, TDD secciones 2.11, 5.8b y 6.
+Fase 9 - Data packs de la comunidad
+Objetivo de la fase: permitir que la comunidad reskinee ligas/torneos completos con nombres y fotos reales, sin que el estudio las aloje.
+☐  Construir la pantalla para crear un data pack: nombre del pack y un mecanismo de carga masiva (pegar lista/CSV: id de jugador, nombre real, link de foto) en vez de un formulario por jugador.
+☐  Implementar validateDataPackLink() para validar en una sola llamada el lote completo de jugadores del pack (dominio, tipo de contenido, peso), no un link a la vez (TDD seccion 6).
+☐  Implementar checkDataPackLinksHealth() como funcion programada, para detectar links externos rotos en packs ya aprobados antes de que un jugador se tope con el problema.
+☐  Construir la biblioteca de data packs dentro de la app, listando solo los que tengan status 'aprobado', mostrando playerCount (ej. '214 jugadores') por pack.
+☐  Crear el indice compuesto de Firestore para dataPacks por (status, createdAt) - Firebase ofrece un link para crearlo con un clic la primera vez que la consulta falle en pruebas (TDD seccion 7.1).
+☐  Implementar la descarga del documento completo del pack en una sola lectura, y la descarga de cada foto individual bajo demanda (solo cuando esa carta especifica se muestra en pantalla), con cache local y respaldo al arte generico si un link puntual falla.
+☐  Mostrar el aviso de contenido de terceros no revisado por el estudio.
+☐  Definir el proceso manual de moderacion inicial (revision humana de los packs reportados, dado el tamano del equipo).
+Ver: GDD seccion 6, TDD secciones 2.3, 2.4, 6 y 7.1.
+Fase 10 - Pulido, QA y prueba con usuarios
+Objetivo de la fase: validar que el juego se sienta bien y no se rompa, antes de pensar en lanzamiento.
+☐  Probar el juego completo con un grupo cerrado de 5-10 personas del publico objetivo.
+☐  Revisar que el nivel de acabado siga sintiendose 'hecho por developers' y no excesivamente perfecto (TDD seccion 2.1).
+☐  Revisar rendimiento en al menos un dispositivo Android de gama baja.
+☐  Probar casos de fraude economico basico (intentar abrir sobres sin tenerlos, vender cartas que no se tienen, etc.).
+☐  Escribir y revisar el copy de estados vacios y de error (sin sobres disponibles, sin conexion, sin cartas en el album, sin amigos, etc.), dando siempre una accion o expectativa en vez de solo negar (ej. 'Vuelve en 2h para tu proximo sobre' en lugar de 'No tienes sobres disponibles').
+☐  Recoger y priorizar el feedback antes de seguir agregando contenido nuevo.
+Ver: GDD seccion 13, Fase 0 de validacion.
+Fase 11 - Preparacion de lanzamiento
+Objetivo de la fase: dejar todo listo para publicar en Google Play.
+☐  Crear la ficha de la app en Google Play Console.
+☐  Revisar si aplica alguna declaracion de contenido generado con IA segun la politica vigente de la tienda al momento del lanzamiento.
+☐  Configurar un canal de pruebas cerradas (closed testing track) antes del lanzamiento publico.
+☐  Revisar los Terminos de Servicio, especialmente lo referente a los data packs de la comunidad (GDD seccion 6.2).
+☐  Confirmar que el proyecto de Firebase de produccion este separado y configurado correctamente, distinto al de desarrollo.
+Ver: TDD seccion 8, GDD seccion 12.

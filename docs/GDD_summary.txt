@@ -1,0 +1,154 @@
+﻿GAME DESIGN DOCUMENT
+Juego de Coleccion de Cartas de Futbol
+"El Panini digital que se siente como abrir un sobre de Pokemon TCG Pocket"
+Version 0.1 - Documento de concepto inicial
+Plataforma: Android (Unity) | Equipo: 2 personas | Mercado: Global (foco LATAM)
+1. Resumen Ejecutivo
+Juego movil de coleccion de cartas de futbol con jugadores genericos (sin licencias oficiales), inspirado en la sensacion de apertura de sobres y coleccion de Pokemon TCG Pocket, combinada con la cultura de album Panini. El MVP no incluye combate: el nucleo del juego es coleccionar, completar albumes tematicos (ligas, torneos, selecciones), armar un 11 ideal de perfil y comparar colecciones con otros jugadores. La comunidad podra crear y compartir 'data packs' que reemplazan los nombres/caras genericos por nombre y foto real del jugador (sin escudos ni logos oficiales), evitando que el estudio asuma directamente el riesgo legal de licencias de imagen.
+Genero: Coleccion de cartas (TCG sin combate) + social/album digital.
+Plataforma: Android, motor Unity.
+Equipo: 2 personas, desarrollo interno (sin outsourcing).
+Modelo de negocio: Free-to-play con sobres gratis (tiempo/anuncios), moneda del juego obtenible jugando, y compra de moneda premium.
+Diferenciador clave: Enfoque casual/arcade (no requiere seguir ligas ni estadisticas en vivo, a diferencia de Sorare), sin exposicion legal de licencias (a diferencia de FIFA/EA Sports FC), y coleccion permanente sin limite de temporada (a diferencia de Panini).
+2. Vision del Producto y Pilares de Diseno
+Vision: convertirse en el 'album Panini digital' de referencia para el aficionado casual de futbol en LATAM y mercados hispanohablantes, con la satisfaccion inmediata de abrir sobres y la profundidad social de comparar colecciones con amigos.
+Pilares de diseno
+1. Satisfaccion inmediata: cada apertura de sobre debe sentirse como un evento (animacion, sonido, revelacion progresiva de rareza), igual que en Pokemon TCG Pocket.
+2. Coleccionar tiene proposito: no es solo acumular; cada carta alimenta un album, un 11 ideal, y un estatus social frente a otros jugadores.
+3. Social es el corazon del loop: comparar albumes, rankings y 11 ideales con amigos es el motor de retencion a largo plazo, no el combate.
+4. Bajo riesgo legal: el juego base es 100% generico; el contenido con licencia real (nombres, caras) lo aporta la comunidad, no el estudio.
+5. Escalable a futuro: arquitectura de datos y cartas preparada para anadir combate/PvP en fases posteriores sin rehacer el sistema de cartas.
+3. Publico Objetivo
+Primario: Fans casuales de futbol de 13 a 35 anos en LATAM (Ecuador, Colombia como mercados base) que disfrutaron album Panini fisico o coleccionables digitales, pero no son 'hardcore' de fantasy football.
+Secundario: Jugadores de Pokemon TCG Pocket / juegos de coleccion movil que buscan una tematica de futbol con el mismo loop de satisfaccion.
+No es el publico objetivo (por ahora): usuarios de Sorare / fantasy managers que buscan profundidad estadistica y ganar dinero real; ese publico requiere una propuesta distinta y mas regulacion.
+4. Core Loop (Bucle Principal de Juego)
+El ciclo de juego diario se resume en:
+1. Abrir sobres (gratis por tiempo, gratis por anuncio, o comprados con moneda del juego).
+2. Coleccionar las cartas obtenidas en los albumes correspondientes (liga, torneo, seleccion).
+3. Curar tu perfil: armar tu 11 ideal con tus mejores/mas raras cartas, personalizar tu album destacado (estilo 'binder' de Pokemon TCGP).
+4. Comparar socialmente: visitar perfiles de amigos, ver sus 11 ideales y albumes, comparar progreso de coleccion.
+5. Intercambiar/vender duplicados: convertir cartas repetidas en moneda del juego para comprar mas sobres.
+6. Volver manana: misiones diarias, sobres gratis que se recargan, y eventos de coleccion por tiempo limitado generan el gancho de retorno.
+5. Sistema de Cartas y Albumes
+5.1 Tipos de carta
+Jugadores actuales: el grueso del pool de cartas, base generica. Cada carta tiene equipo de club Y nacionalidad como atributos independientes, para poder aparecer tanto en albumes de liga como en albumes de seleccion.
+Leyendas: cartas de mayor rareza, jugadores historicos (genericos), con arte especial.
+Entrenadores: carta de apoyo/coleccion, no funcional en el MVP (sin combate).
+Equipos completos: cartas especiales que representan a un equipo, posible mecanica de 'set completo' dentro del album.
+Cartas especiales / Full Art: variantes de arte alternativo de altisima rareza, el 'chase' principal del juego.
+5.2 Sistema de rareza
+Desde Mitica (inclusive) en adelante, la carta incluye el efecto holografico interactivo (tilt + brillo que sigue el dedo, ver prototipo validado).
+Rareza
+Simbolo sugerido
+% aprox. en sobre
+Ejemplo
+Comun
+1 diamante
+~55%
+Jugador de plantilla
+Especial
+2 diamantes
+~25%
+Titular destacado
+Epica
+3 diamantes / 1 estrella
+~12%
+Figura de equipo top
+Legendaria
+2 estrellas
+~5%
+Leyenda
+Mitica (holografica)
+3 estrellas
+~2%
+Leyenda destacada
+Full Art (holografica)
+Corona / arcoiris
+~1%
+Carta especial de evento
+5.3 Albumes (colecciones)
+Cada album es una coleccion tematica con su propio set de cartas y su propio pool de sobres:
+Album por liga nacional (ej. genericos estilo Liga Ecuatoriana, Liga Colombiana, Liga Espanola, etc.)
+Album de torneo internacional (ej. estilo Copa America, Mundial, Champions)
+Album de selecciones nacionales (agrupa cartas por el atributo de nacionalidad, no por equipo de club)
+Albumes de temporada/evento especial (rotativos, tiempo limitado, generan urgencia de coleccion)
+Completar un album otorga recompensa (moneda, carta exclusiva, marco de perfil), replicando el gancho de 'set completion' que ya funciona muy bien en Pokemon TCGP.
+6. Data Packs de la Comunidad (Jugadores Reales)
+El juego base usa unicamente nombres, caras y escudos genericos creados por el estudio. Los 'data packs' que reemplazan estos datos por jugadores reales son creados y subidos por la comunidad (similar al modelo de World Soccer Champs), no por el estudio. Esto traslada el riesgo de derechos de imagen al contenido generado por usuarios.
+6.1 Alcance definido del data pack
+Incluye: nombre real del jugador + foto real del jugador.
+No incluye: escudos ni logos oficiales de clubes, ligas o federaciones, bajo ninguna circunstancia. Los equipos dentro del juego siempre usan nombres y escudos genericos creados por el estudio, incluso cuando el pack aplica jugadores reales.
+Por que esta combinacion: los escudos/logos son marca registrada y el tipo de infraccion mas facil de detectar y perseguir por clubes/ligas (departamentos legales grandes, deteccion automatica). El nombre y la foto de un jugador tocan su derecho de imagen individual, que sigue existiendo aunque no haya logos, pero en la practica es mucho menos probable que un jugador persiga activamente un pack hecho por un fan de bajo perfil. World Soccer Champs opera con un modelo similar sin haber sido retirado de las tiendas por este motivo, lo cual es una senal (no una garantia) de que el riesgo es manejable en la practica.
+6.2 Medidas de proteccion (no eliminan el riesgo, lo hacen manejable)
+1. Terminos de Servicio claros: los data packs son contenido subido por usuarios (UGC); el estudio provee solo la plataforma y no crea ni valida la veracidad del contenido.
+2. Escudos/logos oficiales prohibidos: regla dura del sistema, ver 6.1; reduce el riesgo de mayor impacto.
+3. Proceso de denuncia y retiro rapido: boton de 'reportar pack' visible, con compromiso de revision en 24-48h (puede ser manual al inicio dado el equipo de 2 personas).
+4. Nombres de pack de bajo perfil: evitar que el titulo del pack use el nombre oficial de una liga o club (ej. preferir 'Pack Futbol Espanol 2026' en vez de 'Pack LaLiga 2026' con los mismos jugadores adentro); el nombre del pack tambien es superficie de riesgo aunque el contenido interno sea igual.
+Nota: esto no sustituye una consulta legal especifica antes del lanzamiento (ver seccion 12). El objetivo con equipo de 2 personas no es 'riesgo cero' (no es alcanzable con este modelo), sino bajo perfil y capacidad de reaccion rapida ante reclamos.
+Formato tecnico sugerido: pack como archivo de datos (JSON + assets de imagen) validado por un editor interno simple, sin acceso a codigo del juego, para minimizar riesgo de seguridad.
+Distribucion: biblioteca de packs dentro de la app, con sistema de valoracion/reportes de la comunidad para moderacion.
+7. Sistema Social (Core del Producto)
+Definido como el corazon del juego junto al coleccionismo. Funciones clave del MVP:
+Perfil publico: muestra el 11 ideal del jugador, sus albumes destacados y sus cartas mas raras, con opcion de personalizacion visual (fondo, marco, insignias).
+Lista de amigos: agregar amigos por codigo/usuario, ver su progreso de coleccion y su 11 ideal.
+Comparacion de albumes: vista lado a lado de cuantas cartas tiene cada quien de un album especifico, para generar competencia amistosa por completar antes que el otro.
+Rankings: tabla de clasificacion por 'poder de coleccion' (valor total de rareza), por album completado, o por cartas holograficas obtenidas.
+Intercambio directo (trading): adelantado al MVP (decision tomada durante el diseno de pantallas): intercambio 1 a 1 entre amigos (carta por carta, sin moneda de por medio). El riesgo de fraude (aceptar y no entregar, la carta ya no disponible al momento de confirmar) se resuelve con una transaccion atomica del lado del servidor - ver diseno tecnico completo en el TDD, secciones 2.5, 5.8 y 6.
+7.1 Mercado de cartas entre jugadores
+Distinto del intercambio directo: aqui un jugador pone en venta una carta duplicada por un precio en moneda del juego (la misma que se usa para comprar sobres), y cualquier otro jugador puede comprarla directamente - no requiere ser amigo ni ofrecer una carta a cambio.
+Moneda: la misma moneda del juego usada para sobres; no se introduce una segunda economia paralela.
+Sin comision del estudio: el vendedor recibe el 100% del precio de venta.
+Precio libre: lo fija el vendedor sin restriccion del sistema; puede ajustarlo en cualquier momento mientras la carta siga en venta. El mercado se autorregula por oferta y demanda en vez de un precio fijo o dinamico impuesto por el estudio.
+Duracion del listado: la carta queda publicada hasta que otro jugador la compra o el propio vendedor retira la publicacion; no expira sola.
+Anti-farming (MVP): no se implementa una medida adicional por ahora - comprar en el mercado requiere tener moneda obtenida previamente (jugando o pagando), lo cual ya pone un limite natural. Ver riesgo residual de auto-trading entre cuentas propias en la seccion 8.3.
+8. Economia del Juego
+8.1 Fuentes de sobres
+2 sobres gratis por dia (recarga por tiempo)
+2 sobres gratis adicionales viendo un anuncio (recarga por tiempo, independiente de los primeros)
+Sobres comprados con moneda del juego
+Sobres de eventos/misiones especiales
+8.2 Fuentes de moneda del juego
+Recompensa por completar misiones diarias/semanales
+Venta de cartas duplicadas a otros jugadores (ver mercado entre jugadores, seccion 7.1)
+Recompensa por completar albumes
+Compra directa con dinero real (moneda premium o la misma moneda con tasa de cambio)
+8.3 Puntos criticos a resolver en balance economico
+Anti-inflacion: al ser un mercado entre jugadores con precio libre (ver seccion 7.1), la moneda circula entre jugadores en vez de crearse de la nada, lo cual limita el riesgo de inflacion clasico. El unico vector pendiente de vigilar es el 'auto-trading' entre cuentas propias para lavar moneda ganada gratis (anuncios, sobres diarios) hacia una cuenta principal; por decision de producto, esto NO se mitiga en el MVP mas alla de que comprar en el mercado sigue requiriendo tener moneda obtenida previamente (jugando o pagando) - se revisara si se vuelve un problema real una vez el juego tenga usuarios.
+Balance F2P vs. pagador: el jugador que no paga debe poder completar la mayoria de albumes comunes en un tiempo razonable (ej. 4-6 semanas) para sentirse recompensado; los pagadores deben acelerar el proceso y acceder antes a eventos especiales, sin que el F2P se sienta bloqueado.
+Anuncios: definir limite diario de anuncios para evitar fatiga, y considerar una opcion de compra unica 'sin anuncios' como producto adicional.
+9. Monetizacion
+Sin pase de temporada (decision ya tomada): se descarta el modelo de battle pass/season pass.
+Compra de moneda del juego: paquetes de distintos tamanos con mejor tasa de cambio en paquetes grandes.
+Sobres o packs premium puntuales: ediciones especiales de tiempo limitado vendibles directamente (equivalente a los 'God packs' o ediciones especiales de otros TCG moviles).
+Cosmeticos de perfil: marcos, fondos, insignias para personalizar el perfil/album destacado; monetizacion de bajo riesgo porque no afecta el balance del juego.
+Remocion de anuncios: compra unica opcional.
+Nota regulatoria: al no involucrar dinero real ganable ni resultados de partidos reales (a diferencia de Sorare), el juego se mantiene fuera de la zona gris de apuestas/gambling en la mayoria de jurisdicciones. Aun asi, dado que hay compra de sobres con contenido aleatorio (loot boxes), conviene revisar la regulacion de loot boxes del pais de lanzamiento principal antes de publicar (algunos paises exigen mostrar probabilidades de drop).
+10. Progresion y Retencion
+Misiones diarias (ej. abrir X sobres, completar X cartas de un album)
+Misiones semanales con recompensa mayor
+Eventos de coleccion por tiempo limitado (album especial rotativo)
+Notificaciones de recarga de sobres gratis (retorno diario)
+Logros de coleccion (ej. 'primera carta holografica', 'album completo', 'top 100 en ranking de amigos')
+11. Consideraciones Tecnicas
+Motor: Unity (2D, dado que no hay combate 3D en el MVP; permite iterar rapido con equipo pequeno).
+Backend: necesario para perfiles, amigos, rankings y validacion de economia (evitar que la logica de sobres/monedas viva solo en cliente, para prevenir hackeo/duplicacion de cartas). Se recomienda un backend ligero (ej. Firebase o similar) dado el tamano del equipo.
+Equipo de 2 personas: sugerido dividir roles como Programacion/Backend y Arte/Diseno de UI-UX, priorizando reutilizar assets (un solo sistema de carta con variantes de datos, no cartas dibujadas una por una a mano si el volumen es alto).
+Data packs: arquitectura de datos separada del codigo del juego desde el dia uno (cartas como datos, no hardcodeadas), para soportar tanto el contenido base generico como los packs de la comunidad sin reescribir el motor.
+12. Riesgos y Consideraciones
+Legal (data packs): riesgo residual de derechos de imagen individual incluso sin escudos/logos (ver seccion 6); mitigado con bajo perfil y respuesta rapida a denuncias, pero se recomienda consulta legal especifica antes de lanzamiento.
+Retencion sin combate: el riesgo principal identificado es que, sin battle mechanics, la retencion a largo plazo depende 100% de que el coleccionismo y lo social sean suficientemente satisfactorios. Mitigacion: priorizar fuerte el sistema social (seccion 7) y eventos de coleccion frecuentes desde el MVP.
+Loot boxes / regulacion: revisar normativa local sobre cajas aleatorias antes del lanzamiento (ver seccion 9).
+Fraude en economia: validar transacciones de venta/compra de cartas en backend, no en cliente.
+Escalabilidad de arte: el estilo fotorrealista (definido) es mas costoso de producir que estilos ilustrados; con equipo de 2 personas, evaluar herramientas de generacion/edicion de imagen que aceleren produccion sin perder calidad percibida.
+13. Roadmap Propuesto
+Fase 0 - Validacion: prototipo jugable de la apertura de sobres + 1 album pequeno, probado con un grupo cerrado para validar que el 'feeling' de apertura sea satisfactorio antes de construir todo el resto.
+Fase 1 - MVP: sistema de cartas y rareza, 2-3 albumes, apertura de sobres (gratis + anuncio + moneda), perfil con 11 ideal, sistema de amigos basico y comparacion de albumes, venta de duplicados.
+Fase 2 - Expansion social: rankings, trading directo entre jugadores, mas albumes/eventos rotativos, sistema de data packs de la comunidad.
+Fase 3 - Futuro: evaluar mecanica de combate/batallas opcional, sin romper el sistema de coleccion existente.
+14. Proximos Pasos Sugeridos
+Definir nombre del juego, identidad visual y estilo de arte de referencia (moodboard).
+Prototipo rapido (aunque sea en papel o Figma) de la animacion de apertura de sobre, para validar el 'feeling' antes de programar en Unity.
+Consulta legal puntual sobre el modelo de data packs comunitarios.
+Definir el primer album piloto (numero exacto de cartas, distribucion de rareza) para poder probar la economia con numeros reales.
+Wireframes de las pantallas clave: apertura de sobre, album, perfil/11 ideal, comparacion social.

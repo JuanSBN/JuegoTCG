@@ -48,9 +48,13 @@ namespace JuegoTCG.EditorTools
                         // 256x256 rounded card with 20px radius
                         importer.spriteBorder = new Vector4(20, 20, 20, 20);
                     }
-                    else if (assetPath.Contains("ui_rounded_pack"))
+                    else if (assetPath.Contains("ui_modal_bg"))
                     {
-                        importer.spriteBorder = new Vector4(24, 24, 24, 24);
+                        importer.spriteBorder = new Vector4(32, 32, 32, 32);
+                    }
+                    else if (assetPath.Contains("ui_mission_card"))
+                    {
+                        importer.spriteBorder = new Vector4(20, 20, 20, 20);
                     }
 
                     importer.SaveAndReimport();

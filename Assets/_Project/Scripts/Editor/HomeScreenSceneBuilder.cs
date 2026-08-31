@@ -512,6 +512,7 @@ namespace JuegoTCG.EditorTools
             Image missionsIconImg = missionsIconGO.AddComponent<Image>();
             missionsIconImg.sprite = iconCheckMisiones;
             missionsIconImg.color = Color.white;
+            missionsIconImg.raycastTarget = false;
 
             GameObject missionsTextGO = new GameObject("Text");
             missionsTextGO.transform.SetParent(contentHolderGO.transform, false);
@@ -525,6 +526,7 @@ namespace JuegoTCG.EditorTools
             missionsTMP.characterSpacing = 5f;
             missionsTMP.alignment = TextAlignmentOptions.Center;
             missionsTMP.color = Color.black;
+            missionsTMP.raycastTarget = false;
 
             // Red Notification Dot on Misiones (from Figma)
             GameObject redDotGO = new GameObject("RedDotBadge");
@@ -538,6 +540,9 @@ namespace JuegoTCG.EditorTools
             RoundedRectGraphic redDotG = redDotGO.AddComponent<RoundedRectGraphic>();
             redDotG.IsCapsule = true;
             redDotG.color = new Color(1f, 0.231f, 0.188f); // #ff3b30
+            redDotG.raycastTarget = false;
+
+            missionsBtnGO.AddComponent<MissionsButtonTrigger>();
 
             // ====================================================
             // 5. SECTION "RACHA DIARIA" (Exact Figma Geometry & Progress)
@@ -718,13 +723,13 @@ namespace JuegoTCG.EditorTools
             Image glassImg = glassLineGO.AddComponent<Image>();
             glassImg.color = new Color(1f, 1f, 1f, 0.35f);
 
-            string[] tabLabels = { "Inicio", "Mis cartas", "Comunidad", "Perfil" };
-            Sprite[] tabIcons = { iconHome, iconCards, iconUsers, iconUser };
-            Button[] tabBtns = new Button[4];
-            float tabSpacing = 235f;
-            float startTabX = -tabSpacing * 1.5f;
+            string[] tabLabels = { "Inicio", "Mis cartas", "Tienda", "Comunidad", "Perfil" };
+            Sprite[] tabIcons = { iconHome, iconCards, iconShop, iconUsers, iconUser };
+            Button[] tabBtns = new Button[5];
+            float tabSpacing = 188f;
+            float startTabX = -tabSpacing * 2f;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 bool isTabActive = (i == 0);
                 GameObject tabGO = new GameObject($"Tab_{tabLabels[i]}");
@@ -734,7 +739,7 @@ namespace JuegoTCG.EditorTools
                 tabRect.anchorMax = new Vector2(0.5f, 0.5f);
                 tabRect.pivot = new Vector2(0.5f, 0.5f);
                 tabRect.anchoredPosition = new Vector2(startTabX + i * tabSpacing, 0);
-                tabRect.sizeDelta = isTabActive ? new Vector2(185, 100) : new Vector2(155, 100);
+                tabRect.sizeDelta = isTabActive ? new Vector2(170, 96) : new Vector2(140, 96);
 
                 if (isTabActive)
                 {
@@ -773,6 +778,444 @@ namespace JuegoTCG.EditorTools
                 tabBtns[i] = tabGO.AddComponent<Button>();
             }
 
+            // ====================================================
+            // 7. MISSIONS MODAL (Sub-Pantalla de Misiones Diarias)
+            // ====================================================
+            Sprite iconClose = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_close.png");
+            Sprite milestoneGiftSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_milestone_gift.png");
+            Sprite modalBgSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_modal_bg.png");
+            Sprite missionCardSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_mission_card.png");
+            Sprite missionCardDoneSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_mission_card_done.png");
+
+            GameObject modalRootGO = new GameObject("MissionsModal");
+            modalRootGO.transform.SetParent(canvasGO.transform, false);
+            RectTransform modalRootRect = modalRootGO.AddComponent<RectTransform>();
+            modalRootRect.anchorMin = Vector2.zero;
+            modalRootRect.anchorMax = Vector2.one;
+            modalRootRect.sizeDelta = Vector2.zero;
+            CanvasGroup modalCG = modalRootGO.AddComponent<CanvasGroup>();
+            MissionsModalController modalCtrl = modalRootGO.AddComponent<MissionsModalController>();
+
+            // 1. Blurred Background Snapshot (Optical Blur)
+            GameObject blurBackdropGO = new GameObject("BlurBackdrop");
+            blurBackdropGO.transform.SetParent(modalRootGO.transform, false);
+            RectTransform blurRect = blurBackdropGO.AddComponent<RectTransform>();
+            blurRect.anchorMin = Vector2.zero;
+            blurRect.anchorMax = Vector2.one;
+            blurRect.sizeDelta = Vector2.zero;
+            RawImage blurImg = blurBackdropGO.AddComponent<RawImage>();
+            blurImg.raycastTarget = false;
+            blurBackdropGO.SetActive(false);
+
+            // 2. Backdrop (Deep Semi-Transparent Dark Overlay)
+            GameObject modalBackdropGO = new GameObject("Backdrop");
+            modalBackdropGO.transform.SetParent(modalRootGO.transform, false);
+            RectTransform backdropRect = modalBackdropGO.AddComponent<RectTransform>();
+            backdropRect.anchorMin = Vector2.zero;
+            backdropRect.anchorMax = Vector2.one;
+            backdropRect.sizeDelta = Vector2.zero;
+            Image backdropImg = modalBackdropGO.AddComponent<Image>();
+            backdropImg.color = new Color(0f, 0f, 0f, 0.58f);
+            Button backdropBtn = modalBackdropGO.AddComponent<Button>();
+
+            // Modal Box Card
+            GameObject modalBoxGO = new GameObject("ModalBox");
+            modalBoxGO.transform.SetParent(modalRootGO.transform, false);
+            RectTransform modalBoxRect = modalBoxGO.AddComponent<RectTransform>();
+            modalBoxRect.anchorMin = new Vector2(0.5f, 0.5f);
+            modalBoxRect.anchorMax = new Vector2(0.5f, 0.5f);
+            modalBoxRect.pivot = new Vector2(0.5f, 0.5f);
+            modalBoxRect.anchoredPosition = new Vector2(0, 20);
+            modalBoxRect.sizeDelta = new Vector2(940, 1180);
+
+            Image modalBoxImg = modalBoxGO.AddComponent<Image>();
+            if (modalBgSprite != null)
+            {
+                modalBoxImg.sprite = modalBgSprite;
+                modalBoxImg.type = Image.Type.Sliced;
+            }
+            else
+            {
+                modalBoxImg.color = new Color(0.047f, 0.094f, 0.063f);
+            }
+
+            // Header: Title + Close Button
+            GameObject modalHeaderGO = new GameObject("Header");
+            modalHeaderGO.transform.SetParent(modalBoxGO.transform, false);
+            RectTransform modalHeaderRect = modalHeaderGO.AddComponent<RectTransform>();
+            modalHeaderRect.anchorMin = new Vector2(0f, 1f);
+            modalHeaderRect.anchorMax = new Vector2(1f, 1f);
+            modalHeaderRect.pivot = new Vector2(0.5f, 1f);
+            modalHeaderRect.anchoredPosition = new Vector2(0, -35);
+            modalHeaderRect.sizeDelta = new Vector2(0, 60);
+
+            GameObject modalTitleGO = new GameObject("Title");
+            modalTitleGO.transform.SetParent(modalHeaderGO.transform, false);
+            RectTransform modalTitleRect = modalTitleGO.AddComponent<RectTransform>();
+            modalTitleRect.anchorMin = new Vector2(0f, 0f);
+            modalTitleRect.anchorMax = new Vector2(0.8f, 1f);
+            modalTitleRect.anchoredPosition = new Vector2(40, 0);
+            modalTitleRect.sizeDelta = new Vector2(0, 0);
+            TextMeshProUGUI modalTitleTMP = modalTitleGO.AddComponent<TextMeshProUGUI>();
+            if (barlowTMPFont != null) modalTitleTMP.font = barlowTMPFont;
+            modalTitleTMP.text = "MISIONES DIARIAS";
+            modalTitleTMP.fontSize = 38;
+            modalTitleTMP.fontStyle = FontStyles.Bold;
+            modalTitleTMP.characterSpacing = 8f;
+            modalTitleTMP.color = TextWhite;
+
+            GameObject closeBtnGO = new GameObject("CloseButton");
+            closeBtnGO.transform.SetParent(modalHeaderGO.transform, false);
+            RectTransform closeBtnRect = closeBtnGO.AddComponent<RectTransform>();
+            closeBtnRect.anchorMin = new Vector2(1f, 0.5f);
+            closeBtnRect.anchorMax = new Vector2(1f, 0.5f);
+            closeBtnRect.pivot = new Vector2(1f, 0.5f);
+            closeBtnRect.anchoredPosition = new Vector2(-36, 0);
+            closeBtnRect.sizeDelta = new Vector2(46, 46);
+            Image closeBtnImg = closeBtnGO.AddComponent<Image>();
+            if (iconClose != null) closeBtnImg.sprite = iconClose;
+            closeBtnImg.color = new Color(1f, 1f, 1f, 0.65f);
+            Button closeBtn = closeBtnGO.AddComponent<Button>();
+
+            // Milestone Track Container
+            GameObject milestoneTrackGO = new GameObject("MilestoneTrackContainer");
+            milestoneTrackGO.transform.SetParent(modalBoxGO.transform, false);
+            RectTransform milestoneTrackRect = milestoneTrackGO.AddComponent<RectTransform>();
+            milestoneTrackRect.anchorMin = new Vector2(0.5f, 1f);
+            milestoneTrackRect.anchorMax = new Vector2(0.5f, 1f);
+            milestoneTrackRect.pivot = new Vector2(0.5f, 1f);
+            milestoneTrackRect.anchoredPosition = new Vector2(0, -115);
+            milestoneTrackRect.sizeDelta = new Vector2(860, 180);
+
+            // Milestone Gift 1 at 50%
+            GameObject gift1GO = new GameObject("MilestoneGift1");
+            gift1GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform gift1Rect = gift1GO.AddComponent<RectTransform>();
+            gift1Rect.anchorMin = new Vector2(0.5f, 1f);
+            gift1Rect.anchorMax = new Vector2(0.5f, 1f);
+            gift1Rect.pivot = new Vector2(0.5f, 1f);
+            gift1Rect.anchoredPosition = new Vector2(0, 0);
+            gift1Rect.sizeDelta = new Vector2(80, 80);
+            Image gift1Img = gift1GO.AddComponent<Image>();
+            if (milestoneGiftSprite != null) gift1Img.sprite = milestoneGiftSprite;
+
+            // Connector 1
+            GameObject conn1GO = new GameObject("Connector1");
+            conn1GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform conn1Rect = conn1GO.AddComponent<RectTransform>();
+            conn1Rect.anchorMin = new Vector2(0.5f, 1f);
+            conn1Rect.anchorMax = new Vector2(0.5f, 1f);
+            conn1Rect.anchoredPosition = new Vector2(0, -82);
+            conn1Rect.sizeDelta = new Vector2(2, 16);
+            Image conn1Img = conn1GO.AddComponent<Image>();
+            conn1Img.color = new Color(GoldBorder.r, GoldBorder.g, GoldBorder.b, 0.4f);
+
+            // Milestone Gift 2 at 100%
+            GameObject gift2GO = new GameObject("MilestoneGift2");
+            gift2GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform gift2Rect = gift2GO.AddComponent<RectTransform>();
+            gift2Rect.anchorMin = new Vector2(1f, 1f);
+            gift2Rect.anchorMax = new Vector2(1f, 1f);
+            gift2Rect.pivot = new Vector2(1f, 1f);
+            gift2Rect.anchoredPosition = new Vector2(0, 0);
+            gift2Rect.sizeDelta = new Vector2(80, 80);
+            Image gift2Img = gift2GO.AddComponent<Image>();
+            if (milestoneGiftSprite != null) gift2Img.sprite = milestoneGiftSprite;
+
+            // Connector 2
+            GameObject conn2GO = new GameObject("Connector2");
+            conn2GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform conn2Rect = conn2GO.AddComponent<RectTransform>();
+            conn2Rect.anchorMin = new Vector2(1f, 1f);
+            conn2Rect.anchorMax = new Vector2(1f, 1f);
+            conn2Rect.pivot = new Vector2(1f, 1f);
+            conn2Rect.anchoredPosition = new Vector2(-40, -82);
+            conn2Rect.sizeDelta = new Vector2(2, 16);
+            Image conn2Img = conn2GO.AddComponent<Image>();
+            conn2Img.color = new Color(GoldBorder.r, GoldBorder.g, GoldBorder.b, 0.4f);
+
+            // Milestone Slider Bar (Track)
+            GameObject mSliderGO = new GameObject("MilestoneSlider");
+            mSliderGO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform mSliderRect = mSliderGO.AddComponent<RectTransform>();
+            mSliderRect.anchorMin = new Vector2(0.5f, 1f);
+            mSliderRect.anchorMax = new Vector2(0.5f, 1f);
+            mSliderRect.pivot = new Vector2(0.5f, 1f);
+            mSliderRect.anchoredPosition = new Vector2(0, -100);
+            mSliderRect.sizeDelta = new Vector2(860, 14);
+
+            Slider mSlider = mSliderGO.AddComponent<Slider>();
+            mSlider.interactable = false;
+
+            GameObject mBgGO = new GameObject("Background");
+            mBgGO.transform.SetParent(mSliderGO.transform, false);
+            RectTransform mBgRect = mBgGO.AddComponent<RectTransform>();
+            mBgRect.anchorMin = Vector2.zero;
+            mBgRect.anchorMax = Vector2.one;
+            mBgRect.sizeDelta = Vector2.zero;
+            RoundedRectGraphic mBgG = mBgGO.AddComponent<RoundedRectGraphic>();
+            mBgG.IsCapsule = true;
+            mBgG.color = new Color(1f, 1f, 1f, 0.10f);
+
+            GameObject mFillAreaGO = new GameObject("Fill Area");
+            mFillAreaGO.transform.SetParent(mSliderGO.transform, false);
+            RectTransform mFillAreaRect = mFillAreaGO.AddComponent<RectTransform>();
+            mFillAreaRect.anchorMin = Vector2.zero;
+            mFillAreaRect.anchorMax = Vector2.one;
+            mFillAreaRect.sizeDelta = Vector2.zero;
+
+            GameObject mFillGO = new GameObject("Fill");
+            mFillGO.transform.SetParent(mFillAreaGO.transform, false);
+            RectTransform mFillRect = mFillGO.AddComponent<RectTransform>();
+            mFillRect.anchorMin = Vector2.zero;
+            mFillRect.anchorMax = Vector2.one;
+            mFillRect.sizeDelta = Vector2.zero;
+            RoundedRectGraphic mFillG = mFillGO.AddComponent<RoundedRectGraphic>();
+            mFillG.IsCapsule = true;
+            mFillG.color = Gold;
+            mSlider.fillRect = mFillRect;
+
+            // Checkpoint Dots on Track
+            GameObject dot1GO = new GameObject("Dot1");
+            dot1GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform dot1Rect = dot1GO.AddComponent<RectTransform>();
+            dot1Rect.anchorMin = new Vector2(0.5f, 1f);
+            dot1Rect.anchorMax = new Vector2(0.5f, 1f);
+            dot1Rect.pivot = new Vector2(0.5f, 0.5f);
+            dot1Rect.anchoredPosition = new Vector2(0, -107);
+            dot1Rect.sizeDelta = new Vector2(26, 26);
+            Image dot1Img = dot1GO.AddComponent<Image>();
+            if (circleSprite != null) dot1Img.sprite = circleSprite;
+            dot1Img.color = new Color(0.2f, 0.25f, 0.2f);
+
+            GameObject dot2GO = new GameObject("Dot2");
+            dot2GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform dot2Rect = dot2GO.AddComponent<RectTransform>();
+            dot2Rect.anchorMin = new Vector2(1f, 1f);
+            dot2Rect.anchorMax = new Vector2(1f, 1f);
+            dot2Rect.pivot = new Vector2(1f, 0.5f);
+            dot2Rect.anchoredPosition = new Vector2(0, -107);
+            dot2Rect.sizeDelta = new Vector2(26, 26);
+            Image dot2Img = dot2GO.AddComponent<Image>();
+            if (circleSprite != null) dot2Img.sprite = circleSprite;
+            dot2Img.color = new Color(0.2f, 0.25f, 0.2f);
+
+            // Milestone labels under bar
+            GameObject lbl1GO = new GameObject("Label2Misiones");
+            lbl1GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform lbl1Rect = lbl1GO.AddComponent<RectTransform>();
+            lbl1Rect.anchorMin = new Vector2(0.5f, 1f);
+            lbl1Rect.anchorMax = new Vector2(0.5f, 1f);
+            lbl1Rect.pivot = new Vector2(0.5f, 1f);
+            lbl1Rect.anchoredPosition = new Vector2(0, -125);
+            lbl1Rect.sizeDelta = new Vector2(200, 24);
+            TextMeshProUGUI lbl1TMP = lbl1GO.AddComponent<TextMeshProUGUI>();
+            if (dmSansTMPFont != null) lbl1TMP.font = dmSansTMPFont;
+            lbl1TMP.text = "2 misiones";
+            lbl1TMP.fontSize = 20;
+            lbl1TMP.alignment = TextAlignmentOptions.Center;
+            lbl1TMP.color = TextDim;
+
+            GameObject lbl2GO = new GameObject("Label4Misiones");
+            lbl2GO.transform.SetParent(milestoneTrackGO.transform, false);
+            RectTransform lbl2Rect = lbl2GO.AddComponent<RectTransform>();
+            lbl2Rect.anchorMin = new Vector2(1f, 1f);
+            lbl2Rect.anchorMax = new Vector2(1f, 1f);
+            lbl2Rect.pivot = new Vector2(1f, 1f);
+            lbl2Rect.anchoredPosition = new Vector2(0, -125);
+            lbl2Rect.sizeDelta = new Vector2(200, 24);
+            TextMeshProUGUI lbl2TMP = lbl2GO.AddComponent<TextMeshProUGUI>();
+            if (dmSansTMPFont != null) lbl2TMP.font = dmSansTMPFont;
+            lbl2TMP.text = "4 misiones";
+            lbl2TMP.fontSize = 20;
+            lbl2TMP.alignment = TextAlignmentOptions.Right;
+            lbl2TMP.color = TextDim;
+
+            // Stats Row: Completed count (Left) + Reset Timer (Right)
+            GameObject statsRowGO = new GameObject("StatsRow");
+            statsRowGO.transform.SetParent(modalBoxGO.transform, false);
+            RectTransform statsRowRect = statsRowGO.AddComponent<RectTransform>();
+            statsRowRect.anchorMin = new Vector2(0.5f, 1f);
+            statsRowRect.anchorMax = new Vector2(0.5f, 1f);
+            statsRowRect.pivot = new Vector2(0.5f, 1f);
+            statsRowRect.anchoredPosition = new Vector2(0, -280);
+            statsRowRect.sizeDelta = new Vector2(860, 40);
+
+            GameObject compCountGO = new GameObject("CompletedCount");
+            compCountGO.transform.SetParent(statsRowGO.transform, false);
+            RectTransform compCountRect = compCountGO.AddComponent<RectTransform>();
+            compCountRect.anchorMin = new Vector2(0f, 0f);
+            compCountRect.anchorMax = new Vector2(0.45f, 1f);
+            compCountRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI compCountTMP = compCountGO.AddComponent<TextMeshProUGUI>();
+            if (dmSansTMPFont != null) compCountTMP.font = dmSansTMPFont;
+            compCountTMP.text = "Completadas: <color=white><b>0</b></color>";
+            compCountTMP.fontSize = 24;
+            compCountTMP.color = TextGray;
+            compCountTMP.alignment = TextAlignmentOptions.Left;
+
+            GameObject timerGO = new GameObject("ResetTimer");
+            timerGO.transform.SetParent(statsRowGO.transform, false);
+            RectTransform timerRect = timerGO.AddComponent<RectTransform>();
+            timerRect.anchorMin = new Vector2(0.45f, 0f);
+            timerRect.anchorMax = new Vector2(1f, 1f);
+            timerRect.sizeDelta = Vector2.zero;
+            TextMeshProUGUI timerTMP = timerGO.AddComponent<TextMeshProUGUI>();
+            if (dmSansTMPFont != null) timerTMP.font = dmSansTMPFont;
+            timerTMP.text = "Se reinicia en 05h 41min";
+            timerTMP.fontSize = 22;
+            timerTMP.color = TextGray;
+            timerTMP.alignment = TextAlignmentOptions.Right;
+
+            // Mission Cards Vertical Container
+            GameObject missionListGO = new GameObject("MissionsList");
+            missionListGO.transform.SetParent(modalBoxGO.transform, false);
+            RectTransform missionListRect = missionListGO.AddComponent<RectTransform>();
+            missionListRect.anchorMin = new Vector2(0.5f, 1f);
+            missionListRect.anchorMax = new Vector2(0.5f, 1f);
+            missionListRect.pivot = new Vector2(0.5f, 1f);
+            missionListRect.anchoredPosition = new Vector2(0, -335);
+            missionListRect.sizeDelta = new Vector2(860, 800);
+
+            VerticalLayoutGroup vlg = missionListGO.AddComponent<VerticalLayoutGroup>();
+            vlg.childAlignment = TextAnchor.UpperCenter;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = false;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+            vlg.spacing = 18f;
+
+            List<MissionRowView> rowViews = new List<MissionRowView>();
+            for (int i = 0; i < 4; i++)
+            {
+                GameObject rowGO = new GameObject($"MissionRow_{i}");
+                rowGO.transform.SetParent(missionListGO.transform, false);
+                RectTransform rowRect = rowGO.AddComponent<RectTransform>();
+                rowRect.sizeDelta = new Vector2(860, 165);
+
+                Image rowImg = rowGO.AddComponent<Image>();
+                if (missionCardSprite != null)
+                {
+                    rowImg.sprite = missionCardSprite;
+                    rowImg.type = Image.Type.Sliced;
+                }
+                else
+                {
+                    rowImg.color = new Color(1f, 1f, 1f, 0.05f);
+                }
+
+                // Row Title (Left)
+                GameObject rowTitleGO = new GameObject("MissionTitle");
+                rowTitleGO.transform.SetParent(rowGO.transform, false);
+                RectTransform rowTitleRect = rowTitleGO.AddComponent<RectTransform>();
+                rowTitleRect.anchorMin = new Vector2(0f, 1f);
+                rowTitleRect.anchorMax = new Vector2(0.75f, 1f);
+                rowTitleRect.pivot = new Vector2(0f, 1f);
+                rowTitleRect.anchoredPosition = new Vector2(28, -26);
+                rowTitleRect.sizeDelta = new Vector2(0, 36);
+                TextMeshProUGUI rowTitleTMP = rowTitleGO.AddComponent<TextMeshProUGUI>();
+                if (dmSansTMPFont != null) rowTitleTMP.font = dmSansTMPFont;
+                rowTitleTMP.fontSize = 26;
+                rowTitleTMP.color = TextWhite;
+
+                // Status / Count (Right)
+                GameObject rowStatusGO = new GameObject("StatusText");
+                rowStatusGO.transform.SetParent(rowGO.transform, false);
+                RectTransform rowStatusRect = rowStatusGO.AddComponent<RectTransform>();
+                rowStatusRect.anchorMin = new Vector2(0.75f, 1f);
+                rowStatusRect.anchorMax = new Vector2(1f, 1f);
+                rowStatusRect.pivot = new Vector2(1f, 1f);
+                rowStatusRect.anchoredPosition = new Vector2(-28, -26);
+                rowStatusRect.sizeDelta = new Vector2(0, 36);
+                TextMeshProUGUI rowStatusTMP = rowStatusGO.AddComponent<TextMeshProUGUI>();
+                if (dmSansTMPFont != null) rowStatusTMP.font = dmSansTMPFont;
+                rowStatusTMP.fontSize = 24;
+                rowStatusTMP.color = TextGray;
+                rowStatusTMP.alignment = TextAlignmentOptions.Right;
+
+                // Micro Progress Bar
+                GameObject rowBarGO = new GameObject("ProgressBar");
+                rowBarGO.transform.SetParent(rowGO.transform, false);
+                RectTransform rowBarRect = rowBarGO.AddComponent<RectTransform>();
+                rowBarRect.anchorMin = new Vector2(0f, 0f);
+                rowBarRect.anchorMax = new Vector2(1f, 0f);
+                rowBarRect.pivot = new Vector2(0.5f, 0f);
+                rowBarRect.anchoredPosition = new Vector2(0, 26);
+                rowBarRect.sizeDelta = new Vector2(-56, 10);
+
+                Slider rowSlider = rowBarGO.AddComponent<Slider>();
+                rowSlider.interactable = false;
+
+                GameObject rowBgGO = new GameObject("Background");
+                rowBgGO.transform.SetParent(rowBarGO.transform, false);
+                RectTransform rowBgRect = rowBgGO.AddComponent<RectTransform>();
+                rowBgRect.anchorMin = Vector2.zero;
+                rowBgRect.anchorMax = Vector2.one;
+                rowBgRect.sizeDelta = Vector2.zero;
+                RoundedRectGraphic rowBgG = rowBgGO.AddComponent<RoundedRectGraphic>();
+                rowBgG.IsCapsule = true;
+                rowBgG.color = new Color(1f, 1f, 1f, 0.10f);
+
+                GameObject rowFillAreaGO = new GameObject("Fill Area");
+                rowFillAreaGO.transform.SetParent(rowBarGO.transform, false);
+                RectTransform rowFillAreaRect = rowFillAreaGO.AddComponent<RectTransform>();
+                rowFillAreaRect.anchorMin = Vector2.zero;
+                rowFillAreaRect.anchorMax = Vector2.one;
+                rowFillAreaRect.sizeDelta = Vector2.zero;
+
+                GameObject rowFillGO = new GameObject("Fill");
+                rowFillGO.transform.SetParent(rowFillAreaGO.transform, false);
+                RectTransform rowFillRect = rowFillGO.AddComponent<RectTransform>();
+                rowFillRect.anchorMin = Vector2.zero;
+                rowFillRect.anchorMax = Vector2.one;
+                rowFillRect.sizeDelta = Vector2.zero;
+                RoundedRectGraphic rowFillG = rowFillGO.AddComponent<RoundedRectGraphic>();
+                rowFillG.IsCapsule = true;
+                rowFillG.color = Gold;
+                rowSlider.fillRect = rowFillRect;
+
+                MissionRowView rowView = rowGO.AddComponent<MissionRowView>();
+                SerializedObject rowSO = new SerializedObject(rowView);
+                rowSO.FindProperty("backgroundImage").objectReferenceValue = rowImg;
+                rowSO.FindProperty("titleText").objectReferenceValue = rowTitleTMP;
+                rowSO.FindProperty("progressStatusText").objectReferenceValue = rowStatusTMP;
+                rowSO.FindProperty("progressBar").objectReferenceValue = rowSlider;
+                rowSO.FindProperty("progressFillImage").objectReferenceValue = rowFillG;
+                rowSO.ApplyModifiedProperties();
+
+                rowViews.Add(rowView);
+            }
+
+            // Configure MissionsModalController Serialized Properties
+            SerializedObject modalSO = new SerializedObject(modalCtrl);
+            modalSO.FindProperty("modalRoot").objectReferenceValue = modalRootGO;
+            modalSO.FindProperty("modalCanvasGroup").objectReferenceValue = modalCG;
+            modalSO.FindProperty("modalBoxRect").objectReferenceValue = modalBoxRect;
+            modalSO.FindProperty("backdropCloseButton").objectReferenceValue = backdropBtn;
+            modalSO.FindProperty("closeButton").objectReferenceValue = closeBtn;
+            modalSO.FindProperty("blurBackdropImage").objectReferenceValue = blurImg;
+            modalSO.FindProperty("titleText").objectReferenceValue = modalTitleTMP;
+            modalSO.FindProperty("completedCountText").objectReferenceValue = compCountTMP;
+            modalSO.FindProperty("resetTimerText").objectReferenceValue = timerTMP;
+            modalSO.FindProperty("milestoneSlider").objectReferenceValue = mSlider;
+            modalSO.FindProperty("milestone1Dot").objectReferenceValue = dot1Img;
+            modalSO.FindProperty("milestone2Dot").objectReferenceValue = dot2Img;
+            modalSO.FindProperty("milestone1GiftBox").objectReferenceValue = gift1Img;
+            modalSO.FindProperty("milestone2GiftBox").objectReferenceValue = gift2Img;
+            modalSO.FindProperty("cardNormalSprite").objectReferenceValue = missionCardSprite;
+            modalSO.FindProperty("cardDoneSprite").objectReferenceValue = missionCardDoneSprite;
+
+            SerializedProperty rowsProp = modalSO.FindProperty("missionRows");
+            rowsProp.arraySize = rowViews.Count;
+            for (int i = 0; i < rowViews.Count; i++)
+            {
+                rowsProp.GetArrayElementAtIndex(i).objectReferenceValue = rowViews[i];
+            }
+            modalSO.ApplyModifiedProperties();
+
+            // Set initial state: Hidden by default
+            modalRootGO.SetActive(false);
+
             // Assign Serialized Properties on HomeScreenController
             SerializedObject so = new SerializedObject(controller);
             so.FindProperty("playerNameText").objectReferenceValue = nameTMP;
@@ -796,11 +1239,13 @@ namespace JuegoTCG.EditorTools
             so.FindProperty("specialEventButton").objectReferenceValue = eventBtn;
             so.FindProperty("shopButton").objectReferenceValue = shopBtn;
             so.FindProperty("missionsButton").objectReferenceValue = missionsBtn;
+            so.FindProperty("missionsModal").objectReferenceValue = modalCtrl;
 
             so.FindProperty("tabInicioButton").objectReferenceValue = tabBtns[0];
             so.FindProperty("tabCartasButton").objectReferenceValue = tabBtns[1];
-            so.FindProperty("tabComunidadButton").objectReferenceValue = tabBtns[2];
-            so.FindProperty("tabPerfilButton").objectReferenceValue = tabBtns[3];
+            so.FindProperty("tabTiendaButton").objectReferenceValue = tabBtns[2];
+            so.FindProperty("tabComunidadButton").objectReferenceValue = tabBtns[3];
+            so.FindProperty("tabPerfilButton").objectReferenceValue = tabBtns[4];
 
             // Save Prefab in Assets/_Project/Prefabs/UI/
             string prefabDir = "Assets/_Project/Prefabs/UI";

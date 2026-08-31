@@ -34,3 +34,7 @@ ExportedObj/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Agent brain and scratch directories
+brain/
+scratch/

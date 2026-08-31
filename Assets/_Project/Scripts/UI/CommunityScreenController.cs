@@ -19,6 +19,7 @@ namespace JuegoTCG.UI
         [Header("Bottom Tabs")]
         [SerializeField] private Button tabInicioButton;
         [SerializeField] private Button tabCartasButton;
+        [SerializeField] private Button tabTiendaButton;
         [SerializeField] private Button tabComunidadButton;
         [SerializeField] private Button tabPerfilButton;
 
@@ -53,6 +54,15 @@ namespace JuegoTCG.UI
                 });
             }
 
+            if (tabTiendaButton != null)
+            {
+                tabTiendaButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("<color=green>[CommunityScreen] Navegando a Tienda...</color>");
+                    SceneManager.LoadScene("StoreScene");
+                });
+            }
+
             if (tabPerfilButton != null)
             {
                 tabPerfilButton.onClick.AddListener(() =>
@@ -62,10 +72,39 @@ namespace JuegoTCG.UI
                 });
             }
 
-            if (showcasesButton != null) showcasesButton.onClick.AddListener(() => Debug.Log("<color=yellow>[Community] Vitrinas públicas clicked</color>"));
-            if (exchangeButton != null) exchangeButton.onClick.AddListener(() => Debug.Log("<color=yellow>[Community] Intercambio clicked</color>"));
-            if (sellButton != null) sellButton.onClick.AddListener(() => Debug.Log("<color=yellow>[Community] Vender duplicados clicked</color>"));
-            if (friendsButton != null) friendsButton.onClick.AddListener(() => Debug.Log("<color=yellow>[Community] Amigos clicked</color>"));
+            if (showcasesButton != null)
+            {
+                showcasesButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("<color=green>[Community] Navegando a Vitrinas Públicas...</color>");
+                    SceneManager.LoadScene("VitrinesScene");
+                });
+            }
+
+            if (exchangeButton != null)
+            {
+                exchangeButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("<color=green>[Community] Navegando a Intercambio...</color>");
+                    SceneManager.LoadScene("TradeScene");
+                });
+            }
+            if (sellButton != null)
+            {
+                sellButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("<color=green>[Community] Navegando a Mercado / Vender Duplicados...</color>");
+                    SceneManager.LoadScene("MarketScene");
+                });
+            }
+            if (friendsButton != null)
+            {
+                friendsButton.onClick.AddListener(() =>
+                {
+                    Debug.Log("<color=green>[Community] Navegando a Amigos...</color>");
+                    SceneManager.LoadScene("FriendsScene");
+                });
+            }
         }
     }
 }

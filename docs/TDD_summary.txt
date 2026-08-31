@@ -1,0 +1,454 @@
+﻿DOCUMENTO TECNICO (TDD)
+Juego de Coleccion de Cartas de Futbol
+Stack, arquitectura, estructura de proyecto y esquema de datos
+Version 0.1 - Companero tecnico del Game Design Document
+Cliente: Unity 6.3 LTS (Android) | Backend: Firebase | Equipo: 2 personas
+1. Stack Tecnologico
+Stack elegido priorizando velocidad de desarrollo para un equipo de 2 personas sin backend dedicado, aprovechando la sinergia con las herramientas de IA que ya planean usar (Gemini, Antigravity).
+Cliente: Unity 6.3 LTS (rama de soporte a largo plazo recomendada para proyectos nuevos en 2026), C#, proyecto 2D puro. Se descarto el enfoque 2.5D con objetos 3D reales (ver decision en seccion 2.1) a favor de un acabado mas simple e intencionalmente menos pulido.
+Pipeline de renderizado: URP (Universal Render Pipeline) con el 2D Renderer - permite usar Shader Graph sobre sprites 2D normales para el efecto holografico, sin necesidad de camaras 3D ni modelos con volumen real.
+Shader Graph: para el efecto holografico interactivo de las cartas (tilt + brillo que se mueve), aplicado unicamente a las rarezas Mitica y Full Art (ver GDD seccion 5.2), sobre un sprite 2D compuesto (marco + foto + texto) - el mismo concepto validado en el prototipo HTML.
+Backend: Firebase (Google Cloud) - Authentication, Cloud Firestore, Cloud Functions, Cloud Storage, Remote Config, Analytics, Crashlytics.
+App Check: verifica que cada llamada a Cloud Functions venga de una instancia genuina de la app (usando Play Integrity API en Android), no de un script o una app descompilada llamando directo a los endpoints. Ver seccion 2.7.
+Notificaciones push: Firebase Cloud Messaging (FCM), para la mecanica de retencion del GDD y para avisos de intercambio. Ver seccion 2.8.
+Autenticacion: Firebase Authentication con proveedor de Google/email; evaluar login anonimo para reducir friccion en el primer uso.
+Monetizacion: Google Play Billing (compras de moneda del juego) integrado via Cloud Functions para validacion de recibo server-side; SDK de anuncios recompensados (ej. AdMob) para los sobres gratis por anuncio.
+Control de versiones: Git + GitHub (repositorio privado), Git LFS habilitado para binarios de Unity (texturas, escenas, prefabs) para evitar que el repositorio se vuelva pesado e inmanejable.
+Gestion de proyecto: Tablero Kanban simple (Notion o Trello) dado el tamano del equipo; no se recomienda una herramienta compleja tipo Jira para 2 personas.
+Herramientas de IA de apoyo: Gemini para analisis multimodal de referencias (video/imagen), Antigravity como IDE agentico para generar codigo de cliente y de Cloud Functions, aprovechando su integracion nativa con Firebase.
+2. Arquitectura General
+El cliente Unity nunca ejecuta logica economica de forma autoritativa (abrir sobres, calcular rareza, sumar o restar moneda). Toda esa logica vive en Cloud Functions, que es la unica fuente de verdad y la unica capa con permiso de escritura sobre inventario y moneda en Firestore. Este es el mismo principio de seguridad que se identifico como riesgo en la seccion de Riesgos del GDD.
+Unity Client (Android): interfaz, animaciones, y llamadas a Cloud Functions via el SDK de Firebase. Solo lee datos de Firestore para mostrar informacion; no escribe directamente en colecciones de inventario o moneda.
+Authentication: gestiona la identidad del jugador y emite el token que autoriza cada llamada a Cloud Functions.
+Cloud Functions: contiene toda la logica de negocio: generar cartas al abrir un sobre (RNG del lado del servidor), validar y descontar moneda, procesar ventas de duplicados, validar recibos de compra, y moderar data packs comunitarios.
+Firestore + Cloud Storage: Firestore almacena datos estructurados (usuarios, cartas, colecciones, transacciones); Cloud Storage almacena archivos (arte de cartas, assets de los data packs subidos por la comunidad).
+2.1 Enfoque visual: 2D simple, no 2.5D
+Se evaluo un enfoque 2.5D (menus en 2D, sobres y cartas como objetos 3D reales con camaras separadas, similar a Pokemon TCG Pocket) pero se descarto a favor de un acabado 2D mas simple e intencionalmente menos pulido. La razon es estrategica, no solo tecnica: el juego se va a promocionar mostrando el proceso de desarrollo en redes sociales (TikTok), y un acabado demasiado perfecto se asocia hoy con contenido generado por IA sin supervision humana, lo cual genera rechazo en la audiencia gamer (ver contexto de la industria: encuestas de 2026 muestran que mas de la mitad de los profesionales del sector percibe la IA generativa como algo que dana la calidad y confianza en los juegos). Un acabado con algo mas de caracter 'indie' transmite mejor que el juego esta hecho por dos personas reales.
+Implicacion tecnica: no se necesitan modelos 3D, camaras separadas ni camera stacking. Todo vive en un Canvas 2D estandar de Unity.
+El efecto holografico se mantiene: se logra con un shader (Shader Graph) aplicado sobre el sprite 2D de la carta, reaccionando al arrastre del dedo o al giroscopio, igual que en el prototipo HTML - sin necesidad de geometria 3D.
+Imperfeccion intencional: pequenas variaciones aleatorias en el angulo del abanico de cartas y tipografia simple ayudan a reforzar la sensacion de trabajo genuino de desarrollo.
+2.2 Flujo de creacion de cartas (Canva a Unity)
+Para evitar disenar cientos de cartas completas a mano, se separa la plantilla (diseñada una sola vez por nivel de rareza) del contenido especifico de cada carta (nombre, foto, equipo), que Unity ensambla automaticamente a partir de los datos.
+1. Canva: se disena unicamente el marco/plantilla vacio de cada rareza (comun, especial, epica, legendaria, mitica, full art), exportado como PNG con fondo transparente en las zonas de foto y texto. Resolucion recomendada: 2x el tamano final en pantalla, para verse nitido en pantallas de alta densidad.
+2. Importar a Unity: cada PNG se importa como Sprite (Texture Type: Sprite 2D/UI), con compresion ASTC para Android.
+3. Prefab de Carta: combina en capas dentro de un Canvas: el marco (Canva) al fondo, la foto del jugador en medio, y el texto (nombre, equipo, posicion) generado por codigo a partir del ScriptableObject de CardData.
+4. Shader holografico: se aplica como material sobre el resultado ya ensamblado, no sobre cada capa por separado.
+Con este flujo, agregar una carta nueva al catalogo es agregar una fila de datos (nombre, equipo, posicion, rareza), no disenar una imagen nueva - la plantilla ya existente se reutiliza automaticamente.
+2.3 Fotos de jugadores en data packs de la comunidad
+Decision de arquitectura tomada tras revisar como funciona realmente World Soccer Champs: sus data packs con nombres reales NO incluyen fotos (solo texto + logos genericos), y los packs se alojan en Google Drive/Dropbox/OneDrive del propio usuario, nunca en el servidor del estudio - la app solo importa un link. Se adopta el mismo modelo para las fotos: el estudio nunca recibe, almacena ni procesa el archivo de imagen.
+Un pack cubre muchos jugadores, no uno solo: un data pack normalmente reskinea una liga o torneo completo (potencialmente cientos de jugadores), no un jugador aislado. Por eso un pack es UN documento en Firestore que contiene un mapa (playerOverrides) con una entrada por cada jugador que reemplaza, en vez de un documento por jugador - ver el esquema actualizado en la seccion 5.7.
+Lo que SI vive en nuestro Firestore: dentro del mapa playerOverrides de cada pack: el nombre real del jugador (texto) y el link externo a su foto. Esto es deliberadamente ligero de alojar y moderar, incluso con cientos de entradas.
+Lo que NUNCA vive en nuestra infraestructura: el archivo de imagen en si. Quien crea el pack sube cada foto a su propio Google Drive/Dropbox/OneDrive, genera un link de descarga directa, y lo asocia a cada jugador dentro del pack.
+Carga masiva, no fila por fila: crear un pack de 200+ jugadores uno por uno en el celular es inviable. La app debe permitir pegar una lista (tipo CSV: id de jugador, nombre, link de foto) de una sola vez, similar a como funciona el archivo de texto de World Soccer Champs, en vez de forzar un formulario individual por jugador.
+Validacion del link (no del archivo): una Cloud Function ligera valida cada link a medida que se agrega al pack: confirma que el dominio pertenece a una lista permitida de hosts de descarga directa (Drive, Dropbox, OneDrive), que la URL responde con un tipo de contenido de imagen, y que el peso no excede un limite razonable (ej. 5 MB) - todo esto sin descargar ni guardar una copia permanente del archivo en nuestro Cloud Storage.
+Revision periodica de salud de los links: a diferencia de un archivo propio, un link externo se puede romper con el tiempo sin que nadie edite el pack (el dueno borra el archivo, cambia de plan de Drive, etc.). Conviene una funcion programada (scheduled function) que revise periodicamente los links de los packs aprobados y marque los rotos, en vez de descubrirlo solo cuando un jugador intenta usarlos.
+Aviso de contenido de terceros: siguiendo el mismo lenguaje que usa Monkey I-Brow Studios (creador de World Soccer Champs), la app debe mostrar un aviso claro de que estas fotos son contenido de terceros no revisado por el estudio, y que se usan bajo el propio criterio del jugador - esto refuerza en el producto lo mismo que ya dicen los Terminos de Servicio (ver GDD seccion 6.2).
+Por que el nombre SI vive en nuestro Firestore y la foto no: el nombre real es informacion factual/descriptiva (nombre de un futbolista profesional publico), un riesgo de derechos de imagen mucho menor que una foto/rostro reconocible. Por eso no aplica el mismo tratamiento de alojamiento externo: el texto se guarda directo dentro de playerOverrides sin necesidad de un link a Drive/Dropbox. El titulo del pack en si sigue evitando nombres oficiales de liga/club (marca registrada, ver GDD 6.2), que es un riesgo distinto al del nombre de un jugador.
+Decision de estilo: se acepta el contraste entre la foto real y el marco ilustrado, sin aplicar un filtro de estilizacion automatico.
+2.4 Descarga y aplicacion de data packs (cliente)
+A diferencia del diseno anterior, aqui el cliente descarga la imagen directamente desde el link externo del usuario en tiempo real, no desde nuestro Cloud Storage.
+1. Listado: Unity consulta Firestore (coleccion dataPacks) filtrando por status == 'aprobado'; las reglas de seguridad (seccion 7) solo permiten lectura publica de packs en ese estado. Se muestra playerCount ('214 jugadores') para que el jugador sepa el alcance del pack antes de activarlo.
+2. Activar un pack es una sola lectura: al elegir un pack, Unity descarga el documento completo (incluyendo el mapa playerOverrides con todos sus jugadores) en una sola llamada a Firestore, no una por jugador.
+3. Descarga de fotos bajo demanda desde el link externo: las fotos individuales SI se siguen descargando una por una, y solo cuando hacen falta (ej. al mostrar esa carta especifica en Mis Cartas o en el 11 ideal), con un timeout corto y limite de tamano; si la respuesta no es una imagen valida o tarda demasiado, se descarta y se usa el arte generico para esa carta especifica, sin afectar al resto del pack.
+4. Cache local (solo en el dispositivo del jugador): tanto el mapa del pack como las fotos ya descargadas se guardan en Application.persistentDataPath del propio celular, nunca en nuestro servidor, para no tener que volver a pedirlas cada vez que se abre el juego.
+5. Aplicacion en tiempo real: al activar un data pack, el prefab de Carta busca el cardId correspondiente dentro de playerOverrides y reemplaza el sprite del slot de foto y el texto del nombre por los del pack, sin tocar el marco base.
+6. Respaldo si un link falla: si el link externo de un jugador especifico esta caido, fue borrado, o ya no es una imagen valida, el juego conserva el arte generico solo para esa carta puntual, sin que se rompa el resto del pack.
+2.5 Intercambio directo entre jugadores (anti-fraude)
+El intercambio 1 a 1 se adelanto al MVP (ver GDD seccion 7). El riesgo central de cualquier sistema de trading es el 'trade scam': que un jugador reciba las cartas del otro pero el intercambio se quede a medias, o que alguien ofrezca una carta que ya no tiene al momento de confirmar. La solucion NO es una serie de pasos coordinados desde el cliente, es una unica operacion atomica del lado del servidor.
+Nada se descuenta al proponer, solo al aceptar: cuando alguien propone un intercambio, sus cartas NO se bloquean ni se apartan - el jugador sigue pudiendo usarlas, venderlas o proponerlas en otro intercambio mientras la oferta esta pendiente. Esto evita que proponer intercambios sea una forma de 'congelar' cartas.
+La aceptacion es una transaccion atomica de Firestore: al aceptar, la Cloud Function vuelve a verificar en ESE momento (no cuando se propuso) que ambos jugadores todavia tienen las cartas y cantidades acordadas. Si alguna de las dos partes ya no cumple la condicion (por ejemplo, el proponente ya vendio la carta ofrecida), toda la operacion se cancela y NINGUNA carta se mueve - no puede pasar que se muevan las de un jugador sin que se muevan las del otro.
+Expiracion automatica: una oferta pendiente que nadie acepta caduca despues de un tiempo fijo (ej. 48 horas), para no acumular ofertas viejas invalidas indefinidamente.
+Limite anti-spam: un limite diario de ofertas de intercambio que un jugador puede proponer, similar al limite ya definido para venta de duplicados (GDD seccion 8.3), para evitar que alguien inunde a un amigo de ofertas.
+Fuera de alcance tecnico (es una decision de producto, no de seguridad): el sistema no evalua si un intercambio es 'justo' en valor de rareza; se deja a criterio de los jugadores, igual que un intercambio de cromos en la vida real.
+Riesgo conocido, aceptado por ahora: lavado de duplicados via cuentas alternas: el requisito de 'ser amigos' para intercambiar no evita que un jugador cree una segunda cuenta propia, se agregue a si mismo como amigo, y le transfiera duplicados por intercambio para venderlos ahi, saltandose el limite diario de venta de la cuenta original (GDD seccion 8.3). El limite diario de OFERTAS de intercambio no resuelve esto porque el limite es por cantidad de ofertas, no por cantidad de cartas movidas. Se documenta como riesgo conocido y aceptado para el MVP, no como algo resuelto - si se vuelve un problema real ya en produccion, la mitigacion mas directa es aplicar tambien un limite diario a la CANTIDAD de cartas movidas por intercambio, igual que ya existe para las ventas.
+2.6 Idempotencia en operaciones criticas (openPack, claimFreePack, purchaseCoins)
+Problema que resuelve: si la respuesta del servidor se pierde por una conexion inestable (comun en el mercado objetivo), el cliente no sabe si la operacion se completo o no. Un reintento automatico o un segundo toque del jugador puede terminar cobrando un sobre dos veces, aunque el jugador solo quiso abrir uno - el servidor no tiene forma de distinguir un reintento legitimo de una solicitud nueva, a menos que se lo digamos explicitamente.
+Mecanismo: idempotencyKey generada por el cliente: cada vez que el jugador inicia una accion (tocar 'abrir sobre', 'reclamar gratis', 'comprar moneda'), el cliente genera un identificador unico (UUID) para ESE intento especifico. Si la operacion se reintenta (por timeout o reintento automatico), el cliente reutiliza la MISMA clave - nunca genera una nueva para un reintento.
+Verificacion server-side antes de ejecutar: al recibir la solicitud, la Cloud Function primero revisa si esa idempotencyKey ya fue procesada (coleccion processedRequests, ver seccion 5.9). Si ya existe, devuelve el resultado guardado de la primera ejecucion sin repetir el cobro ni generar cartas nuevas. Si no existe, ejecuta la logica normal y registra la clave como procesada dentro de la MISMA transaccion atomica que descuenta el sobre/moneda - para que no pueda quedar a medias (cobrar sin registrar la clave, o registrar la clave sin cobrar).
+No aplica de la misma forma a acceptTrade(): esa funcion ya se protege sola revisando el campo status de la oferta (ver seccion 2.5); un segundo intento simplemente encuentra que ya no esta 'pendiente' y falla limpiamente, sin necesidad de una clave adicional.
+Limpieza periodica: una funcion programada elimina entradas de processedRequests con mas de 48 horas de antiguedad, tiempo mas que suficiente para cualquier reintento legitimo, para no acumular esta coleccion indefinidamente.
+2.7 Firebase App Check
+Problema que resuelve: todo el diseno de seguridad de este documento asume que las llamadas a Cloud Functions vienen del cliente Unity real. Sin App Check, alguien que descompile el APK puede encontrar los endpoints y llamarlos directamente (con Postman, un script, etc.), saltandose por completo la app y su logica de UI.
+Como funciona en Android: se integra con Play Integrity API - el dispositivo genera una prueba de que la app es una instalacion genuina y sin modificar, y esa prueba viaja junto con cada llamada a Cloud Functions.
+Donde se aplica: en TODAS las funciones que mueven moneda o cartas (openPack, listCardForSale, buyListedCard, purchaseCoins, proposeTrade, acceptTrade, etc.) - se configura como un chequeo obligatorio antes de ejecutar cualquier logica, rechazando la solicitud si no viene acompanada de un token de App Check valido.
+Cuando activarlo: conviene integrarlo desde la Fase 5 (junto con las primeras Cloud Functions de economia), no dejarlo para el final - anadirlo despues implica revisar cada funcion ya escrita.
+2.8 Notificaciones push (Firebase Cloud Messaging)
+Mecanica de retencion pedida en el GDD, y tambien el canal natural para avisar de una oferta de intercambio recibida (el icono de correo en la Pantalla de Inicio, ver documento de Wireframes).
+Registro del token: al iniciar sesion, el cliente solicita permiso de notificaciones, obtiene un token de FCM, y lo guarda en el campo fcmToken del documento del usuario (ver seccion 5.1).
+Casos de uso concretos para el MVP: sobres gratis listos para reclamar, oferta de intercambio recibida, evento especial por terminar pronto, album cerca de completarse.
+Quien dispara el envio: Cloud Functions ya existentes disparan la notificacion como parte de su logica - por ejemplo, proposeTrade() notifica a toUid al crear la oferta, y una funcion programada revisa diariamente los sobres gratis acumulados para notificar a quien los tenga disponibles.
+Respeto a la preferencia del jugador: el toggle de notificaciones en Ajustes (ver Wireframes, Pantalla 5) debe reflejarse en un campo del usuario que las Cloud Functions consulten antes de enviar cualquier notificacion, no solo controlar el permiso del sistema operativo.
+2.9 Catalogo de eventos de Analytics
+Tener Firebase Analytics en el stack sin decidir que eventos registrar no sirve de nada en la practica. Catalogo minimo para el MVP:
+pack_opened: parametros: packId, tipo de costo (gratis/anuncio/moneda).
+card_obtained: parametros: cardId, rareza - para poder analizar despues si la distribucion de rareza se siente bien en la practica.
+album_completed: parametros: albumId.
+trade_proposed / trade_accepted: para medir que tanto se usa el intercambio, el pilar social del juego.
+datapack_activated: parametros: packId - para saber que tan usados son los data packs de la comunidad.
+purchase_completed: parametros: producto, monto - el evento mas importante para medir monetizacion.
+ad_watched: para medir uso del sobre gratis por anuncio.
+mission_completed: parametros: id de la mision.
+2.10 Crashlytics
+Para un equipo de 2 personas sin QA dedicado, esta es la unica forma realista de enterarse de errores en produccion antes de que se acumulen resenas negativas.
+Integracion: SDK de Firebase Crashlytics en el cliente Unity, con reporte automatico de crashes activado desde el primer build de prueba, no solo antes de lanzamiento.
+Errores no fatales tambien importan: ademas de los crashes, registrar como 'non-fatal' los fallos controlados de operaciones criticas (ej. openPack() devuelve un error, un link de data pack falla la validacion) - esos errores no tumban la app pero indican problemas reales que conviene ver agregados.
+2.11 Mercado de cartas entre jugadores (anti-fraude)
+El mercado (ver GDD seccion 7.1) reemplaza a la venta de duplicados directamente al sistema: ahora un jugador publica una carta duplicada con un precio libre en moneda del juego, y cualquier otro jugador (no necesariamente amigo) puede comprarla. A diferencia de tradeOffers (seccion 2.5), aqui SI hace falta reservar la carta al publicarla, porque el vendedor podria de otra forma listar mas copias de las que realmente tiene o vender la misma copia dos veces si dos compradores intentan comprar casi al mismo tiempo.
+Reserva al publicar: listCardForSale() SI descuenta (aparta) la cantidad publicada de userCollection en el momento de crear el listado, a diferencia del intercambio directo - esa cantidad queda marcada como 'en venta' y no se puede usar en otro listado, intercambio ni venderse dos veces.
+Compra como transaccion atomica: buyListedCard() revalida en ese mismo instante que el listado sigue con status 'activo', descuenta la moneda del comprador, acredita el 100% al vendedor, mueve la carta a userCollection del comprador y marca el listado como 'vendido' - todo en una unica operacion. Si dos compradores intentan comprar el mismo listado casi simultaneamente, la transaccion atomica de Firestore garantiza que solo la primera tenga exito; la segunda falla limpiamente porque el listado ya no esta 'activo'.
+Cancelar o repreciar libremente: cancelListing() devuelve la carta reservada a userCollection del vendedor y marca el listado como 'cancelado'. updateListingPrice() solo cambia el precio de un listado propio que siga 'activo', sin tocar la carta reservada.
+Fuera de alcance tecnico (decision de producto, no de seguridad): no se implementa ninguna medida anti-farming adicional (ej. deteccion de auto-trading entre cuentas propias) en el MVP - ver GDD seccion 8.3.
+3. Estructura del Proyecto Unity
+Estructura de carpetas recomendada dentro de Assets/, pensada para que el trabajo de arte y de codigo no se pisen entre si en un equipo de 2 personas:
+Assets/
+  _Project/
+    Scripts/
+      Core/            (game managers, estados del juego)
+      UI/               (pantallas: album, perfil, apertura de sobres)
+      Cards/            (logica de carta, ensamblado y coleccion)
+      Packs/            (logica y animacion de apertura de sobres)
+      Networking/       (wrappers del SDK de Firebase)
+      Economy/          (llamadas a Cloud Functions de economia)
+      Social/           (amigos, comparacion de albumes, rankings)
+    Art/
+      CardFrames/       (plantillas por rareza exportadas de Canva)
+      PlayerPhotos/     (fotos/arte generico de jugadores)
+      UI/
+      Icons/
+    Prefabs/
+      UI/
+      Cards/            (prefab de Carta: marco + foto + texto)
+    Materials/
+    Shaders/            (Shader Graph: holografico, foil, brillo)
+    ScriptableObjects/  (definiciones de Carta, Album y Sobre como datos)
+    Scenes/
+    Audio/
+  Plugins/
+  StreamingAssets/
+Nota de diseno: las cartas, albumes y sobres deben definirse como ScriptableObjects (datos), no como codigo hardcodeado, siguiendo la recomendacion de arquitectura ya establecida en el GDD para soportar tanto el contenido generico base como los futuros data packs de la comunidad. El prefab de Carta es generico y recibe el marco, la foto y el texto como datos, sin necesidad de un prefab distinto por cada carta (ver flujo completo en la seccion 2.2).
+4. Estructura del Backend (Firebase Functions)
+functions/
+  src/
+    packs/
+      openPack.ts        (logica principal: valida, genera cartas, descuenta)
+      generateCards.ts    (RNG ponderado por rareza, del lado servidor)
+    economy/
+      sellDuplicateCard.ts  (REEMPLAZADO - ver marketListings.ts: listCardForSale, buyListedCard, cancelListing, updateListingPrice)
+      purchaseCoins.ts    (valida recibo de Google Play Billing)
+      claimFreePack.ts    (valida cooldown de tiempo)
+      watchAdReward.ts    (valida callback del SDK de anuncios)
+    social/
+      addFriend.ts
+      compareAlbums.ts
+    dataPacks/
+      uploadDataPack.ts
+      reportDataPack.ts   (moderacion, ver seccion 6 del GDD)
+    utils/
+      weightedRandom.ts   (funcion de rareza compartida)
+      validators.ts
+  index.ts
+firestore.rules             (reglas de seguridad, ver seccion 7)
+firestore.indexes.json
+package.json
+5. Esquema de Base de Datos (Firestore)
+Firestore es una base de datos de documentos (NoSQL), asi que el esquema se organiza en colecciones. A continuacion los campos principales de cada una.
+5.1 Coleccion: users
+Campo
+Tipo
+Descripcion
+uid
+string
+ID de Firebase Authentication, clave primaria
+displayName
+string
+Nombre visible del jugador
+friendCode
+string
+Codigo corto para agregar amigos
+softCurrency
+number
+Moneda del juego (solo Cloud Functions escribe aqui)
+packsAvailable
+number
+Sobres disponibles para abrir
+lastFreePackClaim
+timestamp
+Para validar el cooldown de sobres gratis
+fcmToken
+string
+Token de notificaciones push del dispositivo actual (ver 2.8)
+notificationsEnabled
+boolean
+Preferencia del jugador, revisada antes de enviar cualquier notificacion
+createdAt
+timestamp
+Fecha de registro
+5.2 Coleccion: cardsCatalog
+Catalogo maestro de cartas genericas (no cuanto tiene cada usuario, eso va en userCollection).
+Campo
+Tipo
+Descripcion
+cardId
+string
+ID unico de la carta
+name
+string
+Nombre generico del jugador
+team
+string
+Equipo de club generico (no aplica si la carta es de una seleccion nacional)
+nationality
+string
+Pais/seleccion generica del jugador (ej. 'Ecuador'), usado en los albumes de selecciones nacionales (GDD 5.3)
+position
+string
+Posicion (delantero, portero, etc.)
+rarity
+string
+comun / especial / epica / legendaria / mitica / full_art (mitica y full_art llevan efecto holografico)
+albumId
+string
+Album al que pertenece
+artAssetPath
+string
+Ruta del arte en Cloud Storage
+5.3 Coleccion: userCollection (subcoleccion de users)
+Campo
+Tipo
+Descripcion
+cardId
+string
+Referencia a cardsCatalog
+quantity
+number
+Cuantas copias tiene el jugador
+dateObtained
+timestamp
+Primera vez que se obtuvo
+5.4 Coleccion: albums
+Campo
+Tipo
+Descripcion
+albumId
+string
+ID unico del album
+name
+string
+Nombre del album
+type
+string
+liga / torneo / seleccion / evento
+cardIds
+array
+Lista de cartas que componen el album
+rewardOnComplete
+map
+Recompensa al completar (moneda, marco, etc.)
+active
+boolean
+Si esta disponible actualmente (para eventos rotativos)
+5.5 Coleccion: packs (catalogo de sobres)
+Campo
+Tipo
+Descripcion
+packId
+string
+ID unico del sobre
+name
+string
+Nombre del sobre
+albumId
+string
+De que album saca cartas
+rarityWeights
+map
+Probabilidad por rareza (ver GDD seccion 5.2)
+costType
+string
+gratis_tiempo / gratis_anuncio / moneda
+costAmount
+number
+Costo en moneda, si aplica
+5.6 Coleccion: transactions (log de auditoria)
+Registro inmutable de toda operacion economica, esencial para poder auditar fraude o resolver disputas de soporte.
+Campo
+Tipo
+Descripcion
+transactionId
+string
+ID unico
+userId
+string
+Jugador involucrado
+type
+string
+abrir_sobre / vender_carta / comprar_moneda / ver_anuncio
+details
+map
+Datos especificos de la operacion
+timestamp
+timestamp
+Momento exacto
+5.7 Coleccion: dataPacks (contenido de la comunidad)
+Un documento por pack, no por jugador. playerOverrides es un mapa con una entrada por cada jugador que el pack reemplaza (potencialmente cientos).
+Campo
+Tipo
+Descripcion
+packId
+string
+ID unico
+uploaderUid
+string
+Usuario que lo creo
+name
+string
+Nombre del pack (evitar nombres de liga/club oficiales, ver GDD 6.2)
+playerCount
+number
+Cantidad de jugadores incluidos, para mostrar en la biblioteca (ej. '214 jugadores')
+playerOverrides
+map
+cardId -> { realPlayerName, externalPhotoUrl }, uno por cada jugador reemplazado
+status
+string
+pendiente / aprobado / reportado / retirado
+reportCount
+number
+Cantidad de reportes recibidos
+5.8 Coleccion: tradeOffers (intercambio directo)
+Campo
+Tipo
+Descripcion
+tradeId
+string
+ID unico de la oferta
+fromUid
+string
+Quien propone el intercambio
+toUid
+string
+A quien se lo propone (debe ser amigo)
+offeredCardId / offeredQty
+string / number
+Que carta y cuantas ofrece fromUid
+requestedCardId / requestedQty
+string / number
+Que carta y cuantas pide a cambio
+status
+string
+pendiente / aceptado / rechazado / cancelado / expirado
+expiresAt
+timestamp
+Momento en que la oferta caduca sola si nadie responde
+5.8b Coleccion: marketListings (mercado entre jugadores)
+Un documento por carta puesta en venta (ver GDD seccion 7.1 y TDD seccion 2.11). Distinta de tradeOffers: aqui la cantidad publicada SI se reserva desde userCollection al crear el listado.
+Campo
+Tipo
+Descripcion
+listingId
+string
+ID unico del listado
+sellerUid
+string
+Quien publica la carta en venta
+cardId / quantity
+string / number
+Que carta y cuantas copias quedaron reservadas para este listado
+pricePerCard
+number
+Precio en moneda del juego, fijado libremente por el vendedor y editable mientras el listado siga activo
+status
+string
+activo / vendido / cancelado
+buyerUid
+string
+Quien la compro (solo si status = vendido)
+createdAt
+timestamp
+Fecha de publicacion, util para ordenar el listado por recientes
+5.9 Coleccion: processedRequests (idempotencia)
+Campo
+Tipo
+Descripcion
+idempotencyKey
+string (ID del doc)
+UUID generado por el cliente para ese intento especifico
+userId
+string
+Jugador que hizo la solicitud
+functionName
+string
+openPack / claimFreePack / purchaseCoins
+result
+map
+Resultado guardado de la primera ejecucion, para devolverlo igual en un reintento
+createdAt
+timestamp
+Usado por la limpieza periodica (48h)
+6. Cloud Functions Clave
+Principio rector: el cliente nunca calcula resultados economicos, solo los solicita. Cada funcion valida el estado actual en Firestore antes de aplicar cualquier cambio.
+openPack(userId, packId, idempotencyKey): verifica primero si idempotencyKey ya fue procesada (seccion 2.6); si no, verifica que el jugador tenga el sobre disponible, ejecuta el RNG ponderado por rareza en el servidor, escribe las cartas en userCollection, descuenta el sobre, registra la transaccion y la idempotencyKey en una sola operacion atomica, y devuelve el resultado al cliente para animar.
+sellDuplicateCard(userId, cardId, quantity): REEMPLAZADA por el mercado entre jugadores (GDD seccion 7.1, TDD seccion 2.11) - ya no vende directamente al sistema. Las funciones vigentes son las siguientes cuatro.
+listCardForSale(userId, cardId, quantity, pricePerCard, idempotencyKey): verifica que el jugador posea esa cantidad, la reserva descontandola de userCollection, y crea el documento en marketListings con status 'activo' (ver TDD 5.8b y 2.11).
+buyListedCard(listingId, buyerId, idempotencyKey): transaccion atomica que revalida que el listado siga 'activo', descuenta la moneda del comprador, acredita el 100% al vendedor (sin comision), mueve la carta a userCollection del comprador y marca el listado como 'vendido'.
+cancelListing(listingId, userId): solo el vendedor puede cancelar su propio listado 'activo'; devuelve la cantidad reservada a userCollection y marca el listado como 'cancelado'.
+updateListingPrice(listingId, userId, newPrice): solo el vendedor puede cambiar el precio de un listado propio que siga 'activo', sin tocar la carta reservada.
+claimFreePack(userId, idempotencyKey): verifica primero la idempotencyKey (seccion 2.6); luego compara la hora actual contra lastFreePackClaim en el servidor (nunca confia en el reloj del dispositivo del jugador).
+watchAdReward(userId, adCallbackToken): valida el callback del SDK de anuncios antes de otorgar sobres, para evitar que alguien falsifique la senal de anuncio visto.
+purchaseCoins(userId, purchaseReceipt, idempotencyKey): verifica primero la idempotencyKey (seccion 2.6); luego valida el recibo contra la API de Google Play Billing antes de acreditar moneda - nunca acredita solo porque el cliente dice que la compra fue exitosa.
+cleanupProcessedRequests() [funcion programada]: elimina entradas de processedRequests con mas de 48 horas de antiguedad (ver seccion 2.6).
+reportDataPack(packId, reporterId, reason): incrementa el contador de reportes y marca el pack para revision si supera un umbral, apoyando el proceso de moderacion definido en el GDD.
+validateDataPackLink(packId, playerEntries[]): funcion HTTPS que el cliente llama UNA SOLA VEZ por pack, enviando el lote completo de entradas (cardId + nombre + link) que el usuario pego de su lista/CSV - no una llamada por jugador. La funcion valida todas las entradas en paralelo del lado del servidor (dominio permitido, tipo de contenido de imagen, peso maximo) y devuelve un solo resultado con el detalle de que filas pasaron y cuales fallaron, para que el usuario pueda corregir solo esas antes de guardar el pack.
+checkDataPackLinksHealth() [funcion programada]: corre periodicamente (ej. semanal) sobre los packs con status 'aprobado', revisa que los links externos de playerOverrides sigan respondiendo, y marca o notifica los que ya no funcionan, para no depender de que un jugador lo descubra primero (ver seccion 2.3).
+proposeTrade(fromUid, toUid, offeredCardId, offeredQty, requestedCardId, requestedQty): crea el documento en tradeOffers con status 'pendiente'. NO descuenta ni bloquea ninguna carta todavia (ver seccion 2.5); solo valida que ambos usuarios sean amigos y que el limite diario de ofertas no se haya superado. Al crear la oferta, dispara una notificacion push a toUid via FCM (ver seccion 2.8), respetando su preferencia de notificationsEnabled.
+acceptTrade(tradeId): la unica funcion que realmente mueve cartas. Corre como una transaccion atomica de Firestore: revalida en ese momento que ambas partes aun tienen lo acordado, y si es asi, descuenta y acredita las cartas de ambos lados a la vez. Si algo ya no cuadra, cancela toda la operacion sin mover nada (ver seccion 2.5).
+cancelTrade(tradeId): solo quien propuso el intercambio puede cancelarlo, y solo mientras siga en estado 'pendiente'.
+7. Reglas de Seguridad (Firestore Rules)
+Las reglas de Firestore deben reforzar en la base de datos lo mismo que las Cloud Functions ya validan, como segunda capa de defensa:
+Los usuarios pueden leer su propio documento en users/, pero NO pueden escribir directamente en softCurrency ni packsAvailable (solo Cloud Functions, usando permisos de administrador, puede modificar esos campos).
+userCollection es de solo lectura para el propio usuario; toda escritura pasa por openPack, listCardForSale o buyListedCard.
+cardsCatalog, albums y packs son de solo lectura publica (catalogo compartido, nadie los edita desde el cliente).
+transactions es de solo lectura para el propio usuario (para mostrar su historial) y de solo escritura por Cloud Functions.
+dataPacks es de lectura publica UNICAMENTE cuando status == 'aprobado' (necesario para el flujo de descarga de la seccion 2.4); los estados 'pendiente', 'reportado' y 'retirado' solo los puede leer su propio uploaderUid, para que nadie mas vea contenido sin moderar.
+tradeOffers solo puede leerlo fromUid o toUid de esa oferta especifica; ninguna escritura directa del cliente esta permitida - toda escritura pasa por proposeTrade, acceptTrade o cancelTrade (ver seccion 2.5).
+processedRequests no tiene ninguna regla de lectura o escritura para el cliente (denegado por defecto); solo las Cloud Functions, con permisos de administrador, pueden leerla o escribirla (ver seccion 2.6).
+7.1 Indices compuestos de Firestore
+Consultas que filtran por mas de un campo (ej. dataPacks filtrando status == 'aprobado' y ordenando por fecha) necesitan un indice compuesto explicito, o la consulta falla en tiempo de ejecucion, no en tiempo de escritura del codigo.
+Indice minimo a crear desde la Fase 9: dataPacks por (status, createdAt) - necesario para listar packs aprobados ordenados por mas recientes.
+Truco practico para un equipo de 2 personas: Firebase no obliga a adivinar los indices de antemano - cuando una consulta compuesta corre sin el indice necesario durante las pruebas, el mensaje de error en la consola incluye un link que crea el indice exacto con un clic. Conviene simplemente probar todas las pantallas con filtros (Mis Cartas, biblioteca de data packs) durante la Fase 9 y crear los indices que la consola vaya pidiendo.
+7.2 Validacion de forma de los datos (Firestore Rules)
+Firestore no tiene esquema fijo (ver seccion 5): nada impide, por defecto, que un bug en una Cloud Function escriba un documento con un campo del tipo equivocado o un campo obligatorio faltante. Las Firestore Rules pueden usarse no solo para permisos (quien puede leer/escribir) sino tambien para validar la FORMA de los datos antes de aceptar cualquier escritura.
+Ejemplo concreto para la coleccion users - una funcion reutilizable que valida tipos y campos obligatorios, usada dentro de la regla de escritura:
+function isValidUser(data) {
+  return data.keys().hasAll(['uid', 'displayName', 'softCurrency',
+                              'packsAvailable', 'createdAt'])
+    && data.displayName is string
+    && data.softCurrency is number
+    && data.softCurrency >= 0
+    && data.packsAvailable is number
+    && data.packsAvailable >= 0;
+}
+
+match /users/{userId} {
+  allow create: if request.auth.uid == userId
+                && isValidUser(request.resource.data);
+  allow update: if request.auth.uid == userId
+                && isValidUser(request.resource.data)
+                // aun con forma valida, el cliente no puede
+                // tocar estos campos directamente (ver seccion 5.1)
+                && request.resource.data.softCurrency == resource.data.softCurrency
+                && request.resource.data.packsAvailable == resource.data.packsAvailable;
+}
+Patron a replicar: conviene escribir una funcion isValid...() similar para cada coleccion critica (cardsCatalog, albums, tradeOffers) a medida que se construyen en las fases correspondientes, no solo para users.
+Lo que esto NO reemplaza: la logica de negocio (cuanto cuesta un sobre, si el jugador tiene saldo suficiente) sigue viviendo en las Cloud Functions, no en las Rules. Esta validacion es una segunda capa de seguridad de forma, no el lugar para logica compleja.
+8. Flujo de Trabajo de Desarrollo
+Ramas: main (estable) + ramas de feature cortas por tarea; dado el tamano del equipo, no se recomienda un modelo de ramificacion complejo tipo Gitflow completo.
+Entornos: usar un proyecto de Firebase separado para desarrollo/pruebas y otro para produccion, para no arriesgar datos reales durante las pruebas.
+Assets pesados: Git LFS desde el primer commit; agregarlo despues de que el repositorio ya tiene binarios grandes es mucho mas dificil de limpiar.
+Uso de Antigravity: aprovechar su integracion con Firebase para generar el andamiaje inicial de las Cloud Functions listadas en la seccion 6, y luego revisar manualmente la logica de validacion economica antes de desplegar a produccion (nunca desplegar codigo de validacion de dinero sin revision humana).
+9. Proximos Pasos Tecnicos
+Crear el proyecto en Firebase (entorno de desarrollo) y habilitar Authentication, Firestore y Cloud Functions.
+Crear el proyecto en Unity 6.3 LTS con la estructura de carpetas de la seccion 3.
+Definir los ScriptableObjects de Carta, Album y Sobre antes de escribir la logica de apertura.
+Implementar openPack() como la primera Cloud Function, ya que es el corazon de la Fase 0 de validacion del GDD.
+Configurar Firestore Rules basicas desde el dia uno, no despues del lanzamiento.

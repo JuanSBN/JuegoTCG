@@ -58,3 +58,49 @@ body,
   background: rgba(155, 125, 42, 0.58);
   background-clip: padding-box;
 }
+
+/* ── Holographic card shader ─────────────────────────────────────────── */
+@keyframes holo-shimmer {
+  0%   { background-position: 0% 50%;   filter: hue-rotate(0deg) brightness(1.05); }
+  33%  { background-position: 100% 0%;  filter: hue-rotate(120deg) brightness(1.15); }
+  66%  { background-position: 0% 100%; filter: hue-rotate(240deg) brightness(1.10); }
+  100% { background-position: 0% 50%;   filter: hue-rotate(360deg) brightness(1.05); }
+}
+@keyframes holo-glare {
+  0%   { left: -70%; opacity: 0; }
+  12%  { opacity: 0.60; }
+  88%  { opacity: 0.60; }
+  100% { left: 160%;  opacity: 0; }
+}
+.holo-rainbow {
+  background: linear-gradient(
+    125deg,
+    rgba(255, 0, 120, 0.32) 0%,
+    rgba(255, 165, 0, 0.32) 18%,
+    rgba(255, 255, 0, 0.28) 34%,
+    rgba(0, 255, 140, 0.28) 50%,
+    rgba(0, 150, 255, 0.32) 66%,
+    rgba(160, 0, 255, 0.32) 82%,
+    rgba(255, 0, 120, 0.32) 100%
+  );
+  background-size: 300% 300%;
+  mix-blend-mode: color-dodge;
+  animation: holo-shimmer 4.5s linear infinite;
+}
+.holo-glare {
+  position: absolute;
+  top: -25%;
+  width: 42%;
+  height: 150%;
+  background: linear-gradient(
+    108deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.13) 42%,
+    rgba(255, 255, 255, 0.38) 50%,
+    rgba(255, 255, 255, 0.13) 58%,
+    transparent 100%
+  );
+  transform: skewX(-12deg);
+  pointer-events: none;
+  animation: holo-glare 4s ease-in-out infinite;
+}
