@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "714078508972",
+    "project_id": "juegotcg-dev",
+    "storage_bucket": "juegotcg-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714078508972:android:9508b92742d1a2ae54cc09",
+        "android_client_info": {
+          "package_name": "com.juansbn.juegotcg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTk82R_Pvyf4NWtzN2yVcxadCE4bOCefg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using JuegoTCG.Cards;
 using JuegoTCG.UI;
+using JuegoTCG.Networking;
 
 namespace JuegoTCG.Packs
 {
@@ -163,31 +164,71 @@ namespace JuegoTCG.Packs
                 }
             }
 
-            // Generate 5 Cards
+            // Generate 5 Cards from Cloud Function openPack (TDD 2.6 y 6)
             generatedCards.Clear();
             bool forceHolo = (forceHoloToggle != null && forceHoloToggle.isOn);
 
-            for (int i = 0; i < 5; i++)
+            if (FirebaseCloudFunctionsClient.Instance == null)
             {
-                bool isLastSlot = (i == 4);
-                CardData card = null;
+                GameObject fcGO = new GameObject("FirebaseCloudFunctionsClient");
+                fcGO.AddComponent<FirebaseCloudFunctionsClient>();
+            }
 
-                if (isLastSlot)
-                {
-                    // Climax slot: Guarantee Lamine Yamal card so the photo card can be tested
-                    card = cardCatalog.Find(c => c != null && (c.cardId == "card_10" || c.playerName.Contains("Lamine")));
-                }
+            var serverTask = FirebaseCloudFunctionsClient.Instance.CallOpenPackAsync("pack_oro");
+            while (!serverTask.IsCompleted)
+            {
+                yield return null;
+            }
 
-                if (card == null)
-                {
-                    Rarity rarity = (isLastSlot && forceHolo) ? Rarity.Mitica : WeightedRNG.GetRandomRarity();
-                    card = WeightedRNG.SelectRandomCardByRarity(rarity, cardCatalog);
-                }
+            var serverResponse = serverTask.Result;
 
-                if (card != null)
+            if (serverResponse != null && serverResponse.cards != null && serverResponse.cards.Count > 0)
+            {
+                for (int i = 0; i < serverResponse.cards.Count; i++)
                 {
-                    generatedCards.Add(card);
+                    var sCard = serverResponse.cards[i];
+                    CardData matchingCard = cardCatalog.Find(c => c != null && (c.cardId == sCard.cardId || c.playerName.Contains(sCard.name)));
+
+                    if (matchingCard == null)
+                    {
+                        Rarity mappedRarity = Rarity.Comun;
+                        if (sCard.rarity == "poco_comun" || sCard.rarity == "especial") mappedRarity = Rarity.Especial;
+                        else if (sCard.rarity == "rara" || sCard.rarity == "epica") mappedRarity = Rarity.Epica;
+                        else if (sCard.rarity == "legendaria") mappedRarity = Rarity.Legendaria;
+                        else if (sCard.rarity == "mitica") mappedRarity = Rarity.Mitica;
+                        else if (sCard.rarity == "full_art") mappedRarity = Rarity.FullArt;
+
+                        matchingCard = ScriptableObject.CreateInstance<CardData>();
+                        matchingCard.cardId = sCard.cardId;
+                        matchingCard.playerName = sCard.name;
+                        matchingCard.teamName = sCard.team;
+                        matchingCard.position = sCard.position;
+                        matchingCard.rarity = mappedRarity;
+                    }
+
+                    if (i == 4 && forceHolo)
+                    {
+                        matchingCard.rarity = Rarity.Mitica;
+                    }
+
+                    generatedCards.Add(matchingCard);
                 }
+            }
+            else
+            {
+                // Fallback de seguridad local
+                for (int i = 0; i < 5; i++)
+                {
+                    Rarity r = (i == 4 && forceHolo) ? Rarity.Mitica : WeightedRNG.GetRandomRarity();
+                    CardData c = WeightedRNG.SelectRandomCardByRarity(r, cardCatalog);
+                    if (c != null) generatedCards.Add(c);
+                }
+            }
+
+            // Guardar cartas en el inventario real del álbum (Fase 6 y 7)
+            if (PlayerCollectionManager.Instance != null)
+            {
+                PlayerCollectionManager.Instance.AddCards(generatedCards);
             }
 
             if (closedPackView != null) closedPackView.SetActive(false);

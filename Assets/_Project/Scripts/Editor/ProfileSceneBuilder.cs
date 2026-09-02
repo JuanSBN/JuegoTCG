@@ -95,6 +95,7 @@ namespace JuegoTCG.EditorTools
 
             Sprite iconHome = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_home.png");
             Sprite iconCards = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_cards.png");
+            Sprite iconShop = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_shop.png");
             Sprite iconUsers = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_users.png");
             Sprite iconUser = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_user.png");
 
@@ -636,15 +637,15 @@ namespace JuegoTCG.EditorTools
             Image glassImg = glassLineGO.AddComponent<Image>();
             glassImg.color = new Color(1f, 1f, 1f, 0.35f);
 
-            string[] tabLabels = { "Inicio", "Mis cartas", "Comunidad", "Perfil" };
-            Sprite[] tabIcons = { iconHome, iconCards, iconUsers, iconUser };
-            Button[] tabBtns = new Button[4];
-            float tabSpacing = 235f;
-            float startTabX = -tabSpacing * 1.5f;
+            string[] tabLabels = { "Inicio", "Mis cartas", "Tienda", "Comunidad", "Perfil" };
+            Sprite[] tabIcons = { iconHome, iconCards, iconShop, iconUsers, iconUser };
+            Button[] tabBtns = new Button[5];
+            float tabSpacing = 188f;
+            float startTabX = -tabSpacing * 2f;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
-                bool isTabActive = (i == 3); // "Perfil" is Active
+                bool isTabActive = (i == 4); // "Perfil" is Active
                 GameObject tabGO = new GameObject($"Tab_{tabLabels[i]}");
                 tabGO.transform.SetParent(bottomBarGO.transform, false);
                 RectTransform tabRect = tabGO.AddComponent<RectTransform>();
@@ -652,7 +653,7 @@ namespace JuegoTCG.EditorTools
                 tabRect.anchorMax = new Vector2(0.5f, 0.5f);
                 tabRect.pivot = new Vector2(0.5f, 0.5f);
                 tabRect.anchoredPosition = new Vector2(startTabX + i * tabSpacing, 0);
-                tabRect.sizeDelta = isTabActive ? new Vector2(185, 100) : new Vector2(155, 100);
+                tabRect.sizeDelta = isTabActive ? new Vector2(170, 96) : new Vector2(140, 96);
 
                 if (isTabActive)
                 {
@@ -701,8 +702,9 @@ namespace JuegoTCG.EditorTools
 
             so.FindProperty("tabInicioButton").objectReferenceValue = tabBtns[0];
             so.FindProperty("tabCartasButton").objectReferenceValue = tabBtns[1];
-            so.FindProperty("tabComunidadButton").objectReferenceValue = tabBtns[2];
-            so.FindProperty("tabPerfilButton").objectReferenceValue = tabBtns[3];
+            so.FindProperty("tabTiendaButton").objectReferenceValue = tabBtns[2];
+            so.FindProperty("tabComunidadButton").objectReferenceValue = tabBtns[3];
+            so.FindProperty("tabPerfilButton").objectReferenceValue = tabBtns[4];
 
             so.ApplyModifiedProperties();
 
@@ -721,25 +723,21 @@ namespace JuegoTCG.EditorTools
             // Register in Build Settings
             List<EditorBuildSettingsScene> buildScenes = new List<EditorBuildSettingsScene>();
             buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/HomeScreenScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/MyCardsScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MyCardsScene.unity", true));
-            }
-            if (File.Exists("Assets/_Project/Scenes/CommunityScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/CommunityScene.unity", true));
-            }
-            buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/ProfileScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/PackOpeningScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/PackOpeningScene.unity", true));
-            }
+            if (File.Exists("Assets/_Project/Scenes/MyCardsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MyCardsScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/StoreScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/StoreScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/CommunityScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/CommunityScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/VitrinesScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/VitrinesScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/TradeScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/TradeScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/MarketScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MarketScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/FriendsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/FriendsScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/ProfileScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/ProfileScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/PackOpeningScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/PackOpeningScene.unity", true));
             EditorBuildSettings.scenes = buildScenes.ToArray();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Perfil generada con éxito (ProfileScene & ProfileUI.prefab)!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Perfil generada con 5 Pestañas (ProfileScene & ProfileUI.prefab)!</color>");
         }
 
         private static void ConfigureFontImporters()

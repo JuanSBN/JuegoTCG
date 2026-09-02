@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using JuegoTCG.Networking;
 
 namespace JuegoTCG.UI
 {
@@ -73,6 +74,25 @@ namespace JuegoTCG.UI
                         {
                             b.gameObject.AddComponent<MissionsButtonTrigger>();
                         }
+
+                        // Formatear botón Misiones responsivo para evitar salto de línea
+                        RectTransform rt = b.GetComponent<RectTransform>();
+                        if (rt != null)
+                        {
+                            Vector2 sd = rt.sizeDelta;
+                            sd.x = Mathf.Max(sd.x, 240f);
+                            sd.y = Mathf.Max(sd.y, 68f);
+                            rt.sizeDelta = sd;
+                        }
+
+                        TMP_Text[] bTexts = b.GetComponentsInChildren<TMP_Text>(true);
+                        foreach (var bt in bTexts)
+                        {
+                            bt.enableWordWrapping = false;
+                            bt.overflowMode = TextOverflowModes.Overflow;
+                            bt.alignment = TextAlignmentOptions.Center;
+                            if (bt.text.Contains("MISIONE")) bt.text = "MISIONES";
+                        }
                     }
                     else if (specialEventButton == null && b.name.Contains("SpecialEvent")) specialEventButton = b;
                     else if (shopButton == null && b.name.Contains("ShopButton")) shopButton = b;
@@ -89,9 +109,34 @@ namespace JuegoTCG.UI
 
         private void InitializeUserData()
         {
-            if (playerNameText != null) playerNameText.text = "JUGADOR_01";
-            if (playerLevelText != null) playerLevelText.text = "Nivel 7";
-            if (coinsText != null) coinsText.text = "240";
+            if (FirebaseAuthManager.Instance != null)
+            {
+                if (playerNameText != null) playerNameText.text = FirebaseAuthManager.Instance.DisplayName;
+                if (playerLevelText != null) playerLevelText.text = $"Nivel {FirebaseAuthManager.Instance.PlayerLevel}";
+                if (coinsText != null) coinsText.text = FirebaseAuthManager.Instance.Coins.ToString("N0");
+
+                FirebaseAuthManager.Instance.OnCoinsChanged -= OnCoinsUpdated;
+                FirebaseAuthManager.Instance.OnCoinsChanged += OnCoinsUpdated;
+            }
+            else
+            {
+                if (playerNameText != null) playerNameText.text = "JUGADOR_01";
+                if (playerLevelText != null) playerLevelText.text = "Nivel 1";
+                if (coinsText != null) coinsText.text = "300";
+            }
+        }
+
+        private void OnCoinsUpdated(int newCoins)
+        {
+            if (coinsText != null) coinsText.text = newCoins.ToString("N0");
+        }
+
+        private void OnDestroy()
+        {
+            if (FirebaseAuthManager.Instance != null)
+            {
+                FirebaseAuthManager.Instance.OnCoinsChanged -= OnCoinsUpdated;
+            }
         }
 
         private void InitializeDailyStreak()

@@ -1,88 +1,136 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 7. Reglas de Seguridad de Firestore (TDD)
-    
-    // 7.2 Funciones de Validación de Forma de Datos
-    function isValidUserData(data) {
-      return data.keys().hasAll(['userId', 'username', 'softCurrency', 'createdAt'])
-        && data.userId is string
-        && data.username is string
-        && data.softCurrency is int
-        && data.softCurrency >= 0;
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
     }
 
-    function isValidCardData(data) {
-      return data.keys().hasAll(['cardId', 'name', 'team', 'position', 'rarity', 'albumId'])
-        && data.cardId is string
-        && data.name is string
-        && data.team is string
-        && data.position is string
-        && data.rarity in ['comun', 'especial', 'epica', 'legendaria', 'mitica', 'full_art'];
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
     }
 
-    function isValidAlbumData(data) {
-      return data.keys().hasAll(['albumId', 'name', 'type', 'cardIds', 'active'])
-        && data.albumId is string
-        && data.name is string
-        && data.cardIds is list
-        && data.active is bool;
-    }
-
-    function isValidPackData(data) {
-      return data.keys().hasAll(['packId', 'name', 'albumId', 'costType', 'costAmount', 'rarityWeights'])
-        && data.packId is string
-        && data.name is string
-        && data.costAmount is int
-        && data.rarityWeights is map;
-    }
-    
-    // Reglas de acceso por colección
-
-    // Los usuarios pueden leer su propio documento, no escribir directamente (bloqueado para Cloud Functions)
+    // =========================================================================
+    // 1. PERFILES DE USUARIO (/users/{userId})
+    // =========================================================================
     match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false;
+      // Cualquier usuario autenticado puede leer datos públicos (para listas de amigos, ranking y perfil)
+      allow read: if isAuthenticated();
+
+      // Creación inicial del perfil tras registrarse
+      allow create: if isOwner(userId)
+                    && request.resource.data.keys().hasAll(['uid', 'displayName', 'createdAt'])
+                    && request.resource.data.uid == userId;
+
+      // Actualización restringida: Solo el dueño puede editar cosméticos (nombre, avatar, 11 ideal, ajustes).
+      // BLOQUEO ESTRICTO: El cliente NO puede modificar saldo de monedas, sobres, gemas ni poder de colección.
+      allow update: if isOwner(userId)
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny([
+                        'coins', 
+                        'gems', 
+                        'availablePacks', 
+                        'collectionPower', 
+                        'packsOpenedTotal',
+                        'lastFreePackClaimAt',
+                        'adsWatchedTodayCount',
+                        'lastAdWatchedDate'
+                      ]));
+
+      allow delete: if false; // Prohibido borrar perfiles desde el cliente
+
+      // =========================================================================
+      // 2. INVENTARIO DE CARTAS (/users/{userId}/collection/{cardId})
+      // =========================================================================
+      match /collection/{cardId} {
+        // Solo el dueño puede leer su inventario completo
+        allow read: if isOwner(userId);
+        
+        // BLOQUEO TOTAL: Ningún cliente puede añadir o restar cartas directamente.
+        // Toda modificación pasa autoritativamente por Cloud Functions (openPack, mercado, trading).
+        allow write: if false;
+      }
     }
-    
-    // Catálogos públicos de solo lectura con validación de datos
+
+    // =========================================================================
+    // 3. CATÁLOGOS PÚBLICOS (Solo lectura)
+    // =========================================================================
     match /cardsCatalog/{cardId} {
-      allow read: if true;
+      allow read: if isAuthenticated();
       allow write: if false;
     }
-    
+
     match /albums/{albumId} {
-      allow read: if true;
+      allow read: if isAuthenticated();
       allow write: if false;
     }
-    
+
     match /packs/{packId} {
-      allow read: if true;
+      allow read: if isAuthenticated();
       allow write: if false;
     }
-    
-    // Historial de transacciones: solo lectura para el dueño
-    match /transactions/{transactionId} {
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+
+    // =========================================================================
+    // 4. HISTORIAL DE AUDITORÍA Y TRANSACCIONES (/transactions/{txId})
+    // =========================================================================
+    match /transactions/{txId} {
+      // El jugador solo puede consultar sus propias transacciones pasadas
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      // Inmutable: Solo Cloud Functions pueden escribir
       allow write: if false;
     }
-    
-    // Data Packs de la comunidad: lectura pública solo si están aprobados
-    match /dataPacks/{packId} {
-      allow read: if resource.data.status == 'aprobado' || (request.auth != null && resource.data.uploaderUid == request.auth.uid);
+
+    // =========================================================================
+    // 5. MERCADO DE CARTAS ENTRE JUGADORES (/marketListings/{listingId})
+    // =========================================================================
+    match /marketListings/{listingId} {
+      // Lectura pública para ver cartas en venta
+      allow read: if isAuthenticated();
+      // Escritura bloqueada: Las transacciones atómicas de compra/venta se ejecutan en Cloud Functions
       allow write: if false;
     }
-    
-    // Ofertas de intercambio: lectura solo para participantes
+
+    // =========================================================================
+    // 6. OFERTAS DE INTERCAMBIO (/tradeOffers/{tradeId})
+    // =========================================================================
     match /tradeOffers/{tradeId} {
-      allow read: if request.auth != null && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      // Solo el proponente (fromUid) o el receptor (toUid) pueden ver la oferta
+      allow read: if isAuthenticated() && (
+        resource.data.fromUid == request.auth.uid || 
+        resource.data.toUid == request.auth.uid
+      );
+      // Escritura bloqueada: Se procesa de forma atómica en Cloud Functions
       allow write: if false;
     }
-    
-    // Idempotencia: acceso denegado directo al cliente (solo accesible vía Admin SDK)
+
+    // =========================================================================
+    // 7. REGISTROS DE IDEMPOTENCIA (/processedRequests/{requestId})
+    // =========================================================================
     match /processedRequests/{requestId} {
-      allow read, write: if false;
+      // Privado exclusivo del servidor: Denegado por defecto a clientes
+      allow read: if false;
+      allow write: if false;
     }
+
+    // =========================================================================
+    // 8. DATA PACKS DE LA COMUNIDAD (/dataPacks/{packId})
+    // =========================================================================
+    match /dataPacks/{packId} {
+      // Solo se pueden leer si están 'aprobados', o si eres el creador del pack
+      allow read: if resource.data.status == 'aprobado' || (
+        isAuthenticated() && resource.data.uploaderUid == request.auth.uid
+      );
+      // Creación/Edición validada por Cloud Functions
+      allow write: if false;
+    }
+
+    // =========================================================================
+    // 9. MISIONES DE USUARIO (/userMissions/{userMissionId})
+    // =========================================================================
+    match /userMissions/{userMissionId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+
   }
 }

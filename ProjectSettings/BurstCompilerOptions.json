@@ -1,0 +1,5 @@
+{
+  "EnableBurstCompilation": false,
+  "EnableOptimisations": false,
+  "EnableSafetyChecks": false
+}

@@ -1,6 +1,9 @@
 {
   "projects": {
     "default": "juegotcg-dev",
-    "dev": "juegotcg-dev"
-  }
+    "dev": "juegotcg-dev",
+    "juegotcg-dev": "juegotcg-dev"
+  },
+  "targets": {},
+  "etags": {}
 }

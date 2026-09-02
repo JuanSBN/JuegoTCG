@@ -74,6 +74,7 @@ namespace JuegoTCG.EditorTools
             Sprite iconChevRight = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_chevron_right.png");
             Sprite iconHome = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_home.png");
             Sprite iconCards = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_cards.png");
+            Sprite iconShop = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_shop.png");
             Sprite iconUsers = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_users.png");
             Sprite iconUser = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_user.png");
 
@@ -94,8 +95,8 @@ namespace JuegoTCG.EditorTools
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920);
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.referenceResolution = new Vector2(1080, 2400);
+            scaler.matchWidthOrHeight = 0.0f;
             canvasGO.AddComponent<GraphicRaycaster>();
 
             // Event System
@@ -136,8 +137,8 @@ namespace JuegoTCG.EditorTools
             headerRect.anchorMin = new Vector2(0.5f, 1f);
             headerRect.anchorMax = new Vector2(0.5f, 1f);
             headerRect.pivot = new Vector2(0.5f, 1f);
-            headerRect.anchoredPosition = new Vector2(0, -45);
-            headerRect.sizeDelta = new Vector2(980, 235);
+            headerRect.anchoredPosition = new Vector2(0, -90); // Safe Area debajo de la barra de estado y cámara
+            headerRect.sizeDelta = new Vector2(980, 260);
 
             // Title "MIS CARTAS" (Barlow Condensed Bold)
             GameObject titleGO = new GameObject("Title");
@@ -147,11 +148,11 @@ namespace JuegoTCG.EditorTools
             titleRect.anchorMax = new Vector2(1f, 1f);
             titleRect.pivot = new Vector2(0f, 1f);
             titleRect.anchoredPosition = new Vector2(0, 0);
-            titleRect.sizeDelta = new Vector2(0, 48);
+            titleRect.sizeDelta = new Vector2(0, 52);
             TextMeshProUGUI titleTMP = titleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) titleTMP.font = barlowTMPFont;
             titleTMP.text = "MIS CARTAS";
-            titleTMP.fontSize = 38;
+            titleTMP.fontSize = 44;
             titleTMP.fontStyle = FontStyles.Bold;
             titleTMP.characterSpacing = 8f;
             titleTMP.color = TextWhite;
@@ -163,7 +164,7 @@ namespace JuegoTCG.EditorTools
             filterRowRect.anchorMin = new Vector2(0f, 1f);
             filterRowRect.anchorMax = new Vector2(1f, 1f);
             filterRowRect.pivot = new Vector2(0.5f, 1f);
-            filterRowRect.anchoredPosition = new Vector2(0, -62);
+            filterRowRect.anchoredPosition = new Vector2(0, -75);
             filterRowRect.sizeDelta = new Vector2(0, 56);
 
             // Left arrow (<)
@@ -268,14 +269,14 @@ namespace JuegoTCG.EditorTools
             }
 
             // Counter & Search Row
-            GameObject countSearchRowGO = new GameObject("CountSearchRow");
+            GameObject countSearchRowGO = new GameObject("CountAndSearchRow");
             countSearchRowGO.transform.SetParent(headerGO.transform, false);
-            RectTransform csRect = countSearchRowGO.AddComponent<RectTransform>();
-            csRect.anchorMin = new Vector2(0f, 1f);
-            csRect.anchorMax = new Vector2(1f, 1f);
-            csRect.pivot = new Vector2(0.5f, 1f);
-            csRect.anchoredPosition = new Vector2(0, -145);
-            csRect.sizeDelta = new Vector2(0, 48);
+            RectTransform countSearchRowRect = countSearchRowGO.AddComponent<RectTransform>();
+            countSearchRowRect.anchorMin = new Vector2(0f, 1f);
+            countSearchRowRect.anchorMax = new Vector2(1f, 1f);
+            countSearchRowRect.pivot = new Vector2(0.5f, 1f);
+            countSearchRowRect.anchoredPosition = new Vector2(0, -150);
+            countSearchRowRect.sizeDelta = new Vector2(0, 44);
 
             GameObject countGO = new GameObject("TotalCountText");
             countGO.transform.SetParent(countSearchRowGO.transform, false);
@@ -288,7 +289,7 @@ namespace JuegoTCG.EditorTools
             TextMeshProUGUI countTMP = countGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) countTMP.font = dmSansTMPFont;
             countTMP.text = "1232 cartas";
-            countTMP.fontSize = 22;
+            countTMP.fontSize = 26;
             countTMP.alignment = TextAlignmentOptions.Left;
             countTMP.color = TextGray;
 
@@ -299,11 +300,12 @@ namespace JuegoTCG.EditorTools
             sRect.anchorMax = new Vector2(1f, 0.5f);
             sRect.pivot = new Vector2(1f, 0.5f);
             sRect.anchoredPosition = new Vector2(0, 0);
-            sRect.sizeDelta = new Vector2(36, 36);
+            sRect.sizeDelta = new Vector2(40, 40);
             if (iconSearch != null)
             {
                 Image searchImg = searchBtnGO.AddComponent<Image>();
                 searchImg.sprite = iconSearch;
+                searchImg.preserveAspect = true;
                 searchImg.color = new Color(1f, 1f, 1f, 0.50f);
             }
             Button searchBtn = searchBtnGO.AddComponent<Button>();
@@ -317,8 +319,8 @@ namespace JuegoTCG.EditorTools
             gsRect.anchorMin = new Vector2(0.5f, 0f);
             gsRect.anchorMax = new Vector2(0.5f, 1f);
             gsRect.pivot = new Vector2(0.5f, 0.5f);
-            gsRect.offsetMin = new Vector2(-490, 160);
-            gsRect.offsetMax = new Vector2(490, -285);
+            gsRect.offsetMin = new Vector2(-490, 180);
+            gsRect.offsetMax = new Vector2(490, -360);
 
             ScrollRect cardScrollRect = gridScrollGO.AddComponent<ScrollRect>();
             cardScrollRect.horizontal = false;
@@ -478,13 +480,13 @@ namespace JuegoTCG.EditorTools
             Image glassImg = glassLineGO.AddComponent<Image>();
             glassImg.color = new Color(1f, 1f, 1f, 0.35f);
 
-            string[] tabLabels = { "Inicio", "Mis cartas", "Comunidad", "Perfil" };
-            Sprite[] tabIcons = { iconHome, iconCards, iconUsers, iconUser };
-            Button[] tabBtns = new Button[4];
-            float tabSpacing = 235f;
-            float startTabX = -tabSpacing * 1.5f;
+            string[] tabLabels = { "Inicio", "Mis cartas", "Tienda", "Comunidad", "Perfil" };
+            Sprite[] tabIcons = { iconHome, iconCards, iconShop, iconUsers, iconUser };
+            Button[] tabBtns = new Button[5];
+            float tabSpacing = 188f;
+            float startTabX = -tabSpacing * 2f;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 bool isTabActive = (i == 1); // "Mis cartas" is Active
                 GameObject tabGO = new GameObject($"Tab_{tabLabels[i]}");
@@ -494,7 +496,7 @@ namespace JuegoTCG.EditorTools
                 tabRect.anchorMax = new Vector2(0.5f, 0.5f);
                 tabRect.pivot = new Vector2(0.5f, 0.5f);
                 tabRect.anchoredPosition = new Vector2(startTabX + i * tabSpacing, 0);
-                tabRect.sizeDelta = isTabActive ? new Vector2(185, 100) : new Vector2(155, 100);
+                tabRect.sizeDelta = isTabActive ? new Vector2(170, 96) : new Vector2(140, 96);
 
                 if (isTabActive)
                 {
@@ -552,8 +554,9 @@ namespace JuegoTCG.EditorTools
 
             so.FindProperty("tabInicioButton").objectReferenceValue = tabBtns[0];
             so.FindProperty("tabCartasButton").objectReferenceValue = tabBtns[1];
-            so.FindProperty("tabComunidadButton").objectReferenceValue = tabBtns[2];
-            so.FindProperty("tabPerfilButton").objectReferenceValue = tabBtns[3];
+            so.FindProperty("tabTiendaButton").objectReferenceValue = tabBtns[2];
+            so.FindProperty("tabComunidadButton").objectReferenceValue = tabBtns[3];
+            so.FindProperty("tabPerfilButton").objectReferenceValue = tabBtns[4];
 
             so.ApplyModifiedProperties();
 
@@ -572,25 +575,21 @@ namespace JuegoTCG.EditorTools
             // Register in Build Settings
             List<EditorBuildSettingsScene> buildScenes = new List<EditorBuildSettingsScene>();
             buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/HomeScreenScene.unity", true));
-            buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MyCardsScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/CommunityScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/CommunityScene.unity", true));
-            }
-            if (File.Exists("Assets/_Project/Scenes/ProfileScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/ProfileScene.unity", true));
-            }
-            if (File.Exists("Assets/_Project/Scenes/PackOpeningScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/PackOpeningScene.unity", true));
-            }
+            if (File.Exists("Assets/_Project/Scenes/MyCardsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MyCardsScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/StoreScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/StoreScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/CommunityScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/CommunityScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/VitrinesScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/VitrinesScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/TradeScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/TradeScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/MarketScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MarketScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/FriendsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/FriendsScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/ProfileScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/ProfileScene.unity", true));
+            if (File.Exists("Assets/_Project/Scenes/PackOpeningScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/PackOpeningScene.unity", true));
             EditorBuildSettings.scenes = buildScenes.ToArray();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Mis Cartas calibrada con exactitud a Figma (MyCardsScene)!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Mis Cartas calibrada con 5 Pestañas (MyCardsScene)!</color>");
         }
 
         private static void ConfigureFontImporters()

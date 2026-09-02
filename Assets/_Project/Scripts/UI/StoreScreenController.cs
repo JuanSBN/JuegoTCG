@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using JuegoTCG.Networking;
 
 namespace JuegoTCG.UI
 {
@@ -122,7 +123,24 @@ namespace JuegoTCG.UI
 
         public void BuyCoins(int amount, string priceTag)
         {
-            currentCoins += amount;
+            // GDD 10.1 Momento 1: Invitar a vincular cuenta antes de la primera compra real con dinero
+            if (FirebaseAuthManager.Instance != null && !FirebaseAuthManager.Instance.IsLinked)
+            {
+                Debug.LogWarning("<color=yellow>[GDD 10.1 Momento 1] Cuenta no vinculada: Para proteger tu compra real (" + priceTag + "), es necesario vincular tu cuenta con Google o Email.</color>");
+                SceneManager.LoadScene("LoginScene");
+                return;
+            }
+
+            if (FirebaseAuthManager.Instance != null)
+            {
+                FirebaseAuthManager.Instance.AddCoins(amount);
+                currentCoins = FirebaseAuthManager.Instance.Coins;
+            }
+            else
+            {
+                currentCoins += amount;
+            }
+
             UpdateUI();
             Debug.Log($"<color=green>[Tienda] ¡Paquete de {amount} monedas comprado con éxito ({priceTag})! Nuevo saldo: {currentCoins}</color>");
         }

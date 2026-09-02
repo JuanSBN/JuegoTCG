@@ -38,3 +38,6 @@ Thumbs.db
 # Agent brain and scratch directories
 brain/
 scratch/
+.utmp/
+node_modules/
+functions/node_modules/
