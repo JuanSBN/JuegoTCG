@@ -97,12 +97,13 @@ namespace JuegoTCG.UI
             WireVitrineCard("Card_MiAmigo_01", "MIAMIGO_01", "MA", 45);
             WireVitrineCard("Card_ElChampion", "ELCHAMPION", "EC", 78);
 
-            // Bottom Navigation
-            root.Q<Button>("Nav_Inicio")?.RegisterCallback<ClickEvent>(e => SceneManager.LoadScene("HomeScreenScene"));
-            root.Q<Button>("Nav_Cartas")?.RegisterCallback<ClickEvent>(e => SceneManager.LoadScene("MyCardsScene"));
-            root.Q<Button>("Nav_Tienda")?.RegisterCallback<ClickEvent>(e => SceneManager.LoadScene("StoreScene"));
-            root.Q<Button>("Nav_Comunidad")?.RegisterCallback<ClickEvent>(e => SceneManager.LoadScene("CommunityScene"));
-            root.Q<Button>("Nav_Perfil")?.RegisterCallback<ClickEvent>(e => SceneManager.LoadScene("ProfileScene"));
+            // Bottom Navigation (Modular Liquid Glass)
+            var navBarController = gameObject.GetComponent<LiquidGlassNavBarController>();
+            if (navBarController == null)
+            {
+                navBarController = gameObject.AddComponent<LiquidGlassNavBarController>();
+            }
+            navBarController.Initialize(root, LiquidGlassNavBarController.TabType.Comunidad);
         }
 
         private void WireVitrineCard(string buttonName, string userName, string avatar, int likes)

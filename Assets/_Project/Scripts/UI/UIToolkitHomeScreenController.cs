@@ -116,16 +116,12 @@ namespace JuegoTCG.UI
 
         private void WireBottomNav(VisualElement root)
         {
-            Button navInicio = root.Q<Button>("Nav_Inicio");
-            Button navCartas = root.Q<Button>("Nav_Cartas");
-            Button navTienda = root.Q<Button>("Nav_Tienda");
-            Button navComunidad = root.Q<Button>("Nav_Comunidad");
-            Button navPerfil = root.Q<Button>("Nav_Perfil");
-
-            if (navCartas != null) navCartas.clicked += () => SceneManager.LoadScene("MyCardsScene");
-            if (navTienda != null) navTienda.clicked += () => SceneManager.LoadScene("StoreScene");
-            if (navComunidad != null) navComunidad.clicked += () => SceneManager.LoadScene("VitrinesSceneUIToolkit");
-            if (navPerfil != null) navPerfil.clicked += () => SceneManager.LoadScene("ProfileScene");
+            var navBarController = gameObject.GetComponent<LiquidGlassNavBarController>();
+            if (navBarController == null)
+            {
+                navBarController = gameObject.AddComponent<LiquidGlassNavBarController>();
+            }
+            navBarController.Initialize(root, LiquidGlassNavBarController.TabType.Inicio);
         }
 
         private void UpdatePlayerData()

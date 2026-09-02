@@ -1,0 +1,106 @@
+/* ==========================================================================
+   LIQUID GLASS BOTTOM NAVIGATION BAR - UI TOOLKIT COMPONENT
+   Inspirado en diseño Figma & estética iOS / VisionOS Liquid Glass
+   ========================================================================== */
+
+:root {
+    --nav-bg: rgba(12, 28, 18, 0.74);
+    --nav-border: rgba(255, 255, 255, 0.14);
+    --nav-highlight: rgba(255, 255, 255, 0.42);
+    --nav-gold: #E8A820;
+    --nav-gold-bg: rgba(232, 168, 32, 0.20);
+    --nav-gold-border: rgba(232, 168, 32, 0.70);
+    --nav-text-dim: rgba(255, 255, 255, 0.45);
+}
+
+/* Contenedor Flotante Tipo Isla Curva */
+.liquid-glass-nav-bar {
+    position: absolute;
+    bottom: 32px;
+    left: 32px;
+    right: 32px;
+    height: 140px;
+    background-color: var(--nav-bg);
+    border-radius: 46px;
+    border-width: 1.5px;
+    border-color: var(--nav-border);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    overflow: hidden;
+}
+
+/* Línea de Reflejo Especular Superior (Efecto Vidrio Líquido Refracción) */
+.nav-specular-highlight {
+    position: absolute;
+    top: 0;
+    left: 48px;
+    right: 48px;
+    height: 2px;
+    background-color: var(--nav-highlight);
+    border-radius: 2px;
+}
+
+/* Cápsula Deslizante Animada que Viaja Entre Pestañas */
+.nav-active-indicator {
+    position: absolute;
+    top: 14px;
+    bottom: 14px;
+    left: 0;
+    width: 180px;
+    background-color: var(--nav-gold-bg);
+    border-radius: 36px;
+    border-width: 1.5px;
+    border-color: var(--nav-gold-border);
+    transition: translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Pestañas Individuales */
+.nav-tab {
+    flex: 1;
+    height: 100%;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-tab:active {
+    scale: 0.94;
+}
+
+/* Contenido de la Pestaña */
+.nav-tab-content {
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-icon {
+    width: 44px;
+    height: 44px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--nav-text-dim);
+    margin-bottom: 6px;
+    transition: scale 0.2s ease-out, -unity-background-image-tint-color 0.2s ease-out;
+}
+
+.nav-label {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: var(--nav-text-dim);
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease-out;
+}
+
+/* Estados Activos */
+.nav-tab-active .nav-icon {
+    -unity-background-image-tint-color: var(--nav-gold);
+    scale: 1.12;
+}
+
+.nav-tab-active .nav-label {
+    color: var(--nav-gold);
+}

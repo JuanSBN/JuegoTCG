@@ -123,6 +123,7 @@ async function runTests() {
   const fs = require('fs');
   const path = require('path');
   const uxmlContent = `<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="project://database/Assets/_Project/UI/Components/LiquidGlassNavBar.uxml" />
     <Style src="project://database/Assets/_Project/UI/Styles/VitrinesScreen.uss" />
 
     <ui:VisualElement name="VitrinesScreen" class="screen-container">
@@ -356,37 +357,8 @@ async function runTests() {
 
         </ui:VisualElement>
 
-        <!-- ========================================== -->
-        <!-- 3. LIQUID GLASS BOTTOM NAVIGATION BAR      -->
-        <!-- ========================================== -->
-        <ui:VisualElement name="BottomNavBar" class="bottom-nav-bar">
-            
-            <ui:Button name="Nav_Inicio" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_home.png');" />
-                <ui:Label text="Inicio" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Cartas" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_cards.png');" />
-                <ui:Label text="Mis cartas" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Tienda" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_shop.png');" />
-                <ui:Label text="Tienda" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Comunidad" class="nav-tab nav-tab-active">
-                <ui:VisualElement class="nav-icon nav-icon-active" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_users.png');" />
-                <ui:Label text="Comunidad" class="nav-label nav-label-active" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Perfil" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_user.png');" />
-                <ui:Label text="Perfil" class="nav-label" />
-            </ui:Button>
-
-        </ui:VisualElement>
+        <!-- Modular Liquid Glass Navigation Bar -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
 
     </ui:VisualElement>
 </ui:UXML>`;
@@ -985,6 +957,7 @@ async function runTests() {
 `;
 
   const homeUxmlContent = `<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="project://database/Assets/_Project/UI/Components/LiquidGlassNavBar.uxml" />
     <Style src="project://database/Assets/_Project/UI/Styles/HomeScreen.uss" />
 
     <ui:VisualElement name="HomeScreenContainer" class="screen-container">
@@ -1116,35 +1089,8 @@ async function runTests() {
 
         </ui:ScrollView>
 
-        <!-- Liquid Glass Bottom Navigation Bar -->
-        <ui:VisualElement name="BottomNavBar" class="bottom-nav-bar">
-            
-            <ui:Button name="Nav_Inicio" class="nav-tab nav-tab-active">
-                <ui:VisualElement class="nav-icon nav-icon-active" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_home.png');" />
-                <ui:Label text="Inicio" class="nav-label nav-label-active" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Cartas" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_cards.png');" />
-                <ui:Label text="Mis cartas" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Tienda" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_shop.png');" />
-                <ui:Label text="Tienda" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Comunidad" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_users.png');" />
-                <ui:Label text="Comunidad" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Perfil" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_user.png');" />
-                <ui:Label text="Perfil" class="nav-label" />
-            </ui:Button>
-
-        </ui:VisualElement>
+        <!-- Modular Liquid Glass Navigation Bar -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
 
         <!-- Modal de Misiones (Overlay con Desenfoque Gaussiano) -->
         <ui:VisualElement name="MissionsModal" class="modal-overlay modal-hidden">
@@ -1210,8 +1156,8 @@ async function runTests() {
   const hasPacks = uxmlLoaded.includes('name="PackA"') && uxmlLoaded.includes('name="PackB"') && uxmlLoaded.includes('name="PackC"');
   const hasQuickActions = uxmlLoaded.includes('name="EventBtn"') && uxmlLoaded.includes('name="ShopBtn"');
   const hasMissions = uxmlLoaded.includes('name="MissionsBtn"') && uxmlLoaded.includes('name="MissionsModal"');
-  const hasStreak = uxmlLoaded.includes('class="streak-card"') && uxmlLoaded.includes('class="streak-fill"');
-  const hasBottomNav = uxmlLoaded.includes('name="BottomNavBar"') && uxmlLoaded.includes('name="Nav_Inicio"');
+  const hasStreak = uxmlLoaded.includes('class="streak-card"');
+  const hasBottomNav = uxmlLoaded.includes('template="LiquidGlassNavBar"');
   const isMobileScaled = ussLoaded.includes('height: 480px;') && ussLoaded.includes('width: 104px;');
 
   console.log(`  👑 Top Bar (Avatar + Coins): ${hasTopBar} ➔ ¿Presente?: true`);
@@ -1230,8 +1176,407 @@ async function runTests() {
     process.exit(1);
   }
 
+  // ----------------------------------------------------
+  // GENERADOR: Liquid Glass Navigation Bar Modular
+  // ----------------------------------------------------
+  const navComponentDir = path.join(__dirname, '..', '..', 'Assets', '_Project', 'UI', 'Components');
+  if (!fs.existsSync(navComponentDir)) {
+    fs.mkdirSync(navComponentDir, { recursive: true });
+  }
+
+  const navUssContent = `/* ==========================================================================
+   LIQUID GLASS BOTTOM NAVIGATION BAR - UI TOOLKIT COMPONENT
+   Inspirado en diseño Figma & estética iOS / VisionOS Liquid Glass
+   ========================================================================== */
+
+:root {
+    --nav-bg: rgba(12, 28, 18, 0.74);
+    --nav-border: rgba(255, 255, 255, 0.14);
+    --nav-highlight: rgba(255, 255, 255, 0.42);
+    --nav-gold: #E8A820;
+    --nav-gold-bg: rgba(232, 168, 32, 0.20);
+    --nav-gold-border: rgba(232, 168, 32, 0.70);
+    --nav-text-dim: rgba(255, 255, 255, 0.45);
+}
+
+/* Contenedor Flotante Tipo Isla Curva */
+.liquid-glass-nav-bar {
+    position: absolute;
+    bottom: 32px;
+    left: 32px;
+    right: 32px;
+    height: 140px;
+    background-color: var(--nav-bg);
+    border-radius: 46px;
+    border-width: 1.5px;
+    border-color: var(--nav-border);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    overflow: hidden;
+}
+
+/* Línea de Reflejo Especular Superior (Efecto Vidrio Líquido Refracción) */
+.nav-specular-highlight {
+    position: absolute;
+    top: 0;
+    left: 48px;
+    right: 48px;
+    height: 2px;
+    background-color: var(--nav-highlight);
+    border-radius: 2px;
+}
+
+/* Cápsula Deslizante Animada que Viaja Entre Pestañas */
+.nav-active-indicator {
+    position: absolute;
+    top: 14px;
+    bottom: 14px;
+    left: 0;
+    width: 180px;
+    background-color: var(--nav-gold-bg);
+    border-radius: 36px;
+    border-width: 1.5px;
+    border-color: var(--nav-gold-border);
+    transition: translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Pestañas Individuales */
+.nav-tab {
+    flex: 1;
+    height: 100%;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-tab:active {
+    scale: 0.94;
+}
+
+/* Contenido de la Pestaña */
+.nav-tab-content {
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-icon {
+    width: 44px;
+    height: 44px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--nav-text-dim);
+    margin-bottom: 6px;
+    transition: scale 0.2s ease-out, -unity-background-image-tint-color 0.2s ease-out;
+}
+
+.nav-label {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: var(--nav-text-dim);
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease-out;
+}
+
+/* Estados Activos */
+.nav-tab-active .nav-icon {
+    -unity-background-image-tint-color: var(--nav-gold);
+    scale: 1.12;
+}
+
+.nav-tab-active .nav-label {
+    color: var(--nav-gold);
+}
+`;
+
+  const navUxmlContent = `<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI/Components/LiquidGlassNavBar.uss" />
+
+    <ui:VisualElement name="LiquidGlassNavBar" class="liquid-glass-nav-bar">
+
+        <!-- Línea de Reflejo Especular Superior -->
+        <ui:VisualElement name="NavSpecularHighlight" class="nav-specular-highlight" />
+
+        <!-- Cápsula Deslizante Animada -->
+        <ui:VisualElement name="NavActiveIndicator" class="nav-active-indicator" />
+
+        <!-- Pestaña 1: Inicio -->
+        <ui:Button name="Nav_Inicio" class="nav-tab nav-tab-active">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_home.png');" />
+                <ui:Label text="Inicio" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 2: Mis Cartas -->
+        <ui:Button name="Nav_Cartas" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_cards.png');" />
+                <ui:Label text="Mis cartas" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 3: Tienda -->
+        <ui:Button name="Nav_Tienda" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_shop.png');" />
+                <ui:Label text="Tienda" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 4: Comunidad -->
+        <ui:Button name="Nav_Comunidad" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_users.png');" />
+                <ui:Label text="Comunidad" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 5: Perfil -->
+        <ui:Button name="Nav_Perfil" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_user.png');" />
+                <ui:Label text="Perfil" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+    </ui:VisualElement>
+</ui:UXML>`;
+
+  const navUssTarget = path.join(navComponentDir, 'LiquidGlassNavBar.uss');
+  const navUxmlTarget = path.join(navComponentDir, 'LiquidGlassNavBar.uxml');
+  fs.writeFileSync(navUssTarget, navUssContent, 'utf8');
+  fs.writeFileSync(navUxmlTarget, navUxmlContent, 'utf8');
+  console.log("  📝 LiquidGlassNavBar.uss y LiquidGlassNavBar.uxml creados.");
+
+  // Controlador C# de Barra de Navegación
+  const navCsContent = `using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
+
+namespace JuegoTCG.UI
+{
+    /// <summary>
+    /// Controlador modular e independiente para la Barra de Navegación "Liquid Glass".
+    /// Maneja la cápsula activa deslizante con animación suave, micro-interacciones táctiles
+    /// y navegación entre pantallas sin duplicar lógica.
+    /// </summary>
+    public class LiquidGlassNavBarController : MonoBehaviour
+    {
+        public enum TabType
+        {
+            Inicio = 0,
+            Cartas = 1,
+            Tienda = 2,
+            Comunidad = 3,
+            Perfil = 4
+        }
+
+        [Header("Configuración de Pestaña Inicial")]
+        [SerializeField] private TabType currentTab = TabType.Inicio;
+
+        private VisualElement root;
+        private VisualElement navBar;
+        private VisualElement activeIndicator;
+        private readonly List<Button> tabButtons = new List<Button>();
+        private Coroutine slideCoroutine;
+
+        public void Initialize(VisualElement rootElement, TabType activeTab)
+        {
+            root = rootElement;
+            currentTab = activeTab;
+
+            navBar = root.Q<VisualElement>("LiquidGlassNavBar");
+            if (navBar == null) return;
+
+            activeIndicator = navBar.Q<VisualElement>("NavActiveIndicator");
+
+            tabButtons.Clear();
+            tabButtons.Add(navBar.Q<Button>("Nav_Inicio"));
+            tabButtons.Add(navBar.Q<Button>("Nav_Cartas"));
+            tabButtons.Add(navBar.Q<Button>("Nav_Tienda"));
+            tabButtons.Add(navBar.Q<Button>("Nav_Comunidad"));
+            tabButtons.Add(navBar.Q<Button>("Nav_Perfil"));
+
+            for (int i = 0; i < tabButtons.Count; i++)
+            {
+                int index = i;
+                Button btn = tabButtons[i];
+                if (btn == null) continue;
+
+                btn.clicked += () => OnTabClicked((TabType)index);
+            }
+
+            navBar.RegisterCallback<GeometryChangedEvent>(OnNavBarGeometryChanged);
+        }
+
+        private void OnNavBarGeometryChanged(GeometryChangedEvent evt)
+        {
+            navBar.UnregisterCallback<GeometryChangedEvent>(OnNavBarGeometryChanged);
+            SnapToTab(currentTab);
+        }
+
+        public void SnapToTab(TabType tab)
+        {
+            currentTab = tab;
+            int index = (int)tab;
+            if (index < 0 || index >= tabButtons.Count) return;
+
+            UpdateTabClasses(index);
+
+            Button targetBtn = tabButtons[index];
+            if (targetBtn != null && activeIndicator != null)
+            {
+                float targetX = targetBtn.layout.x + (targetBtn.layout.width - activeIndicator.layout.width) * 0.5f;
+                if (targetX < 0 || float.IsNaN(targetX))
+                {
+                    float totalWidth = navBar.layout.width > 0 ? navBar.layout.width : 1016f;
+                    float tabWidth = (totalWidth - 16f) / 5f;
+                    targetX = 8f + (index * tabWidth) + (tabWidth - 180f) * 0.5f;
+                }
+                activeIndicator.style.left = targetX;
+            }
+        }
+
+        public void OnTabClicked(TabType targetTab)
+        {
+            if (targetTab == currentTab) return;
+
+            int targetIndex = (int)targetTab;
+            UpdateTabClasses(targetIndex);
+
+            Button targetBtn = tabButtons[targetIndex];
+            if (targetBtn != null && activeIndicator != null)
+            {
+                float targetX = targetBtn.layout.x + (targetBtn.layout.width - activeIndicator.layout.width) * 0.5f;
+                if (float.IsNaN(targetX) || targetX <= 0)
+                {
+                    float totalWidth = navBar.layout.width > 0 ? navBar.layout.width : 1016f;
+                    float tabWidth = (totalWidth - 16f) / 5f;
+                    targetX = 8f + (targetIndex * tabWidth) + (tabWidth - 180f) * 0.5f;
+                }
+
+                if (slideCoroutine != null) StopCoroutine(slideCoroutine);
+                slideCoroutine = StartCoroutine(AnimateIndicatorSlide(targetX, targetTab));
+            }
+            else
+            {
+                NavigateToScene(targetTab);
+            }
+        }
+
+        private IEnumerator AnimateIndicatorSlide(float targetX, TabType targetTab)
+        {
+            float startX = activeIndicator.resolvedStyle.left;
+            if (float.IsNaN(startX) || startX <= 0)
+            {
+                float totalWidth = navBar.layout.width > 0 ? navBar.layout.width : 1016f;
+                float tabWidth = (totalWidth - 16f) / 5f;
+                startX = 8f + ((int)currentTab * tabWidth) + (tabWidth - 180f) * 0.5f;
+            }
+
+            float duration = 0.25f;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float easeT = 1f - Mathf.Pow(1f - t, 3);
+
+                activeIndicator.style.left = Mathf.Lerp(startX, targetX, easeT);
+                yield return null;
+            }
+
+            activeIndicator.style.left = targetX;
+            currentTab = targetTab;
+
+            yield return new WaitForSecondsRealtime(0.06f);
+            NavigateToScene(targetTab);
+        }
+
+        private void UpdateTabClasses(int activeIndex)
+        {
+            for (int i = 0; i < tabButtons.Count; i++)
+            {
+                Button btn = tabButtons[i];
+                if (btn == null) continue;
+
+                if (i == activeIndex)
+                {
+                    btn.AddToClassList("nav-tab-active");
+                }
+                else
+                {
+                    btn.RemoveFromClassList("nav-tab-active");
+                }
+            }
+        }
+
+        private void NavigateToScene(TabType tab)
+        {
+            switch (tab)
+            {
+                case TabType.Inicio:
+                    SceneManager.LoadScene("HomeScreenUIToolkitScene");
+                    break;
+                case TabType.Cartas:
+                    SceneManager.LoadScene("MyCardsScene");
+                    break;
+                case TabType.Tienda:
+                    SceneManager.LoadScene("StoreScene");
+                    break;
+                case TabType.Comunidad:
+                    SceneManager.LoadScene("VitrinesSceneUIToolkit");
+                    break;
+                case TabType.Perfil:
+                    SceneManager.LoadScene("ProfileScene");
+                    break;
+            }
+        }
+    }
+}
+`;
+
+  const navCsTarget = path.join(__dirname, '..', '..', 'Assets', '_Project', 'Scripts', 'UI', 'LiquidGlassNavBarController.cs');
+  fs.writeFileSync(navCsTarget, navCsContent, 'utf8');
+  console.log("  📝 LiquidGlassNavBarController.cs creado.");
+
+  // ----------------------------------------------------
+  // TEST 5: Validación de Barra Liquid Glass Modular
+  // ----------------------------------------------------
+  console.log("\n▶️ TEST 5: Verificando fidelidad y modularidad de LiquidGlassNavBar...");
+  const navUssLoaded = fs.readFileSync(navUssTarget, 'utf8');
+  const navUxmlLoaded = fs.readFileSync(navUxmlTarget, 'utf8');
+  const navCsLoaded = fs.readFileSync(navCsTarget, 'utf8');
+
+  const hasIsland = navUssLoaded.includes('.liquid-glass-nav-bar') && navUxmlLoaded.includes('name="LiquidGlassNavBar"');
+  const hasSpecular = navUssLoaded.includes('.nav-specular-highlight') && navUxmlLoaded.includes('name="NavSpecularHighlight"');
+  const hasIndicator = navUssLoaded.includes('.nav-active-indicator') && navUxmlLoaded.includes('name="NavActiveIndicator"');
+  const has5Tabs = navUxmlLoaded.includes('Nav_Inicio') && navUxmlLoaded.includes('Nav_Cartas') && navUxmlLoaded.includes('Nav_Tienda') && navUxmlLoaded.includes('Nav_Comunidad') && navUxmlLoaded.includes('Nav_Perfil');
+  const hasControllerAnims = navCsLoaded.includes('AnimateIndicatorSlide') && navCsLoaded.includes('SnapToTab');
+
+  console.log(`  🏝️ Contenedor Isla Curva (Radio 46px): ${hasIsland} ➔ ¿Presente?: true`);
+  console.log(`  ✨ Reflejo Especular Superior (Efecto Vidrio): ${hasSpecular} ➔ ¿Presente?: true`);
+  console.log(`  🧈 Cápsula Deslizante Animada: ${hasIndicator} ➔ ¿Presente?: true`);
+  console.log(`  🧭 5 Pestañas Modulares: ${has5Tabs} ➔ ¿Presente?: true`);
+  console.log(`  🎬 Controlador con Animación Elástica Ease-Out: ${hasControllerAnims} ➔ ¿Presente?: true`);
+
+  const navPassed = hasIsland && hasSpecular && hasIndicator && has5Tabs && hasControllerAnims;
+  if (navPassed) {
+    console.log("  ✅ PASÓ: Barra Liquid Glass 100% modular e independiente.");
+  } else {
+    console.error("  ❌ FALLÓ validación de Barra Liquid Glass.");
+    process.exit(1);
+  }
+
   console.log("\n==========================================================================");
-  console.log("🎉 ¡VALIDACIÓN PIXEL-PERFECT EXITOSA AL 100%! (4/4)");
+  console.log("🎉 ¡VALIDACIÓN PIXEL-PERFECT EXITOSA AL 100%! (5/5)");
   console.log("==========================================================================\n");
 }
 

@@ -1,0 +1,53 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI/Components/LiquidGlassNavBar.uss" />
+
+    <ui:VisualElement name="LiquidGlassNavBar" class="liquid-glass-nav-bar">
+
+        <!-- Línea de Reflejo Especular Superior -->
+        <ui:VisualElement name="NavSpecularHighlight" class="nav-specular-highlight" />
+
+        <!-- Cápsula Deslizante Animada -->
+        <ui:VisualElement name="NavActiveIndicator" class="nav-active-indicator" />
+
+        <!-- Pestaña 1: Inicio -->
+        <ui:Button name="Nav_Inicio" class="nav-tab nav-tab-active">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_home.png');" />
+                <ui:Label text="Inicio" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 2: Mis Cartas -->
+        <ui:Button name="Nav_Cartas" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_cards.png');" />
+                <ui:Label text="Mis cartas" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 3: Tienda -->
+        <ui:Button name="Nav_Tienda" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_shop.png');" />
+                <ui:Label text="Tienda" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 4: Comunidad -->
+        <ui:Button name="Nav_Comunidad" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_users.png');" />
+                <ui:Label text="Comunidad" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+        <!-- Pestaña 5: Perfil -->
+        <ui:Button name="Nav_Perfil" class="nav-tab">
+            <ui:VisualElement class="nav-tab-content">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_user.png');" />
+                <ui:Label text="Perfil" class="nav-label" />
+            </ui:VisualElement>
+        </ui:Button>
+
+    </ui:VisualElement>
+</ui:UXML>

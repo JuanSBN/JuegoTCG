@@ -1,4 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="project://database/Assets/_Project/UI/Components/LiquidGlassNavBar.uxml" />
     <Style src="project://database/Assets/_Project/UI/Styles/VitrinesScreen.uss" />
 
     <ui:VisualElement name="VitrinesScreen" class="screen-container">
@@ -232,37 +233,8 @@
 
         </ui:VisualElement>
 
-        <!-- ========================================== -->
-        <!-- 3. LIQUID GLASS BOTTOM NAVIGATION BAR      -->
-        <!-- ========================================== -->
-        <ui:VisualElement name="BottomNavBar" class="bottom-nav-bar">
-            
-            <ui:Button name="Nav_Inicio" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_home.png');" />
-                <ui:Label text="Inicio" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Cartas" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_cards.png');" />
-                <ui:Label text="Mis cartas" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Tienda" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_shop.png');" />
-                <ui:Label text="Tienda" class="nav-label" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Comunidad" class="nav-tab nav-tab-active">
-                <ui:VisualElement class="nav-icon nav-icon-active" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_users.png');" />
-                <ui:Label text="Comunidad" class="nav-label nav-label-active" />
-            </ui:Button>
-
-            <ui:Button name="Nav_Perfil" class="nav-tab">
-                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_user.png');" />
-                <ui:Label text="Perfil" class="nav-label" />
-            </ui:Button>
-
-        </ui:VisualElement>
+        <!-- Modular Liquid Glass Navigation Bar -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
 
     </ui:VisualElement>
 </ui:UXML>
