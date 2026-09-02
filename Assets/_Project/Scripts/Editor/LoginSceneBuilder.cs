@@ -23,7 +23,6 @@ namespace JuegoTCG.EditorTools
         private static readonly Color TextDim = new Color(1f, 1f, 1f, 0.40f);
         private static readonly Color BorderSubtle = new Color(1f, 1f, 1f, 0.18f);
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Login (LoginScene)")]
         public static void BuildLoginScene()
         {
             ProceduralAssetGenerator.GenerateUISprites();

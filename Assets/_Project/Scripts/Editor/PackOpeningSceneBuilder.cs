@@ -17,7 +17,6 @@ namespace JuegoTCG.EditorTools
         private const string ScenePath = "Assets/_Project/Scenes/PackOpeningScene.unity";
         private const string UIPath = "Assets/_Project/Art/UI";
 
-        [MenuItem("JuegoTCG/Generar Escena de Apertura de Sobres")]
         public static void BuildPackOpeningScene()
         {
             if (EditorApplication.isPlaying)

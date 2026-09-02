@@ -68,7 +68,6 @@ namespace JuegoTCG.EditorTools
             }
         }
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Perfil")]
         public static void BuildProfileScene()
         {
             if (EditorApplication.isPlaying)

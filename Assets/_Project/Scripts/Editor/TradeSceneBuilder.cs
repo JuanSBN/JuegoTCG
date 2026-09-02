@@ -26,7 +26,6 @@ namespace JuegoTCG.EditorTools
         private static readonly Color BorderSubtle = new Color(1f, 1f, 1f, 0.13f);
         private static readonly Color NavBg = new Color(0.055f, 0.125f, 0.086f, 0.85f);
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Intercambio (Trade)")]
         public static void BuildTradeScene()
         {
             ProceduralAssetGenerator.GenerateUISprites();
@@ -254,7 +253,7 @@ namespace JuegoTCG.EditorTools
             tsTMP.fontSize = 24;
             tsTMP.fontStyle = FontStyles.Bold;
             tsTMP.characterSpacing = 3f;
-            tsTMP.enableWordWrapping = false;
+            tsTMP.textWrappingMode = TextWrappingModes.NoWrap;
             tsTMP.alignment = TextAlignmentOptions.Center;
             tsTMP.color = TextGray;
             tsTMP.raycastTarget = false;

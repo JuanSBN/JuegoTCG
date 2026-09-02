@@ -13,7 +13,6 @@ namespace JuegoTCG.EditorTools
         private const string PrefabPath = "Assets/_Project/Prefabs/Cards/CardPrefab.prefab";
         private const string ShaderPath = "Assets/_Project/Shaders/HolographicFoilShader.shadergraph";
 
-        [MenuItem("JuegoTCG/Configurar Material Holográfico")]
         public static void SetupHolographicMaterial()
         {
             if (!Directory.Exists(MaterialsFolder))

@@ -1,0 +1,571 @@
+/* ==========================================================================
+   DESIGN TOKENS & FIGMA FIDELITY VARIABLES
+   ========================================================================== */
+:root {
+    --gold: rgb(232, 168, 32);
+    --gold-border: rgb(212, 150, 14);
+    --card-bg: rgb(13, 26, 19);
+    --dark-bg: rgb(9, 19, 13);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+    --text-white: rgb(255, 255, 255);
+    --text-gray: rgba(255, 255, 255, 0.60);
+    --text-dim: rgba(255, 255, 255, 0.38);
+
+    /* Rarity Tokens */
+    --rarity-mythic: rgb(232, 168, 32);
+    --rarity-rare: rgb(173, 94, 240);
+    --rarity-uncommon: rgb(180, 200, 195);
+    --rarity-common: rgb(39, 201, 106);
+}
+
+/* ==========================================================================
+   SCREEN CONTAINER (1080x2400 Responsive Flexbox)
+   ========================================================================== */
+.screen-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--dark-bg);
+    background-image: url(project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png);
+    -unity-background-scale-mode: scale-and-crop;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ==========================================================================
+   CATALOG VIEW (IMAGEN 2 DE FIGMA)
+   ========================================================================== */
+.catalog-view {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding-top: 80px;
+    padding-left: 36px;
+    padding-right: 36px;
+    padding-bottom: 220px;
+}
+
+/* Header */
+.catalog-header {
+    flex-direction: row;
+    align-items: center;
+    height: 70px;
+    margin-bottom: 24px;
+}
+
+.back-btn {
+    width: 56px;
+    height: 56px;
+    background-color: transparent;
+    border-width: 0;
+    color: var(--text-white);
+    font-size: 36px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    padding: 0;
+    margin-right: 16px;
+}
+
+.catalog-title {
+    font-size: 42px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    letter-spacing: 4px;
+}
+
+/* Search Bar (Figma Integrated Design) */
+.search-container {
+    flex-direction: row;
+    align-items: center;
+    height: 84px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 42px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding-left: 28px;
+    padding-right: 28px;
+    margin-bottom: 36px;
+    transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.search-container:focus-within {
+    border-color: var(--gold);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.search-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_search.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--text-gray);
+    margin-right: 16px;
+}
+
+.search-input {
+    flex-grow: 1;
+    background-color: transparent;
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* Quita el fondo blanco por defecto del componente nativo de Unity */
+.search-input > .unity-text-field__input,
+.search-input > .unity-base-text-field__input,
+.search-input TextInput {
+    background-color: transparent;
+    border-width: 0;
+    border-color: transparent;
+    border-radius: 0;
+    color: var(--text-white);
+    font-size: 26px;
+    padding: 0;
+    margin: 0;
+    -unity-text-align: middle-left;
+    cursor: text;
+    selection-color: rgba(232, 168, 32, 0.35);
+}
+
+/* Color sutil e integrado para el texto de marcador (placeholder) */
+.search-input .unity-base-text-field__placeholder,
+.search-input .unity-text-field__placeholder {
+    color: var(--text-dim);
+    font-size: 26px;
+    -unity-text-align: middle-left;
+}
+
+/* Scroll Area */
+.catalog-scroll {
+    flex-grow: 1;
+}
+
+.section-label {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    letter-spacing: 8px;
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+/* Vitrine Cards Grid (2x2) */
+.vitrines-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+/* Individual Vitrine Card in Catalog */
+.vitrine-card {
+    width: 48%;
+    height: 250px;
+    background-color: var(--card-bg);
+    border-radius: 24px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding: 20px 22px;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    transition: scale 0.15s ease-out;
+}
+
+.vitrine-card:active {
+    scale: 0.97;
+    border-color: var(--gold);
+}
+
+.vitrine-card-top {
+    flex-direction: row;
+    align-items: center;
+}
+
+.card-avatar-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+}
+
+.card-avatar-text {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+}
+
+.card-username {
+    font-size: 26px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+}
+
+/* Mini Cards Row Preview */
+.mini-cards-row {
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+}
+
+.mini-card-preview {
+    width: 50px;
+    height: 72px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    border-width: 1.5px;
+}
+
+.mini-card-mythic {
+    border-color: var(--rarity-mythic);
+}
+
+.mini-card-rare {
+    border-color: var(--rarity-rare);
+}
+
+.mini-card-uncommon {
+    border-color: var(--rarity-uncommon);
+}
+
+.mini-card-common {
+    border-color: var(--rarity-common);
+}
+
+/* Card Bottom Likes */
+.vitrine-card-bottom {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.catalog-like-icon {
+    width: 24px;
+    height: 24px;
+    background-image: url(project://database/Assets/_Project/Art/UI/ui_icon_like.png);
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--text-gray);
+    margin-right: 8px;
+}
+
+.catalog-like-text {
+    font-size: 22px;
+    color: var(--text-gray);
+}
+
+/* ==========================================================================
+   DETAIL OVERLAY VIEW (IMAGEN 1 DE FIGMA)
+   ========================================================================== */
+.detail-view {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: var(--dark-bg);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: scale-and-crop;
+    padding-top: 80px;
+    padding-left: 36px;
+    padding-right: 36px;
+    padding-bottom: 0px;
+}
+
+.detail-view-hidden {
+    display: none;
+}
+
+/* Detail Header */
+.detail-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 110px;
+    margin-bottom: 24px;
+}
+
+.detail-profile-info {
+    flex-direction: row;
+    align-items: center;
+}
+
+.detail-avatar-circle {
+    width: 88px;
+    height: 88px;
+    border-radius: 44px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1.5px;
+    border-color: rgba(255, 255, 255, 0.25);
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.detail-avatar-text {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+}
+
+.detail-username {
+    font-size: 44px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+}
+
+.detail-card-count {
+    font-size: 24px;
+    color: var(--text-dim);
+}
+
+.detail-close-btn {
+    width: 64px;
+    height: 64px;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.detail-close-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url(project://database/Assets/_Project/Art/UI/ui_icon_close.png);
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.70);
+}
+
+/* Detail Scroll View */
+.detail-scroll {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+/* Detail 6-Cards Grid */
+.detail-cards-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 26px;
+    padding-bottom: 340px;
+}
+
+.showcase-card {
+    width: 48%;
+    height: 580px;
+    background-color: var(--card-bg);
+    border-radius: 24px;
+    border-width: 2px;
+    padding: 24px;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.showcase-card-star {
+    position: absolute;
+    right: 22px;
+    top: 22px;
+    width: 28px;
+    height: 28px;
+    background-image: url(project://database/Assets/_Project/Art/UI/ui_star.png);
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--gold);
+}
+
+.showcase-initials {
+    font-size: 96px;
+    -unity-font-style: bold;
+    color: rgba(255, 255, 255, 0.22);
+    -unity-text-align: middle-center;
+    margin-bottom: 12px;
+}
+
+.showcase-rarity {
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 5px;
+    -unity-text-align: middle-center;
+    margin-bottom: 8px;
+}
+
+.showcase-name {
+    font-size: 30px;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+}
+
+/* Floating Like Pill */
+.floating-like-pill {
+    position: absolute;
+    right: 46px;
+    bottom: 215px;
+    height: 78px;
+    border-radius: 39px;
+    background-color: rgba(9, 19, 13, 0.94);
+    border-width: 2px;
+    border-color: var(--gold);
+    flex-direction: row;
+    align-items: center;
+    padding-left: 28px;
+    padding-right: 28px;
+    gap: 12px;
+    transition: scale 0.1s ease-out;
+}
+
+.floating-like-pill:active {
+    scale: 0.94;
+}
+
+.floating-like-icon {
+    width: 34px;
+    height: 34px;
+    background-image: url(project://database/Assets/_Project/Art/UI/ui_icon_like.png);
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--gold);
+}
+
+.floating-like-text {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: var(--gold);
+}
+
+/* ==========================================================================
+   INTEGRATED MOBILE SCROLLBAR (Figma Sleek Style)
+   ========================================================================== */
+.detail-scroll .unity-scroller--vertical,
+.catalog-scroll .unity-scroller--vertical,
+.unity-scroller--vertical {
+    width: 6px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    position: absolute;
+    right: 4px;
+    top: 10px;
+    bottom: 220px;
+}
+
+/* Ocultar las flechas cuadradas de escritorio (#unity-low-button, #unity-high-button) */
+.unity-scroller__low-button,
+.unity-scroller__high-button,
+.detail-scroll #unity-low-button,
+.detail-scroll #unity-high-button,
+.catalog-scroll #unity-low-button,
+.catalog-scroll #unity-high-button {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+/* Slider contenedor */
+.detail-scroll .unity-slider,
+.catalog-scroll .unity-slider {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    width: 6px;
+}
+
+/* Pista translúcida sutil */
+.detail-scroll #unity-tracker,
+.catalog-scroll #unity-tracker,
+.unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    margin: 0;
+}
+
+/* Cápsula dorada deslizante estilizada */
+.detail-scroll #unity-dragger,
+.catalog-scroll #unity-dragger,
+.unity-base-slider__dragger {
+    background-color: var(--gold);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    min-height: 100px;
+    margin: 0;
+    opacity: 0.75;
+    transition: opacity 0.15s ease-out;
+}
+
+.detail-scroll #unity-dragger:hover,
+.detail-scroll #unity-dragger:active {
+    background-color: #ffd257;
+    opacity: 1;
+}
+
+/* ==========================================================================
+   BOTTOM NAVIGATION BAR (LIQUID GLASS)
+   ========================================================================== */
+.bottom-nav-bar {
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    bottom: 48px;
+    height: 140px;
+    border-radius: 70px;
+    background-color: rgba(14, 32, 22, 0.88);
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.nav-tab {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 160px;
+    height: 100px;
+    background-color: transparent;
+    border-width: 0;
+    padding: 0;
+}
+
+.nav-tab-active {
+    background-color: rgba(232, 168, 32, 0.14);
+    border-radius: 36px;
+}
+
+.nav-icon {
+    width: 36px;
+    height: 36px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--text-dim);
+    margin-bottom: 6px;
+}
+
+.nav-icon-active {
+    -unity-background-image-tint-color: var(--gold);
+}
+
+.nav-label {
+    font-size: 18px;
+    color: var(--text-dim);
+}
+
+.nav-label-active {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: var(--gold);
+}

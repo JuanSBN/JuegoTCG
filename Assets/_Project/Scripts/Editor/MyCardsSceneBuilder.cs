@@ -50,7 +50,6 @@ namespace JuegoTCG.EditorTools
             }
         }
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Mis Cartas")]
         public static void BuildMyCardsScene()
         {
             if (EditorApplication.isPlaying)
@@ -148,11 +147,11 @@ namespace JuegoTCG.EditorTools
             titleRect.anchorMax = new Vector2(1f, 1f);
             titleRect.pivot = new Vector2(0f, 1f);
             titleRect.anchoredPosition = new Vector2(0, 0);
-            titleRect.sizeDelta = new Vector2(0, 52);
+            titleRect.sizeDelta = new Vector2(0, 56);
             TextMeshProUGUI titleTMP = titleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) titleTMP.font = barlowTMPFont;
             titleTMP.text = "MIS CARTAS";
-            titleTMP.fontSize = 44;
+            titleTMP.fontSize = 50;
             titleTMP.fontStyle = FontStyles.Bold;
             titleTMP.characterSpacing = 8f;
             titleTMP.color = TextWhite;
@@ -164,8 +163,8 @@ namespace JuegoTCG.EditorTools
             filterRowRect.anchorMin = new Vector2(0f, 1f);
             filterRowRect.anchorMax = new Vector2(1f, 1f);
             filterRowRect.pivot = new Vector2(0.5f, 1f);
-            filterRowRect.anchoredPosition = new Vector2(0, -75);
-            filterRowRect.sizeDelta = new Vector2(0, 56);
+            filterRowRect.anchoredPosition = new Vector2(0, -80);
+            filterRowRect.sizeDelta = new Vector2(0, 60);
 
             // Left arrow (<)
             GameObject leftArrowGO = new GameObject("LeftArrowBtn");
@@ -175,11 +174,12 @@ namespace JuegoTCG.EditorTools
             laRect.anchorMax = new Vector2(0f, 0.5f);
             laRect.pivot = new Vector2(0f, 0.5f);
             laRect.anchoredPosition = new Vector2(0, 0);
-            laRect.sizeDelta = new Vector2(28, 44);
+            laRect.sizeDelta = new Vector2(32, 48);
             if (iconChevLeft != null)
             {
                 Image laImg = leftArrowGO.AddComponent<Image>();
                 laImg.sprite = iconChevLeft;
+                laImg.preserveAspect = true;
                 laImg.color = new Color(1f, 1f, 1f, 0.40f);
             }
             Button leftArrowBtn = leftArrowGO.AddComponent<Button>();
@@ -192,11 +192,12 @@ namespace JuegoTCG.EditorTools
             raRect.anchorMax = new Vector2(1f, 0.5f);
             raRect.pivot = new Vector2(1f, 0.5f);
             raRect.anchoredPosition = new Vector2(0, 0);
-            raRect.sizeDelta = new Vector2(28, 44);
+            raRect.sizeDelta = new Vector2(32, 48);
             if (iconChevRight != null)
             {
                 Image raImg = rightArrowGO.AddComponent<Image>();
                 raImg.sprite = iconChevRight;
+                raImg.preserveAspect = true;
                 raImg.color = new Color(1f, 1f, 1f, 0.40f);
             }
             Button rightArrowBtn = rightArrowGO.AddComponent<Button>();
@@ -207,8 +208,8 @@ namespace JuegoTCG.EditorTools
             RectTransform fsRect = filterScrollGO.AddComponent<RectTransform>();
             fsRect.anchorMin = Vector2.zero;
             fsRect.anchorMax = Vector2.one;
-            fsRect.offsetMin = new Vector2(36, 0);
-            fsRect.offsetMax = new Vector2(-36, 0);
+            fsRect.offsetMin = new Vector2(40, 0);
+            fsRect.offsetMax = new Vector2(-40, 0);
             ScrollRect filterScrollRect = filterScrollGO.AddComponent<ScrollRect>();
             filterScrollRect.vertical = false;
             filterScrollRect.horizontal = true;
@@ -220,7 +221,7 @@ namespace JuegoTCG.EditorTools
             fcRect.anchorMax = new Vector2(0f, 0.5f);
             fcRect.pivot = new Vector2(0f, 0.5f);
             fcRect.anchoredPosition = Vector2.zero;
-            fcRect.sizeDelta = new Vector2(880, 52);
+            fcRect.sizeDelta = new Vector2(920, 56);
 
             HorizontalLayoutGroup fcHlg = filterContentGO.AddComponent<HorizontalLayoutGroup>();
             fcHlg.childAlignment = TextAnchor.MiddleLeft;
@@ -228,12 +229,12 @@ namespace JuegoTCG.EditorTools
             fcHlg.childControlHeight = false;
             fcHlg.childForceExpandWidth = false;
             fcHlg.childForceExpandHeight = false;
-            fcHlg.spacing = 14f;
+            fcHlg.spacing = 16f;
 
             filterScrollRect.content = fcRect;
 
             string[] filterNames = { "Álbum", "Recientes", "Rareza", "Cantidad", "Nación" };
-            float[] filterWidths = { 135f, 160f, 145f, 155f, 140f };
+            float[] filterWidths = { 145f, 175f, 155f, 165f, 150f };
             Button[] filterBtns = new Button[filterNames.Length];
 
             for (int i = 0; i < filterNames.Length; i++)
@@ -242,14 +243,13 @@ namespace JuegoTCG.EditorTools
                 GameObject fBtnGO = new GameObject($"FilterBtn_{filterNames[i]}");
                 fBtnGO.transform.SetParent(filterContentGO.transform, false);
                 RectTransform fbRect = fBtnGO.AddComponent<RectTransform>();
-                fbRect.sizeDelta = new Vector2(filterWidths[i], 48);
+                fbRect.sizeDelta = new Vector2(filterWidths[i], 52);
 
                 RoundedRectGraphic fbG = fBtnGO.AddComponent<RoundedRectGraphic>();
                 fbG.IsCapsule = true;
-                // Exact Figma styling: subtle transparent fill + gold border for active, gray border for inactive
-                fbG.color = isActive ? new Color(0.910f, 0.659f, 0.125f, 0.10f) : new Color(1f, 1f, 1f, 0.05f);
-                fbG.BorderWidth = isActive ? 1.8f : 1.2f;
-                fbG.BorderColor = isActive ? GoldBorder : BorderSubtle;
+                fbG.color = isActive ? new Color(0.910f, 0.659f, 0.125f, 0.12f) : new Color(1f, 1f, 1f, 0.05f);
+                fbG.BorderWidth = isActive ? 2f : 1.2f;
+                fbG.BorderColor = isActive ? Gold : BorderSubtle;
 
                 GameObject fbTextGO = new GameObject("Text");
                 fbTextGO.transform.SetParent(fBtnGO.transform, false);
@@ -260,7 +260,7 @@ namespace JuegoTCG.EditorTools
                 TextMeshProUGUI fbtTMP = fbTextGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) fbtTMP.font = dmSansTMPFont;
                 fbtTMP.text = filterNames[i];
-                fbtTMP.fontSize = 20;
+                fbtTMP.fontSize = 22;
                 fbtTMP.fontStyle = isActive ? FontStyles.Bold : FontStyles.Normal;
                 fbtTMP.alignment = TextAlignmentOptions.Center;
                 fbtTMP.color = isActive ? Gold : TextGray;
@@ -275,8 +275,8 @@ namespace JuegoTCG.EditorTools
             countSearchRowRect.anchorMin = new Vector2(0f, 1f);
             countSearchRowRect.anchorMax = new Vector2(1f, 1f);
             countSearchRowRect.pivot = new Vector2(0.5f, 1f);
-            countSearchRowRect.anchoredPosition = new Vector2(0, -150);
-            countSearchRowRect.sizeDelta = new Vector2(0, 44);
+            countSearchRowRect.anchoredPosition = new Vector2(0, -160);
+            countSearchRowRect.sizeDelta = new Vector2(0, 48);
 
             GameObject countGO = new GameObject("TotalCountText");
             countGO.transform.SetParent(countSearchRowGO.transform, false);
@@ -285,11 +285,12 @@ namespace JuegoTCG.EditorTools
             cRect.anchorMax = new Vector2(0.6f, 0.5f);
             cRect.pivot = new Vector2(0f, 0.5f);
             cRect.anchoredPosition = new Vector2(0, 0);
-            cRect.sizeDelta = new Vector2(0, 40);
+            cRect.sizeDelta = new Vector2(0, 44);
             TextMeshProUGUI countTMP = countGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) countTMP.font = dmSansTMPFont;
-            countTMP.text = "1232 cartas";
-            countTMP.fontSize = 26;
+            countTMP.text = "1,232 CARTAS";
+            countTMP.fontSize = 28;
+            countTMP.fontStyle = FontStyles.Bold;
             countTMP.alignment = TextAlignmentOptions.Left;
             countTMP.color = TextGray;
 
@@ -298,6 +299,9 @@ namespace JuegoTCG.EditorTools
             RectTransform sRect = searchBtnGO.AddComponent<RectTransform>();
             sRect.anchorMin = new Vector2(1f, 0.5f);
             sRect.anchorMax = new Vector2(1f, 0.5f);
+            sRect.pivot = new Vector2(1f, 0.5f);
+            sRect.anchoredPosition = new Vector2(0, 0);
+            sRect.sizeDelta = new Vector2(46, 46);
             sRect.pivot = new Vector2(1f, 0.5f);
             sRect.anchoredPosition = new Vector2(0, 0);
             sRect.sizeDelta = new Vector2(40, 40);
@@ -319,8 +323,8 @@ namespace JuegoTCG.EditorTools
             gsRect.anchorMin = new Vector2(0.5f, 0f);
             gsRect.anchorMax = new Vector2(0.5f, 1f);
             gsRect.pivot = new Vector2(0.5f, 0.5f);
-            gsRect.offsetMin = new Vector2(-490, 180);
-            gsRect.offsetMax = new Vector2(490, -360);
+            gsRect.offsetMin = new Vector2(-510, 0);
+            gsRect.offsetMax = new Vector2(510, -280);
 
             ScrollRect cardScrollRect = gridScrollGO.AddComponent<ScrollRect>();
             cardScrollRect.horizontal = false;
@@ -345,14 +349,17 @@ namespace JuegoTCG.EditorTools
             gcRect.anchorMax = new Vector2(1f, 1f);
             gcRect.pivot = new Vector2(0.5f, 1f);
             gcRect.anchoredPosition = Vector2.zero;
-            gcRect.sizeDelta = new Vector2(0, 3850);
+            gcRect.sizeDelta = new Vector2(0, 4400);
 
             GridLayoutGroup glg = gridContentGO.AddComponent<GridLayoutGroup>();
-            glg.cellSize = new Vector2(465, 590); // 3:4 aspect ratio
-            glg.spacing = new Vector2(35, 35);
-            glg.padding = new RectOffset(10, 10, 10, 50);
+            glg.cellSize = new Vector2(460, 640); // 3:4 aspect ratio
+            glg.spacing = new Vector2(30, 30);
+            glg.padding = new RectOffset(35, 35, 20, 260); // 260px de espacio inferior para que las últimas cartas queden 100% visibles sobre la barra
             glg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             glg.constraintCount = 2;
+
+            ContentSizeFitter csf = gridContentGO.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             cardScrollRect.content = gcRect;
 
@@ -380,28 +387,78 @@ namespace JuegoTCG.EditorTools
                 cardGO.transform.SetParent(gridContentGO.transform, false);
                 RectTransform cCardRect = cardGO.AddComponent<RectTransform>();
 
-                // Card Base Container (Rounded 16px with Rarity Border and Dark Card Background)
+                // Card Base Container (Rounded 24px with Rarity Border and Dark Card Background)
                 RoundedRectGraphic cardG = cardGO.AddComponent<RoundedRectGraphic>();
-                cardG.CornerRadius = 16f;
+                cardG.CornerRadius = 24f;
                 cardG.color = CardBg;
-                cardG.BorderWidth = 2f;
+                cardG.BorderWidth = 2.5f;
                 cardG.BorderColor = card.rarityColor;
 
-                // Player Avatar Ring (Dark translucent background + thin colored ring)
+                // Card Number Badge (Top-Left)
+                GameObject numGO = new GameObject("CardNumber");
+                numGO.transform.SetParent(cardGO.transform, false);
+                RectTransform numRect = numGO.AddComponent<RectTransform>();
+                numRect.anchorMin = new Vector2(0f, 1f);
+                numRect.anchorMax = new Vector2(0f, 1f);
+                numRect.pivot = new Vector2(0f, 1f);
+                numRect.anchoredPosition = new Vector2(18, -16);
+                numRect.sizeDelta = new Vector2(80, 28);
+                TextMeshProUGUI numTMP = numGO.AddComponent<TextMeshProUGUI>();
+                if (dmSansTMPFont != null) numTMP.font = dmSansTMPFont;
+                numTMP.text = $"#{i + 1:D2}";
+                numTMP.fontSize = 18;
+                numTMP.fontStyle = FontStyles.Bold;
+                numTMP.alignment = TextAlignmentOptions.Left;
+                numTMP.color = TextDim;
+
+                // Duplicate Badge (Top-Right)
+                if (card.count > 1)
+                {
+                    GameObject dupGO = new GameObject("DuplicateBadge");
+                    dupGO.transform.SetParent(cardGO.transform, false);
+                    RectTransform dupRect = dupGO.AddComponent<RectTransform>();
+                    dupRect.anchorMin = new Vector2(1f, 1f);
+                    dupRect.anchorMax = new Vector2(1f, 1f);
+                    dupRect.pivot = new Vector2(1f, 1f);
+                    dupRect.anchoredPosition = new Vector2(-16, -14);
+                    dupRect.sizeDelta = new Vector2(64, 32);
+
+                    RoundedRectGraphic dupG = dupGO.AddComponent<RoundedRectGraphic>();
+                    dupG.IsCapsule = true;
+                    dupG.color = new Color(0.910f, 0.659f, 0.125f, 0.20f);
+                    dupG.BorderWidth = 1.5f;
+                    dupG.BorderColor = GoldBorder;
+
+                    GameObject dupTextGO = new GameObject("Text");
+                    dupTextGO.transform.SetParent(dupGO.transform, false);
+                    RectTransform dtRect = dupTextGO.AddComponent<RectTransform>();
+                    dtRect.anchorMin = Vector2.zero;
+                    dtRect.anchorMax = Vector2.one;
+                    dtRect.sizeDelta = Vector2.zero;
+                    TextMeshProUGUI dtTMP = dupTextGO.AddComponent<TextMeshProUGUI>();
+                    if (dmSansTMPFont != null) dtTMP.font = dmSansTMPFont;
+                    dtTMP.text = $"×{card.count}";
+                    dtTMP.fontSize = 18;
+                    dtTMP.fontStyle = FontStyles.Bold;
+                    dtTMP.alignment = TextAlignmentOptions.Center;
+                    dtTMP.color = Gold;
+                }
+
+                // Player Avatar Ring (Central emblem with glow)
                 GameObject avatarCircleGO = new GameObject("AvatarRing");
                 avatarCircleGO.transform.SetParent(cardGO.transform, false);
                 RectTransform avRect = avatarCircleGO.AddComponent<RectTransform>();
                 avRect.anchorMin = new Vector2(0.5f, 1f);
                 avRect.anchorMax = new Vector2(0.5f, 1f);
                 avRect.pivot = new Vector2(0.5f, 1f);
-                avRect.anchoredPosition = new Vector2(0, -45);
-                avRect.sizeDelta = new Vector2(130, 130);
+                avRect.anchoredPosition = new Vector2(0, -68);
+                avRect.sizeDelta = new Vector2(160, 160);
 
                 RoundedRectGraphic avG = avatarCircleGO.AddComponent<RoundedRectGraphic>();
                 avG.IsCapsule = true;
-                avG.color = new Color(1f, 1f, 1f, 0.05f); // Translucent dark background
-                avG.BorderWidth = 2f;
-                avG.BorderColor = card.rarityColor;       // Crisp colored ring
+                avG.color = new Color(1f, 1f, 1f, 0.06f);
+                avG.BorderWidth = 2.5f;
+                avG.BorderColor = card.rarityColor;
 
                 GameObject iniTextGO = new GameObject("Initials");
                 iniTextGO.transform.SetParent(avatarCircleGO.transform, false);
@@ -412,38 +469,54 @@ namespace JuegoTCG.EditorTools
                 TextMeshProUGUI iniTMP = iniTextGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) iniTMP.font = dmSansTMPFont;
                 iniTMP.text = card.initials;
-                iniTMP.fontSize = 38;
+                iniTMP.fontSize = 46;
                 iniTMP.fontStyle = FontStyles.Bold;
                 iniTMP.alignment = TextAlignmentOptions.Center;
-                iniTMP.color = card.rarityColor;          // Bright colored text inside ring
+                iniTMP.color = card.rarityColor;
 
                 // Player Name
                 GameObject pNameGO = new GameObject("PlayerName");
                 pNameGO.transform.SetParent(cardGO.transform, false);
                 RectTransform pnRect = pNameGO.AddComponent<RectTransform>();
-                pnRect.anchorMin = new Vector2(0.05f, 0.30f);
-                pnRect.anchorMax = new Vector2(0.95f, 0.50f);
+                pnRect.anchorMin = new Vector2(0.04f, 0.28f);
+                pnRect.anchorMax = new Vector2(0.96f, 0.44f);
                 pnRect.sizeDelta = Vector2.zero;
                 TextMeshProUGUI pnTMP = pNameGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) pnTMP.font = dmSansTMPFont;
                 pnTMP.text = card.name;
-                pnTMP.fontSize = 26;
+                pnTMP.fontSize = 30;
                 pnTMP.fontStyle = FontStyles.Bold;
                 pnTMP.alignment = TextAlignmentOptions.Center;
                 pnTMP.color = TextWhite;
 
-                // Rarity Label + Duplicates Count
-                GameObject rLabelGO = new GameObject("RarityLabel");
-                rLabelGO.transform.SetParent(cardGO.transform, false);
-                RectTransform rlRect = rLabelGO.AddComponent<RectTransform>();
-                rlRect.anchorMin = new Vector2(0.05f, 0.10f);
-                rlRect.anchorMax = new Vector2(0.95f, 0.26f);
-                rlRect.sizeDelta = Vector2.zero;
-                TextMeshProUGUI rlTMP = rLabelGO.AddComponent<TextMeshProUGUI>();
+                // Rarity Pill Badge (Bottom)
+                GameObject rPillGO = new GameObject("RarityPill");
+                rPillGO.transform.SetParent(cardGO.transform, false);
+                RectTransform rpRect = rPillGO.AddComponent<RectTransform>();
+                rpRect.anchorMin = new Vector2(0.5f, 0f);
+                rpRect.anchorMax = new Vector2(0.5f, 0f);
+                rpRect.pivot = new Vector2(0.5f, 0f);
+                rpRect.anchoredPosition = new Vector2(0, 36);
+                rpRect.sizeDelta = new Vector2(240, 46);
+
+                RoundedRectGraphic rpG = rPillGO.AddComponent<RoundedRectGraphic>();
+                rpG.IsCapsule = true;
+                rpG.color = new Color(card.rarityColor.r, card.rarityColor.g, card.rarityColor.b, 0.12f);
+                rpG.BorderWidth = 1.5f;
+                rpG.BorderColor = card.rarityColor;
+
+                GameObject rlTextGO = new GameObject("Text");
+                rlTextGO.transform.SetParent(rPillGO.transform, false);
+                RectTransform rltRect = rlTextGO.AddComponent<RectTransform>();
+                rltRect.anchorMin = Vector2.zero;
+                rltRect.anchorMax = Vector2.one;
+                rltRect.sizeDelta = Vector2.zero;
+                TextMeshProUGUI rlTMP = rlTextGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) rlTMP.font = dmSansTMPFont;
-                rlTMP.text = card.count > 1 ? $"{card.rarity} ×{card.count}" : card.rarity;
+                rlTMP.text = card.rarity.ToUpper();
                 rlTMP.fontSize = 20;
-                rlTMP.fontStyle = FontStyles.Normal;
+                rlTMP.fontStyle = FontStyles.Bold;
+                rlTMP.characterSpacing = 3f;
                 rlTMP.alignment = TextAlignmentOptions.Center;
                 rlTMP.color = card.rarityColor;
 

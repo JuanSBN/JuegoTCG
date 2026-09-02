@@ -23,7 +23,6 @@ namespace JuegoTCG.EditorTools
             "ae059fc1520988141a79cb933243639f"  // Full Art
         };
 
-        [MenuItem("JuegoTCG/Generar Prefab de Carta")]
         public static void BuildCardPrefab()
         {
             if (!Directory.Exists(PrefabFolderPath))

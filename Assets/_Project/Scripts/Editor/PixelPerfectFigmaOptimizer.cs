@@ -28,7 +28,6 @@ namespace JuegoTCG.Editor
             "Assets/_Project/Scenes/PackOpeningScene.unity"
         };
 
-        [MenuItem("JuegoTCG/✨ Ajuste Visual Pixel-Perfect (Figma Responsive)")]
         public static void ApplyPixelPerfectOptimization()
         {
             if (EditorApplication.isPlaying)

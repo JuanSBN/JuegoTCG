@@ -27,7 +27,6 @@ namespace JuegoTCG.EditorTools
         private static readonly Color RedBorder = new Color(0.843f, 0.255f, 0.255f, 0.35f);
         private static readonly Color RedText = new Color(0.882f, 0.294f, 0.294f, 0.95f);
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Ajustes (Settings)")]
         public static void BuildSettingsScene()
         {
             ProceduralAssetGenerator.GenerateUISprites();

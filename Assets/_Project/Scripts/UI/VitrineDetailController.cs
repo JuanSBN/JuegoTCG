@@ -46,6 +46,14 @@ namespace JuegoTCG.UI
             if (likeButton != null) likeButton.onClick.AddListener(ToggleLike);
         }
 
+        private void Start()
+        {
+            if (activeVitrine == null)
+            {
+                Show(new VitrineData { userName = "PROPLAYER_99", avatarText = "PP", likesCount = 234 });
+            }
+        }
+
         public void Show(VitrineData vitrine)
         {
             activeVitrine = vitrine;
@@ -53,16 +61,25 @@ namespace JuegoTCG.UI
             isLiked = false;
 
             gameObject.SetActive(true);
-            transform.SetAsLastSibling();
 
             if (detailRoot != null)
             {
                 detailRoot.SetActive(true);
-                detailRoot.transform.SetAsLastSibling();
+            }
+
+            // Keep bottom nav bar in front if it exists
+            Canvas parentCanvas = GetComponentInParent<Canvas>();
+            if (parentCanvas != null)
+            {
+                Transform bottomBar = parentCanvas.transform.Find("BottomNavigationBar");
+                if (bottomBar != null)
+                {
+                    bottomBar.SetAsLastSibling();
+                }
             }
 
             if (avatarText != null) avatarText.text = vitrine.avatarText;
-            if (userNameText != null) userNameText.text = vitrine.userName;
+            if (userNameText != null) userNameText.text = vitrine.userName.ToUpper();
             if (cardCountText != null) cardCountText.text = $"Vitrina pública · {GetCardsForUser(vitrine.userName).Count} cartas";
 
             UpdateLikeDisplay();
@@ -130,27 +147,38 @@ namespace JuegoTCG.UI
             TMP_Text iniTMP = cardTr.Find("InitialsText")?.GetComponent<TMP_Text>();
             TMP_Text rarityTMP = cardTr.Find("RarityText")?.GetComponent<TMP_Text>();
             TMP_Text nameTMP = cardTr.Find("PlayerNameText")?.GetComponent<TMP_Text>();
+            Transform starTr = cardTr.Find("StarIcon");
             RoundedRectGraphic borderG = cardTr.GetComponent<RoundedRectGraphic>();
 
-            if (iniTMP != null) iniTMP.text = cardData.initials;
-            if (nameTMP != null) nameTMP.text = cardData.playerName;
+            Color rarityCol = GetRarityColor(cardData.rarity);
+
+            if (iniTMP != null)
+            {
+                iniTMP.text = cardData.initials;
+                iniTMP.color = new Color(1f, 1f, 1f, 0.22f);
+            }
+
+            if (nameTMP != null)
+            {
+                nameTMP.text = cardData.playerName;
+                nameTMP.color = Color.white;
+            }
+
             if (rarityTMP != null)
             {
                 rarityTMP.text = cardData.rarity.ToUpper();
-                rarityTMP.color = GetRarityColor(cardData.rarity);
+                rarityTMP.color = rarityCol;
+            }
+
+            if (starTr != null)
+            {
+                starTr.gameObject.SetActive(cardData.rarity == "Mítica" || cardData.rarity == "Mitica");
             }
 
             if (borderG != null)
             {
-                borderG.BorderColor = GetRarityColor(cardData.rarity);
-                if (cardData.rarity == "Mítica")
-                {
-                    borderG.BorderWidth = 2.5f;
-                }
-                else
-                {
-                    borderG.BorderWidth = 1.5f;
-                }
+                borderG.BorderColor = rarityCol;
+                borderG.BorderWidth = (cardData.rarity == "Mítica" || cardData.rarity == "Mitica") ? 2.5f : 1.8f;
             }
         }
 
@@ -208,11 +236,11 @@ namespace JuegoTCG.UI
                     return new Color(0.678f, 0.369f, 0.941f); // Purple #ad5ef0
                 case "Poco común":
                 case "Poco comun":
-                    return new Color(0.188f, 0.820f, 0.345f); // Green #30d158
+                    return new Color(0.706f, 0.784f, 0.765f); // Silver/Cyan #b4c8c3
                 case "Común":
                 case "Comun":
                 default:
-                    return new Color(0.6f, 0.6f, 0.6f, 0.5f); // Gray
+                    return new Color(0.153f, 0.788f, 0.416f); // Green #27c96a
             }
         }
     }

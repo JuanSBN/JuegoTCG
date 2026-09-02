@@ -21,22 +21,28 @@ namespace JuegoTCG.EditorTools
         private static readonly Color GoldBorder = new Color(0.831f, 0.588f, 0.055f);    // #d4960e
         private static readonly Color CardBg = new Color(0.051f, 0.102f, 0.075f);        // #0d1a13
         private static readonly Color TextWhite = Color.white;
-        private static readonly Color TextGray = new Color(1f, 1f, 1f, 0.50f);
+        private static readonly Color TextGray = new Color(1f, 1f, 1f, 0.55f);
         private static readonly Color TextDim = new Color(1f, 1f, 1f, 0.30f);
         private static readonly Color BorderSubtle = new Color(1f, 1f, 1f, 0.13f);
         private static readonly Color NavBg = new Color(0.055f, 0.125f, 0.086f, 0.85f);   // rgba(14,32,22,0.85)
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Tienda (Store)")]
         public static void BuildStoreScene()
         {
+            if (EditorApplication.isPlaying)
+            {
+                EditorUtility.DisplayDialog("JuegoTCG", "Por favor sal del modo Play antes de generar la escena.", "Entendido");
+                return;
+            }
+
             ProceduralAssetGenerator.GenerateUISprites();
+            ConfigureFontImporters();
+            AssetDatabase.Refresh();
 
             // Load and create persistent SDF Font Assets
             TMP_FontAsset barlowTMPFont = GetOrCreateTMPFont("BarlowCondensed-Bold");
             TMP_FontAsset dmSansTMPFont = GetOrCreateTMPFont("DMSans-SemiBold") ?? GetOrCreateTMPFont("DMSans-Bold");
 
             // Load UI Sprites
-            Sprite circleSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_circle.png");
             Sprite tacticalPitchSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/bg_tactical_pitch.png");
             Sprite coinSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_coin.png");
             Sprite playSprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{UIPath}/ui_icon_play.png");
@@ -58,14 +64,14 @@ namespace JuegoTCG.EditorTools
             cam.orthographic = true;
             camGO.AddComponent<AudioListener>();
 
-            // Canvas
+            // Canvas (1080x2400 Match Width for AAA Mobile Display)
             GameObject canvasGO = new GameObject("Canvas");
             Canvas canvas = canvasGO.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920);
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.referenceResolution = new Vector2(1080, 2400);
+            scaler.matchWidthOrHeight = 0.0f;
             canvasGO.AddComponent<GraphicRaycaster>();
 
             // Event System
@@ -98,7 +104,7 @@ namespace JuegoTCG.EditorTools
             contentRect.sizeDelta = Vector2.zero;
 
             // ====================================================
-            // 1. TOP HEADER ("TIENDA" + CoinChip)
+            // 1. TOP HEADER (Fixed: "TIENDA" + CoinChip)
             // ====================================================
             GameObject topBarGO = new GameObject("TopHeader");
             topBarGO.transform.SetParent(contentGO.transform, false);
@@ -106,22 +112,22 @@ namespace JuegoTCG.EditorTools
             topBarRect.anchorMin = new Vector2(0.5f, 1f);
             topBarRect.anchorMax = new Vector2(0.5f, 1f);
             topBarRect.pivot = new Vector2(0.5f, 1f);
-            topBarRect.anchoredPosition = new Vector2(0, -60);
-            topBarRect.sizeDelta = new Vector2(980, 100);
+            topBarRect.anchoredPosition = new Vector2(0, -80); // Safe Area debajo de la cámara
+            topBarRect.sizeDelta = new Vector2(1000, 90);
 
             // Title Left: "TIENDA"
             GameObject titleGO = new GameObject("Title");
             titleGO.transform.SetParent(topBarGO.transform, false);
             RectTransform titleRect = titleGO.AddComponent<RectTransform>();
             titleRect.anchorMin = new Vector2(0f, 0.5f);
-            titleRect.anchorMax = new Vector2(0.5f, 0.5f);
+            titleRect.anchorMax = new Vector2(0.6f, 0.5f);
             titleRect.pivot = new Vector2(0f, 0.5f);
-            titleRect.anchoredPosition = new Vector2(0, 0);
-            titleRect.sizeDelta = new Vector2(400, 80);
+            titleRect.anchoredPosition = new Vector2(10, 0);
+            titleRect.sizeDelta = new Vector2(0, 70);
             TextMeshProUGUI titleTMP = titleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) titleTMP.font = barlowTMPFont;
             titleTMP.text = "TIENDA";
-            titleTMP.fontSize = 50;
+            titleTMP.fontSize = 52;
             titleTMP.fontStyle = FontStyles.Bold;
             titleTMP.characterSpacing = 8f;
             titleTMP.color = TextWhite;
@@ -133,13 +139,13 @@ namespace JuegoTCG.EditorTools
             chipRect.anchorMin = new Vector2(1f, 0.5f);
             chipRect.anchorMax = new Vector2(1f, 0.5f);
             chipRect.pivot = new Vector2(1f, 0.5f);
-            chipRect.anchoredPosition = new Vector2(0, 0);
-            chipRect.sizeDelta = new Vector2(180, 68);
+            chipRect.anchoredPosition = new Vector2(-10, 0);
+            chipRect.sizeDelta = new Vector2(190, 64);
 
             RoundedRectGraphic chipG = coinChipGO.AddComponent<RoundedRectGraphic>();
             chipG.IsCapsule = true;
             chipG.color = new Color(0f, 0f, 0f, 0.50f);
-            chipG.BorderWidth = 1.8f;
+            chipG.BorderWidth = 2f;
             chipG.BorderColor = GoldBorder;
 
             GameObject chipCoinIconGO = new GameObject("CoinIcon");
@@ -158,27 +164,73 @@ namespace JuegoTCG.EditorTools
             RectTransform chipTextRect = chipTextGO.AddComponent<RectTransform>();
             chipTextRect.anchorMin = new Vector2(0f, 0f);
             chipTextRect.anchorMax = new Vector2(1f, 1f);
-            chipTextRect.anchoredPosition = new Vector2(28, 0);
-            chipTextRect.sizeDelta = new Vector2(0, 0);
+            chipTextRect.offsetMin = new Vector2(56, 0);
+            chipTextRect.offsetMax = new Vector2(-12, 0);
             TextMeshProUGUI coinsTMP = chipTextGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) coinsTMP.font = dmSansTMPFont;
             coinsTMP.text = "240";
-            coinsTMP.fontSize = 28;
+            coinsTMP.fontSize = 26;
             coinsTMP.fontStyle = FontStyles.Bold;
             coinsTMP.alignment = TextAlignmentOptions.Center;
             coinsTMP.color = TextWhite;
 
             // ====================================================
-            // 2. SECTION 1: "COMPRAR SOBRES"
+            // 2. SCROLLABLE STORE VIEW (Sobres, Ver Anuncio, Comprar Monedas)
+            // ====================================================
+            GameObject storeScrollGO = new GameObject("StoreScrollView");
+            storeScrollGO.transform.SetParent(contentGO.transform, false);
+            RectTransform ssRect = storeScrollGO.AddComponent<RectTransform>();
+            ssRect.anchorMin = new Vector2(0.5f, 0f);
+            ssRect.anchorMax = new Vector2(0.5f, 1f);
+            ssRect.pivot = new Vector2(0.5f, 0.5f);
+            ssRect.offsetMin = new Vector2(-510, 0);
+            ssRect.offsetMax = new Vector2(510, -180);
+
+            ScrollRect storeScrollRect = storeScrollGO.AddComponent<ScrollRect>();
+            storeScrollRect.horizontal = false;
+            storeScrollRect.vertical = true;
+            storeScrollRect.scrollSensitivity = 35f;
+
+            // Viewport
+            GameObject vpGO = new GameObject("Viewport");
+            vpGO.transform.SetParent(storeScrollGO.transform, false);
+            RectTransform vpRect = vpGO.AddComponent<RectTransform>();
+            vpRect.anchorMin = Vector2.zero;
+            vpRect.anchorMax = Vector2.one;
+            vpRect.sizeDelta = Vector2.zero;
+            vpGO.AddComponent<RectMask2D>();
+            storeScrollRect.viewport = vpRect;
+
+            // Scroll Content Holder (Vertical Stack with ContentSizeFitter)
+            GameObject scrollContentGO = new GameObject("Content");
+            scrollContentGO.transform.SetParent(vpGO.transform, false);
+            RectTransform scRect = scrollContentGO.AddComponent<RectTransform>();
+            scRect.anchorMin = new Vector2(0f, 1f);
+            scRect.anchorMax = new Vector2(1f, 1f);
+            scRect.pivot = new Vector2(0.5f, 1f);
+            scRect.anchoredPosition = Vector2.zero;
+            scRect.sizeDelta = new Vector2(0, 1800);
+
+            VerticalLayoutGroup vlg = scrollContentGO.AddComponent<VerticalLayoutGroup>();
+            vlg.childAlignment = TextAnchor.UpperCenter;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = false;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+            vlg.spacing = 40f;
+            vlg.padding = new RectOffset(10, 10, 10, 260); // 260px espacio inferior para librar la barra de navegación
+
+            ContentSizeFitter csf = scrollContentGO.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            storeScrollRect.content = scRect;
+
+            // ====================================================
+            // SECTION 1: "COMPRAR SOBRES"
             // ====================================================
             GameObject sec1GO = new GameObject("Section_Packs");
-            sec1GO.transform.SetParent(contentGO.transform, false);
+            sec1GO.transform.SetParent(scrollContentGO.transform, false);
             RectTransform sec1Rect = sec1GO.AddComponent<RectTransform>();
-            sec1Rect.anchorMin = new Vector2(0.5f, 1f);
-            sec1Rect.anchorMax = new Vector2(0.5f, 1f);
-            sec1Rect.pivot = new Vector2(0.5f, 1f);
-            sec1Rect.anchoredPosition = new Vector2(0, -180);
-            sec1Rect.sizeDelta = new Vector2(980, 560);
+            sec1Rect.sizeDelta = new Vector2(1000, 680);
 
             GameObject sec1TitleGO = new GameObject("SectionTitle");
             sec1TitleGO.transform.SetParent(sec1GO.transform, false);
@@ -186,17 +238,17 @@ namespace JuegoTCG.EditorTools
             sec1TitleRect.anchorMin = new Vector2(0f, 1f);
             sec1TitleRect.anchorMax = new Vector2(1f, 1f);
             sec1TitleRect.pivot = new Vector2(0f, 1f);
-            sec1TitleRect.anchoredPosition = new Vector2(0, 0);
-            sec1TitleRect.sizeDelta = new Vector2(0, 40);
+            sec1TitleRect.anchoredPosition = new Vector2(10, 0);
+            sec1TitleRect.sizeDelta = new Vector2(0, 48);
             TextMeshProUGUI sec1TitleTMP = sec1TitleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) sec1TitleTMP.font = barlowTMPFont;
             sec1TitleTMP.text = "COMPRAR SOBRES";
-            sec1TitleTMP.fontSize = 30;
+            sec1TitleTMP.fontSize = 36;
             sec1TitleTMP.fontStyle = FontStyles.Bold;
             sec1TitleTMP.characterSpacing = 8f;
             sec1TitleTMP.color = TextWhite;
 
-            string[] packLabels = { "SOBRE A", "SOBRE B", "SOBRE C" };
+            string[] packLabels = { "SOBRE BRONCE", "SOBRE ORO", "SOBRE DIAMANTE" };
             int[] packPrices = { 100, 300, 600 };
             Button[] packBtns = new Button[3];
             float packSpacing = 335f;
@@ -212,9 +264,9 @@ namespace JuegoTCG.EditorTools
                 phRect.anchorMax = new Vector2(0.5f, 1f);
                 phRect.pivot = new Vector2(0.5f, 1f);
                 phRect.anchoredPosition = new Vector2(startPackX + i * packSpacing, -60);
-                phRect.sizeDelta = new Vector2(305, 480);
+                phRect.sizeDelta = isFeatured ? new Vector2(325, 600) : new Vector2(300, 570);
 
-                // Envelope Card (3:4 ratio)
+                // Envelope Card
                 GameObject envCardGO = new GameObject("EnvelopeCard");
                 envCardGO.transform.SetParent(packHolderGO.transform, false);
                 RectTransform envRect = envCardGO.AddComponent<RectTransform>();
@@ -222,28 +274,28 @@ namespace JuegoTCG.EditorTools
                 envRect.anchorMax = new Vector2(0.5f, 1f);
                 envRect.pivot = new Vector2(0.5f, 1f);
                 envRect.anchoredPosition = new Vector2(0, 0);
-                envRect.sizeDelta = new Vector2(305, 390);
+                envRect.sizeDelta = isFeatured ? new Vector2(325, 490) : new Vector2(300, 460);
 
                 RoundedRectGraphic envG = envCardGO.AddComponent<RoundedRectGraphic>();
-                envG.CornerRadius = 20f;
-                envG.color = CardBg;
-                envG.BorderWidth = isFeatured ? 2.5f : 1.5f;
-                envG.BorderColor = isFeatured ? GoldBorder : BorderSubtle;
+                envG.CornerRadius = 24f;
+                envG.color = isFeatured ? new Color(0.06f, 0.12f, 0.09f) : CardBg;
+                envG.BorderWidth = isFeatured ? 3.5f : 1.5f;
+                envG.BorderColor = isFeatured ? Gold : BorderSubtle;
 
-                // Envelope Label at bottom of card
+                // Envelope Label
                 GameObject envLabelGO = new GameObject("Label");
                 envLabelGO.transform.SetParent(envCardGO.transform, false);
                 RectTransform envLabelRect = envLabelGO.AddComponent<RectTransform>();
                 envLabelRect.anchorMin = new Vector2(0f, 0f);
-                envLabelRect.anchorMax = new Vector2(1f, 0.22f);
+                envLabelRect.anchorMax = new Vector2(1f, 0.25f);
                 envLabelRect.sizeDelta = Vector2.zero;
                 TextMeshProUGUI envLabelTMP = envLabelGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) envLabelTMP.font = dmSansTMPFont;
                 envLabelTMP.text = packLabels[i];
-                envLabelTMP.fontSize = 22;
+                envLabelTMP.fontSize = isFeatured ? 24 : 20;
                 envLabelTMP.fontStyle = FontStyles.Bold;
                 envLabelTMP.alignment = TextAlignmentOptions.Center;
-                envLabelTMP.color = isFeatured ? Gold : TextGray;
+                envLabelTMP.color = isFeatured ? Gold : TextWhite;
 
                 // Price Button Below Card
                 GameObject priceBtnGO = new GameObject("PriceButton");
@@ -253,17 +305,17 @@ namespace JuegoTCG.EditorTools
                 priceRect.anchorMax = new Vector2(0.5f, 0f);
                 priceRect.pivot = new Vector2(0.5f, 0f);
                 priceRect.anchoredPosition = new Vector2(0, 0);
-                priceRect.sizeDelta = new Vector2(305, 76);
+                priceRect.sizeDelta = isFeatured ? new Vector2(325, 84) : new Vector2(300, 80);
 
                 RoundedRectGraphic priceG = priceBtnGO.AddComponent<RoundedRectGraphic>();
-                priceG.CornerRadius = 14f;
-                priceG.color = isFeatured ? new Color(0.910f, 0.659f, 0.125f, 0.12f) : new Color(1f, 1f, 1f, 0.05f);
-                priceG.BorderWidth = 1.5f;
-                priceG.BorderColor = isFeatured ? GoldBorder : BorderSubtle;
+                priceG.CornerRadius = 16f;
+                priceG.color = isFeatured ? new Color(0.910f, 0.659f, 0.125f, 0.18f) : new Color(1f, 1f, 1f, 0.05f);
+                priceG.BorderWidth = 1.8f;
+                priceG.BorderColor = isFeatured ? Gold : BorderSubtle;
 
                 packBtns[i] = priceBtnGO.AddComponent<Button>();
 
-                // Price icon + text centered
+                // Price content
                 GameObject pContentGO = new GameObject("PriceContent");
                 pContentGO.transform.SetParent(priceBtnGO.transform, false);
                 RectTransform pcRect = pContentGO.AddComponent<RectTransform>();
@@ -275,14 +327,12 @@ namespace JuegoTCG.EditorTools
                 phlg.childAlignment = TextAnchor.MiddleCenter;
                 phlg.childControlWidth = false;
                 phlg.childControlHeight = false;
-                phlg.childForceExpandWidth = false;
-                phlg.childForceExpandHeight = false;
-                phlg.spacing = 10f;
+                phlg.spacing = 12f;
 
                 GameObject pIconGO = new GameObject("CoinIcon");
                 pIconGO.transform.SetParent(pContentGO.transform, false);
                 RectTransform pIconRect = pIconGO.AddComponent<RectTransform>();
-                pIconRect.sizeDelta = new Vector2(32, 32);
+                pIconRect.sizeDelta = new Vector2(36, 36);
                 Image pIconImg = pIconGO.AddComponent<Image>();
                 if (coinSprite != null) pIconImg.sprite = coinSprite;
                 pIconImg.raycastTarget = false;
@@ -290,11 +340,11 @@ namespace JuegoTCG.EditorTools
                 GameObject pTextGO = new GameObject("PriceText");
                 pTextGO.transform.SetParent(pContentGO.transform, false);
                 RectTransform pTextRect = pTextGO.AddComponent<RectTransform>();
-                pTextRect.sizeDelta = new Vector2(100, 36);
+                pTextRect.sizeDelta = new Vector2(110, 38);
                 TextMeshProUGUI pTMP = pTextGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) pTMP.font = dmSansTMPFont;
-                pTMP.text = packPrices[i].ToString();
-                pTMP.fontSize = 26;
+                pTMP.text = packPrices[i].ToString("N0");
+                pTMP.fontSize = 28;
                 pTMP.fontStyle = FontStyles.Bold;
                 pTMP.alignment = TextAlignmentOptions.Left;
                 pTMP.color = isFeatured ? Gold : TextWhite;
@@ -302,16 +352,12 @@ namespace JuegoTCG.EditorTools
             }
 
             // ====================================================
-            // 3. SECTION 2: "VER ANUNCIO"
+            // SECTION 2: "VER ANUNCIO"
             // ====================================================
             GameObject sec2GO = new GameObject("Section_WatchAd");
-            sec2GO.transform.SetParent(contentGO.transform, false);
+            sec2GO.transform.SetParent(scrollContentGO.transform, false);
             RectTransform sec2Rect = sec2GO.AddComponent<RectTransform>();
-            sec2Rect.anchorMin = new Vector2(0.5f, 1f);
-            sec2Rect.anchorMax = new Vector2(0.5f, 1f);
-            sec2Rect.pivot = new Vector2(0.5f, 1f);
-            sec2Rect.anchoredPosition = new Vector2(0, -780);
-            sec2Rect.sizeDelta = new Vector2(980, 240);
+            sec2Rect.sizeDelta = new Vector2(1000, 270);
 
             GameObject sec2TitleGO = new GameObject("SectionTitle");
             sec2TitleGO.transform.SetParent(sec2GO.transform, false);
@@ -319,12 +365,12 @@ namespace JuegoTCG.EditorTools
             sec2TitleRect.anchorMin = new Vector2(0f, 1f);
             sec2TitleRect.anchorMax = new Vector2(1f, 1f);
             sec2TitleRect.pivot = new Vector2(0f, 1f);
-            sec2TitleRect.anchoredPosition = new Vector2(0, 0);
-            sec2TitleRect.sizeDelta = new Vector2(0, 40);
+            sec2TitleRect.anchoredPosition = new Vector2(10, 0);
+            sec2TitleRect.sizeDelta = new Vector2(0, 48);
             TextMeshProUGUI sec2TitleTMP = sec2TitleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) sec2TitleTMP.font = barlowTMPFont;
             sec2TitleTMP.text = "VER ANUNCIO";
-            sec2TitleTMP.fontSize = 30;
+            sec2TitleTMP.fontSize = 36;
             sec2TitleTMP.fontStyle = FontStyles.Bold;
             sec2TitleTMP.characterSpacing = 8f;
             sec2TitleTMP.color = TextWhite;
@@ -336,12 +382,12 @@ namespace JuegoTCG.EditorTools
             adCardRect.anchorMin = new Vector2(0.5f, 1f);
             adCardRect.anchorMax = new Vector2(0.5f, 1f);
             adCardRect.pivot = new Vector2(0.5f, 1f);
-            adCardRect.anchoredPosition = new Vector2(0, -50);
-            adCardRect.sizeDelta = new Vector2(980, 180);
+            adCardRect.anchoredPosition = new Vector2(0, -60);
+            adCardRect.sizeDelta = new Vector2(1000, 190);
 
             RoundedRectGraphic adG = adCardGO.AddComponent<RoundedRectGraphic>();
             adG.CornerRadius = 24f;
-            adG.color = new Color(0.055f, 0.086f, 0.039f, 0.90f); // rgba(14,22,10,0.9)
+            adG.color = new Color(0.055f, 0.086f, 0.039f, 0.90f);
             adG.BorderWidth = 2.0f;
             adG.BorderColor = Gold;
 
@@ -354,8 +400,8 @@ namespace JuegoTCG.EditorTools
             playCircleRect.anchorMin = new Vector2(0f, 0.5f);
             playCircleRect.anchorMax = new Vector2(0f, 0.5f);
             playCircleRect.pivot = new Vector2(0f, 0.5f);
-            playCircleRect.anchoredPosition = new Vector2(30, 0);
-            playCircleRect.sizeDelta = new Vector2(100, 100);
+            playCircleRect.anchoredPosition = new Vector2(34, 0);
+            playCircleRect.sizeDelta = new Vector2(104, 104);
 
             RoundedRectGraphic playCircleG = playCircleGO.AddComponent<RoundedRectGraphic>();
             playCircleG.IsCapsule = true;
@@ -368,7 +414,7 @@ namespace JuegoTCG.EditorTools
             playIconRect.anchorMin = new Vector2(0.5f, 0.5f);
             playIconRect.anchorMax = new Vector2(0.5f, 0.5f);
             playIconRect.anchoredPosition = new Vector2(4, 0);
-            playIconRect.sizeDelta = new Vector2(44, 44);
+            playIconRect.sizeDelta = new Vector2(48, 48);
             Image playIconImg = playIconGO.AddComponent<Image>();
             if (playSprite != null) playIconImg.sprite = playSprite;
             playIconImg.color = Color.black;
@@ -379,9 +425,9 @@ namespace JuegoTCG.EditorTools
             adTextContGO.transform.SetParent(adCardGO.transform, false);
             RectTransform adTextContRect = adTextContGO.AddComponent<RectTransform>();
             adTextContRect.anchorMin = new Vector2(0f, 0.5f);
-            adTextContRect.anchorMax = new Vector2(0.75f, 0.5f);
+            adTextContRect.anchorMax = new Vector2(0.72f, 0.5f);
             adTextContRect.pivot = new Vector2(0f, 0.5f);
-            adTextContRect.anchoredPosition = new Vector2(150, 0);
+            adTextContRect.anchoredPosition = new Vector2(160, 0);
             adTextContRect.sizeDelta = new Vector2(0, 100);
 
             GameObject adTitleGO = new GameObject("Title");
@@ -391,7 +437,7 @@ namespace JuegoTCG.EditorTools
             adTitleRect.anchorMax = new Vector2(1f, 1f);
             adTitleRect.pivot = new Vector2(0f, 1f);
             adTitleRect.anchoredPosition = new Vector2(0, -10);
-            adTitleRect.sizeDelta = new Vector2(0, 36);
+            adTitleRect.sizeDelta = new Vector2(0, 40);
             TextMeshProUGUI adTitleTMP = adTitleGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) adTitleTMP.font = dmSansTMPFont;
             adTitleTMP.text = "Ve un anuncio y gana 1 sobre";
@@ -406,11 +452,11 @@ namespace JuegoTCG.EditorTools
             adSubRect.anchorMin = new Vector2(0f, 0f);
             adSubRect.anchorMax = new Vector2(1f, 0f);
             adSubRect.pivot = new Vector2(0f, 0f);
-            adSubRect.anchoredPosition = new Vector2(0, 16);
-            adSubRect.sizeDelta = new Vector2(0, 30);
+            adSubRect.anchoredPosition = new Vector2(0, 14);
+            adSubRect.sizeDelta = new Vector2(0, 32);
             TextMeshProUGUI adSubTMP = adSubGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) adSubTMP.font = dmSansTMPFont;
-            adSubTMP.text = "Gratis · Sin costo";
+            adSubTMP.text = "Gratis · Sin costo · Recompensa instantánea";
             adSubTMP.fontSize = 22;
             adSubTMP.color = TextGray;
             adSubTMP.raycastTarget = false;
@@ -423,7 +469,7 @@ namespace JuegoTCG.EditorTools
             adCounterContRect.anchorMax = new Vector2(1f, 0.5f);
             adCounterContRect.pivot = new Vector2(1f, 0.5f);
             adCounterContRect.anchoredPosition = new Vector2(-36, 0);
-            adCounterContRect.sizeDelta = new Vector2(120, 100);
+            adCounterContRect.sizeDelta = new Vector2(130, 100);
 
             GameObject adCountNumGO = new GameObject("CountText");
             adCountNumGO.transform.SetParent(adCounterContGO.transform, false);
@@ -432,11 +478,11 @@ namespace JuegoTCG.EditorTools
             adCountNumRect.anchorMax = new Vector2(1f, 1f);
             adCountNumRect.pivot = new Vector2(0.5f, 1f);
             adCountNumRect.anchoredPosition = new Vector2(0, -10);
-            adCountNumRect.sizeDelta = new Vector2(0, 42);
+            adCountNumRect.sizeDelta = new Vector2(0, 44);
             TextMeshProUGUI adCountNumTMP = adCountNumGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) adCountNumTMP.font = dmSansTMPFont;
             adCountNumTMP.text = "2/3";
-            adCountNumTMP.fontSize = 38;
+            adCountNumTMP.fontSize = 40;
             adCountNumTMP.fontStyle = FontStyles.Bold;
             adCountNumTMP.alignment = TextAlignmentOptions.Center;
             adCountNumTMP.color = Gold;
@@ -449,27 +495,23 @@ namespace JuegoTCG.EditorTools
             adHoyRect.anchorMax = new Vector2(1f, 0f);
             adHoyRect.pivot = new Vector2(0.5f, 0f);
             adHoyRect.anchoredPosition = new Vector2(0, 14);
-            adHoyRect.sizeDelta = new Vector2(0, 24);
+            adHoyRect.sizeDelta = new Vector2(0, 26);
             TextMeshProUGUI adHoyTMP = adHoyGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) adHoyTMP.font = dmSansTMPFont;
             adHoyTMP.text = "HOY";
-            adHoyTMP.fontSize = 18;
+            adHoyTMP.fontSize = 20;
             adHoyTMP.characterSpacing = 4f;
             adHoyTMP.alignment = TextAlignmentOptions.Center;
             adHoyTMP.color = TextDim;
             adHoyTMP.raycastTarget = false;
 
             // ====================================================
-            // 4. SECTION 3: "COMPRAR MONEDAS" (2x2 Grid)
+            // SECTION 3: "COMPRAR MONEDAS" (2x2 Grid)
             // ====================================================
             GameObject sec3GO = new GameObject("Section_BuyCoins");
-            sec3GO.transform.SetParent(contentGO.transform, false);
+            sec3GO.transform.SetParent(scrollContentGO.transform, false);
             RectTransform sec3Rect = sec3GO.AddComponent<RectTransform>();
-            sec3Rect.anchorMin = new Vector2(0.5f, 1f);
-            sec3Rect.anchorMax = new Vector2(0.5f, 1f);
-            sec3Rect.pivot = new Vector2(0.5f, 1f);
-            sec3Rect.anchoredPosition = new Vector2(0, -1060);
-            sec3Rect.sizeDelta = new Vector2(980, 520);
+            sec3Rect.sizeDelta = new Vector2(1000, 600);
 
             GameObject sec3TitleGO = new GameObject("SectionTitle");
             sec3TitleGO.transform.SetParent(sec3GO.transform, false);
@@ -477,12 +519,12 @@ namespace JuegoTCG.EditorTools
             sec3TitleRect.anchorMin = new Vector2(0f, 1f);
             sec3TitleRect.anchorMax = new Vector2(1f, 1f);
             sec3TitleRect.pivot = new Vector2(0f, 1f);
-            sec3TitleRect.anchoredPosition = new Vector2(0, 0);
-            sec3TitleRect.sizeDelta = new Vector2(0, 40);
+            sec3TitleRect.anchoredPosition = new Vector2(10, 0);
+            sec3TitleRect.sizeDelta = new Vector2(0, 48);
             TextMeshProUGUI sec3TitleTMP = sec3TitleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) sec3TitleTMP.font = barlowTMPFont;
             sec3TitleTMP.text = "COMPRAR MONEDAS";
-            sec3TitleTMP.fontSize = 30;
+            sec3TitleTMP.fontSize = 36;
             sec3TitleTMP.fontStyle = FontStyles.Bold;
             sec3TitleTMP.characterSpacing = 8f;
             sec3TitleTMP.color = TextWhite;
@@ -492,8 +534,8 @@ namespace JuegoTCG.EditorTools
             string[] priceTags = { "$0.99", "$1.99", "$3.99", "$7.99" };
             Button[] coinPackBtns = new Button[4];
 
-            float cardW = 475f;
-            float cardH = 220f;
+            float cardW = 485f;
+            float cardH = 240f;
             float gapX = 30f;
             float gapY = 24f;
 
@@ -508,11 +550,11 @@ namespace JuegoTCG.EditorTools
                 cpRect.anchorMin = new Vector2(0f, 1f);
                 cpRect.anchorMax = new Vector2(0f, 1f);
                 cpRect.pivot = new Vector2(0f, 1f);
-                cpRect.anchoredPosition = new Vector2(col * (cardW + gapX), -55 - row * (cardH + gapY));
+                cpRect.anchoredPosition = new Vector2(col * (cardW + gapX), -60 - row * (cardH + gapY));
                 cpRect.sizeDelta = new Vector2(cardW, cardH);
 
                 RoundedRectGraphic cpG = cpGO.AddComponent<RoundedRectGraphic>();
-                cpG.CornerRadius = 20f;
+                cpG.CornerRadius = 24f;
                 cpG.color = CardBg;
                 cpG.BorderWidth = 1.5f;
                 cpG.BorderColor = BorderSubtle;
@@ -526,19 +568,19 @@ namespace JuegoTCG.EditorTools
                 ciRect.anchorMin = new Vector2(0.5f, 1f);
                 ciRect.anchorMax = new Vector2(0.5f, 1f);
                 ciRect.pivot = new Vector2(0.5f, 1f);
-                ciRect.anchoredPosition = new Vector2(0, -16);
-                ciRect.sizeDelta = new Vector2(100, 44);
+                ciRect.anchoredPosition = new Vector2(0, -18);
+                ciRect.sizeDelta = new Vector2(110, 48);
 
                 HorizontalLayoutGroup cihlg = cIconsHolderGO.AddComponent<HorizontalLayoutGroup>();
                 cihlg.childAlignment = TextAnchor.MiddleCenter;
                 cihlg.childControlWidth = false;
                 cihlg.childControlHeight = false;
-                cihlg.spacing = 6f;
+                cihlg.spacing = 8f;
 
                 GameObject c1GO = new GameObject("Coin1");
                 c1GO.transform.SetParent(cIconsHolderGO.transform, false);
                 RectTransform c1Rect = c1GO.AddComponent<RectTransform>();
-                c1Rect.sizeDelta = new Vector2(40, 40);
+                c1Rect.sizeDelta = new Vector2(44, 44);
                 Image c1Img = c1GO.AddComponent<Image>();
                 if (coinSprite != null) c1Img.sprite = coinSprite;
                 c1Img.raycastTarget = false;
@@ -548,7 +590,7 @@ namespace JuegoTCG.EditorTools
                     GameObject c2GO = new GameObject("Coin2");
                     c2GO.transform.SetParent(cIconsHolderGO.transform, false);
                     RectTransform c2Rect = c2GO.AddComponent<RectTransform>();
-                    c2Rect.sizeDelta = new Vector2(30, 30);
+                    c2Rect.sizeDelta = new Vector2(34, 34);
                     Image c2Img = c2GO.AddComponent<Image>();
                     if (coinSprite != null) c2Img.sprite = coinSprite;
                     c2Img.raycastTarget = false;
@@ -561,12 +603,12 @@ namespace JuegoTCG.EditorTools
                 amtRect.anchorMin = new Vector2(0f, 0.5f);
                 amtRect.anchorMax = new Vector2(1f, 0.5f);
                 amtRect.pivot = new Vector2(0.5f, 0.5f);
-                amtRect.anchoredPosition = new Vector2(0, bonusAmounts[i] > 0 ? 4 : -6);
-                amtRect.sizeDelta = new Vector2(0, 34);
+                amtRect.anchoredPosition = new Vector2(0, bonusAmounts[i] > 0 ? 6 : -6);
+                amtRect.sizeDelta = new Vector2(0, 38);
                 TextMeshProUGUI amtTMP = amtGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) amtTMP.font = dmSansTMPFont;
-                amtTMP.text = coinAmounts[i].ToString();
-                amtTMP.fontSize = 32;
+                amtTMP.text = coinAmounts[i].ToString("N0");
+                amtTMP.fontSize = 36;
                 amtTMP.fontStyle = FontStyles.Bold;
                 amtTMP.alignment = TextAlignmentOptions.Center;
                 amtTMP.color = TextWhite;
@@ -580,12 +622,12 @@ namespace JuegoTCG.EditorTools
                     bonusRect.anchorMin = new Vector2(0f, 0.5f);
                     bonusRect.anchorMax = new Vector2(1f, 0.5f);
                     bonusRect.pivot = new Vector2(0.5f, 0.5f);
-                    bonusRect.anchoredPosition = new Vector2(0, -22);
-                    bonusRect.sizeDelta = new Vector2(0, 24);
+                    bonusRect.anchoredPosition = new Vector2(0, -26);
+                    bonusRect.sizeDelta = new Vector2(0, 26);
                     TextMeshProUGUI bonusTMP = bonusGO.AddComponent<TextMeshProUGUI>();
                     if (dmSansTMPFont != null) bonusTMP.font = dmSansTMPFont;
                     bonusTMP.text = $"+{bonusAmounts[i]} bonus";
-                    bonusTMP.fontSize = 20;
+                    bonusTMP.fontSize = 22;
                     bonusTMP.fontStyle = FontStyles.Bold;
                     bonusTMP.alignment = TextAlignmentOptions.Center;
                     bonusTMP.color = Gold;
@@ -599,13 +641,13 @@ namespace JuegoTCG.EditorTools
                 pTagRect.anchorMin = new Vector2(0.5f, 0f);
                 pTagRect.anchorMax = new Vector2(0.5f, 0f);
                 pTagRect.pivot = new Vector2(0.5f, 0f);
-                pTagRect.anchoredPosition = new Vector2(0, 14);
-                pTagRect.sizeDelta = new Vector2(150, 44);
+                pTagRect.anchoredPosition = new Vector2(0, 16);
+                pTagRect.sizeDelta = new Vector2(170, 50);
 
                 RoundedRectGraphic pTagG = pTagGO.AddComponent<RoundedRectGraphic>();
-                pTagG.CornerRadius = 10f;
+                pTagG.CornerRadius = 12f;
                 pTagG.color = new Color(1f, 1f, 1f, 0.07f);
-                pTagG.BorderWidth = 1.2f;
+                pTagG.BorderWidth = 1.5f;
                 pTagG.BorderColor = BorderSubtle;
                 pTagG.raycastTarget = false;
 
@@ -618,15 +660,15 @@ namespace JuegoTCG.EditorTools
                 TextMeshProUGUI pttTMP = pTagTextGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) pttTMP.font = dmSansTMPFont;
                 pttTMP.text = priceTags[i];
-                pttTMP.fontSize = 22;
+                pttTMP.fontSize = 24;
                 pttTMP.fontStyle = FontStyles.Bold;
                 pttTMP.alignment = TextAlignmentOptions.Center;
-                pttTMP.color = TextGray;
+                pttTMP.color = TextWhite;
                 pttTMP.raycastTarget = false;
             }
 
             // ====================================================
-            // 5. BOTTOM NAVIGATION BAR (5 Tabs, "Tienda" Active)
+            // 3. BOTTOM NAVIGATION BAR (5 Tabs, "Tienda" Active)
             // ====================================================
             GameObject bottomBarGO = new GameObject("BottomNavigationBar");
             bottomBarGO.transform.SetParent(canvasGO.transform, false);
@@ -745,39 +787,18 @@ namespace JuegoTCG.EditorTools
             EditorSceneManager.SaveScene(scene, ScenePath);
 
             // Register Scenes in Build Settings
-            List<EditorBuildSettingsScene> buildScenes = new List<EditorBuildSettingsScene>();
-            buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/HomeScreenScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/MyCardsScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MyCardsScene.unity", true));
-            }
-            if (File.Exists("Assets/_Project/Scenes/StoreScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/StoreScene.unity", true));
-            }
-            if (File.Exists("Assets/_Project/Scenes/CommunityScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/CommunityScene.unity", true));
-            }
-            if (File.Exists("Assets/_Project/Scenes/ProfileScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/ProfileScene.unity", true));
-            }
-            if (File.Exists("Assets/_Project/Scenes/PackOpeningScene.unity"))
-            {
-                buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/PackOpeningScene.unity", true));
-            }
-            EditorBuildSettings.scenes = buildScenes.ToArray();
+            JuegoTCG.Editor.AutoRegisterBuildScenes.RegisterScenes();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Tienda guardada como Escena Oficial (StoreScene.unity) y Prefab (StoreScreenUI.prefab)!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Tienda guardada con diseño responsivo AAA (StoreScene.unity)!</color>");
         }
 
         private static TMP_FontAsset GetOrCreateTMPFont(string fontName)
         {
             Font font = AssetDatabase.LoadAssetAtPath<Font>($"{FontPath}/{fontName}.ttf");
+            if (font == null) font = AssetDatabase.LoadAssetAtPath<Font>($"{FontPath}/{fontName}.otf");
             if (font != null)
             {
                 try
@@ -794,7 +815,22 @@ namespace JuegoTCG.EditorTools
                     Debug.LogWarning($"[JuegoTCG] Creación dinámica de fuente {fontName}: {ex.Message}");
                 }
             }
-            return TMP_Settings.defaultFontAsset;
+            return TMP_Settings.defaultFontAsset ?? Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
+        }
+
+        private static void ConfigureFontImporters()
+        {
+            string[] fontFiles = { "BarlowCondensed-Bold.ttf", "DMSans-Bold.ttf", "DMSans-Medium.ttf", "DMSans-SemiBold.ttf" };
+            foreach (var f in fontFiles)
+            {
+                string p = $"{FontPath}/{f}";
+                TrueTypeFontImporter imp = AssetImporter.GetAtPath(p) as TrueTypeFontImporter;
+                if (imp != null && !imp.includeFontData)
+                {
+                    imp.includeFontData = true;
+                    imp.SaveAndReimport();
+                }
+            }
         }
     }
 }

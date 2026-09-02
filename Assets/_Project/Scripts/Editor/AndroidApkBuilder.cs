@@ -8,7 +8,7 @@ namespace JuegoTCG.Editor
 {
     public static class AndroidApkBuilder
     {
-        [MenuItem("JuegoTCG/📦 Compilar APK Android (1-Click Build)")]
+        [MenuItem("JuegoTCG/⚙️ Herramientas y Build/📦 Compilar APK Android", priority = 43)]
         public static void BuildAndroidApk()
         {
             string outputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Builds", "Android");

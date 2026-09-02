@@ -11,7 +11,6 @@ namespace JuegoTCG.EditorTools
     {
         private const string FolderPath = "Assets/_Project/ScriptableObjects/PilotAlbum";
 
-        [MenuItem("JuegoTCG/Generar Álbum Piloto")]
         public static void BuildPilotAlbum()
         {
             if (Directory.Exists(FolderPath))

@@ -26,7 +26,6 @@ namespace JuegoTCG.EditorTools
         private static readonly Color BorderSubtle = new Color(1f, 1f, 1f, 0.13f);
         private static readonly Color NavBg = new Color(0.055f, 0.125f, 0.086f, 0.85f);   // rgba(14,32,22,0.85)
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Inicio (Home)")]
         public static void BuildHomeScreenScene()
         {
             ProceduralAssetGenerator.GenerateUISprites();
@@ -69,8 +68,8 @@ namespace JuegoTCG.EditorTools
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920);
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.referenceResolution = new Vector2(1080, 2400);
+            scaler.matchWidthOrHeight = 0.0f;
             canvasGO.AddComponent<GraphicRaycaster>();
 
             // Event System
@@ -111,8 +110,8 @@ namespace JuegoTCG.EditorTools
             topBarRect.anchorMin = new Vector2(0.5f, 1f);
             topBarRect.anchorMax = new Vector2(0.5f, 1f);
             topBarRect.pivot = new Vector2(0.5f, 1f);
-            topBarRect.anchoredPosition = new Vector2(0, -50);
-            topBarRect.sizeDelta = new Vector2(1000, 130);
+            topBarRect.anchoredPosition = new Vector2(0, -70);
+            topBarRect.sizeDelta = new Vector2(1000, 160);
 
             // Left: 2 square slot badges
             for (int i = 0; i < 2; i++)
@@ -123,11 +122,11 @@ namespace JuegoTCG.EditorTools
                 slotRect.anchorMin = new Vector2(0f, 0.5f);
                 slotRect.anchorMax = new Vector2(0f, 0.5f);
                 slotRect.pivot = new Vector2(0f, 0.5f);
-                slotRect.anchoredPosition = new Vector2(i * 85, 0);
-                slotRect.sizeDelta = new Vector2(74, 74);
+                slotRect.anchoredPosition = new Vector2(i * 100, 0);
+                slotRect.sizeDelta = new Vector2(88, 88);
 
                 RoundedRectGraphic slotG = slotGO.AddComponent<RoundedRectGraphic>();
-                slotG.CornerRadius = 14f;
+                slotG.CornerRadius = 18f;
                 slotG.color = new Color(1f, 1f, 1f, 0.05f);
                 slotG.BorderWidth = 1.5f;
                 slotG.BorderColor = BorderSubtle;
@@ -141,7 +140,7 @@ namespace JuegoTCG.EditorTools
             profileRect.anchorMax = new Vector2(0.5f, 0.5f);
             profileRect.pivot = new Vector2(0.5f, 0.5f);
             profileRect.anchoredPosition = new Vector2(0, 0);
-            profileRect.sizeDelta = new Vector2(280, 130);
+            profileRect.sizeDelta = new Vector2(340, 160);
 
             // Avatar Circle
             GameObject avatarGO = new GameObject("AvatarCircle");
@@ -151,23 +150,23 @@ namespace JuegoTCG.EditorTools
             avatarRect.anchorMax = new Vector2(0.5f, 1f);
             avatarRect.pivot = new Vector2(0.5f, 1f);
             avatarRect.anchoredPosition = new Vector2(0, 0);
-            avatarRect.sizeDelta = new Vector2(68, 68);
+            avatarRect.sizeDelta = new Vector2(86, 86);
 
             RoundedRectGraphic avatarG = avatarGO.AddComponent<RoundedRectGraphic>();
             avatarG.IsCapsule = true;
             avatarG.color = new Color(1f, 1f, 1f, 0.07f);
-            avatarG.BorderWidth = 1.5f;
-            avatarG.BorderColor = BorderSubtle;
+            avatarG.BorderWidth = 2f;
+            avatarG.BorderColor = GoldBorder;
 
             GameObject avatarIconGO = new GameObject("Icon");
             avatarIconGO.transform.SetParent(avatarGO.transform, false);
             RectTransform avatarIconRect = avatarIconGO.AddComponent<RectTransform>();
             avatarIconRect.anchorMin = new Vector2(0.5f, 0.5f);
             avatarIconRect.anchorMax = new Vector2(0.5f, 0.5f);
-            avatarIconRect.sizeDelta = new Vector2(40, 40);
+            avatarIconRect.sizeDelta = new Vector2(52, 52);
             Image avatarIconImg = avatarIconGO.AddComponent<Image>();
             avatarIconImg.sprite = iconUser;
-            avatarIconImg.color = TextGray;
+            avatarIconImg.color = TextWhite;
 
             // Player Name
             GameObject playerNameGO = new GameObject("PlayerNameText");
@@ -176,12 +175,12 @@ namespace JuegoTCG.EditorTools
             nameRect.anchorMin = new Vector2(0.5f, 1f);
             nameRect.anchorMax = new Vector2(0.5f, 1f);
             nameRect.pivot = new Vector2(0.5f, 1f);
-            nameRect.anchoredPosition = new Vector2(0, -74);
-            nameRect.sizeDelta = new Vector2(260, 26);
+            nameRect.anchoredPosition = new Vector2(0, -94);
+            nameRect.sizeDelta = new Vector2(320, 32);
             TextMeshProUGUI nameTMP = playerNameGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) nameTMP.font = dmSansTMPFont;
             nameTMP.text = "JUGADOR_01";
-            nameTMP.fontSize = 21;
+            nameTMP.fontSize = 26;
             nameTMP.fontStyle = FontStyles.Bold;
             nameTMP.characterSpacing = 4f;
             nameTMP.alignment = TextAlignmentOptions.Center;
@@ -194,12 +193,12 @@ namespace JuegoTCG.EditorTools
             levelRect.anchorMin = new Vector2(0.5f, 1f);
             levelRect.anchorMax = new Vector2(0.5f, 1f);
             levelRect.pivot = new Vector2(0.5f, 1f);
-            levelRect.anchoredPosition = new Vector2(0, -102);
-            levelRect.sizeDelta = new Vector2(260, 20);
+            levelRect.anchoredPosition = new Vector2(0, -128);
+            levelRect.sizeDelta = new Vector2(320, 26);
             TextMeshProUGUI levelTMP = playerLevelGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) levelTMP.font = dmSansTMPFont;
             levelTMP.text = "Nivel 7";
-            levelTMP.fontSize = 15;
+            levelTMP.fontSize = 20;
             levelTMP.alignment = TextAlignmentOptions.Center;
             levelTMP.color = TextGray;
 
@@ -211,9 +210,9 @@ namespace JuegoTCG.EditorTools
             rightRect.anchorMax = new Vector2(1f, 0.5f);
             rightRect.pivot = new Vector2(1f, 0.5f);
             rightRect.anchoredPosition = new Vector2(0, 0);
-            rightRect.sizeDelta = new Vector2(330, 60);
+            rightRect.sizeDelta = new Vector2(360, 70);
 
-            // Coins Pill (Perfect Procedural Capsule with Gold Border)
+            // Coins Pill
             GameObject coinsBadgeGO = new GameObject("CoinsBadge");
             coinsBadgeGO.transform.SetParent(topRightGO.transform, false);
             RectTransform coinsBadgeRect = coinsBadgeGO.AddComponent<RectTransform>();
@@ -221,7 +220,7 @@ namespace JuegoTCG.EditorTools
             coinsBadgeRect.anchorMax = new Vector2(0f, 0.5f);
             coinsBadgeRect.pivot = new Vector2(0f, 0.5f);
             coinsBadgeRect.anchoredPosition = new Vector2(0, 0);
-            coinsBadgeRect.sizeDelta = new Vector2(148, 48);
+            coinsBadgeRect.sizeDelta = new Vector2(170, 58);
 
             RoundedRectGraphic coinsG = coinsBadgeGO.AddComponent<RoundedRectGraphic>();
             coinsG.IsCapsule = true;
@@ -235,8 +234,8 @@ namespace JuegoTCG.EditorTools
             coinsIconRect.anchorMin = new Vector2(0f, 0.5f);
             coinsIconRect.anchorMax = new Vector2(0f, 0.5f);
             coinsIconRect.pivot = new Vector2(0f, 0.5f);
-            coinsIconRect.anchoredPosition = new Vector2(14, 0);
-            coinsIconRect.sizeDelta = new Vector2(28, 28);
+            coinsIconRect.anchoredPosition = new Vector2(16, 0);
+            coinsIconRect.sizeDelta = new Vector2(34, 34);
             Image coinsIconImg = coinsIconGO.AddComponent<Image>();
             coinsIconImg.sprite = coinSprite;
             coinsIconImg.color = Color.white;
@@ -246,12 +245,12 @@ namespace JuegoTCG.EditorTools
             RectTransform coinsTextRect = coinsTextGO.AddComponent<RectTransform>();
             coinsTextRect.anchorMin = new Vector2(0f, 0f);
             coinsTextRect.anchorMax = new Vector2(1f, 1f);
-            coinsTextRect.offsetMin = new Vector2(46, 0);
-            coinsTextRect.offsetMax = new Vector2(-10, 0);
+            coinsTextRect.offsetMin = new Vector2(56, 0);
+            coinsTextRect.offsetMax = new Vector2(-12, 0);
             TextMeshProUGUI coinsTMP = coinsTextGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) coinsTMP.font = dmSansTMPFont;
             coinsTMP.text = "240";
-            coinsTMP.fontSize = 20;
+            coinsTMP.fontSize = 24;
             coinsTMP.fontStyle = FontStyles.Bold;
             coinsTMP.alignment = TextAlignmentOptions.Center;
             coinsTMP.color = TextWhite;
@@ -263,8 +262,8 @@ namespace JuegoTCG.EditorTools
             mailRect.anchorMin = new Vector2(0f, 0.5f);
             mailRect.anchorMax = new Vector2(0f, 0.5f);
             mailRect.pivot = new Vector2(0f, 0.5f);
-            mailRect.anchoredPosition = new Vector2(170, 0);
-            mailRect.sizeDelta = new Vector2(48, 48);
+            mailRect.anchoredPosition = new Vector2(190, 0);
+            mailRect.sizeDelta = new Vector2(58, 58);
             Image mailImg = mailGO.AddComponent<Image>();
             mailImg.sprite = iconMail;
             mailImg.color = TextGray;
@@ -277,7 +276,7 @@ namespace JuegoTCG.EditorTools
             dotRect.anchorMax = new Vector2(1f, 1f);
             dotRect.pivot = new Vector2(1f, 1f);
             dotRect.anchoredPosition = new Vector2(-2, -2);
-            dotRect.sizeDelta = new Vector2(14, 14);
+            dotRect.sizeDelta = new Vector2(16, 16);
             RoundedRectGraphic mailDotG = mailDotGO.AddComponent<RoundedRectGraphic>();
             mailDotG.IsCapsule = true;
             mailDotG.color = Gold;
@@ -289,8 +288,8 @@ namespace JuegoTCG.EditorTools
             giftRect.anchorMin = new Vector2(0f, 0.5f);
             giftRect.anchorMax = new Vector2(0f, 0.5f);
             giftRect.pivot = new Vector2(0f, 0.5f);
-            giftRect.anchoredPosition = new Vector2(240, 0);
-            giftRect.sizeDelta = new Vector2(48, 48);
+            giftRect.anchoredPosition = new Vector2(270, 0);
+            giftRect.sizeDelta = new Vector2(58, 58);
             Image giftImg = giftGO.AddComponent<Image>();
             giftImg.sprite = iconGift;
             giftImg.color = TextGray;
@@ -304,12 +303,12 @@ namespace JuegoTCG.EditorTools
             titleSobresRect.anchorMin = new Vector2(0.5f, 1f);
             titleSobresRect.anchorMax = new Vector2(0.5f, 1f);
             titleSobresRect.pivot = new Vector2(0.5f, 1f);
-            titleSobresRect.anchoredPosition = new Vector2(0, -210);
-            titleSobresRect.sizeDelta = new Vector2(980, 40);
+            titleSobresRect.anchoredPosition = new Vector2(0, -255);
+            titleSobresRect.sizeDelta = new Vector2(1000, 50);
             TextMeshProUGUI titleSobresTMP = titleSobresGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) titleSobresTMP.font = barlowTMPFont;
             titleSobresTMP.text = "SOBRES DISPONIBLES";
-            titleSobresTMP.fontSize = 32;
+            titleSobresTMP.fontSize = 40;
             titleSobresTMP.fontStyle = FontStyles.Bold;
             titleSobresTMP.characterSpacing = 10f;
             titleSobresTMP.color = TextWhite;
@@ -321,12 +320,12 @@ namespace JuegoTCG.EditorTools
             packsRowRect.anchorMin = new Vector2(0.5f, 1f);
             packsRowRect.anchorMax = new Vector2(0.5f, 1f);
             packsRowRect.pivot = new Vector2(0.5f, 1f);
-            packsRowRect.anchoredPosition = new Vector2(0, -265);
-            packsRowRect.sizeDelta = new Vector2(980, 480);
+            packsRowRect.anchoredPosition = new Vector2(0, -325);
+            packsRowRect.sizeDelta = new Vector2(1000, 680);
 
             Button[] packBtns = new Button[3];
             string[] packLabels = { "SOBRE A", "SOBRE B", "SOBRE C" };
-            float packSpacing = 330f;
+            float packSpacing = 340f;
             float startPackX = -packSpacing;
 
             for (int i = 0; i < 3; i++)
@@ -339,13 +338,13 @@ namespace JuegoTCG.EditorTools
                 pRect.anchorMax = new Vector2(0.5f, 0.5f);
                 pRect.pivot = new Vector2(0.5f, 0.5f);
                 pRect.anchoredPosition = new Vector2(startPackX + i * packSpacing, 0);
-                pRect.sizeDelta = new Vector2(305, 470);
+                pRect.sizeDelta = isFeatured ? new Vector2(340, 660) : new Vector2(310, 610);
 
                 RoundedRectGraphic pG = packCardGO.AddComponent<RoundedRectGraphic>();
-                pG.CornerRadius = 24f;
-                pG.color = CardBg;
-                pG.BorderWidth = isFeatured ? 3f : 1.5f;
-                pG.BorderColor = isFeatured ? GoldBorder : BorderSubtle;
+                pG.CornerRadius = 28f;
+                pG.color = isFeatured ? new Color(0.06f, 0.12f, 0.09f) : CardBg;
+                pG.BorderWidth = isFeatured ? 3.5f : 1.5f;
+                pG.BorderColor = isFeatured ? Gold : BorderSubtle;
 
                 // Label at bottom
                 GameObject pLabelGO = new GameObject("Label");
@@ -357,7 +356,7 @@ namespace JuegoTCG.EditorTools
                 TextMeshProUGUI pLabelTMP = pLabelGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) pLabelTMP.font = dmSansTMPFont;
                 pLabelTMP.text = packLabels[i];
-                pLabelTMP.fontSize = 20;
+                pLabelTMP.fontSize = isFeatured ? 26 : 22;
                 pLabelTMP.fontStyle = FontStyles.Bold;
                 pLabelTMP.characterSpacing = 4f;
                 pLabelTMP.alignment = TextAlignmentOptions.Center;
@@ -375,8 +374,8 @@ namespace JuegoTCG.EditorTools
             actionCardsRect.anchorMin = new Vector2(0.5f, 1f);
             actionCardsRect.anchorMax = new Vector2(0.5f, 1f);
             actionCardsRect.pivot = new Vector2(0.5f, 1f);
-            actionCardsRect.anchoredPosition = new Vector2(0, -780);
-            actionCardsRect.sizeDelta = new Vector2(980, 200);
+            actionCardsRect.anchoredPosition = new Vector2(0, -1040);
+            actionCardsRect.sizeDelta = new Vector2(1000, 240);
 
             // Card 1: Evento Especial
             GameObject eventCardGO = new GameObject("EventCard");
@@ -397,11 +396,11 @@ namespace JuegoTCG.EditorTools
             RectTransform eventIconRect = eventIconGO.AddComponent<RectTransform>();
             eventIconRect.anchorMin = new Vector2(0.5f, 0.5f);
             eventIconRect.anchorMax = new Vector2(0.5f, 0.5f);
-            eventIconRect.anchoredPosition = new Vector2(0, 28);
-            eventIconRect.sizeDelta = new Vector2(56, 56);
+            eventIconRect.anchoredPosition = new Vector2(0, 36);
+            eventIconRect.sizeDelta = new Vector2(68, 68);
             Image eventIconImg = eventIconGO.AddComponent<Image>();
             eventIconImg.sprite = iconClock;
-            eventIconImg.color = TextGray;
+            eventIconImg.color = TextWhite;
 
             GameObject eventTitleGO = new GameObject("Title");
             eventTitleGO.transform.SetParent(eventCardGO.transform, false);
@@ -412,7 +411,7 @@ namespace JuegoTCG.EditorTools
             TextMeshProUGUI eventTitleTMP = eventTitleGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) eventTitleTMP.font = dmSansTMPFont;
             eventTitleTMP.text = "Evento especial";
-            eventTitleTMP.fontSize = 22;
+            eventTitleTMP.fontSize = 26;
             eventTitleTMP.fontStyle = FontStyles.Bold;
             eventTitleTMP.alignment = TextAlignmentOptions.Center;
             eventTitleTMP.color = TextWhite;
@@ -426,7 +425,7 @@ namespace JuegoTCG.EditorTools
             TextMeshProUGUI eventTimerTMP = eventTimerGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) eventTimerTMP.font = dmSansTMPFont;
             eventTimerTMP.text = "2d 14h";
-            eventTimerTMP.fontSize = 17;
+            eventTimerTMP.fontSize = 20;
             eventTimerTMP.alignment = TextAlignmentOptions.Center;
             eventTimerTMP.color = TextGray;
             Button eventBtn = eventCardGO.AddComponent<Button>();
@@ -450,11 +449,11 @@ namespace JuegoTCG.EditorTools
             RectTransform shopIconRect = shopIconGO.AddComponent<RectTransform>();
             shopIconRect.anchorMin = new Vector2(0.5f, 0.5f);
             shopIconRect.anchorMax = new Vector2(0.5f, 0.5f);
-            shopIconRect.anchoredPosition = new Vector2(0, 24);
-            shopIconRect.sizeDelta = new Vector2(56, 56);
+            shopIconRect.anchoredPosition = new Vector2(0, 32);
+            shopIconRect.sizeDelta = new Vector2(68, 68);
             Image shopIconImg = shopIconGO.AddComponent<Image>();
             shopIconImg.sprite = iconShop;
-            shopIconImg.color = TextGray;
+            shopIconImg.color = Gold;
 
             GameObject shopTitleGO = new GameObject("Title");
             shopTitleGO.transform.SetParent(shopCardGO.transform, false);
@@ -465,7 +464,7 @@ namespace JuegoTCG.EditorTools
             TextMeshProUGUI shopTitleTMP = shopTitleGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) shopTitleTMP.font = dmSansTMPFont;
             shopTitleTMP.text = "Tienda";
-            shopTitleTMP.fontSize = 22;
+            shopTitleTMP.fontSize = 26;
             shopTitleTMP.fontStyle = FontStyles.Bold;
             shopTitleTMP.alignment = TextAlignmentOptions.Center;
             shopTitleTMP.color = TextWhite;
@@ -480,8 +479,8 @@ namespace JuegoTCG.EditorTools
             missionsRect.anchorMin = new Vector2(1f, 1f);
             missionsRect.anchorMax = new Vector2(1f, 1f);
             missionsRect.pivot = new Vector2(1f, 1f);
-            missionsRect.anchoredPosition = new Vector2(-50, -1005);
-            missionsRect.sizeDelta = new Vector2(330, 80);
+            missionsRect.anchoredPosition = new Vector2(-40, -1310);
+            missionsRect.sizeDelta = new Vector2(340, 90);
 
             // Procedural Capsule Graphic (100% Mathematically Perfect Semicircles)
             RoundedRectGraphic missionsG = missionsBtnGO.AddComponent<RoundedRectGraphic>();
@@ -503,25 +502,25 @@ namespace JuegoTCG.EditorTools
             hlg.childControlHeight = false;
             hlg.childForceExpandWidth = false;
             hlg.childForceExpandHeight = false;
-            hlg.spacing = 12f;
+            hlg.spacing = 14f;
 
             GameObject missionsIconGO = new GameObject("CheckIcon");
             missionsIconGO.transform.SetParent(contentHolderGO.transform, false);
             RectTransform missionsIconRect = missionsIconGO.AddComponent<RectTransform>();
-            missionsIconRect.sizeDelta = new Vector2(34, 34);
+            missionsIconRect.sizeDelta = new Vector2(38, 38);
             Image missionsIconImg = missionsIconGO.AddComponent<Image>();
             missionsIconImg.sprite = iconCheckMisiones;
-            missionsIconImg.color = Color.white;
+            missionsIconImg.color = Color.black;
             missionsIconImg.raycastTarget = false;
 
             GameObject missionsTextGO = new GameObject("Text");
             missionsTextGO.transform.SetParent(contentHolderGO.transform, false);
             RectTransform missionsTextRect = missionsTextGO.AddComponent<RectTransform>();
-            missionsTextRect.sizeDelta = new Vector2(165, 34);
+            missionsTextRect.sizeDelta = new Vector2(180, 38);
             TextMeshProUGUI missionsTMP = missionsTextGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) missionsTMP.font = dmSansTMPFont;
             missionsTMP.text = "MISIONES";
-            missionsTMP.fontSize = 24;
+            missionsTMP.fontSize = 28;
             missionsTMP.fontStyle = FontStyles.Bold;
             missionsTMP.characterSpacing = 5f;
             missionsTMP.alignment = TextAlignmentOptions.Center;
@@ -536,7 +535,7 @@ namespace JuegoTCG.EditorTools
             redDotRect.anchorMax = new Vector2(1f, 1f);
             redDotRect.pivot = new Vector2(1f, 1f);
             redDotRect.anchoredPosition = new Vector2(-8, -6);
-            redDotRect.sizeDelta = new Vector2(16, 16);
+            redDotRect.sizeDelta = new Vector2(20, 20);
             RoundedRectGraphic redDotG = redDotGO.AddComponent<RoundedRectGraphic>();
             redDotG.IsCapsule = true;
             redDotG.color = new Color(1f, 0.231f, 0.188f); // #ff3b30
@@ -553,8 +552,8 @@ namespace JuegoTCG.EditorTools
             streakSectionRect.anchorMin = new Vector2(0.5f, 1f);
             streakSectionRect.anchorMax = new Vector2(0.5f, 1f);
             streakSectionRect.pivot = new Vector2(0.5f, 1f);
-            streakSectionRect.anchoredPosition = new Vector2(0, -1115);
-            streakSectionRect.sizeDelta = new Vector2(980, 230);
+            streakSectionRect.anchoredPosition = new Vector2(0, -1430);
+            streakSectionRect.sizeDelta = new Vector2(1000, 300);
 
             RoundedRectGraphic streakG = streakSectionGO.AddComponent<RoundedRectGraphic>();
             streakG.CornerRadius = 24f;
@@ -569,12 +568,12 @@ namespace JuegoTCG.EditorTools
             streakTitleRect.anchorMin = new Vector2(0f, 1f);
             streakTitleRect.anchorMax = new Vector2(0.6f, 1f);
             streakTitleRect.pivot = new Vector2(0f, 1f);
-            streakTitleRect.anchoredPosition = new Vector2(30, -22);
-            streakTitleRect.sizeDelta = new Vector2(0, 32);
+            streakTitleRect.anchoredPosition = new Vector2(36, -26);
+            streakTitleRect.sizeDelta = new Vector2(0, 38);
             TextMeshProUGUI streakTitleTMP = streakTitleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) streakTitleTMP.font = barlowTMPFont;
             streakTitleTMP.text = "RACHA DIARIA";
-            streakTitleTMP.fontSize = 28;
+            streakTitleTMP.fontSize = 32;
             streakTitleTMP.fontStyle = FontStyles.Bold;
             streakTitleTMP.characterSpacing = 8f;
             streakTitleTMP.color = TextWhite;
@@ -585,12 +584,12 @@ namespace JuegoTCG.EditorTools
             streakDaysRect.anchorMin = new Vector2(0.4f, 1f);
             streakDaysRect.anchorMax = new Vector2(1f, 1f);
             streakDaysRect.pivot = new Vector2(1f, 1f);
-            streakDaysRect.anchoredPosition = new Vector2(-30, -22);
-            streakDaysRect.sizeDelta = new Vector2(0, 32);
+            streakDaysRect.anchoredPosition = new Vector2(-36, -26);
+            streakDaysRect.sizeDelta = new Vector2(0, 38);
             TextMeshProUGUI streakDaysTMP = streakDaysGO.AddComponent<TextMeshProUGUI>();
             if (dmSansTMPFont != null) streakDaysTMP.font = dmSansTMPFont;
             streakDaysTMP.text = "3 / 5 días";
-            streakDaysTMP.fontSize = 20;
+            streakDaysTMP.fontSize = 24;
             streakDaysTMP.alignment = TextAlignmentOptions.Right;
             streakDaysTMP.color = TextGray;
 
@@ -601,8 +600,8 @@ namespace JuegoTCG.EditorTools
             sliderRect.anchorMin = new Vector2(0.5f, 1f);
             sliderRect.anchorMax = new Vector2(0.5f, 1f);
             sliderRect.pivot = new Vector2(0.5f, 1f);
-            sliderRect.anchoredPosition = new Vector2(0, -68);
-            sliderRect.sizeDelta = new Vector2(920, 10);
+            sliderRect.anchoredPosition = new Vector2(0, -84);
+            sliderRect.sizeDelta = new Vector2(930, 12);
 
             Slider slider = sliderGO.AddComponent<Slider>();
             slider.minValue = 0f;
@@ -653,13 +652,13 @@ namespace JuegoTCG.EditorTools
                 bRect.anchorMin = new Vector2(0.5f, 1f);
                 bRect.anchorMax = new Vector2(0.5f, 1f);
                 bRect.pivot = new Vector2(0.5f, 1f);
-                bRect.anchoredPosition = new Vector2(startBoxX + i * boxSpacing, -98);
-                bRect.sizeDelta = new Vector2(76, 76);
+                bRect.anchoredPosition = new Vector2(startBoxX + i * boxSpacing, -130);
+                bRect.sizeDelta = new Vector2(98, 98);
 
                 RoundedRectGraphic bG = boxGO.AddComponent<RoundedRectGraphic>();
-                bG.CornerRadius = 14f;
+                bG.CornerRadius = 18f;
                 bG.color = isCompleted ? new Color(0.910f, 0.659f, 0.125f, 0.15f) : new Color(1f, 1f, 1f, 0.05f);
-                bG.BorderWidth = 1.8f;
+                bG.BorderWidth = 2f;
                 bG.BorderColor = isCompleted ? GoldBorder : BorderSubtle;
 
                 if (isCompleted)
@@ -669,7 +668,7 @@ namespace JuegoTCG.EditorTools
                     RectTransform checkRect = checkIconGO.AddComponent<RectTransform>();
                     checkRect.anchorMin = new Vector2(0.5f, 0.5f);
                     checkRect.anchorMax = new Vector2(0.5f, 0.5f);
-                    checkRect.sizeDelta = new Vector2(38, 38);
+                    checkRect.sizeDelta = new Vector2(48, 48);
                     Image checkImg = checkIconGO.AddComponent<Image>();
                     checkImg.sprite = checkGold;
                     checkImg.color = Color.white;
@@ -686,7 +685,7 @@ namespace JuegoTCG.EditorTools
                     TextMeshProUGUI numTMP = dayNumGO.AddComponent<TextMeshProUGUI>();
                     if (dmSansTMPFont != null) numTMP.font = dmSansTMPFont;
                     numTMP.text = $"{i + 1}";
-                    numTMP.fontSize = 24;
+                    numTMP.fontSize = 28;
                     numTMP.fontStyle = FontStyles.Bold;
                     numTMP.alignment = TextAlignmentOptions.Center;
                     numTMP.color = TextDim;

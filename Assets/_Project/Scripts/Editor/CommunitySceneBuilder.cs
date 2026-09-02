@@ -22,27 +22,28 @@ namespace JuegoTCG.EditorTools
         private static readonly Color CardBg = new Color(0.051f, 0.102f, 0.075f);        // #0d1a13
         private static readonly Color TextWhite = Color.white;
         private static readonly Color TextGray = new Color(1f, 1f, 1f, 0.60f);
-        private static readonly Color TextDim = new Color(1f, 1f, 1f, 0.30f);
-        private static readonly Color BorderSubtle = new Color(1f, 1f, 1f, 0.13f);
+        private static readonly Color TextDim = new Color(1f, 1f, 1f, 0.35f);
+        private static readonly Color BorderSubtle = new Color(1f, 1f, 1f, 0.14f);
         private static readonly Color NavBg = new Color(0.055f, 0.125f, 0.086f, 0.85f);
 
         private struct CommunityItemDef
         {
             public string key;
             public string label;
+            public string subtitle;
             public Sprite icon;
             public int? badge;
 
-            public CommunityItemDef(string k, string l, Sprite ic, int? b)
+            public CommunityItemDef(string k, string l, string sub, Sprite ic, int? b)
             {
                 key = k;
                 label = l;
+                subtitle = sub;
                 icon = ic;
                 badge = b;
             }
         }
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Comunidad")]
         public static void BuildCommunityScene()
         {
             if (EditorApplication.isPlaying)
@@ -83,14 +84,14 @@ namespace JuegoTCG.EditorTools
             cam.orthographic = true;
             camGO.AddComponent<AudioListener>();
 
-            // Canvas
+            // Canvas (1080x2400 Match Width for AAA Mobile Display)
             GameObject canvasGO = new GameObject("Canvas");
             Canvas canvas = canvasGO.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920);
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.referenceResolution = new Vector2(1080, 2400);
+            scaler.matchWidthOrHeight = 0.0f;
             canvasGO.AddComponent<GraphicRaycaster>();
 
             // Event System
@@ -131,26 +132,44 @@ namespace JuegoTCG.EditorTools
             headerRect.anchorMin = new Vector2(0.5f, 1f);
             headerRect.anchorMax = new Vector2(0.5f, 1f);
             headerRect.pivot = new Vector2(0.5f, 1f);
-            headerRect.anchoredPosition = new Vector2(0, -60);
-            headerRect.sizeDelta = new Vector2(980, 80);
+            headerRect.anchoredPosition = new Vector2(0, -80); // Safe Area
+            headerRect.sizeDelta = new Vector2(1000, 110);
 
             GameObject titleGO = new GameObject("Title");
             titleGO.transform.SetParent(headerGO.transform, false);
             RectTransform titleRect = titleGO.AddComponent<RectTransform>();
-            titleRect.anchorMin = Vector2.zero;
-            titleRect.anchorMax = Vector2.one;
-            titleRect.sizeDelta = Vector2.zero;
+            titleRect.anchorMin = new Vector2(0f, 1f);
+            titleRect.anchorMax = new Vector2(1f, 1f);
+            titleRect.pivot = new Vector2(0f, 1f);
+            titleRect.anchoredPosition = new Vector2(10, 0);
+            titleRect.sizeDelta = new Vector2(0, 56);
             TextMeshProUGUI titleTMP = titleGO.AddComponent<TextMeshProUGUI>();
             if (barlowTMPFont != null) titleTMP.font = barlowTMPFont;
             titleTMP.text = "COMUNIDAD";
-            titleTMP.fontSize = 38;
+            titleTMP.fontSize = 52;
             titleTMP.fontStyle = FontStyles.Bold;
             titleTMP.characterSpacing = 8f;
             titleTMP.alignment = TextAlignmentOptions.Left;
             titleTMP.color = TextWhite;
 
+            GameObject subtitleGO = new GameObject("Subtitle");
+            subtitleGO.transform.SetParent(headerGO.transform, false);
+            RectTransform subRect = subtitleGO.AddComponent<RectTransform>();
+            subRect.anchorMin = new Vector2(0f, 0f);
+            subRect.anchorMax = new Vector2(1f, 0f);
+            subRect.pivot = new Vector2(0f, 0f);
+            subRect.anchoredPosition = new Vector2(10, 8);
+            subRect.sizeDelta = new Vector2(0, 36);
+            TextMeshProUGUI subTMP = subtitleGO.AddComponent<TextMeshProUGUI>();
+            if (dmSansTMPFont != null) subTMP.font = dmSansTMPFont;
+            subTMP.text = "INTERCAMBIA Y CONECTA CON OTROS JUGADORES";
+            subTMP.fontSize = 22;
+            subTMP.fontStyle = FontStyles.Bold;
+            subTMP.characterSpacing = 3f;
+            subTMP.color = Gold;
+
             // ====================================================
-            // 2. 2x2 GRID OF ACTION CARDS (Aspect Ratio 1:1)
+            // 2. 2x2 GRID OF ACTION CARDS (Aspect Ratio 1:1.15)
             // ====================================================
             GameObject gridGO = new GameObject("CommunityGrid");
             gridGO.transform.SetParent(contentGO.transform, false);
@@ -158,20 +177,22 @@ namespace JuegoTCG.EditorTools
             gridRect.anchorMin = new Vector2(0.5f, 1f);
             gridRect.anchorMax = new Vector2(0.5f, 1f);
             gridRect.pivot = new Vector2(0.5f, 1f);
-            gridRect.anchoredPosition = new Vector2(0, -180);
-            gridRect.sizeDelta = new Vector2(980, 1050);
+            gridRect.anchoredPosition = new Vector2(0, -220);
+            gridRect.sizeDelta = new Vector2(1000, 1160);
 
             GridLayoutGroup glg = gridGO.AddComponent<GridLayoutGroup>();
-            glg.cellSize = new Vector2(465, 465); // 1:1 square
-            glg.spacing = new Vector2(35, 35);
+            glg.cellSize = new Vector2(480, 540);
+            glg.spacing = new Vector2(36, 36);
+            glg.padding = new RectOffset(2, 2, 2, 2);
+            glg.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             glg.constraintCount = 2;
 
             CommunityItemDef[] items = new CommunityItemDef[]
             {
-                new CommunityItemDef("vitrinas", "Vitrinas públicas", iconVitrinas, null),
-                new CommunityItemDef("intercambio", "Intercambio", iconIntercambio, 3),
-                new CommunityItemDef("vender", "Mercado", iconVender, null),
-                new CommunityItemDef("amigos", "Amigos", iconAmigos, 2)
+                new CommunityItemDef("vitrinas", "Vitrinas públicas", "Explora colecciones", iconVitrinas, null),
+                new CommunityItemDef("intercambio", "Intercambio", "Intercambia repetidas", iconIntercambio, 3),
+                new CommunityItemDef("vender", "Mercado", "Compra y vende cartas", iconVender, null),
+                new CommunityItemDef("amigos", "Amigos", "Juega con amigos", iconAmigos, 2)
             };
 
             Button[] actionBtns = new Button[4];
@@ -185,10 +206,10 @@ namespace JuegoTCG.EditorTools
 
                 // Rounded Box Container
                 RoundedRectGraphic cardG = cardGO.AddComponent<RoundedRectGraphic>();
-                cardG.CornerRadius = 24f;
+                cardG.CornerRadius = 28f;
                 cardG.color = CardBg;
-                cardG.BorderWidth = 1.5f;
-                cardG.BorderColor = BorderSubtle;
+                cardG.BorderWidth = 2.0f;
+                cardG.BorderColor = item.badge.HasValue ? GoldBorder : BorderSubtle;
 
                 // Badge (if applicable)
                 if (item.badge.HasValue)
@@ -199,14 +220,14 @@ namespace JuegoTCG.EditorTools
                     badgeRect.anchorMin = new Vector2(1f, 1f);
                     badgeRect.anchorMax = new Vector2(1f, 1f);
                     badgeRect.pivot = new Vector2(1f, 1f);
-                    badgeRect.anchoredPosition = new Vector2(-20, -20);
-                    badgeRect.sizeDelta = new Vector2(54, 40);
+                    badgeRect.anchoredPosition = new Vector2(-22, -22);
+                    badgeRect.sizeDelta = new Vector2(60, 42);
 
                     RoundedRectGraphic badgeG = badgeGO.AddComponent<RoundedRectGraphic>();
                     badgeG.IsCapsule = true;
-                    badgeG.color = new Color(0f, 0f, 0f, 0.65f);
-                    badgeG.BorderWidth = 1.5f;
-                    badgeG.BorderColor = GoldBorder;
+                    badgeG.color = new Color(0.910f, 0.659f, 0.125f, 0.20f);
+                    badgeG.BorderWidth = 1.8f;
+                    badgeG.BorderColor = Gold;
 
                     GameObject badgeTextGO = new GameObject("Text");
                     badgeTextGO.transform.SetParent(badgeGO.transform, false);
@@ -217,39 +238,69 @@ namespace JuegoTCG.EditorTools
                     TextMeshProUGUI btTMP = badgeTextGO.AddComponent<TextMeshProUGUI>();
                     if (dmSansTMPFont != null) btTMP.font = dmSansTMPFont;
                     btTMP.text = item.badge.Value.ToString();
-                    btTMP.fontSize = 22;
+                    btTMP.fontSize = 24;
                     btTMP.fontStyle = FontStyles.Bold;
                     btTMP.alignment = TextAlignmentOptions.Center;
                     btTMP.color = Gold;
                 }
 
-                // Icon
+                // Icon Ring Glow
+                GameObject iconRingGO = new GameObject("IconRing");
+                iconRingGO.transform.SetParent(cardGO.transform, false);
+                RectTransform irRect = iconRingGO.AddComponent<RectTransform>();
+                irRect.anchorMin = new Vector2(0.5f, 0.5f);
+                irRect.anchorMax = new Vector2(0.5f, 0.5f);
+                irRect.pivot = new Vector2(0.5f, 0.5f);
+                irRect.anchoredPosition = new Vector2(0, 50);
+                irRect.sizeDelta = new Vector2(140, 140);
+
+                RoundedRectGraphic irG = iconRingGO.AddComponent<RoundedRectGraphic>();
+                irG.IsCapsule = true;
+                irG.color = new Color(1f, 1f, 1f, 0.05f);
+                irG.BorderWidth = 1.5f;
+                irG.BorderColor = item.badge.HasValue ? GoldBorder : BorderSubtle;
+
+                // Icon Inside Ring
                 GameObject iconGO = new GameObject("Icon");
-                iconGO.transform.SetParent(cardGO.transform, false);
+                iconGO.transform.SetParent(iconRingGO.transform, false);
                 RectTransform iconRect = iconGO.AddComponent<RectTransform>();
                 iconRect.anchorMin = new Vector2(0.5f, 0.5f);
                 iconRect.anchorMax = new Vector2(0.5f, 0.5f);
-                iconRect.pivot = new Vector2(0.5f, 0.5f);
-                iconRect.anchoredPosition = new Vector2(0, 25);
-                iconRect.sizeDelta = new Vector2(84, 84);
+                iconRect.anchoredPosition = Vector2.zero;
+                iconRect.sizeDelta = new Vector2(72, 72);
                 Image iconImg = iconGO.AddComponent<Image>();
                 iconImg.sprite = item.icon;
-                iconImg.color = new Color(1f, 1f, 1f, 0.85f);
+                iconImg.preserveAspect = true;
+                iconImg.color = item.badge.HasValue ? Gold : TextWhite;
 
-                // Label
+                // Title Label
                 GameObject labelGO = new GameObject("Label");
                 labelGO.transform.SetParent(cardGO.transform, false);
                 RectTransform labelRect = labelGO.AddComponent<RectTransform>();
-                labelRect.anchorMin = new Vector2(0.05f, 0f);
-                labelRect.anchorMax = new Vector2(0.95f, 0.35f);
+                labelRect.anchorMin = new Vector2(0.04f, 0.18f);
+                labelRect.anchorMax = new Vector2(0.96f, 0.32f);
                 labelRect.sizeDelta = Vector2.zero;
                 TextMeshProUGUI labelTMP = labelGO.AddComponent<TextMeshProUGUI>();
                 if (dmSansTMPFont != null) labelTMP.font = dmSansTMPFont;
                 labelTMP.text = item.label;
-                labelTMP.fontSize = 28;
+                labelTMP.fontSize = 30;
                 labelTMP.fontStyle = FontStyles.Bold;
                 labelTMP.alignment = TextAlignmentOptions.Center;
                 labelTMP.color = TextWhite;
+
+                // Subtitle Label
+                GameObject subLabelGO = new GameObject("Subtitle");
+                subLabelGO.transform.SetParent(cardGO.transform, false);
+                RectTransform subLabelRect = subLabelGO.AddComponent<RectTransform>();
+                subLabelRect.anchorMin = new Vector2(0.04f, 0.06f);
+                subLabelRect.anchorMax = new Vector2(0.96f, 0.18f);
+                subLabelRect.sizeDelta = Vector2.zero;
+                TextMeshProUGUI subLabelTMP = subLabelGO.AddComponent<TextMeshProUGUI>();
+                if (dmSansTMPFont != null) subLabelTMP.font = dmSansTMPFont;
+                subLabelTMP.text = item.subtitle;
+                subLabelTMP.fontSize = 20;
+                subLabelTMP.alignment = TextAlignmentOptions.Center;
+                subLabelTMP.color = TextGray;
 
                 actionBtns[i] = cardGO.AddComponent<Button>();
             }
@@ -263,8 +314,8 @@ namespace JuegoTCG.EditorTools
             bottomBarRect.anchorMin = new Vector2(0.5f, 0f);
             bottomBarRect.anchorMax = new Vector2(0.5f, 0f);
             bottomBarRect.pivot = new Vector2(0.5f, 0f);
-            bottomBarRect.anchoredPosition = new Vector2(0, 45);
-            bottomBarRect.sizeDelta = new Vector2(980, 135);
+            bottomBarRect.anchoredPosition = new Vector2(0, 48);
+            bottomBarRect.sizeDelta = new Vector2(1000, 140);
 
             RoundedRectGraphic bottomBarG = bottomBarGO.AddComponent<RoundedRectGraphic>();
             bottomBarG.IsCapsule = true;
@@ -352,7 +403,6 @@ namespace JuegoTCG.EditorTools
             so.FindProperty("tabTiendaButton").objectReferenceValue = tabBtns[2];
             so.FindProperty("tabComunidadButton").objectReferenceValue = tabBtns[3];
             so.FindProperty("tabPerfilButton").objectReferenceValue = tabBtns[4];
-
             so.ApplyModifiedProperties();
 
             // Save Prefab
@@ -368,22 +418,12 @@ namespace JuegoTCG.EditorTools
             EditorSceneManager.SaveScene(scene, ScenePath);
 
             // Register in Build Settings
-            List<EditorBuildSettingsScene> buildScenes = new List<EditorBuildSettingsScene>();
-            buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/HomeScreenScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/MyCardsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MyCardsScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/StoreScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/StoreScene.unity", true));
-            buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/CommunityScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/VitrinesScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/VitrinesScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/TradeScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/TradeScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/MarketScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MarketScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/ProfileScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/ProfileScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/PackOpeningScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/PackOpeningScene.unity", true));
-            EditorBuildSettings.scenes = buildScenes.ToArray();
+            JuegoTCG.Editor.AutoRegisterBuildScenes.RegisterScenes();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Comunidad generada con éxito (CommunityScene & CommunityUI.prefab)!</color>");
+            Debug.Log("<color=green>[JuegoTCG] ¡Pantalla de Comunidad generada con éxito en CommunityScene.unity!</color>");
         }
 
         private static void ConfigureFontImporters()
@@ -405,6 +445,7 @@ namespace JuegoTCG.EditorTools
         private static TMP_FontAsset GetOrCreateTMPFont(string fontName)
         {
             Font font = AssetDatabase.LoadAssetAtPath<Font>($"{FontPath}/{fontName}.ttf");
+            if (font == null) font = AssetDatabase.LoadAssetAtPath<Font>($"{FontPath}/{fontName}.otf");
             if (font != null)
             {
                 try
@@ -421,7 +462,7 @@ namespace JuegoTCG.EditorTools
                     Debug.LogWarning($"[JuegoTCG] Creación dinámica de fuente {fontName}: {ex.Message}");
                 }
             }
-            return TMP_Settings.defaultFontAsset;
+            return TMP_Settings.defaultFontAsset ?? Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
         }
     }
 }

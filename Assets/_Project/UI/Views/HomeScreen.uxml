@@ -1,0 +1,208 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI/Styles/HomeScreen.uss" />
+
+    <ui:VisualElement name="HomeScreenContainer" class="screen-container">
+
+        <!-- Top Bar -->
+        <ui:VisualElement name="TopBar" class="top-bar">
+            
+            <!-- Left Action Buttons -->
+            <ui:VisualElement class="top-bar-left">
+                <ui:Button name="TopBtn_0" class="top-bar-btn">
+                    <ui:VisualElement class="top-bar-btn-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_clock.png');" />
+                </ui:Button>
+                <ui:Button name="TopBtn_1" class="top-bar-btn">
+                    <ui:VisualElement class="top-bar-btn-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_gift.png');" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- Center Avatar & Player Info -->
+            <ui:VisualElement class="top-bar-center">
+                <ui:VisualElement class="avatar-circle">
+                    <ui:VisualElement class="avatar-icon" />
+                </ui:VisualElement>
+                <ui:Label name="PlayerName" text="JUGADOR_01" class="player-name" />
+                <ui:Label name="PlayerLevel" text="Nivel 7" class="player-level" />
+            </ui:VisualElement>
+
+            <!-- Right Currency & Notifications -->
+            <ui:VisualElement class="top-bar-right">
+                <ui:VisualElement class="currency-pill">
+                    <ui:VisualElement class="coin-icon" />
+                    <ui:Label name="CoinsText" text="240" class="coins-text" />
+                </ui:VisualElement>
+
+                <ui:Button name="MailBtn" class="top-bar-btn">
+                    <ui:VisualElement class="top-bar-btn-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_mail.png');" />
+                    <ui:VisualElement class="notification-badge" />
+                </ui:Button>
+
+                <ui:Button name="GiftBtn" class="top-bar-btn">
+                    <ui:VisualElement class="top-bar-btn-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_gift.png');" />
+                </ui:Button>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <!-- Scrollable Main Content -->
+        <ui:ScrollView class="home-scroll-container" show-vertical-scroller="false">
+
+            <!-- Sobres Disponibles -->
+            <ui:VisualElement name="PacksSection">
+                <ui:VisualElement class="section-header">
+                    <ui:Label text="SOBRES DISPONIBLES" class="section-title" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="packs-carousel">
+                    <ui:Button name="PackA" class="pack-card">
+                        <ui:VisualElement class="pack-card-art">
+                            <ui:VisualElement class="pack-card-art-icon" />
+                        </ui:VisualElement>
+                        <ui:Label text="SOBRE A" class="pack-card-title" />
+                    </ui:Button>
+
+                    <ui:Button name="PackB" class="pack-card pack-card-active">
+                        <ui:VisualElement class="pack-card-art">
+                            <ui:VisualElement class="pack-card-art-icon" />
+                        </ui:VisualElement>
+                        <ui:Label text="SOBRE B" class="pack-card-title pack-card-title-active" />
+                    </ui:Button>
+
+                    <ui:Button name="PackC" class="pack-card">
+                        <ui:VisualElement class="pack-card-art">
+                            <ui:VisualElement class="pack-card-art-icon" />
+                        </ui:VisualElement>
+                        <ui:Label text="SOBRE C" class="pack-card-title" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Acciones Rápidas (Evento especial + Tienda) -->
+            <ui:VisualElement class="quick-actions-row">
+                <ui:Button name="EventBtn" class="action-tile">
+                    <ui:VisualElement class="action-tile-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_clock.png');" />
+                    <ui:Label text="Evento especial" class="action-tile-title" />
+                </ui:Button>
+
+                <ui:Button name="ShopBtn" class="action-tile">
+                    <ui:VisualElement class="action-tile-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_shop.png');" />
+                    <ui:Label text="Tienda" class="action-tile-title" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- Botón Misiones Prominente -->
+            <ui:VisualElement class="missions-row">
+                <ui:Button name="MissionsBtn" class="missions-btn">
+                    <ui:VisualElement class="missions-btn-icon" />
+                    <ui:Label text="MISIONES" class="missions-btn-text" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- Racha Diaria -->
+            <ui:VisualElement class="streak-card">
+                <ui:VisualElement class="streak-header">
+                    <ui:Label text="RACHA DIARIA" class="streak-title" />
+                    <ui:Label text="3 / 5 días" class="streak-counter" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="streak-track">
+                    <ui:VisualElement class="streak-fill" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="streak-days-row">
+                    <ui:VisualElement class="day-box day-box-done">
+                        <ui:VisualElement class="day-box-check" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="day-box day-box-done">
+                        <ui:VisualElement class="day-box-check" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="day-box day-box-done">
+                        <ui:VisualElement class="day-box-check" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="day-box">
+                        <ui:Label text="4" class="day-box-text" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="day-box">
+                        <ui:Label text="5" class="day-box-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:ScrollView>
+
+        <!-- Liquid Glass Bottom Navigation Bar -->
+        <ui:VisualElement name="BottomNavBar" class="bottom-nav-bar">
+            
+            <ui:Button name="Nav_Inicio" class="nav-tab nav-tab-active">
+                <ui:VisualElement class="nav-icon nav-icon-active" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_home.png');" />
+                <ui:Label text="Inicio" class="nav-label nav-label-active" />
+            </ui:Button>
+
+            <ui:Button name="Nav_Cartas" class="nav-tab">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_cards.png');" />
+                <ui:Label text="Mis cartas" class="nav-label" />
+            </ui:Button>
+
+            <ui:Button name="Nav_Tienda" class="nav-tab">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_shop.png');" />
+                <ui:Label text="Tienda" class="nav-label" />
+            </ui:Button>
+
+            <ui:Button name="Nav_Comunidad" class="nav-tab">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_users.png');" />
+                <ui:Label text="Comunidad" class="nav-label" />
+            </ui:Button>
+
+            <ui:Button name="Nav_Perfil" class="nav-tab">
+                <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_user.png');" />
+                <ui:Label text="Perfil" class="nav-label" />
+            </ui:Button>
+
+        </ui:VisualElement>
+
+        <!-- Modal de Misiones (Overlay con Desenfoque Gaussiano) -->
+        <ui:VisualElement name="MissionsModal" class="modal-overlay modal-hidden">
+            <ui:VisualElement name="ModalBlurBackdrop" class="modal-blur-backdrop" />
+
+            <ui:VisualElement class="modal-card">
+                <ui:VisualElement class="modal-header">
+                    <ui:Label text="MISIONES DIARIAS" class="modal-title" />
+                    <ui:Button name="CloseMissionsBtn" class="modal-close-btn">
+                        <ui:VisualElement class="modal-close-icon" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="mission-item">
+                    <ui:VisualElement>
+                        <ui:Label text="Abre 1 Sobre de Cartas" class="mission-desc" />
+                        <ui:Label text="Progreso: 1 / 1" class="mission-progress-text" />
+                    </ui:VisualElement>
+                    <ui:Button class="mission-claim-btn">
+                        <ui:Label text="Reclamar +50 🪙" class="mission-claim-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="mission-item">
+                    <ui:VisualElement>
+                        <ui:Label text="Visita 1 Vitrina Pública" class="mission-desc" />
+                        <ui:Label text="Progreso: 1 / 1" class="mission-progress-text" />
+                    </ui:VisualElement>
+                    <ui:Button class="mission-claim-btn">
+                        <ui:Label text="Reclamar +30 🪙" class="mission-claim-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="mission-item">
+                    <ui:VisualElement>
+                        <ui:Label text="Intercambia 1 Carta con un Amigo" class="mission-desc" />
+                        <ui:Label text="Progreso: 0 / 1" class="mission-progress-text" />
+                    </ui:VisualElement>
+                    <ui:Button class="mission-claim-btn" style="background-color: rgba(255,255,255,0.1);">
+                        <ui:Label text="+100 🪙" class="mission-claim-text" style="color: var(--text-dim);" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

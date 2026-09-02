@@ -9,7 +9,6 @@ namespace JuegoTCG.EditorTools
     {
         private const string UIPath = "Assets/_Project/Art/UI";
 
-        [MenuItem("JuegoTCG/Generar Sprites Procedurales de UI")]
         public static void GenerateUISprites()
         {
             if (!Directory.Exists(UIPath))

@@ -5,7 +5,7 @@ namespace JuegoTCG.Editor
 {
     public static class ForceProjectRecompile
     {
-        [MenuItem("JuegoTCG/🔄 Forzar Recarga de Scripts (Fix Play Mode)")]
+        [MenuItem("JuegoTCG/⚙️ Herramientas y Build/🔄 Forzar Recarga de Scripts (Fix Play Mode)", priority = 41)]
         public static void ForceRecompile()
         {
             Debug.Log("<color=cyan>[Recompile] Sincronizando base de datos de assets y forzando recarga de scripts...</color>");

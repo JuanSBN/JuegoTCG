@@ -28,7 +28,6 @@ namespace JuegoTCG.Editor
             "Assets/_Project/Scenes/PackOpeningScene.unity"
         };
 
-        [MenuItem("JuegoTCG/📱 Aplicar Diseño Responsivo Global (FHD+ 20:9)")]
         public static void OptimizeAllScenesForMobile()
         {
             Debug.Log("<color=cyan>[Responsive] Aplicando diseño responsivo integral (Anclas, Canvas Scaler Match Width y Grillas)...</color>");

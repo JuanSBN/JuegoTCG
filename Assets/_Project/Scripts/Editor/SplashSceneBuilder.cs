@@ -22,7 +22,6 @@ namespace JuegoTCG.EditorTools
         private static readonly Color TextGray = new Color(1f, 1f, 1f, 0.70f);
         private static readonly Color TrackBg = new Color(1f, 1f, 1f, 0.12f);
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Splash (SplashScene)")]
         public static void BuildSplashScene()
         {
             ProceduralAssetGenerator.GenerateUISprites();

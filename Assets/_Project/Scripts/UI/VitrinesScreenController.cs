@@ -62,6 +62,26 @@ namespace JuegoTCG.UI
             {
                 detailModal = canvas.GetComponentInChildren<VitrineDetailController>(true);
             }
+
+            if (popularCardViews == null || popularCardViews.Count == 0)
+            {
+                popularCardViews = new List<VitrineCardView>();
+                var popSec = canvas.transform.Find("ContentContainer/VitrinesScrollView/Viewport/Content/Section_Populares");
+                if (popSec != null)
+                {
+                    popularCardViews.AddRange(popSec.GetComponentsInChildren<VitrineCardView>(true));
+                }
+            }
+
+            if (friendCardViews == null || friendCardViews.Count == 0)
+            {
+                friendCardViews = new List<VitrineCardView>();
+                var friendSec = canvas.transform.Find("ContentContainer/VitrinesScrollView/Viewport/Content/Section_Amigos");
+                if (friendSec != null)
+                {
+                    friendCardViews.AddRange(friendSec.GetComponentsInChildren<VitrineCardView>(true));
+                }
+            }
         }
 
         private void InitializeData()

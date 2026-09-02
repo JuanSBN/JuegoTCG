@@ -15,6 +15,8 @@ namespace JuegoTCG.Editor
             "Assets/_Project/Scenes/SplashScene.unity",
             "Assets/_Project/Scenes/LoginScene.unity",
             "Assets/_Project/Scenes/HomeScreenScene.unity",
+            "Assets/_Project/Scenes/HomeScreenUIToolkitScene.unity",
+            "Assets/_Project/Scenes/VitrinesSceneUIToolkit.unity",
             "Assets/_Project/Scenes/MyCardsScene.unity",
             "Assets/_Project/Scenes/StoreScene.unity",
             "Assets/_Project/Scenes/CommunityScene.unity",
@@ -32,7 +34,7 @@ namespace JuegoTCG.Editor
             RegisterScenes();
         }
 
-        [MenuItem("JuegoTCG/🛠️ Registrar Escenas en Build Settings")]
+        [MenuItem("JuegoTCG/⚙️ Herramientas y Build/🛠️ Registrar Escenas en Build Settings", priority = 42)]
         public static void RegisterScenes()
         {
             var buildScenes = new EditorBuildSettingsScene[RequiredScenes.Length];

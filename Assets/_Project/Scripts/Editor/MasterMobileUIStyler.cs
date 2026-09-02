@@ -19,7 +19,7 @@ namespace JuegoTCG.Editor
         private static readonly Color TextWhite = Color.white;
         private static readonly Color TextMuted = new Color(1f, 1f, 1f, 0.60f);
 
-        [MenuItem("JuegoTCG/🎨 Pulir Diseño Visual Móvil (Todas las Pantallas)")]
+        [MenuItem("JuegoTCG/⚙️ Herramientas y Build/🎨 Pulir Todas las Pantallas", priority = 40)]
         public static void PolishAllMobileScreens()
         {
             if (EditorApplication.isPlaying)
@@ -54,7 +54,85 @@ namespace JuegoTCG.Editor
             // 6. Aplicar ajustes globales Pixel-Perfect
             PixelPerfectFigmaOptimizer.ApplyPixelPerfectOptimization();
 
+            // 7. Abrir HomeScreenScene para visualización inmediata
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/HomeScreenScene.unity");
+
             Debug.Log("<color=gold>[Styler:COMPLETO] ¡Todas las pantallas tienen ahora el diseño pulido, estético y responsivo para celulares!</color>");
+        }
+
+        [MenuItem("JuegoTCG/📱 Pantallas AAA/🏠 Inicio (HomeScreen)", priority = 1)]
+        public static void PolishAndOpenHome()
+        {
+            if (EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("<color=yellow>[Styler] Sal del modo Play antes de aplicar el pulido visual.</color>");
+                return;
+            }
+
+            RegisterAllProjectScenesInBuildSettings();
+            EditorTools.HomeScreenSceneBuilder.BuildHomeScreenScene();
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/HomeScreenScene.unity");
+            Debug.Log("<color=gold>[Styler:Inicio] ¡Pantalla de Inicio reconstruida con calidad AAA!</color>");
+        }
+
+        [MenuItem("JuegoTCG/📱 Pantallas AAA/🃏 Mis Cartas (Álbum)", priority = 2)]
+        public static void PolishAndOpenMyCards()
+        {
+            if (EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("<color=yellow>[Styler] Sal del modo Play antes de aplicar el pulido visual.</color>");
+                return;
+            }
+
+            RegisterAllProjectScenesInBuildSettings();
+            EditorTools.MyCardsSceneBuilder.BuildMyCardsScene();
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/MyCardsScene.unity");
+            Debug.Log("<color=gold>[Styler:MisCartas] ¡Pantalla de Mis Cartas / Álbum reconstruida con calidad AAA!</color>");
+        }
+
+        [MenuItem("JuegoTCG/📱 Pantallas AAA/🛒 Tienda (Store)", priority = 3)]
+        public static void PolishAndOpenStore()
+        {
+            if (EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("<color=yellow>[Styler] Sal del modo Play antes de aplicar el pulido visual.</color>");
+                return;
+            }
+
+            RegisterAllProjectScenesInBuildSettings();
+            EditorTools.StoreSceneBuilder.BuildStoreScene();
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/StoreScene.unity");
+            Debug.Log("<color=gold>[Styler:Tienda] ¡Pantalla de Tienda reconstruida con calidad AAA!</color>");
+        }
+
+        [MenuItem("JuegoTCG/📱 Pantallas AAA/👥 Comunidad (Community)", priority = 4)]
+        public static void PolishAndOpenCommunity()
+        {
+            if (EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("<color=yellow>[Styler] Sal del modo Play antes de aplicar el pulido visual.</color>");
+                return;
+            }
+
+            RegisterAllProjectScenesInBuildSettings();
+            EditorTools.CommunitySceneBuilder.BuildCommunityScene();
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/CommunityScene.unity");
+            Debug.Log("<color=gold>[Styler:Comunidad] ¡Pantalla de Comunidad reconstruida con calidad AAA!</color>");
+        }
+
+        [MenuItem("JuegoTCG/📱 Pantallas AAA/🏆 Vitrinas Públicas (Vitrines)", priority = 5)]
+        public static void PolishAndOpenVitrines()
+        {
+            if (EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("<color=yellow>[Styler] Sal del modo Play antes de aplicar el pulido visual.</color>");
+                return;
+            }
+
+            RegisterAllProjectScenesInBuildSettings();
+            EditorTools.VitrinesSceneBuilder.BuildVitrinesScene();
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/VitrinesScene.unity");
+            Debug.Log("<color=gold>[Styler:Vitrinas] ¡Pantalla de Vitrinas Públicas reconstruida con calidad AAA!</color>");
         }
 
         private static void PolishProfileScene()

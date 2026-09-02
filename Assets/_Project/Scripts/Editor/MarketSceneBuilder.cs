@@ -26,7 +26,6 @@ namespace JuegoTCG.EditorTools
         private static readonly Color BorderSubtle = new Color(1f, 1f, 1f, 0.13f);
         private static readonly Color NavBg = new Color(0.055f, 0.125f, 0.086f, 0.85f);
 
-        [MenuItem("JuegoTCG/Generar Pantalla de Mercado (Market)")]
         public static void BuildMarketScene()
         {
             ProceduralAssetGenerator.GenerateUISprites();
