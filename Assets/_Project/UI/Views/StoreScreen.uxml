@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/StoreScreen.uss" />
+    
+    <ui:VisualElement name="StoreScreenRoot" class="screen-container">
+        
+        <!-- Header: Tienda + CoinChip -->
+        <ui:VisualElement class="store-header">
+            <ui:Label text="TIENDA" class="store-title" />
+            <ui:VisualElement class="currency-pill coin-chip">
+                <ui:VisualElement class="coin-icon" />
+                <ui:Label name="CoinsCountLabel" text="240" class="coins-text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Scrollable content -->
+        <ui:ScrollView name="StoreScrollView" class="store-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Always">
+            
+            <!-- ── SECCIÓN 1: COMPRAR SOBRES ── -->
+            <ui:Label text="COMPRAR SOBRES" class="section-heading" />
+            <ui:VisualElement class="sobres-row">
+                
+                <!-- Sobre Bronce -->
+                <ui:VisualElement class="envelope-column">
+                    <ui:Button name="Pack_A" class="envelope-card">
+                        <ui:Label text="SOBRE BRONCE" class="envelope-label" />
+                    </ui:Button>
+                    <ui:Button name="Btn_BuyPack_A" class="envelope-buy-button">
+                        <ui:VisualElement class="coin-icon-mini" />
+                        <ui:Label text="100" class="envelope-price-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Sobre Oro (Featured Gold) -->
+                <ui:VisualElement class="envelope-column envelope-column-featured">
+                    <ui:Button name="Pack_B" class="envelope-card envelope-featured">
+                        <ui:Label text="SOBRE ORO" class="envelope-label envelope-label-featured" />
+                    </ui:Button>
+                    <ui:Button name="Btn_BuyPack_B" class="envelope-buy-button envelope-buy-button-featured">
+                        <ui:VisualElement class="coin-icon-mini" />
+                        <ui:Label text="300" class="envelope-price-text envelope-price-text-featured" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Sobre Diamante -->
+                <ui:VisualElement class="envelope-column">
+                    <ui:Button name="Pack_C" class="envelope-card">
+                        <ui:Label text="SOBRE DIAMANTE" class="envelope-label" />
+                    </ui:Button>
+                    <ui:Button name="Btn_BuyPack_C" class="envelope-buy-button">
+                        <ui:VisualElement class="coin-icon-mini" />
+                        <ui:Label text="600" class="envelope-price-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+
+            <!-- ── SECCIÓN 2: VER ANUNCIO ── -->
+            <ui:Label text="VER ANUNCIO" class="section-heading" />
+            <ui:Button name="AdBannerButton" class="ad-banner">
+                <ui:VisualElement class="ad-play-circle">
+                    <ui:Label text="▶" class="ad-play-icon" />
+                </ui:VisualElement>
+                <ui:VisualElement class="ad-info-container">
+                    <ui:Label text="Ve un anuncio y gana 1 sobre" class="ad-title" />
+                    <ui:Label text="Gratis · Sin costo · Recompensa instantánea" class="ad-subtitle" />
+                </ui:VisualElement>
+                <ui:VisualElement class="ad-counter-container">
+                    <ui:Label name="AdCounterNumber" text="2/3" class="ad-counter-number" />
+                    <ui:Label text="HOY" class="ad-counter-label" />
+                </ui:VisualElement>
+            </ui:Button>
+
+            <!-- ── SECCIÓN 3: COMPRAR MONEDAS ── -->
+            <ui:Label text="COMPRAR MONEDAS" class="section-heading" />
+            <ui:VisualElement class="coin-packs-grid">
+                
+                <!-- Pack 1: Inicio (150 - $0.99) -->
+                <ui:Button name="CoinPack_1" class="coin-pack-card">
+                    <ui:VisualElement class="coin-pack-art">
+                        <ui:VisualElement class="coin-pack-icon-large" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="align-items: center;">
+                        <ui:Label text="150" class="coin-pack-coins" />
+                    </ui:VisualElement>
+                    <ui:Label text="$0.99" class="coin-pack-price-tag" />
+                </ui:Button>
+
+                <!-- Pack 2: Estándar (400 - $1.99) -->
+                <ui:Button name="CoinPack_2" class="coin-pack-card">
+                    <ui:VisualElement class="coin-pack-art">
+                        <ui:VisualElement class="coin-pack-icon-large" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="align-items: center;">
+                        <ui:Label text="400" class="coin-pack-coins" />
+                    </ui:VisualElement>
+                    <ui:Label text="$1.99" class="coin-pack-price-tag" />
+                </ui:Button>
+
+                <!-- Pack 3: Premium (900 + 100 bonus - $3.99) -->
+                <ui:Button name="CoinPack_3" class="coin-pack-card">
+                    <ui:VisualElement class="coin-pack-art">
+                        <ui:VisualElement class="coin-pack-icon-large" />
+                        <ui:VisualElement class="coin-pack-icon-medium" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="align-items: center;">
+                        <ui:Label text="900" class="coin-pack-coins" />
+                        <ui:Label text="+100 bonus" class="coin-pack-bonus" />
+                    </ui:VisualElement>
+                    <ui:Label text="$3.99" class="coin-pack-price-tag" />
+                </ui:Button>
+
+                <!-- Pack 4: Élite (2,000 + 300 bonus - $7.99) -->
+                <ui:Button name="CoinPack_4" class="coin-pack-card">
+                    <ui:VisualElement class="coin-pack-art">
+                        <ui:VisualElement class="coin-pack-icon-large" />
+                        <ui:VisualElement class="coin-pack-icon-medium" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="align-items: center;">
+                        <ui:Label text="2,000" class="coin-pack-coins" />
+                        <ui:Label text="+300 bonus" class="coin-pack-bonus" />
+                    </ui:VisualElement>
+                    <ui:Label text="$7.99" class="coin-pack-price-tag" />
+                </ui:Button>
+
+            </ui:VisualElement>
+
+        </ui:ScrollView>
+
+        <!-- Feedback Modal -->
+        <ui:VisualElement name="StoreFeedbackModal" class="store-modal-overlay">
+            <ui:VisualElement class="store-modal-card">
+                <ui:Label name="ModalIcon" text="🎉" class="store-modal-icon" />
+                <ui:Label name="ModalTitle" text="¡COMPRA EXITOSA!" class="store-modal-title" />
+                <ui:Label name="ModalDesc" text="Has adquirido tu recompensa con éxito." class="store-modal-desc" />
+                <ui:Button name="Btn_CloseFeedback" text="ACEPTAR" class="store-modal-close-btn" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+    </ui:VisualElement>
+</ui:UXML>

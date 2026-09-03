@@ -1,0 +1,705 @@
+:root {
+    --bg-dark: #06110B;
+    --card-bg: rgba(13, 26, 19, 0.85);
+    --gold: #E8A820;
+    --gold-border: rgba(232, 168, 32, 0.70);
+    --gold-glow: rgba(232, 168, 32, 0.25);
+    --text-white: #F5F5F7;
+    --text-gray: rgba(255, 255, 255, 0.65);
+    --text-dim: rgba(255, 255, 255, 0.40);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+}
+
+.screen-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-dark);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    padding-left: 44px;
+    padding-right: 44px;
+    padding-top: 72px;
+    padding-bottom: 0;
+    position: relative;
+}
+
+/* Header */
+.friends-header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.back-btn {
+    width: 64px;
+    height: 64px;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    margin-right: 18px;
+    padding: 0;
+}
+
+.back-btn:active {
+    scale: 0.92;
+}
+
+.back-btn-icon {
+    width: 36px;
+    height: 36px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_back.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+}
+
+.friends-title {
+    font-size: 52px;
+    -unity-font-style: bold;
+    letter-spacing: 6px;
+    color: var(--text-white);
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* SCROLLBAR INTEGRADA (FIGMA GOLDEN PILL)                     */
+/* ─────────────────────────────────────────────────────────── */
+.friends-scroll-view {
+    flex: 1;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.friends-scroll-view .unity-scroller--vertical {
+    width: 8px;
+    margin-right: -28px;
+}
+
+.friends-scroll-view .unity-scroller--vertical .unity-base-slider__tracker {
+    background-color: transparent;
+    border-width: 0;
+}
+
+.friends-scroll-view .unity-scroller--vertical .unity-base-slider__dragger {
+    width: 8px;
+    background-color: rgba(232, 168, 32, 0.55);
+    border-radius: 4px;
+    border-width: 0;
+    left: 0;
+}
+
+.friends-scroll-view .unity-scroller--vertical .unity-scroller__low-button,
+.friends-scroll-view .unity-scroller--vertical .unity-scroller__high-button {
+    display: none;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Safe Area Bottom Padding for Floating Nav Bar */
+.friends-scroll-content {
+    padding-bottom: 340px;
+    width: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* CARD 1: TU CÓDIGO DE AMIGO Y BÚSQUEDA INTEGRADA             */
+/* ─────────────────────────────────────────────────────────── */
+.friend-code-box {
+    background-color: var(--card-bg);
+    border-radius: 26px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding: 30px 32px;
+    margin-bottom: 36px;
+    width: 100%;
+}
+
+.code-header-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.code-text-group {
+    flex-direction: column;
+}
+
+.code-subtitle {
+    font-size: 24px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+}
+
+.my-friend-code {
+    font-size: 52px;
+    -unity-font-style: bold;
+    letter-spacing: 5px;
+    color: var(--text-white);
+}
+
+.btn-copy {
+    height: 64px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    flex-direction: row;
+    align-items: center;
+    padding-left: 22px;
+    padding-right: 24px;
+}
+
+.btn-copy:active {
+    scale: 0.95;
+}
+
+.copy-icon {
+    width: 24px;
+    height: 24px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_copy.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.65);
+    margin-right: 10px;
+}
+
+.copy-text {
+    font-size: 22px;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    color: var(--text-gray);
+}
+
+/* Barra de Búsqueda Integrada */
+.search-input-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.search-box {
+    flex: 1;
+    height: 76px;
+    border-radius: 18px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    flex-direction: row;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-right: 16px;
+}
+
+.search-icon {
+    width: 28px;
+    height: 28px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_search.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.35);
+    margin-right: 14px;
+}
+
+.search-input-field {
+    flex: 1;
+    background-color: transparent;
+    border-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.search-input-field > .unity-base-text-field__input {
+    background-color: transparent;
+    border-width: 0;
+    color: var(--text-white);
+    font-size: 26px;
+    padding: 0;
+    margin: 0;
+}
+
+.search-input-field > .unity-base-text-field__input--placeholder {
+    color: var(--text-dim);
+    font-size: 26px;
+}
+
+.btn-add-friend {
+    height: 76px;
+    padding-left: 32px;
+    padding-right: 32px;
+    min-width: 150px;
+    border-radius: 18px;
+    background-color: var(--gold);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-add-friend:active {
+    scale: 0.96;
+}
+
+.btn-add-friend-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: #0D1A13;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* SECCIÓN: SOLICITUDES                                        */
+/* ─────────────────────────────────────────────────────────── */
+.section-header-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 34px;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    color: var(--text-white);
+    margin-right: 14px;
+}
+
+.requests-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 19px;
+    background-color: rgba(0, 0, 0, 0.55);
+    border-width: 1.5px;
+    border-color: var(--gold-border);
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.requests-badge-text {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    -unity-text-align: middle-center;
+}
+
+.request-card {
+    background-color: var(--card-bg);
+    border-radius: 22px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding: 20px 24px;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.avatar-circle {
+    width: 68px;
+    height: 68px;
+    border-radius: 34px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-right: 18px;
+    flex-shrink: 0;
+}
+
+.avatar-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+}
+
+.request-user-name {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 16px;
+}
+
+.request-actions-row {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.btn-accept-request {
+    height: 60px;
+    min-width: 130px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 14px;
+    background-color: var(--gold);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.btn-accept-request:active {
+    scale: 0.96;
+}
+
+.btn-accept-request-text {
+    font-size: 21px;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    color: #0D1A13;
+}
+
+.btn-reject-request {
+    height: 60px;
+    min-width: 130px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-reject-request:active {
+    scale: 0.96;
+}
+
+.btn-reject-request-text {
+    font-size: 21px;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    color: var(--text-gray);
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* SECCIÓN: MIS AMIGOS (Espaciosa y Proporcional como Figma)   */
+/* ─────────────────────────────────────────────────────────── */
+.friends-section {
+    margin-top: 32px;
+    margin-bottom: 36px;
+}
+
+.friend-card {
+    background-color: var(--card-bg);
+    border-radius: 26px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding: 30px 32px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.friend-top-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.friend-info-block {
+    flex: 1;
+}
+
+.friend-name {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin-bottom: 4px;
+}
+
+.friend-level {
+    font-size: 24px;
+    color: var(--text-dim);
+}
+
+.friend-power-pill {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.lightning-icon {
+    width: 26px;
+    height: 26px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_lightning.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--gold);
+    margin-right: 8px;
+}
+
+.friend-power-text {
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+/* Stats and Progress Bar */
+.friend-stats-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.stats-label {
+    font-size: 24px;
+    color: var(--text-dim);
+}
+
+.stats-dot {
+    font-size: 22px;
+    color: var(--text-dim);
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.progress-track {
+    flex: 1;
+    height: 12px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.10);
+    margin-left: 16px;
+    margin-right: 16px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    background-color: var(--gold);
+}
+
+.progress-pct {
+    font-size: 24px;
+    color: var(--text-gray);
+    -unity-font-style: bold;
+}
+
+/* Friend Actions */
+.friend-actions-row {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn-friend-action {
+    flex: 1;
+    height: 72px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+}
+
+.btn-friend-action {
+    margin-right: 0;
+}
+
+.btn-friend-action:active {
+    scale: 0.96;
+}
+
+.btn-friend-action-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: var(--text-gray);
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* SECCIÓN: RANKING DE AMIGOS (Figma Fidelity 100%)            */
+/* ─────────────────────────────────────────────────────────── */
+.ranking-section {
+    margin-top: 14px;
+    width: 100%;
+}
+
+.ranking-title {
+    font-size: 34px;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    color: var(--text-white);
+    margin-bottom: 22px;
+}
+
+.ranking-list {
+    flex-direction: column;
+}
+
+.ranking-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 24px;
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    margin-bottom: 14px;
+    width: 100%;
+}
+
+.ranking-row-me {
+    background-color: rgba(232, 168, 32, 0.08);
+    border-color: var(--gold-border);
+}
+
+.ranking-pos {
+    font-size: 28px;
+    -unity-font-style: bold;
+    width: 44px;
+    color: var(--text-dim);
+}
+
+.ranking-pos-first {
+    color: var(--gold);
+}
+
+.ranking-pos-second {
+    color: rgba(220, 220, 220, 0.85);
+}
+
+.ranking-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 29px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-right: 18px;
+    flex-shrink: 0;
+}
+
+.ranking-avatar-me {
+    background-color: rgba(232, 168, 32, 0.15);
+    border-color: var(--gold-border);
+}
+
+.ranking-avatar-text {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+}
+
+.ranking-avatar-text-me {
+    color: var(--gold);
+}
+
+.ranking-name {
+    flex: 1;
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ranking-name-me {
+    color: var(--text-white);
+}
+
+.ranking-power-box {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.ranking-lightning {
+    width: 24px;
+    height: 24px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_lightning.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.35);
+    margin-right: 8px;
+}
+
+.ranking-lightning-me {
+    -unity-background-image-tint-color: var(--gold);
+}
+
+.ranking-power-text {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+}
+
+.ranking-power-text-me {
+    color: var(--gold);
+}
+
+/* Feedback / Compare Modal */
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.modal-box {
+    width: 100%;
+    background-color: #0A1810;
+    border-radius: 28px;
+    border-width: 1.5px;
+    border-color: var(--gold-border);
+    padding: 44px 34px;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 38px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    -unity-text-align: middle-center;
+}
+
+.modal-desc {
+    font-size: 26px;
+    color: var(--text-white);
+    margin-bottom: 32px;
+    -unity-text-align: middle-center;
+}
+
+.modal-close-btn {
+    width: 220px;
+    height: 68px;
+    border-radius: 16px;
+    background-color: var(--gold);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: #0D1A13;
+}
+
+.modal-hidden {
+    display: none;
+}
+
+#BottomNavBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+}

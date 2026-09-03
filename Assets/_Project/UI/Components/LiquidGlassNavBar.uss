@@ -1,33 +1,33 @@
 /* ==========================================================================
-   LIQUID GLASS BOTTOM NAVIGATION BAR - UI TOOLKIT COMPONENT
+   LIQUID GLASS BOTTOM NAVIGATION BAR - UI TOOLKIT COMPONENT (1080x2400 Figma 1:1)
    Inspirado en diseño Figma & estética iOS / VisionOS Liquid Glass
    ========================================================================== */
 
 :root {
-    --nav-bg: rgba(12, 28, 18, 0.74);
-    --nav-border: rgba(255, 255, 255, 0.14);
-    --nav-highlight: rgba(255, 255, 255, 0.42);
+    --nav-bg: rgba(12, 28, 18, 0.82);
+    --nav-border: rgba(255, 255, 255, 0.16);
+    --nav-highlight: rgba(255, 255, 255, 0.45);
     --nav-gold: #E8A820;
-    --nav-gold-bg: rgba(232, 168, 32, 0.20);
-    --nav-gold-border: rgba(232, 168, 32, 0.70);
-    --nav-text-dim: rgba(255, 255, 255, 0.45);
+    --nav-gold-bg: rgba(232, 168, 32, 0.18);
+    --nav-gold-border: rgba(232, 168, 32, 0.75);
+    --nav-text-dim: rgba(255, 255, 255, 0.70);
 }
 
-/* Contenedor Flotante Tipo Isla Curva */
+/* Contenedor Flotante Tipo Isla Curva (190px de alto, escala generosa de Figma) */
 .liquid-glass-nav-bar {
     position: absolute;
-    bottom: 32px;
-    left: 32px;
-    right: 32px;
-    height: 140px;
+    bottom: 44px;
+    left: 36px;
+    right: 36px;
+    height: 190px;
     background-color: var(--nav-bg);
-    border-radius: 46px;
-    border-width: 1.5px;
+    border-radius: 56px;
+    border-width: 2px;
     border-color: var(--nav-border);
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
-    padding: 0 8px;
+    padding: 0 12px;
     overflow: hidden;
 }
 
@@ -35,9 +35,9 @@
 .nav-specular-highlight {
     position: absolute;
     top: 0;
-    left: 48px;
-    right: 48px;
-    height: 2px;
+    left: 56px;
+    right: 56px;
+    height: 2.5px;
     background-color: var(--nav-highlight);
     border-radius: 2px;
 }
@@ -45,13 +45,13 @@
 /* Cápsula Deslizante Animada que Viaja Entre Pestañas */
 .nav-active-indicator {
     position: absolute;
-    top: 14px;
-    bottom: 14px;
+    top: 16px;
+    bottom: 16px;
     left: 0;
-    width: 180px;
+    width: 184px;
     background-color: var(--nav-gold-bg);
-    border-radius: 36px;
-    border-width: 1.5px;
+    border-radius: 44px;
+    border-width: 2px;
     border-color: var(--nav-gold-border);
     transition: translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -79,16 +79,16 @@
 }
 
 .nav-icon {
-    width: 44px;
-    height: 44px;
+    width: 66px;
+    height: 66px;
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--nav-text-dim);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     transition: scale 0.2s ease-out, -unity-background-image-tint-color 0.2s ease-out;
 }
 
 .nav-label {
-    font-size: 22px;
+    font-size: 30px;
     -unity-font-style: bold;
     color: var(--nav-text-dim);
     letter-spacing: 0.5px;
@@ -98,9 +98,10 @@
 /* Estados Activos */
 .nav-tab-active .nav-icon {
     -unity-background-image-tint-color: var(--nav-gold);
-    scale: 1.12;
+    scale: 1.10;
 }
 
 .nav-tab-active .nav-label {
     color: var(--nav-gold);
+    font-size: 30px;
 }

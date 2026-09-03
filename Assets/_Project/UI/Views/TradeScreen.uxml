@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/TradeScreen.uss" />
+
+    <ui:VisualElement name="TradeScreenRoot" class="screen-container">
+
+        <!-- Header -->
+        <ui:VisualElement class="trade-header">
+            <ui:Button name="BackBtn" class="back-btn">
+                <ui:VisualElement class="back-btn-icon" />
+            </ui:Button>
+            <ui:Label text="INTERCAMBIO" class="trade-title" />
+        </ui:VisualElement>
+
+        <!-- Filter Tabs Row -->
+        <ui:VisualElement class="trade-tabs-row">
+            <ui:Button name="Tab_Received" class="trade-tab-pill trade-tab-pill-active">
+                <ui:Label text="RECIBIDAS" class="trade-tab-label" />
+                <ui:VisualElement name="Badge_Received" class="trade-tab-badge">
+                    <ui:Label name="BadgeCount_Received" text="2" class="trade-tab-badge-text" />
+                </ui:VisualElement>
+            </ui:Button>
+
+            <ui:Button name="Tab_Sent" class="trade-tab-pill">
+                <ui:Label text="ENVIADAS" class="trade-tab-label" />
+            </ui:Button>
+        </ui:VisualElement>
+
+        <!-- Scrollable Offers Container -->
+        <ui:ScrollView name="TradeScrollView" class="trade-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" show-vertical-scroller="false">
+            
+            <!-- Cards List -->
+            <ui:VisualElement name="TradeCardsList" class="trade-cards-list">
+
+                <!-- Trade Card 1 (Received - MiAmigo_01 - Unread) -->
+                <ui:VisualElement name="Card_Trade_1" class="trade-card trade-card-unread">
+                    <ui:VisualElement class="trade-card-header">
+                        <ui:VisualElement class="trade-avatar-circle">
+                            <ui:Label text="MA" class="trade-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="MiAmigo_01" class="trade-user-name" />
+                        <ui:Label text="hace 2 h" class="trade-time-label" />
+                        <ui:VisualElement name="Dot_Trade_1" class="trade-unread-dot" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-exchange-row">
+                        <ui:VisualElement class="trade-side-col">
+                            <ui:Label text="TÚ DAS" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-mythic">
+                                    <ui:Label text="MÍ" class="trade-token-text" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:Label text="RA" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="trade-swap-icon" />
+
+                        <ui:VisualElement class="trade-side-col trade-side-col-right">
+                            <ui:Label text="TÚ RECIBES" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-mythic">
+                                    <ui:Label text="MÍ" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-actions-row">
+                        <ui:Button name="Btn_Accept_1" class="trade-btn-accept">
+                            <ui:Label text="ACEPTAR" class="trade-btn-accept-text" />
+                        </ui:Button>
+                        <ui:Button name="Btn_Reject_1" class="trade-btn-reject">
+                            <ui:Label text="RECHAZAR" class="trade-btn-reject-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Trade Card 2 (Received - ElChampion - Unread) -->
+                <ui:VisualElement name="Card_Trade_2" class="trade-card trade-card-unread">
+                    <ui:VisualElement class="trade-card-header">
+                        <ui:VisualElement class="trade-avatar-circle">
+                            <ui:Label text="EC" class="trade-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="ElChampion" class="trade-user-name" />
+                        <ui:Label text="hace 1 d" class="trade-time-label" />
+                        <ui:VisualElement name="Dot_Trade_2" class="trade-unread-dot" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-exchange-row">
+                        <ui:VisualElement class="trade-side-col">
+                            <ui:Label text="TÚ DAS" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:Label text="RA" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="trade-swap-icon" />
+
+                        <ui:VisualElement class="trade-side-col trade-side-col-right">
+                            <ui:Label text="TÚ RECIBES" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:Label text="RA" class="trade-token-text" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="trade-token trade-token-common">
+                                    <ui:Label text="CO" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-actions-row">
+                        <ui:Button name="Btn_Accept_2" class="trade-btn-accept">
+                            <ui:Label text="ACEPTAR" class="trade-btn-accept-text" />
+                        </ui:Button>
+                        <ui:Button name="Btn_Reject_2" class="trade-btn-reject">
+                            <ui:Label text="RECHAZAR" class="trade-btn-reject-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Trade Card 3 (Received - ProPlayer_99 - Read) -->
+                <ui:VisualElement name="Card_Trade_3" class="trade-card">
+                    <ui:VisualElement class="trade-card-header">
+                        <ui:VisualElement class="trade-avatar-circle">
+                            <ui:Label text="PP" class="trade-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="ProPlayer_99" class="trade-user-name" />
+                        <ui:Label text="hace 3 d" class="trade-time-label" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-exchange-row">
+                        <ui:VisualElement class="trade-side-col">
+                            <ui:Label text="TÚ DAS" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-uncommon">
+                                    <ui:Label text="PO" class="trade-token-text" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="trade-token trade-token-common">
+                                    <ui:Label text="CO" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="trade-swap-icon" />
+
+                        <ui:VisualElement class="trade-side-col trade-side-col-right">
+                            <ui:Label text="TÚ RECIBES" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-uncommon">
+                                    <ui:Label text="PO" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-actions-row">
+                        <ui:Button name="Btn_Accept_3" class="trade-btn-accept">
+                            <ui:Label text="ACEPTAR" class="trade-btn-accept-text" />
+                        </ui:Button>
+                        <ui:Button name="Btn_Reject_3" class="trade-btn-reject">
+                            <ui:Label text="RECHAZAR" class="trade-btn-reject-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Trade Card 4 (Sent - GoldenShot_7) - initially hidden in Received tab -->
+                <ui:VisualElement name="Card_Trade_Sent_1" class="trade-card" style="display: none;">
+                    <ui:VisualElement class="trade-card-header">
+                        <ui:VisualElement class="trade-avatar-circle">
+                            <ui:Label text="GS" class="trade-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="GoldenShot_7" class="trade-user-name" />
+                        <ui:Label text="hace 5 h" class="trade-time-label" />
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-exchange-row">
+                        <ui:VisualElement class="trade-side-col">
+                            <ui:Label text="TÚ DAS" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-mythic">
+                                    <ui:Label text="MÍ" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="trade-swap-icon" />
+
+                        <ui:VisualElement class="trade-side-col trade-side-col-right">
+                            <ui:Label text="TÚ RECIBES" class="trade-side-title" />
+                            <ui:VisualElement class="trade-tokens-row">
+                                <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:Label text="RA" class="trade-token-text" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:Label text="RA" class="trade-token-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="trade-actions-row">
+                        <ui:Button name="Btn_Cancel_1" class="trade-btn-cancel">
+                            <ui:Label text="CANCELAR OFERTA" class="trade-btn-cancel-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Empty State -->
+                <ui:VisualElement name="TradeEmptyState" class="trade-empty-state" style="display: none;">
+                    <ui:VisualElement class="trade-empty-icon" />
+                    <ui:Label name="EmptyTitle" text="Aún no tienes intercambios." class="trade-empty-title" />
+                    <ui:Label name="EmptyDesc" text="Cuando un amigo te proponga un trato, aparecerá aquí." class="trade-empty-desc" />
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:ScrollView>
+
+        <!-- Floating Action Button (FAB) -->
+        <ui:Button name="Btn_NewTrade" class="trade-fab">
+            <ui:Label text="+ NUEVO INTERCAMBIO" class="trade-fab-text" />
+        </ui:Button>
+
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+    </ui:VisualElement>
+</ui:UXML>

@@ -209,7 +209,6 @@
 /* Mini Cards Row Preview */
 .mini-cards-row {
     flex-direction: row;
-    gap: 12px;
     align-items: center;
 }
 
@@ -355,7 +354,6 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 26px;
     padding-bottom: 340px;
 }
 
@@ -418,7 +416,6 @@
     align-items: center;
     padding-left: 28px;
     padding-right: 28px;
-    gap: 12px;
     transition: scale 0.1s ease-out;
 }
 

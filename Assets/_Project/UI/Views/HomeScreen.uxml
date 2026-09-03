@@ -4,17 +4,13 @@
 
     <ui:VisualElement name="HomeScreenContainer" class="screen-container">
 
-        <!-- Top Bar -->
+        <!-- Top Bar (Figma 1:1) -->
         <ui:VisualElement name="TopBar" class="top-bar">
             
-            <!-- Left Action Buttons -->
+            <!-- Left Action Buttons (Figma clean outlines) -->
             <ui:VisualElement class="top-bar-left">
-                <ui:Button name="TopBtn_0" class="top-bar-btn">
-                    <ui:VisualElement class="top-bar-btn-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_clock.png');" />
-                </ui:Button>
-                <ui:Button name="TopBtn_1" class="top-bar-btn">
-                    <ui:VisualElement class="top-bar-btn-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_gift.png');" />
-                </ui:Button>
+                <ui:Button name="TopBtn_0" class="top-bar-btn" />
+                <ui:Button name="TopBtn_1" class="top-bar-btn" />
             </ui:VisualElement>
 
             <!-- Center Avatar & Player Info -->
@@ -45,40 +41,31 @@
 
         </ui:VisualElement>
 
-        <!-- Scrollable Main Content -->
-        <ui:ScrollView class="home-scroll-container" show-vertical-scroller="false">
+        <!-- Main Content Wrapper (Pure Layout, no ScrollView, like SettingsScreen) -->
+        <ui:VisualElement name="MainContent" class="home-main-content">
 
-            <!-- Sobres Disponibles -->
-            <ui:VisualElement name="PacksSection">
+            <!-- Sobres Disponibles (Booster Packs Esbeltos y Limpios) -->
+            <ui:VisualElement name="PacksSection" class="packs-section">
                 <ui:VisualElement class="section-header">
                     <ui:Label text="SOBRES DISPONIBLES" class="section-title" />
                 </ui:VisualElement>
 
                 <ui:VisualElement class="packs-carousel">
                     <ui:Button name="PackA" class="pack-card">
-                        <ui:VisualElement class="pack-card-art">
-                            <ui:VisualElement class="pack-card-art-icon" />
-                        </ui:VisualElement>
                         <ui:Label text="SOBRE A" class="pack-card-title" />
                     </ui:Button>
 
                     <ui:Button name="PackB" class="pack-card pack-card-active">
-                        <ui:VisualElement class="pack-card-art">
-                            <ui:VisualElement class="pack-card-art-icon" />
-                        </ui:VisualElement>
                         <ui:Label text="SOBRE B" class="pack-card-title pack-card-title-active" />
                     </ui:Button>
 
                     <ui:Button name="PackC" class="pack-card">
-                        <ui:VisualElement class="pack-card-art">
-                            <ui:VisualElement class="pack-card-art-icon" />
-                        </ui:VisualElement>
                         <ui:Label text="SOBRE C" class="pack-card-title" />
                     </ui:Button>
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <!-- Acciones Rápidas (Evento especial + Tienda) -->
+            <!-- Acciones Rápidas (Evento especial + Tienda: Tarjetas Verticales Figma) -->
             <ui:VisualElement class="quick-actions-row">
                 <ui:Button name="EventBtn" class="action-tile">
                     <ui:VisualElement class="action-tile-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_clock.png');" />
@@ -91,7 +78,7 @@
                 </ui:Button>
             </ui:VisualElement>
 
-            <!-- Botón Misiones Prominente -->
+            <!-- Botón Misiones Prominente Flotante -->
             <ui:VisualElement class="missions-row">
                 <ui:Button name="MissionsBtn" class="missions-btn">
                     <ui:VisualElement class="missions-btn-icon" />
@@ -99,7 +86,7 @@
                 </ui:Button>
             </ui:VisualElement>
 
-            <!-- Racha Diaria -->
+            <!-- Racha Diaria (Figma 1:1) -->
             <ui:VisualElement class="streak-card">
                 <ui:VisualElement class="streak-header">
                     <ui:Label text="RACHA DIARIA" class="streak-title" />
@@ -129,15 +116,14 @@
                 </ui:VisualElement>
             </ui:VisualElement>
 
-        </ui:ScrollView>
+        </ui:VisualElement>
 
         <!-- Modular Liquid Glass Navigation Bar -->
         <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
 
-        <!-- Modal de Misiones (Overlay con Desenfoque Gaussiano) -->
+        <!-- Modal de Misiones (Overlay) -->
         <ui:VisualElement name="MissionsModal" class="modal-overlay modal-hidden">
             <ui:VisualElement name="ModalBlurBackdrop" class="modal-blur-backdrop" />
-
             <ui:VisualElement class="modal-card">
                 <ui:VisualElement class="modal-header">
                     <ui:Label text="MISIONES DIARIAS" class="modal-title" />
@@ -146,35 +132,39 @@
                     </ui:Button>
                 </ui:VisualElement>
 
-                <ui:VisualElement class="mission-item">
-                    <ui:VisualElement>
-                        <ui:Label text="Abre 1 Sobre de Cartas" class="mission-desc" />
-                        <ui:Label text="Progreso: 1 / 1" class="mission-progress-text" />
+                <ui:VisualElement class="modal-content-list">
+                    <ui:VisualElement class="mission-item">
+                        <ui:VisualElement class="mission-left">
+                            <ui:VisualElement class="mission-check-icon" />
+                            <ui:VisualElement class="mission-text-group">
+                                <ui:Label text="Abre 2 sobres hoy" class="mission-title" />
+                                <ui:Label text="Progreso: 1 / 2" class="mission-subtitle" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="mission-reward-badge">
+                            <ui:VisualElement class="mission-reward-coin" />
+                            <ui:Label text="+150" class="mission-reward-text" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:Button class="mission-claim-btn">
-                        <ui:Label text="Reclamar +50 🪙" class="mission-claim-text" />
-                    </ui:Button>
+
+                    <ui:VisualElement class="mission-item">
+                        <ui:VisualElement class="mission-left">
+                            <ui:VisualElement class="mission-check-icon" />
+                            <ui:VisualElement class="mission-text-group">
+                                <ui:Label text="Realiza 1 intercambio" class="mission-title" />
+                                <ui:Label text="Progreso: 0 / 1" class="mission-subtitle" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement class="mission-reward-badge">
+                            <ui:VisualElement class="mission-reward-coin" />
+                            <ui:Label text="+250" class="mission-reward-text" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
                 </ui:VisualElement>
 
-                <ui:VisualElement class="mission-item">
-                    <ui:VisualElement>
-                        <ui:Label text="Visita 1 Vitrina Pública" class="mission-desc" />
-                        <ui:Label text="Progreso: 1 / 1" class="mission-progress-text" />
-                    </ui:VisualElement>
-                    <ui:Button class="mission-claim-btn">
-                        <ui:Label text="Reclamar +30 🪙" class="mission-claim-text" />
-                    </ui:Button>
-                </ui:VisualElement>
-
-                <ui:VisualElement class="mission-item">
-                    <ui:VisualElement>
-                        <ui:Label text="Intercambia 1 Carta con un Amigo" class="mission-desc" />
-                        <ui:Label text="Progreso: 0 / 1" class="mission-progress-text" />
-                    </ui:VisualElement>
-                    <ui:Button class="mission-claim-btn" style="background-color: rgba(255,255,255,0.1);">
-                        <ui:Label text="+100 🪙" class="mission-claim-text" style="color: var(--text-dim);" />
-                    </ui:Button>
-                </ui:VisualElement>
+                <ui:Button name="ClaimAllBtn" class="modal-action-btn">
+                    <ui:Label text="RECLAMAR TODO" class="modal-action-btn-text" />
+                </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
 

@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/FriendsScreen.uss" />
+
+    <ui:VisualElement name="FriendsScreenRoot" class="screen-container">
+
+        <!-- Header -->
+        <ui:VisualElement class="friends-header">
+            <ui:Button name="BackBtn" class="back-btn">
+                <ui:VisualElement class="back-btn-icon" />
+            </ui:Button>
+            <ui:Label text="AMIGOS" class="friends-title" />
+        </ui:VisualElement>
+
+        <!-- Scrollable Body -->
+        <ui:ScrollView name="FriendsScrollView" class="friends-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden">
+            <ui:VisualElement class="friends-scroll-content">
+
+                <!-- Card 1: Tu código de amigo y búsqueda integrada -->
+                <ui:VisualElement class="friend-code-box">
+                    <ui:VisualElement class="code-header-row">
+                        <ui:VisualElement class="code-text-group">
+                            <ui:Label text="Tu código de amigo" class="code-subtitle" />
+                            <ui:Label name="MyFriendCode" text="FCX-2847" class="my-friend-code" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_CopyCode" class="btn-copy">
+                            <ui:VisualElement class="copy-icon" />
+                            <ui:Label name="Btn_CopyCodeText" text="COPIAR" class="copy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="search-input-row">
+                        <ui:VisualElement class="search-box">
+                            <ui:VisualElement class="search-icon" />
+                            <ui:TextField name="SearchFriendInput" placeholder="Código de amigo..." class="search-input-field" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_AddFriend" class="btn-add-friend">
+                            <ui:Label text="AGREGAR" class="btn-add-friend-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Sección: Solicitudes (2) -->
+                <ui:VisualElement name="RequestsSection">
+                    <ui:VisualElement class="section-header-row">
+                        <ui:Label text="SOLICITUDES" class="section-title" />
+                        <ui:VisualElement name="RequestsBadge" class="requests-badge">
+                            <ui:Label name="RequestsBadgeCount" text="2" class="requests-badge-text" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Solicitud 1: NuevoJugador_99 -->
+                    <ui:VisualElement name="Card_Request_1" class="request-card">
+                        <ui:VisualElement class="avatar-circle">
+                            <ui:Label text="NJ" class="avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="NuevoJugador_99" class="request-user-name" />
+                        <ui:VisualElement class="request-actions-row">
+                            <ui:Button name="Btn_Accept_1" class="btn-accept-request">
+                                <ui:Label text="ACEPTAR" class="btn-accept-request-text" />
+                            </ui:Button>
+                            <ui:Button name="Btn_Reject_1" class="btn-reject-request">
+                                <ui:Label text="RECHAZAR" class="btn-reject-request-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Solicitud 2: FutbolFan_77 -->
+                    <ui:VisualElement name="Card_Request_2" class="request-card">
+                        <ui:VisualElement class="avatar-circle">
+                            <ui:Label text="F7" class="avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="FutbolFan_77" class="request-user-name" />
+                        <ui:VisualElement class="request-actions-row">
+                            <ui:Button name="Btn_Accept_2" class="btn-accept-request">
+                                <ui:Label text="ACEPTAR" class="btn-accept-request-text" />
+                            </ui:Button>
+                            <ui:Button name="Btn_Reject_2" class="btn-reject-request">
+                                <ui:Label text="RECHAZAR" class="btn-reject-request-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Sección: Mis Amigos -->
+                <ui:VisualElement class="friends-section">
+                    <ui:VisualElement class="section-header-row">
+                        <ui:Label text="MIS AMIGOS" class="section-title" />
+                    </ui:VisualElement>
+
+                    <!-- Amigo 1: GoldenShot_7 -->
+                    <ui:VisualElement name="Card_Friend_1" class="friend-card">
+                        <ui:VisualElement class="friend-top-row">
+                            <ui:VisualElement class="avatar-circle">
+                                <ui:Label text="GS" class="avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-info-block">
+                                <ui:Label text="GoldenShot_7" class="friend-name" />
+                                <ui:Label text="Nivel 24" class="friend-level" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-power-pill">
+                                <ui:VisualElement class="lightning-icon" />
+                                <ui:Label text="9120" class="friend-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-stats-row">
+                            <ui:Label text="445 cartas" class="stats-label" />
+                            <ui:Label text="•" class="stats-dot" />
+                            <ui:Label text="Álbum" class="stats-label" />
+                            <ui:VisualElement class="progress-track">
+                                <ui:VisualElement class="progress-fill" style="width: 89%;" />
+                            </ui:VisualElement>
+                            <ui:Label text="89%" class="progress-pct" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-actions-row">
+                            <ui:Button name="Btn_Compare_1" class="btn-friend-action">
+                                <ui:Label text="COMPARAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                            <ui:Button name="Btn_Trade_1" class="btn-friend-action">
+                                <ui:Label text="INTERCAMBIAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Amigo 2: ElChampion -->
+                    <ui:VisualElement name="Card_Friend_2" class="friend-card">
+                        <ui:VisualElement class="friend-top-row">
+                            <ui:VisualElement class="avatar-circle">
+                                <ui:Label text="EC" class="avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-info-block">
+                                <ui:Label text="ElChampion" class="friend-name" />
+                                <ui:Label text="Nivel 18" class="friend-level" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-power-pill">
+                                <ui:VisualElement class="lightning-icon" />
+                                <ui:Label text="6840" class="friend-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-stats-row">
+                            <ui:Label text="312 cartas" class="stats-label" />
+                            <ui:Label text="•" class="stats-dot" />
+                            <ui:Label text="Álbum" class="stats-label" />
+                            <ui:VisualElement class="progress-track">
+                                <ui:VisualElement class="progress-fill" style="width: 71%;" />
+                            </ui:VisualElement>
+                            <ui:Label text="71%" class="progress-pct" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-actions-row">
+                            <ui:Button name="Btn_Compare_2" class="btn-friend-action">
+                                <ui:Label text="COMPARAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                            <ui:Button name="Btn_Trade_2" class="btn-friend-action">
+                                <ui:Label text="INTERCAMBIAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Amigo 3: MiAmigo_01 -->
+                    <ui:VisualElement name="Card_Friend_3" class="friend-card">
+                        <ui:VisualElement class="friend-top-row">
+                            <ui:VisualElement class="avatar-circle">
+                                <ui:Label text="MA" class="avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-info-block">
+                                <ui:Label text="MiAmigo_01" class="friend-name" />
+                                <ui:Label text="Nivel 12" class="friend-level" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-power-pill">
+                                <ui:VisualElement class="lightning-icon" />
+                                <ui:Label text="4250" class="friend-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-stats-row">
+                            <ui:Label text="187 cartas" class="stats-label" />
+                            <ui:Label text="•" class="stats-dot" />
+                            <ui:Label text="Álbum" class="stats-label" />
+                            <ui:VisualElement class="progress-track">
+                                <ui:VisualElement class="progress-fill" style="width: 52%;" />
+                            </ui:VisualElement>
+                            <ui:Label text="52%" class="progress-pct" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-actions-row">
+                            <ui:Button name="Btn_Compare_3" class="btn-friend-action">
+                                <ui:Label text="COMPARAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                            <ui:Button name="Btn_Trade_3" class="btn-friend-action">
+                                <ui:Label text="INTERCAMBIAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <!-- Amigo 4: FutbolFan_22 -->
+                    <ui:VisualElement name="Card_Friend_4" class="friend-card">
+                        <ui:VisualElement class="friend-top-row">
+                            <ui:VisualElement class="avatar-circle">
+                                <ui:Label text="FF" class="avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-info-block">
+                                <ui:Label text="FutbolFan_22" class="friend-name" />
+                                <ui:Label text="Nivel 8" class="friend-level" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="friend-power-pill">
+                                <ui:VisualElement class="lightning-icon" />
+                                <ui:Label text="2180" class="friend-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-stats-row">
+                            <ui:Label text="94 cartas" class="stats-label" />
+                            <ui:Label text="•" class="stats-dot" />
+                            <ui:Label text="Álbum" class="stats-label" />
+                            <ui:VisualElement class="progress-track">
+                                <ui:VisualElement class="progress-fill" style="width: 34%;" />
+                            </ui:VisualElement>
+                            <ui:Label text="34%" class="progress-pct" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement class="friend-actions-row">
+                            <ui:Button name="Btn_Compare_4" class="btn-friend-action">
+                                <ui:Label text="COMPARAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                            <ui:Button name="Btn_Trade_4" class="btn-friend-action">
+                                <ui:Label text="INTERCAMBIAR" class="btn-friend-action-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <!-- SECCIÓN: RANKING DE AMIGOS (Figma Fidelity 100%)            -->
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <ui:VisualElement name="RankingSection" class="ranking-section">
+                    <ui:Label text="RANKING DE AMIGOS" class="ranking-title" />
+
+                    <ui:VisualElement class="ranking-list">
+                        
+                        <!-- Rank 1: GoldenShot_7 -->
+                        <ui:VisualElement name="Ranking_Row_1" class="ranking-row">
+                            <ui:Label text="1" class="ranking-pos ranking-pos-first" />
+                            <ui:VisualElement class="ranking-avatar">
+                                <ui:Label text="GS" class="ranking-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="GoldenShot_7" class="ranking-name" />
+                            <ui:VisualElement class="ranking-power-box">
+                                <ui:VisualElement class="ranking-lightning" />
+                                <ui:Label text="9120" class="ranking-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Rank 2: ElChampion -->
+                        <ui:VisualElement name="Ranking_Row_2" class="ranking-row">
+                            <ui:Label text="2" class="ranking-pos ranking-pos-second" />
+                            <ui:VisualElement class="ranking-avatar">
+                                <ui:Label text="EC" class="ranking-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="ElChampion" class="ranking-name" />
+                            <ui:VisualElement class="ranking-power-box">
+                                <ui:VisualElement class="ranking-lightning" />
+                                <ui:Label text="6840" class="ranking-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Rank 3: Tú (Highlighted Gold) -->
+                        <ui:VisualElement name="Ranking_Row_3" class="ranking-row ranking-row-me">
+                            <ui:Label text="3" class="ranking-pos" />
+                            <ui:VisualElement class="ranking-avatar ranking-avatar-me">
+                                <ui:Label text="YO" class="ranking-avatar-text ranking-avatar-text-me" />
+                            </ui:VisualElement>
+                            <ui:Label text="Tú" class="ranking-name ranking-name-me" />
+                            <ui:VisualElement class="ranking-power-box">
+                                <ui:VisualElement class="ranking-lightning ranking-lightning-me" />
+                                <ui:Label text="5430" class="ranking-power-text ranking-power-text-me" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Rank 4: MiAmigo_01 -->
+                        <ui:VisualElement name="Ranking_Row_4" class="ranking-row">
+                            <ui:Label text="4" class="ranking-pos" />
+                            <ui:VisualElement class="ranking-avatar">
+                                <ui:Label text="MA" class="ranking-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="MiAmigo_01" class="ranking-name" />
+                            <ui:VisualElement class="ranking-power-box">
+                                <ui:VisualElement class="ranking-lightning" />
+                                <ui:Label text="4250" class="ranking-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Rank 5: FutbolFan_22 -->
+                        <ui:VisualElement name="Ranking_Row_5" class="ranking-row">
+                            <ui:Label text="5" class="ranking-pos" />
+                            <ui:VisualElement class="ranking-avatar">
+                                <ui:Label text="FF" class="ranking-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="FutbolFan_22" class="ranking-name" />
+                            <ui:VisualElement class="ranking-power-box">
+                                <ui:VisualElement class="ranking-lightning" />
+                                <ui:Label text="2180" class="ranking-power-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:ScrollView>
+
+        <!-- Compare / Feedback Modal -->
+        <ui:VisualElement name="CompareModal" class="modal-backdrop modal-hidden">
+            <ui:VisualElement class="modal-box">
+                <ui:Label name="CompareModalTitle" text="COMPARAR COLECCIÓN" class="modal-title" />
+                <ui:Label name="CompareModalDesc" text="Comparando tu álbum con GoldenShot_7..." class="modal-desc" />
+                <ui:Button name="Btn_CloseCompare" class="modal-close-btn">
+                    <ui:Label text="CERRAR" class="modal-close-btn-text" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+    </ui:VisualElement>
+</ui:UXML>

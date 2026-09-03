@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/SettingsScreen.uss" />
+
+    <ui:VisualElement name="SettingsScreenRoot" class="screen-container">
+
+        <!-- ── Header: < AJUSTES ── -->
+        <ui:VisualElement class="settings-header">
+            <ui:Button name="Btn_Back" class="back-btn">
+                <ui:VisualElement class="back-btn-icon" />
+            </ui:Button>
+            <ui:Label text="AJUSTES" class="settings-title" />
+        </ui:VisualElement>
+
+        <!-- ── Settings Content Box (Proporción y Espacio Limpio) ── -->
+        <ui:VisualElement class="settings-content-wrapper">
+
+            <ui:VisualElement class="settings-card">
+                
+                <!-- Row 1: Música -->
+                <ui:VisualElement class="settings-row">
+                    <ui:VisualElement class="settings-row-left">
+                        <ui:VisualElement class="settings-icon settings-icon-music" />
+                        <ui:Label text="Música" class="settings-label" />
+                    </ui:VisualElement>
+                    <ui:Button name="Btn_ToggleMusic" class="toggle-switch-btn">
+                        <ui:VisualElement class="toggle-knob" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="settings-divider" />
+
+                <!-- Row 2: Notificaciones -->
+                <ui:VisualElement class="settings-row">
+                    <ui:VisualElement class="settings-row-left">
+                        <ui:VisualElement class="settings-icon settings-icon-bell" />
+                        <ui:Label text="Notificaciones" class="settings-label" />
+                    </ui:VisualElement>
+                    <ui:Button name="Btn_ToggleNotifs" class="toggle-switch-btn">
+                        <ui:VisualElement class="toggle-knob" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="settings-divider" />
+
+                <!-- Row 3: Términos y privacidad -->
+                <ui:Button name="Btn_Terms" class="settings-row settings-row-interactive">
+                    <ui:VisualElement class="settings-row-left">
+                        <ui:VisualElement class="settings-icon settings-icon-doc" />
+                        <ui:Label text="Términos y privacidad" class="settings-label" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chevron-right-icon" />
+                </ui:Button>
+
+                <ui:VisualElement class="settings-divider" />
+
+                <!-- Row 4: Vincular cuenta -->
+                <ui:Button name="Btn_LinkAccount" class="settings-row settings-row-interactive">
+                    <ui:VisualElement class="settings-row-left">
+                        <ui:VisualElement class="settings-icon settings-icon-link" />
+                        <ui:Label text="Vincular cuenta" class="settings-label" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chevron-right-icon" />
+                </ui:Button>
+
+            </ui:VisualElement>
+
+            <!-- Botón Cerrar Sesión -->
+            <ui:Button name="Btn_Logout" class="btn-logout">
+                <ui:Label text="CERRAR SESIÓN" class="btn-logout-text" />
+            </ui:Button>
+
+            <!-- Versión de la Aplicación -->
+            <ui:Label text="Versión 0.1.0 · Build 47" class="version-text" />
+
+        </ui:VisualElement>
+
+        <!-- Confirmation Modal -->
+        <ui:VisualElement name="LogoutModal" class="modal-backdrop modal-hidden">
+            <ui:VisualElement class="modal-box">
+                <ui:Label text="CERRAR SESIÓN" class="modal-title" />
+                <ui:Label text="¿Estás seguro de que deseas salir de tu cuenta?" class="modal-desc" />
+                <ui:VisualElement class="modal-actions-row">
+                    <ui:Button name="Btn_ConfirmLogout" class="modal-btn-confirm">
+                        <ui:Label text="SALIR" class="modal-btn-text" />
+                    </ui:Button>
+                    <ui:Button name="Btn_CancelLogout" class="modal-btn-cancel">
+                        <ui:Label text="CANCELAR" class="modal-btn-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Generic Feedback Modal -->
+        <ui:VisualElement name="FeedbackModal" class="modal-backdrop modal-hidden">
+            <ui:VisualElement class="modal-box">
+                <ui:Label name="FeedbackTitle" text="INFORMACIÓN" class="modal-title" />
+                <ui:Label name="FeedbackDesc" text="Información detallada." class="modal-desc" />
+                <ui:Button name="Btn_CloseFeedback" class="modal-btn-cancel" style="width: 200px;">
+                    <ui:Label text="ENTENDIDO" class="modal-btn-text" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+    </ui:VisualElement>
+</ui:UXML>

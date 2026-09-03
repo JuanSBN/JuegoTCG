@@ -39,6 +39,18 @@ namespace JuegoTCG.UI
             navBar = root.Q<VisualElement>("LiquidGlassNavBar");
             if (navBar == null) return;
 
+            // Pin the parent instance wrapper to the bottom of the screen
+            var parentInstance = navBar.parent;
+            if (parentInstance != null && parentInstance != root)
+            {
+                parentInstance.style.position = Position.Absolute;
+                parentInstance.style.bottom = 0;
+                parentInstance.style.left = 0;
+                parentInstance.style.right = 0;
+                parentInstance.style.width = Length.Percent(100);
+                parentInstance.style.height = 0;
+            }
+
             activeIndicator = navBar.Q<VisualElement>("NavActiveIndicator");
 
             tabButtons.Clear();
@@ -57,6 +69,7 @@ namespace JuegoTCG.UI
                 btn.clicked += () => OnTabClicked((TabType)index);
             }
 
+            SnapToTab(currentTab);
             navBar.RegisterCallback<GeometryChangedEvent>(OnNavBarGeometryChanged);
         }
 
@@ -171,16 +184,16 @@ namespace JuegoTCG.UI
                     SceneManager.LoadScene("HomeScreenUIToolkitScene");
                     break;
                 case TabType.Cartas:
-                    SceneManager.LoadScene("MyCardsScene");
+                    SceneManager.LoadScene("MyCardsSceneUIToolkit");
                     break;
                 case TabType.Tienda:
-                    SceneManager.LoadScene("StoreScene");
+                    SceneManager.LoadScene("StoreSceneUIToolkit");
                     break;
                 case TabType.Comunidad:
-                    SceneManager.LoadScene("VitrinesSceneUIToolkit");
+                    SceneManager.LoadScene("CommunitySceneUIToolkit");
                     break;
                 case TabType.Perfil:
-                    SceneManager.LoadScene("ProfileScene");
+                    SceneManager.LoadScene("ProfileSceneUIToolkit");
                     break;
             }
         }

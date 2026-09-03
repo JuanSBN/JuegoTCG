@@ -68,7 +68,7 @@ namespace JuegoTCG.UI
             // Back button
             if (backBtn != null)
             {
-                backBtn.clicked += () => SceneManager.LoadScene("CommunityScene");
+                backBtn.clicked += () => SceneManager.LoadScene("CommunitySceneUIToolkit");
             }
 
             // Close detail button

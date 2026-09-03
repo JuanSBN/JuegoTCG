@@ -1,0 +1,314 @@
+:root {
+    --bg-dark: #06110B;
+    --card-bg: rgba(13, 26, 19, 0.88);
+    --gold: #E8A820;
+    --gold-border: rgba(232, 168, 32, 0.70);
+    --gold-glow: rgba(232, 168, 32, 0.25);
+    --text-white: #F5F5F7;
+    --text-gray: rgba(255, 255, 255, 0.75);
+    --text-dim: rgba(255, 255, 255, 0.40);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+    --danger-red: #E55353;
+    --danger-border: rgba(229, 83, 83, 0.40);
+}
+
+.screen-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-dark);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    padding-left: 44px;
+    padding-right: 44px;
+    padding-top: 140px;
+    padding-bottom: 0;
+    position: relative;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* CABECERA (FIGMA 1:1 SCALE: < AJUSTES)                       */
+/* ─────────────────────────────────────────────────────────── */
+.settings-header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 60px;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.back-btn {
+    width: 80px;
+    height: 80px;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    margin-right: 24px;
+    padding: 0;
+}
+
+.back-btn:active {
+    scale: 0.92;
+}
+
+.back-btn-icon {
+    width: 48px;
+    height: 48px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_back.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+}
+
+.settings-title {
+    font-size: 64px;
+    -unity-font-style: bold;
+    letter-spacing: 6px;
+    color: var(--text-white);
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* TARJETA DE CONFIGURACIÓN ESPACIOSA (FIGMA 1:1 SCALE)        */
+/* ─────────────────────────────────────────────────────────── */
+.settings-content-wrapper {
+    width: 100%;
+    max-width: 990px;
+    align-self: center;
+}
+
+.settings-card {
+    background-color: var(--card-bg);
+    border-radius: 32px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    width: 100%;
+}
+
+.settings-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 140px;
+}
+
+.settings-row-interactive {
+    background-color: transparent;
+    border-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.settings-row-interactive:active {
+    opacity: 0.70;
+}
+
+.settings-row-left {
+    flex-direction: row;
+    align-items: center;
+}
+
+.settings-icon {
+    width: 50px;
+    height: 50px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+    margin-right: 28px;
+}
+
+.settings-icon-music {
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_music.png");
+}
+
+.settings-icon-bell {
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_bell.png");
+}
+
+.settings-icon-doc {
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_document.png");
+}
+
+.settings-icon-link {
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_google.png");
+}
+
+.settings-label {
+    font-size: 38px;
+    color: var(--text-white);
+    letter-spacing: 1px;
+}
+
+.settings-divider {
+    height: 1.5px;
+    background-color: rgba(255, 255, 255, 0.08);
+    width: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* TOGGLE SWITCHES TÁCTILES ESTILO FIGMA (120px x 68px)        */
+/* ─────────────────────────────────────────────────────────── */
+.toggle-switch-btn {
+    width: 120px;
+    height: 68px;
+    border-radius: 34px;
+    background-color: var(--gold);
+    border-width: 2px;
+    border-color: var(--gold);
+    padding: 6px;
+    justify-content: center;
+    position: relative;
+    transition-property: background-color, border-color;
+    transition-duration: 0.18s;
+}
+
+.toggle-switch-btn.toggle-off {
+    background-color: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.20);
+}
+
+.toggle-knob {
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+    background-color: #0D1A13;
+    align-self: flex-end;
+    transition-property: align-self, background-color;
+    transition-duration: 0.18s;
+}
+
+.toggle-switch-btn.toggle-off .toggle-knob {
+    align-self: flex-start;
+    background-color: rgba(255, 255, 255, 0.65);
+}
+
+.chevron-right-icon {
+    width: 36px;
+    height: 36px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_chevron_right.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* BOTÓN CERRAR SESIÓN & VERSIÓN (FIGMA 1:1 SCALE)             */
+/* ─────────────────────────────────────────────────────────── */
+.btn-logout {
+    margin-top: 80px;
+    height: 120px;
+    border-radius: 24px;
+    background-color: transparent;
+    border-width: 2px;
+    border-color: var(--danger-border);
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-logout:active {
+    scale: 0.97;
+    background-color: rgba(229, 83, 83, 0.10);
+}
+
+.btn-logout-text {
+    font-size: 36px;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    color: var(--danger-red);
+}
+
+.version-text {
+    font-size: 28px;
+    color: var(--text-dim);
+    margin-top: 60px;
+    -unity-text-align: middle-center;
+    letter-spacing: 1.5px;
+}
+
+/* Modals */
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.modal-box {
+    width: 100%;
+    background-color: #0A1810;
+    border-radius: 32px;
+    border-width: 2px;
+    border-color: var(--gold-border);
+    padding: 56px 40px;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 42px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    -unity-text-align: middle-center;
+}
+
+.modal-desc {
+    font-size: 30px;
+    color: var(--text-white);
+    margin-bottom: 40px;
+    -unity-text-align: middle-center;
+}
+
+.modal-actions-row {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.modal-btn-confirm {
+    flex: 1;
+    height: 84px;
+    border-radius: 20px;
+    background-color: var(--danger-red);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+}
+
+.modal-btn-cancel {
+    flex: 1;
+    height: 84px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-btn-text {
+    font-size: 28px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: var(--text-white);
+}
+
+.modal-hidden {
+    display: none;
+}
+
+#BottomNavBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+}

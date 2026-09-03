@@ -20,24 +20,11 @@
     height: 100%;
     background-color: var(--dark-bg);
     background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
-    -unity-background-scale-mode: scale-and-crop;
-    overflow: hidden;
+    -unity-background-scale-mode: stretch-to-fill;
+    padding-top: 140px;
+    padding-left: 44px;
+    padding-right: 44px;
     position: relative;
-    padding-top: 80px;
-    padding-left: 40px;
-    padding-right: 40px;
-    padding-bottom: 220px;
-}
-
-/* Scrollable Main Content */
-.home-scroll-container {
-    flex-grow: 1;
-    width: 100%;
-    height: 100%;
-}
-
-.home-scroll-container #unity-content-container {
-    padding-bottom: 60px;
 }
 
 /* ==========================================================================
@@ -47,32 +34,38 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 140px;
-    margin-bottom: 30px;
+    height: 160px;
+    margin-bottom: 44px;
     position: relative;
+    width: 100%;
+    flex-shrink: 0;
 }
 
 .top-bar-left {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
 }
 
 .top-bar-btn {
-    width: 72px;
-    height: 72px;
-    border-radius: 20px;
+    width: 92px;
+    height: 92px;
+    border-radius: 24px;
     background-color: rgba(255, 255, 255, 0.06);
     border-width: 1.5px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
     padding: 0;
+    margin-right: 14px;
+}
+
+.top-bar-btn:active {
+    scale: 0.92;
 }
 
 .top-bar-btn-icon {
-    width: 36px;
-    height: 36px;
+    width: 46px;
+    height: 46px;
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--text-gray);
 }
@@ -80,42 +73,46 @@
 /* Center Avatar + User Info */
 .top-bar-center {
     position: absolute;
-    left: 50%;
+    left: 44%;
     translate: -50% 0;
     flex-direction: column;
     align-items: center;
+    max-width: 320px;
 }
 
 .avatar-circle {
-    width: 104px;
-    height: 104px;
-    border-radius: 52px;
+    width: 124px;
+    height: 124px;
+    border-radius: 62px;
     background-color: rgba(255, 255, 255, 0.08);
     border-width: 2px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .avatar-icon {
-    width: 52px;
-    height: 52px;
+    width: 62px;
+    height: 62px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_user.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
 }
 
 .player-name {
-    font-size: 26px;
+    font-size: 30px;
     -unity-font-style: bold;
     color: var(--text-white);
-    letter-spacing: 2px;
-    line-height: 1;
+    letter-spacing: 1.5px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -unity-text-align: middle-center;
 }
 
 .player-level {
-    font-size: 20px;
+    font-size: 24px;
     color: var(--text-gray);
     letter-spacing: 1px;
 }
@@ -124,31 +121,31 @@
 .top-bar-right {
     flex-direction: row;
     align-items: center;
-    gap: 14px;
 }
 
 .currency-pill {
     flex-direction: row;
     align-items: center;
-    height: 64px;
+    height: 84px;
     background-color: rgba(0, 0, 0, 0.45);
     border-width: 1.5px;
     border-color: var(--gold-border);
-    border-radius: 32px;
-    padding-left: 18px;
-    padding-right: 22px;
-    gap: 10px;
+    border-radius: 42px;
+    padding-left: 22px;
+    padding-right: 26px;
+    margin-right: 14px;
 }
 
 .coin-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
     -unity-background-scale-mode: scale-to-fit;
+    margin-right: 10px;
 }
 
 .coins-text {
-    font-size: 26px;
+    font-size: 32px;
     -unity-font-style: bold;
     color: var(--text-white);
     letter-spacing: 1px;
@@ -156,49 +153,64 @@
 
 .notification-badge {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 14px;
-    height: 14px;
-    border-radius: 7px;
+    top: 14px;
+    right: 14px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
     background-color: var(--gold);
     border-width: 2px;
     border-color: var(--dark-bg);
 }
 
 /* ==========================================================================
-   SECCIÓN: SOBRES DISPONIBLES
+   MAIN CONTENT WRAPPER
    ========================================================================== */
+.home-main-content {
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* ==========================================================================
+   SECCIÓN: SOBRES DISPONIBLES (680px FIGMA 1:1)
+   ========================================================================== */
+.packs-section {
+    width: 100%;
+    margin-bottom: 44px;
+}
+
 .section-header {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .section-title {
-    font-size: 34px;
+    font-size: 46px;
     -unity-font-style: bold;
     color: var(--text-white);
-    letter-spacing: 4px;
-    text-transform: uppercase;
+    letter-spacing: 5px;
 }
 
 .packs-carousel {
     flex-direction: row;
     justify-content: space-between;
-    height: 480px;
-    margin-bottom: 34px;
+    height: 680px;
+    width: 100%;
 }
 
 .pack-card {
     width: 31.5%;
     height: 100%;
     background-color: var(--card-bg);
-    border-width: 2px;
+    border-width: 1.5px;
     border-color: var(--border-subtle);
-    border-radius: 24px;
+    border-radius: 28px;
     align-items: center;
-    justify-content: space-between;
-    padding: 24px 14px;
-    transition: scale 0.15s ease-out, border-color 0.15s ease-out;
+    justify-content: flex-end;
+    padding-bottom: 34px;
+    padding-left: 12px;
+    padding-right: 12px;
+    transition-property: scale, border-color;
+    transition-duration: 0.15s;
 }
 
 .pack-card:active {
@@ -206,41 +218,16 @@
 }
 
 .pack-card-active {
-    border-width: 2.5px;
+    border-width: 3.5px;
     border-color: var(--gold);
     background-color: rgba(232, 168, 32, 0.08);
 }
 
-.pack-card-art {
-    width: 100%;
-    flex-grow: 1;
-    border-radius: 16px;
-    background-color: rgba(255, 255, 255, 0.04);
-    border-width: 1px;
-    border-color: rgba(255, 255, 255, 0.06);
-    margin-bottom: 16px;
-    align-items: center;
-    justify-content: center;
-}
-
-.pack-card-art-icon {
-    width: 80px;
-    height: 80px;
-    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_cards.png");
-    -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: rgba(255, 255, 255, 0.25);
-}
-
-.pack-card-active .pack-card-art-icon {
-    -unity-background-image-tint-color: var(--gold);
-}
-
 .pack-card-title {
-    font-size: 24px;
+    font-size: 32px;
     color: var(--text-gray);
-    letter-spacing: 2px;
+    letter-spacing: 2.5px;
     -unity-font-style: bold;
-    text-transform: uppercase;
 }
 
 .pack-card-title-active {
@@ -248,13 +235,14 @@
 }
 
 /* ==========================================================================
-   SECCIÓN: ACCIONES RÁPIDAS (EVENTO ESPECIAL + TIENDA)
+   SECCIÓN: ACCIONES RÁPIDAS (EVENTO ESPECIAL + TIENDA: COLUMNAS 230px)
    ========================================================================== */
 .quick-actions-row {
     flex-direction: row;
     justify-content: space-between;
-    height: 160px;
-    margin-bottom: 28px;
+    height: 230px;
+    margin-bottom: 36px;
+    width: 100%;
 }
 
 .action-tile {
@@ -263,13 +251,13 @@
     background-color: var(--card-bg);
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    border-radius: 20px;
-    flex-direction: row;
+    border-radius: 28px;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    padding: 0 20px;
-    transition: scale 0.12s ease-out;
+    padding: 24px 16px;
+    transition-property: scale;
+    transition-duration: 0.12s;
 }
 
 .action-tile:active {
@@ -277,38 +265,42 @@
 }
 
 .action-tile-icon {
-    width: 44px;
-    height: 44px;
+    width: 72px;
+    height: 72px;
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 16px;
 }
 
 .action-tile-title {
-    font-size: 28px;
+    font-size: 34px;
     color: var(--text-white);
     -unity-font-style: bold;
+    letter-spacing: 1px;
 }
 
 /* ==========================================================================
-   BOTÓN PROMINENTE: MISIONES
+   BOTÓN PROMINENTE: MISIONES (94px)
    ========================================================================== */
 .missions-row {
     flex-direction: row;
     justify-content: flex-end;
-    margin-bottom: 30px;
+    margin-top: -36px;
+    margin-bottom: 40px;
+    width: 100%;
 }
 
 .missions-btn {
-    height: 80px;
+    height: 94px;
     background-color: var(--gold);
     border-width: 0;
-    border-radius: 40px;
+    border-radius: 47px;
     flex-direction: row;
     align-items: center;
-    padding-left: 36px;
-    padding-right: 36px;
-    gap: 14px;
-    transition: scale 0.12s ease-out;
+    padding-left: 44px;
+    padding-right: 44px;
+    transition-property: scale;
+    transition-duration: 0.12s;
 }
 
 .missions-btn:active {
@@ -316,78 +308,84 @@
 }
 
 .missions-btn-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_check_misiones.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgb(0, 0, 0);
+    margin-right: 14px;
 }
 
 .missions-btn-text {
-    font-size: 26px;
+    font-size: 32px;
     -unity-font-style: bold;
     color: rgb(0, 0, 0);
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    letter-spacing: 2.5px;
 }
 
 /* ==========================================================================
-   SECCIÓN: RACHA DIARIA
+   SECCIÓN: RACHA DIARIA (CASILLAS DE 88x88px)
    ========================================================================== */
 .streak-card {
     background-color: var(--card-bg);
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    border-radius: 24px;
-    padding: 30px 32px;
-    margin-bottom: 40px;
+    border-radius: 30px;
+    padding-top: 38px;
+    padding-bottom: 42px;
+    padding-left: 36px;
+    padding-right: 36px;
+    margin-bottom: 50px;
+    width: 100%;
 }
 
 .streak-header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 }
 
 .streak-title {
-    font-size: 28px;
+    font-size: 38px;
     -unity-font-style: bold;
     color: var(--text-white);
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    letter-spacing: 2.5px;
 }
 
 .streak-counter {
-    font-size: 24px;
+    font-size: 28px;
     color: var(--text-gray);
     letter-spacing: 1px;
 }
 
 .streak-track {
-    height: 14px;
-    border-radius: 7px;
+    width: 100%;
+    height: 16px;
+    border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.10);
     overflow: hidden;
-    margin-bottom: 22px;
+    margin-bottom: 26px;
 }
 
 .streak-fill {
-    height: 100%;
     width: 60%;
-    border-radius: 7px;
+    height: 100%;
+    border-radius: 8px;
     background-color: var(--gold);
 }
 
 .streak-days-row {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .day-box {
-    width: 86px;
-    height: 86px;
-    border-radius: 18px;
+    width: 88px;
+    height: 88px;
+    border-radius: 20px;
     background-color: rgba(255, 255, 255, 0.05);
     border-width: 1.5px;
     border-color: var(--border-subtle);
@@ -400,185 +398,193 @@
     border-color: var(--gold-border);
 }
 
-.day-box-text {
-    font-size: 26px;
-    -unity-font-style: bold;
-    color: var(--text-dim);
-}
-
 .day-box-check {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_check_racha.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--gold);
 }
 
+.day-box-text {
+    font-size: 34px;
+    color: var(--text-dim);
+    -unity-font-style: bold;
+}
+
 /* ==========================================================================
-   MODAL DE MISIONES (OVERLAY FLOTANTE CON DESENFOQUE GAUSSIANO)
+   MODAL DE MISIONES (Overlay)
    ========================================================================== */
 .modal-overlay {
     position: absolute;
-    left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
     align-items: center;
     justify-content: center;
     padding: 40px;
+    z-index: 100;
 }
 
 .modal-blur-backdrop {
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(4, 10, 7, 0.85);
+}
+
+.modal-card {
     width: 100%;
-    height: 100%;
-    background-color: rgba(4, 10, 6, 0.72);
-    -unity-background-scale-mode: scale-and-crop;
-    -unity-background-image-tint-color: rgba(120, 130, 125, 0.55);
+    max-width: 960px;
+    background-color: rgb(10, 22, 16);
+    border-radius: 36px;
+    border-width: 2px;
+    border-color: var(--gold-border);
+    padding: 44px 38px;
+    align-items: center;
+}
+
+.modal-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 32px;
+}
+
+.modal-title {
+    font-size: 44px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 3px;
+}
+
+.modal-close-btn {
+    width: 68px;
+    height: 68px;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn:active {
+    scale: 0.90;
+}
+
+.modal-close-icon {
+    width: 36px;
+    height: 36px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_close.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.70);
+}
+
+.modal-content-list {
+    width: 100%;
+    margin-bottom: 36px;
+}
+
+.mission-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 22px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+}
+
+.mission-left {
+    flex-direction: row;
+    align-items: center;
+    flex: 1;
+}
+
+.mission-check-icon {
+    width: 44px;
+    height: 44px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_check_misiones.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--gold);
+    margin-right: 18px;
+}
+
+.mission-text-group {
+    flex: 1;
+}
+
+.mission-title {
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin-bottom: 6px;
+}
+
+.mission-subtitle {
+    font-size: 24px;
+    color: var(--text-gray);
+}
+
+.mission-reward-badge {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(232, 168, 32, 0.15);
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: var(--gold-border);
+    padding: 8px 18px;
+}
+
+.mission-reward-coin {
+    width: 32px;
+    height: 32px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-right: 8px;
+}
+
+.mission-reward-text {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: var(--gold);
+}
+
+.modal-action-btn {
+    width: 100%;
+    height: 94px;
+    background-color: var(--gold);
+    border-radius: 26px;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-action-btn:active {
+    scale: 0.96;
+}
+
+.modal-action-btn-text {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: rgb(0, 0, 0);
+    letter-spacing: 2.5px;
 }
 
 .modal-hidden {
     display: none;
 }
 
-.modal-card {
-    width: 100%;
-    max-height: 80%;
-    background-color: var(--dark-bg);
-    border-width: 2px;
-    border-color: var(--gold);
-    border-radius: 32px;
-    padding: 36px;
-}
-
-.modal-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-}
-
-.modal-title {
-    font-size: 38px;
-    -unity-font-style: bold;
-    color: var(--text-white);
-    letter-spacing: 2px;
-}
-
-.modal-close-btn {
-    width: 64px;
-    height: 64px;
-    background-color: transparent;
-    border-width: 0;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-
-.modal-close-icon {
-    width: 32px;
-    height: 32px;
-    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_close.png");
-    -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
-}
-
-.mission-item {
-    background-color: var(--card-bg);
-    border-width: 1.5px;
-    border-color: var(--border-subtle);
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 18px;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.mission-desc {
-    font-size: 26px;
-    color: var(--text-white);
-    margin-bottom: 6px;
-}
-
-.mission-progress-text {
-    font-size: 22px;
-    color: var(--text-gray);
-}
-
-.mission-claim-btn {
-    height: 64px;
-    border-radius: 32px;
-    background-color: var(--gold);
-    border-width: 0;
-    padding: 0 28px;
-    align-items: center;
-    justify-content: center;
-}
-
-.mission-claim-text {
-    font-size: 22px;
-    -unity-font-style: bold;
-    color: rgb(0, 0, 0);
-}
-
-/* ==========================================================================
-   LIQUID GLASS BOTTOM NAVIGATION BAR
-   ========================================================================== */
-.bottom-nav-bar {
+#BottomNavBar {
     position: absolute;
-    left: 40px;
-    right: 40px;
-    bottom: 48px;
-    height: 140px;
-    border-radius: 70px;
-    background-color: rgba(14, 32, 22, 0.88);
-    border-width: 1.5px;
-    border-color: var(--border-subtle);
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding-left: 16px;
-    padding-right: 16px;
-}
-
-.nav-tab {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 160px;
-    height: 100px;
-    background-color: transparent;
-    border-width: 0;
-    padding: 0;
-}
-
-.nav-tab-active {
-    background-color: rgba(232, 168, 32, 0.14);
-    border-radius: 36px;
-}
-
-.nav-icon {
-    width: 36px;
-    height: 36px;
-    -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: var(--text-dim);
-    margin-bottom: 6px;
-}
-
-.nav-icon-active {
-    -unity-background-image-tint-color: var(--gold);
-}
-
-.nav-label {
-    font-size: 18px;
-    color: var(--text-dim);
-}
-
-.nav-label-active {
-    font-size: 18px;
-    -unity-font-style: bold;
-    color: var(--gold);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
 }

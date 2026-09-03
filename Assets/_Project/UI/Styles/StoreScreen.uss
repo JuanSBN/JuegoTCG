@@ -1,0 +1,501 @@
+:root {
+    --bg-dark: #06110B;
+    --card-bg: rgba(13, 26, 19, 0.85);
+    --gold: #E8A820;
+    --gold-border: rgba(232, 168, 32, 0.65);
+    --gold-glow: rgba(232, 168, 32, 0.25);
+    --text-white: #F5F5F7;
+    --text-gray: rgba(255, 255, 255, 0.65);
+    --text-dim: rgba(255, 255, 255, 0.40);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+}
+
+.screen-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-dark);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 56px;
+    padding-bottom: 0;
+    position: relative;
+}
+
+/* Header */
+.store-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.store-title {
+    font-size: 56px;
+    -unity-font-style: bold;
+    letter-spacing: 8px;
+    color: var(--text-white);
+}
+
+.currency-pill,
+.coin-chip {
+    flex-direction: row;
+    align-items: center;
+    height: 64px;
+    background-color: rgba(0, 0, 0, 0.45);
+    border-width: 1.5px;
+    border-color: var(--gold-border);
+    border-radius: 32px;
+    padding-left: 18px;
+    padding-right: 22px;
+}
+
+.coin-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-right: 10px;
+}
+
+.coins-text,
+.coin-chip-text {
+    font-size: 26px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    letter-spacing: 1px;
+}
+
+/* Scroll View */
+.store-scroll-view {
+    flex-grow: 1;
+    width: 100%;
+    position: relative;
+}
+
+.store-scroll-view #unity-content-container {
+    padding-bottom: 240px;
+    width: 100%;
+}
+
+/* Section Headings */
+.section-heading {
+    font-size: 34px;
+    -unity-font-style: bold;
+    letter-spacing: 6px;
+    color: var(--text-white);
+    margin-top: 28px;
+    margin-bottom: 20px;
+}
+
+/* ── COMPRAR SOBRES (3 Envelopes) ── */
+.sobres-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 14px;
+}
+
+.envelope-column {
+    width: 31.5%;
+    align-items: stretch;
+}
+
+.envelope-column-featured {
+    width: 33%;
+}
+
+.envelope-card {
+    width: 100%;
+    height: 410px;
+    border-radius: 20px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    background-color: var(--card-bg);
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 24px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin: 0;
+    transition-property: scale;
+    transition-duration: 0.15s;
+}
+
+.envelope-card:hover {
+    scale: 1.03;
+}
+
+.envelope-featured {
+    height: 450px;
+    border-color: var(--gold);
+    border-width: 2.5px;
+    background-color: rgba(13, 26, 19, 0.95);
+    padding-bottom: 28px;
+}
+
+.envelope-label {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 2px;
+    -unity-text-align: middle-center;
+}
+
+.envelope-label-featured {
+    font-size: 24px;
+    color: var(--gold);
+    letter-spacing: 2.5px;
+}
+
+.envelope-buy-button {
+    width: 100%;
+    height: 68px;
+    margin-top: 14px;
+    border-radius: 14px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    background-color: rgba(255, 255, 255, 0.05);
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    transition-property: scale;
+    transition-duration: 0.15s;
+}
+
+.envelope-buy-button:hover {
+    scale: 1.04;
+}
+
+.envelope-buy-button-featured {
+    height: 72px;
+    border-width: 2px;
+    border-color: rgba(232, 168, 32, 0.85);
+    background-color: rgba(232, 168, 32, 0.15);
+}
+
+.coin-icon-mini {
+    width: 28px;
+    height: 28px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-right: 10px;
+}
+
+.envelope-price-text {
+    font-size: 26px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+}
+
+.envelope-price-text-featured {
+    font-size: 28px;
+    color: var(--gold);
+}
+
+/* ── VER ANUNCIO (Banner) ── */
+.ad-banner {
+    width: 100%;
+    height: 146px;
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: var(--gold);
+    background-color: rgba(14, 22, 10, 0.90);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 24px;
+    padding-right: 28px;
+    margin-bottom: 16px;
+    transition-property: scale;
+    transition-duration: 0.15s;
+}
+
+.ad-banner:hover {
+    scale: 1.02;
+}
+
+.ad-play-circle {
+    width: 82px;
+    height: 82px;
+    border-radius: 41px;
+    background-color: var(--gold);
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.ad-play-icon {
+    font-size: 32px;
+    color: #000000;
+    -unity-text-align: middle-center;
+    margin-left: 5px;
+}
+
+.ad-info-container {
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.ad-title {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin-bottom: 6px;
+}
+
+.ad-subtitle {
+    font-size: 20px;
+    color: var(--text-gray);
+}
+
+.ad-counter-container {
+    align-items: center;
+    justify-content: center;
+    margin-left: 16px;
+    flex-shrink: 0;
+}
+
+.ad-counter-number {
+    font-size: 38px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    -unity-text-align: middle-center;
+}
+
+.ad-counter-label {
+    font-size: 16px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    margin-top: 2px;
+    -unity-text-align: middle-center;
+}
+
+/* ── COMPRAR MONEDAS (2x2 Grid) ── */
+.coin-packs-grid {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.coin-pack-card {
+    width: 48.5%;
+    height: 265px;
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 22px;
+    padding-bottom: 18px;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 20px;
+    transition-property: scale;
+    transition-duration: 0.15s;
+}
+
+.coin-pack-card:hover {
+    scale: 1.03;
+}
+
+.coin-pack-art {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    margin-top: 4px;
+}
+
+.coin-pack-icon-large {
+    width: 42px;
+    height: 42px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.coin-pack-icon-medium {
+    width: 32px;
+    height: 32px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-left: 6px;
+}
+
+.coin-pack-coins {
+    font-size: 36px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+}
+
+.coin-pack-bonus {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    margin-top: 2px;
+    -unity-text-align: middle-center;
+}
+
+.coin-pack-price-tag {
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    background-color: rgba(255, 255, 255, 0.06);
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   INTEGRATED MOBILE SCROLLBAR (Figma Sleek Golden Style)
+   ========================================================================== */
+.store-scroll-view .unity-scroller--horizontal,
+.store-scroll-view #unity-horizontal-scroller,
+.unity-scroller--horizontal {
+    display: none;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.store-scroll-view .unity-scroller--vertical,
+.store-scroll-view #unity-vertical-scroller,
+.unity-scroller--vertical {
+    width: 6px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    bottom: 220px;
+}
+
+.store-scroll-view .unity-scroller__low-button,
+.store-scroll-view .unity-scroller__high-button,
+.store-scroll-view #unity-low-button,
+.store-scroll-view #unity-high-button,
+.unity-scroller__low-button,
+.unity-scroller__high-button {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.store-scroll-view .unity-slider {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    width: 6px;
+}
+
+.store-scroll-view #unity-tracker,
+.store-scroll-view .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    margin: 0;
+}
+
+.store-scroll-view .unity-scroller--vertical #unity-dragger,
+.store-scroll-view #unity-vertical-scroller #unity-dragger,
+.store-scroll-view .unity-scroller--vertical .unity-base-slider__dragger {
+    background-color: var(--gold);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    min-height: 120px;
+    margin: 0;
+    opacity: 0.65;
+    transition-property: opacity;
+    transition-duration: 0.15s;
+}
+
+.store-scroll-view .unity-scroller--vertical #unity-dragger:hover,
+.store-scroll-view .unity-scroller--vertical #unity-dragger:active {
+    background-color: #FFD257;
+    opacity: 1;
+}
+
+/* ==========================================================================
+   FEEDBACK MODAL
+   ========================================================================== */
+.store-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.82);
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
+.store-modal-card {
+    width: 86%;
+    background-color: #0d1a13;
+    border-radius: 28px;
+    border-width: 2px;
+    border-color: var(--gold);
+    padding: 40px 32px;
+    align-items: center;
+}
+
+.store-modal-icon {
+    font-size: 72px;
+    margin-bottom: 16px;
+}
+
+.store-modal-title {
+    font-size: 38px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    -unity-text-align: middle-center;
+}
+
+.store-modal-desc {
+    font-size: 24px;
+    color: var(--text-white);
+    margin-bottom: 32px;
+    -unity-text-align: middle-center;
+}
+
+.store-modal-close-btn {
+    width: 200px;
+    height: 64px;
+    border-radius: 16px;
+    background-color: var(--gold);
+    color: #000000;
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    align-items: center;
+    justify-content: center;
+    border-width: 0;
+}
+
+.store-bottom-spacer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+}

@@ -1,0 +1,67 @@
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.UIElements;
+using JuegoTCG.UI;
+
+namespace JuegoTCG.EditorTools
+{
+    public static class UIToolkitSettingsSceneBuilder
+    {
+        private const string ScenePath = "Assets/_Project/Scenes/SettingsSceneUIToolkit.unity";
+        private const string UXMLPath = "Assets/_Project/UI/Views/SettingsScreen.uxml";
+        private const string PanelSettingsPath = "Assets/_Project/UI/PanelSettings.asset";
+
+        [MenuItem("JuegoTCG/✨ UI Toolkit (UXML + USS)/⚙️ Ajustes UI Toolkit", priority = 29)]
+        public static void BuildUIToolkitSettingsScene()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            // Camera
+            GameObject camGO = new GameObject("Main Camera");
+            Camera cam = camGO.AddComponent<Camera>();
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.04f, 0.08f, 0.06f);
+            cam.orthographic = true;
+            camGO.AddComponent<AudioListener>();
+
+            // UI Document
+            GameObject uiDocGO = new GameObject("UIDocument_SettingsScreen");
+            UIDocument uiDoc = uiDocGO.AddComponent<UIDocument>();
+
+            // Load UXML
+            VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UXMLPath);
+            if (uxml != null)
+            {
+                uiDoc.visualTreeAsset = uxml;
+            }
+
+            // Panel Settings
+            PanelSettings panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelSettingsPath);
+            if (panelSettings == null)
+            {
+                panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+                panelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
+                panelSettings.referenceResolution = new Vector2Int(1080, 2400);
+                panelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
+                panelSettings.match = 0.5f;
+                AssetDatabase.CreateAsset(panelSettings, PanelSettingsPath);
+                AssetDatabase.SaveAssets();
+            }
+            uiDoc.panelSettings = panelSettings;
+
+            // Add Controllers
+            uiDocGO.AddComponent<UIToolkitSettingsController>();
+            uiDocGO.AddComponent<LiquidGlassNavBarController>();
+
+            // Save Scene
+            EditorSceneManager.SaveScene(scene, ScenePath);
+            JuegoTCG.Editor.AutoRegisterBuildScenes.RegisterScenes();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            EditorSceneManager.OpenScene(ScenePath);
+
+            Debug.Log($"<color=gold>[UIToolkit] ¡Escena de Ajustes UI Toolkit generada y abierta con éxito en {ScenePath}!</color>");
+        }
+    }
+}

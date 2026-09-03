@@ -1,0 +1,204 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="project://database/Assets/_Project/UI/Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/MyCardsScreen.uss" />
+
+    <ui:VisualElement name="MyCardsScreenContainer" class="screen-container">
+
+        <!-- Header -->
+        <ui:VisualElement class="cards-header">
+            <ui:Label text="MIS CARTAS" class="cards-title" />
+
+            <!-- Horizontal Filter Bar -->
+            <ui:VisualElement class="filter-bar">
+                <ui:Button name="FilterPrevBtn" class="filter-arrow-btn">
+                    <ui:VisualElement class="filter-arrow-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_chevron_left.png');" />
+                </ui:Button>
+
+                <ui:ScrollView name="FilterScrollView" mode="Horizontal" class="filter-scroll" show-horizontal-scroller="false">
+                    <ui:Button name="Filter_Album" class="filter-pill">
+                        <ui:Label text="Álbum" class="filter-pill-text" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Recientes" class="filter-pill">
+                        <ui:Label text="Recientes" class="filter-pill-text" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Rareza" class="filter-pill filter-pill-active">
+                        <ui:Label text="Rareza" class="filter-pill-text filter-pill-text-active" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Cantidad" class="filter-pill">
+                        <ui:Label text="Cantidad" class="filter-pill-text" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Nacion" class="filter-pill">
+                        <ui:Label text="Nación" class="filter-pill-text" />
+                    </ui:Button>
+                </ui:ScrollView>
+
+                <ui:Button name="FilterNextBtn" class="filter-arrow-btn">
+                    <ui:VisualElement class="filter-arrow-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_chevron_right.png');" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- Counter & Search Row -->
+            <ui:VisualElement class="meta-row">
+                <ui:Label name="CardsCountLabel" text="1,232 cartas" class="cards-count-label" />
+                <ui:VisualElement class="search-box">
+                    <ui:VisualElement class="search-icon" />
+                    <ui:TextField name="SearchField" placeholder-text="Buscar jugador..." class="search-text-field" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Cards Grid Scroll View (2 Columns) -->
+        <ui:ScrollView name="CardsScrollView" class="cards-scroll-view" vertical-scroller-visibility="Always">
+            <ui:VisualElement name="CardsGrid" class="cards-grid">
+                
+                <!-- Card 1: Luis Díaz (Mítica) -->
+                <ui:Button name="Card_1" class="card-item card-mythic">
+                    <ui:VisualElement class="card-avatar-circle avatar-mythic">
+                        <ui:Label text="LD" class="card-avatar-initials initials-mythic" />
+                    </ui:VisualElement>
+                    <ui:Label text="Luis Díaz" class="card-player-name" />
+                    <ui:Label text="Mítica ×1" class="card-rarity-badge initials-mythic" />
+                </ui:Button>
+
+                <!-- Card 2: Vinicius Jr. (Rara) -->
+                <ui:Button name="Card_2" class="card-item card-rare">
+                    <ui:VisualElement class="card-avatar-circle avatar-rare">
+                        <ui:Label text="VJ" class="card-avatar-initials initials-rare" />
+                    </ui:VisualElement>
+                    <ui:Label text="Vinicius Jr." class="card-player-name" />
+                    <ui:Label text="Rara ×2" class="card-rarity-badge initials-rare" />
+                </ui:Button>
+
+                <!-- Card 3: Haaland (Común) -->
+                <ui:Button name="Card_3" class="card-item card-common">
+                    <ui:VisualElement class="card-avatar-circle avatar-common">
+                        <ui:Label text="EH" class="card-avatar-initials initials-common" />
+                    </ui:VisualElement>
+                    <ui:Label text="Haaland" class="card-player-name" />
+                    <ui:Label text="Común ×5" class="card-rarity-badge initials-common" />
+                </ui:Button>
+
+                <!-- Card 4: Mbappé (Poco común) -->
+                <ui:Button name="Card_4" class="card-item card-uncommon">
+                    <ui:VisualElement class="card-avatar-circle avatar-uncommon">
+                        <ui:Label text="KM" class="card-avatar-initials initials-uncommon" />
+                    </ui:VisualElement>
+                    <ui:Label text="Mbappé" class="card-player-name" />
+                    <ui:Label text="Poco común ×3" class="card-rarity-badge initials-uncommon" />
+                </ui:Button>
+
+                <!-- Card 5: Pedri (Rara) -->
+                <ui:Button name="Card_5" class="card-item card-rare">
+                    <ui:VisualElement class="card-avatar-circle avatar-rare">
+                        <ui:Label text="PE" class="card-avatar-initials initials-rare" />
+                    </ui:VisualElement>
+                    <ui:Label text="Pedri" class="card-player-name" />
+                    <ui:Label text="Rara ×1" class="card-rarity-badge initials-rare" />
+                </ui:Button>
+
+                <!-- Card 6: Rodri (Común) -->
+                <ui:Button name="Card_6" class="card-item card-common">
+                    <ui:VisualElement class="card-avatar-circle avatar-common">
+                        <ui:Label text="RO" class="card-avatar-initials initials-common" />
+                    </ui:VisualElement>
+                    <ui:Label text="Rodri" class="card-player-name" />
+                    <ui:Label text="Común ×4" class="card-rarity-badge initials-common" />
+                </ui:Button>
+
+                <!-- Card 7: Lamine Yamal (Mítica) -->
+                <ui:Button name="Card_7" class="card-item card-mythic">
+                    <ui:VisualElement class="card-avatar-circle avatar-mythic">
+                        <ui:Label text="LY" class="card-avatar-initials initials-mythic" />
+                    </ui:VisualElement>
+                    <ui:Label text="Lamine Yamal" class="card-player-name" />
+                    <ui:Label text="Mítica ×1" class="card-rarity-badge initials-mythic" />
+                </ui:Button>
+
+                <!-- Card 8: Bellingham (Rara) -->
+                <ui:Button name="Card_8" class="card-item card-rare">
+                    <ui:VisualElement class="card-avatar-circle avatar-rare">
+                        <ui:Label text="JB" class="card-avatar-initials initials-rare" />
+                    </ui:VisualElement>
+                    <ui:Label text="Bellingham" class="card-player-name" />
+                    <ui:Label text="Rara ×2" class="card-rarity-badge initials-rare" />
+                </ui:Button>
+
+                <!-- Card 9: Salah (Poco común) -->
+                <ui:Button name="Card_9" class="card-item card-uncommon">
+                    <ui:VisualElement class="card-avatar-circle avatar-uncommon">
+                        <ui:Label text="MS" class="card-avatar-initials initials-uncommon" />
+                    </ui:VisualElement>
+                    <ui:Label text="Salah" class="card-player-name" />
+                    <ui:Label text="Poco común ×6" class="card-rarity-badge initials-uncommon" />
+                </ui:Button>
+
+                <!-- Card 10: De Bruyne (Rara) -->
+                <ui:Button name="Card_10" class="card-item card-rare">
+                    <ui:VisualElement class="card-avatar-circle avatar-rare">
+                        <ui:Label text="KDB" class="card-avatar-initials initials-rare" />
+                    </ui:VisualElement>
+                    <ui:Label text="De Bruyne" class="card-player-name" />
+                    <ui:Label text="Rara ×1" class="card-rarity-badge initials-rare" />
+                </ui:Button>
+
+                <!-- Card 11: Musiala (Común) -->
+                <ui:Button name="Card_11" class="card-item card-common">
+                    <ui:VisualElement class="card-avatar-circle avatar-common">
+                        <ui:Label text="JM" class="card-avatar-initials initials-common" />
+                    </ui:VisualElement>
+                    <ui:Label text="Musiala" class="card-player-name" />
+                    <ui:Label text="Común ×3" class="card-rarity-badge initials-common" />
+                </ui:Button>
+
+                <!-- Card 12: Osimhen (Poco común) -->
+                <ui:Button name="Card_12" class="card-item card-uncommon">
+                    <ui:VisualElement class="card-avatar-circle avatar-uncommon">
+                        <ui:Label text="VO" class="card-avatar-initials initials-uncommon" />
+                    </ui:VisualElement>
+                    <ui:Label text="Osimhen" class="card-player-name" />
+                    <ui:Label text="Poco común ×2" class="card-rarity-badge initials-uncommon" />
+                </ui:Button>
+
+            </ui:VisualElement>
+        </ui:ScrollView>
+
+        <!-- Modular Liquid Glass Navigation Bar -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+        <!-- Card Zoom / Inspect Modal -->
+        <ui:VisualElement name="CardInspectModal" class="modal-overlay modal-hidden">
+            <ui:VisualElement class="modal-card">
+                <ui:VisualElement class="modal-header">
+                    <ui:Label text="DETALLE DE CARTA" class="modal-title" />
+                    <ui:Button name="InspectCloseBtn" class="modal-close-btn">
+                        <ui:VisualElement class="modal-close-icon" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="InspectHeroCard" class="modal-hero-card card-mythic">
+                    <ui:VisualElement name="InspectAvatarCircle" class="card-avatar-circle avatar-mythic" style="width: 220px; height: 220px; border-radius: 110px;">
+                        <ui:Label name="InspectAvatarInitials" text="LD" class="card-avatar-initials initials-mythic" style="font-size: 72px;" />
+                    </ui:VisualElement>
+                    <ui:Label name="InspectPlayerName" text="Luis Díaz" class="card-player-name" style="font-size: 44px;" />
+                    <ui:Label name="InspectRarityBadge" text="MÍTICA" class="card-rarity-badge initials-mythic" style="font-size: 26px;" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="modal-details-row">
+                    <ui:VisualElement class="modal-stat-box">
+                        <ui:Label text="POSICIÓN" class="modal-stat-label" />
+                        <ui:Label name="InspectStatPosition" text="Extremo Izq." class="modal-stat-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="modal-stat-box">
+                        <ui:Label text="CLUB / PAÍS" class="modal-stat-label" />
+                        <ui:Label name="InspectStatTeam" text="Liverpool" class="modal-stat-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="modal-stat-box">
+                        <ui:Label text="COPIAS" class="modal-stat-label" />
+                        <ui:Label name="InspectStatCopies" text="×1" class="modal-stat-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

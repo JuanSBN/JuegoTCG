@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/CommunityScreen.uss" />
+    
+    <ui:VisualElement name="CommunityScreenRoot" class="screen-container">
+        
+        <!-- Header -->
+        <ui:VisualElement class="community-header">
+            <ui:Label text="COMUNIDAD" class="community-title" />
+        </ui:VisualElement>
+
+        <!-- 2x2 Hub Grid -->
+        <ui:VisualElement class="community-grid">
+            
+            <!-- Card 1: Vitrinas públicas -->
+            <ui:Button name="Card_Vitrinas" class="community-card">
+                <ui:VisualElement class="community-card-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_vitrinas.png');" />
+                <ui:Label text="Vitrinas públicas" class="community-card-label" />
+            </ui:Button>
+
+            <!-- Card 2: Intercambio (Badge 3) -->
+            <ui:Button name="Card_Intercambio" class="community-card">
+                <ui:VisualElement class="community-card-badge">
+                    <ui:Label text="3" class="community-badge-text" />
+                </ui:VisualElement>
+                <ui:VisualElement class="community-card-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_intercambio.png');" />
+                <ui:Label text="Intercambio" class="community-card-label" />
+            </ui:Button>
+
+            <!-- Card 3: Mercado -->
+            <ui:Button name="Card_Mercado" class="community-card">
+                <ui:VisualElement class="community-card-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_vender.png');" />
+                <ui:Label text="Mercado" class="community-card-label" />
+            </ui:Button>
+
+            <!-- Card 4: Amigos (Badge 2) -->
+            <ui:Button name="Card_Amigos" class="community-card">
+                <ui:VisualElement class="community-card-badge">
+                    <ui:Label text="2" class="community-badge-text" />
+                </ui:VisualElement>
+                <ui:VisualElement class="community-card-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_amigos.png');" />
+                <ui:Label text="Amigos" class="community-card-label" />
+            </ui:Button>
+
+        </ui:VisualElement>
+
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+    </ui:VisualElement>
+</ui:UXML>

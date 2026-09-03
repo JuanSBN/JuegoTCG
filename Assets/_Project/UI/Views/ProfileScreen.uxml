@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/ProfileScreen.uss" />
+
+    <ui:VisualElement name="ProfileScreenRoot" class="screen-container">
+
+        <!-- Scrollable Body -->
+        <ui:ScrollView name="ProfileScrollView" class="profile-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden">
+            <ui:VisualElement class="profile-scroll-content">
+
+                <!-- ── Header: settings + avatar + name + code ── -->
+                <ui:VisualElement class="profile-header">
+                    
+                    <!-- Settings Gear Button -->
+                    <ui:Button name="Btn_Settings" class="settings-btn">
+                        <ui:VisualElement class="settings-icon" />
+                    </ui:Button>
+
+                    <!-- Avatar with Edit Badge -->
+                    <ui:VisualElement class="avatar-wrapper">
+                        <ui:VisualElement class="profile-avatar-circle">
+                            <ui:VisualElement class="profile-avatar-icon" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_EditAvatar" class="avatar-edit-badge">
+                            <ui:VisualElement class="avatar-edit-icon" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <!-- Username + Edit -->
+                    <ui:VisualElement class="username-row">
+                        <ui:Label name="UsernameText" text="JUGADOR_01" class="profile-username" />
+                        <ui:Button name="Btn_EditUsername" class="btn-edit-username">
+                            <ui:VisualElement class="edit-icon-small" />
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <!-- Friend Code + Copy Button -->
+                    <ui:Button name="Btn_CopyFriendCode" class="friend-code-pill-btn">
+                        <ui:Label text="Código de amigo:" class="code-pill-label" />
+                        <ui:Label name="FriendCodeText" text="4872-1093" class="code-pill-number" />
+                        <ui:VisualElement class="code-copy-icon" />
+                    </ui:Button>
+
+                </ui:VisualElement>
+
+                <!-- ── Mi 11 Ideal (Tactical Pitch) ── -->
+                <ui:VisualElement class="formation-section">
+                    <ui:VisualElement class="section-header-between">
+                        <ui:Label text="MI 11 IDEAL" class="profile-section-title" />
+                        <ui:Label name="FormationCountText" text="5 / 11 espacios" class="formation-slots-count" />
+                    </ui:VisualElement>
+
+                    <!-- Pitch Container -->
+                    <ui:VisualElement name="TacticalPitch" class="tactical-pitch-box">
+                        
+                        <!-- Field Lines Simulation -->
+                        <ui:VisualElement class="pitch-boundary-line" />
+                        <ui:VisualElement class="pitch-halfway-line" />
+                        <ui:VisualElement class="pitch-center-circle">
+                            <ui:VisualElement class="pitch-center-dot" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="pitch-penalty-top" />
+                        <ui:VisualElement class="pitch-penalty-bottom" />
+
+                        <!-- 11 Player Slots (4-3-3 Formation) -->
+                        
+                        <!-- FWD (3) -->
+                        <ui:VisualElement name="Slot_F1" class="pitch-player-slot slot-occupied slot-rare" style="left: 22%; top: 12%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEL" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="slot-token-circle" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_F2" class="pitch-player-slot" style="left: 50%; top: 12%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEL" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_F3" class="pitch-player-slot" style="left: 78%; top: 12%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEL" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- MID (3) -->
+                        <ui:VisualElement name="Slot_M1" class="pitch-player-slot slot-occupied slot-mythic" style="left: 18%; top: 36%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="MED" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="slot-token-circle" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_M2" class="pitch-player-slot" style="left: 50%; top: 36%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="MED" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_M3" class="pitch-player-slot slot-occupied slot-common" style="left: 82%; top: 36%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="MED" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="slot-token-circle" />
+                        </ui:VisualElement>
+
+                        <!-- DEF (4) -->
+                        <ui:VisualElement name="Slot_D1" class="pitch-player-slot slot-occupied slot-uncommon" style="left: 12%; top: 62%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEF" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="slot-token-circle" />
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_D2" class="pitch-player-slot" style="left: 37%; top: 62%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEF" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_D3" class="pitch-player-slot" style="left: 63%; top: 62%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEF" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_D4" class="pitch-player-slot slot-occupied slot-rare" style="left: 88%; top: 62%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEF" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="slot-token-circle" />
+                        </ui:VisualElement>
+
+                        <!-- GK (1) -->
+                        <ui:VisualElement name="Slot_G1" class="pitch-player-slot" style="left: 50%; top: 86%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="POR" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- ── Cartas Destacadas ── -->
+                <ui:VisualElement class="featured-section">
+                    <ui:Label text="CARTAS DESTACADAS" class="profile-section-title" style="margin-bottom: 20px;" />
+
+                    <ui:VisualElement class="featured-cards-row">
+                        
+                        <!-- Featured 1: Luis Díaz (Mítica) -->
+                        <ui:VisualElement name="Featured_Card_1" class="featured-card featured-card-mythic">
+                            <ui:VisualElement class="featured-avatar-circle">
+                                <ui:Label text="LD" class="featured-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="Luis Díaz" class="featured-card-name" />
+                        </ui:VisualElement>
+
+                        <!-- Featured 2: Bellingham (Rara) -->
+                        <ui:VisualElement name="Featured_Card_2" class="featured-card featured-card-rare">
+                            <ui:VisualElement class="featured-avatar-circle">
+                                <ui:Label text="JB" class="featured-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="Bellingham" class="featured-card-name" />
+                        </ui:VisualElement>
+
+                        <!-- Featured 3: Vacío -->
+                        <ui:VisualElement name="Featured_Card_3" class="featured-card featured-card-empty">
+                            <ui:VisualElement class="featured-avatar-circle" />
+                            <ui:Label text="Vacío" class="featured-card-name" />
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+        </ui:ScrollView>
+
+        <!-- Feedback / Customization Modal -->
+        <ui:VisualElement name="ProfileFeedbackModal" class="modal-backdrop modal-hidden">
+            <ui:VisualElement class="modal-box">
+                <ui:Label name="ModalTitle" text="MI 11 IDEAL" class="modal-title" />
+                <ui:Label name="ModalDesc" text="Has seleccionado esta posición táctica." class="modal-desc" />
+                <ui:Button name="Btn_CloseModal" class="modal-close-btn">
+                    <ui:Label text="ENTENDIDO" class="modal-close-btn-text" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+    </ui:VisualElement>
+</ui:UXML>

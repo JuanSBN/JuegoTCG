@@ -61,7 +61,7 @@ namespace JuegoTCG.UI
             WirePackCard(packCButton, "pack_diamante", root);
 
             // Wire Quick Actions
-            if (shopButton != null) shopButton.clicked += () => SceneManager.LoadScene("StoreScene");
+            if (shopButton != null) shopButton.clicked += () => SceneManager.LoadScene("StoreSceneUIToolkit");
             if (eventButton != null) eventButton.clicked += () => Debug.Log("<color=cyan>[UI Toolkit] Evento especial presionado</color>");
 
             // Wire Missions Modal with Gaussian Blur

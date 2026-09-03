@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <Style src="project://database/Assets/_Project/UI/Styles/MarketScreen.uss" />
+
+    <ui:VisualElement name="MarketScreenRoot" class="screen-container">
+
+        <!-- Header -->
+        <ui:VisualElement class="market-header">
+            <ui:VisualElement class="market-header-left">
+                <ui:Button name="BackBtn" class="back-btn">
+                    <ui:VisualElement class="back-btn-icon" />
+                </ui:Button>
+                <ui:Label text="MERCADO" class="market-title" />
+            </ui:VisualElement>
+
+            <!-- Currency Pill -->
+            <ui:VisualElement class="currency-pill">
+                <ui:VisualElement class="coin-icon" />
+                <ui:Label name="CoinsText" text="1240" class="coins-text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Main Mode Tabs -->
+        <ui:VisualElement class="market-mode-tabs">
+            <ui:Button name="Tab_Buy" class="mode-tab-pill mode-tab-pill-active">
+                <ui:Label text="COMPRAR" class="mode-tab-label" />
+            </ui:Button>
+
+            <ui:Button name="Tab_Sell" class="mode-tab-pill">
+                <ui:Label text="MIS VENTAS" class="mode-tab-label" />
+            </ui:Button>
+        </ui:VisualElement>
+
+        <!-- Rarity Filters Row (COMPRAR Mode) -->
+        <ui:ScrollView name="RarityFiltersScrollView" class="rarity-filters-row" mode="Horizontal" vertical-scroller-visibility="Hidden" show-horizontal-scroller="false">
+            <ui:Button name="Filter_Todas" class="rarity-pill rarity-pill-active">
+                <ui:Label text="TODAS" class="rarity-pill-label" />
+            </ui:Button>
+            <ui:Button name="Filter_Comun" class="rarity-pill">
+                <ui:Label text="COMÚN" class="rarity-pill-label" />
+            </ui:Button>
+            <ui:Button name="Filter_PocoComun" class="rarity-pill">
+                <ui:Label text="POCO COMÚN" class="rarity-pill-label" />
+            </ui:Button>
+            <ui:Button name="Filter_Rara" class="rarity-pill">
+                <ui:Label text="RARA" class="rarity-pill-label" />
+            </ui:Button>
+            <ui:Button name="Filter_Mitica" class="rarity-pill">
+                <ui:Label text="MÍTICA" class="rarity-pill-label" />
+            </ui:Button>
+        </ui:ScrollView>
+
+        <!-- Scrollable Content -->
+        <ui:ScrollView name="MarketScrollView" class="market-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden">
+            
+            <!-- Cards 2-Column Grid (COMPRAR Mode) -->
+            <ui:VisualElement name="MarketCardsGrid" class="market-cards-grid">
+
+                <!-- Card 1: Musiala (Común - 25) -->
+                <ui:VisualElement name="Card_Market_1" class="market-card market-card-common">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="PP" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="ProPlayer_99" class="seller-name" />
+                        <ui:Label text="hace 5 min" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="JM" class="card-big-initials" />
+                        <ui:Label text="Musiala" class="card-player-name" />
+                        <ui:Label text="COMÚN" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="25" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_1" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 2: Rodri (Común - 30) -->
+                <ui:VisualElement name="Card_Market_2" class="market-card market-card-common">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="EC" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="ElChampion" class="seller-name" />
+                        <ui:Label text="hace 3 h" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="RO" class="card-big-initials" />
+                        <ui:Label text="Rodri" class="card-player-name" />
+                        <ui:Label text="COMÚN" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="30" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_2" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 3: Haaland (Común - 45) -->
+                <ui:VisualElement name="Card_Market_3" class="market-card market-card-common">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="GS" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="GoldenShot_7" class="seller-name" />
+                        <ui:Label text="hace 5 h" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="EH" class="card-big-initials" />
+                        <ui:Label text="Haaland" class="card-player-name" />
+                        <ui:Label text="COMÚN" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="45" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_3" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 4: Salah (Poco común - 70) -->
+                <ui:VisualElement name="Card_Market_4" class="market-card market-card-uncommon">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="CM" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="CardMaster_X" class="seller-name" />
+                        <ui:Label text="hace 8 h" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="MS" class="card-big-initials" />
+                        <ui:Label text="Salah" class="card-player-name" />
+                        <ui:Label text="POCO COMÚN" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="70" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_4" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 5: Mbappé (Poco común - 80) -->
+                <ui:VisualElement name="Card_Market_5" class="market-card market-card-uncommon">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="FF" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="FutbolFan_22" class="seller-name" />
+                        <ui:Label text="hace 12 min" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="KM" class="card-big-initials" />
+                        <ui:Label text="Mbappé" class="card-player-name" />
+                        <ui:Label text="POCO COMÚN" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="80" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_5" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 6: Pedri (Rara - 180) -->
+                <ui:VisualElement name="Card_Market_6" class="market-card market-card-rare">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="FF" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="FutbolFan_22" class="seller-name" />
+                        <ui:Label text="hace 5 h" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="PE" class="card-big-initials" />
+                        <ui:Label text="Pedri" class="card-player-name" />
+                        <ui:Label text="RARA" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="180" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_6" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 7: Bellingham (Rara - 195) -->
+                <ui:VisualElement name="Card_Market_7" class="market-card market-card-rare">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="MA" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="MiAmigo_01" class="seller-name" />
+                        <ui:Label text="hace 2 h" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="JB" class="card-big-initials" />
+                        <ui:Label text="Bellingham" class="card-player-name" />
+                        <ui:Label text="RARA" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="195" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_7" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 8: Vinicius Jr. (Rara - 220) -->
+                <ui:VisualElement name="Card_Market_8" class="market-card market-card-rare">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="CM" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="CardMaster_X" class="seller-name" />
+                        <ui:Label text="hace 23 min" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="VJ" class="card-big-initials" />
+                        <ui:Label text="Vinicius Jr." class="card-player-name" />
+                        <ui:Label text="RARA" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="220" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_8" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 9: Luis Díaz (Mítica - 650) -->
+                <ui:VisualElement name="Card_Market_9" class="market-card market-card-mythic">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="PP" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="ProPlayer_99" class="seller-name" />
+                        <ui:Label text="hace 1 h" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="LD" class="card-big-initials" />
+                        <ui:Label text="Luis Díaz" class="card-player-name" />
+                        <ui:Label text="MÍTICA" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="650" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_9" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Card 10: Lamine Yamal (Mítica - 750) -->
+                <ui:VisualElement name="Card_Market_10" class="market-card market-card-mythic">
+                    <ui:VisualElement class="market-card-seller">
+                        <ui:VisualElement class="seller-avatar">
+                            <ui:Label text="GS" class="seller-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label text="GoldenShot_7" class="seller-name" />
+                        <ui:Label text="hace 4 h" class="seller-time" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-body">
+                        <ui:Label text="LY" class="card-big-initials" />
+                        <ui:Label text="Lamine Yamal" class="card-player-name" />
+                        <ui:Label text="MÍTICA" class="card-rarity-badge" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="market-card-footer">
+                        <ui:VisualElement class="market-price-pill">
+                            <ui:VisualElement class="price-coin-icon" />
+                            <ui:Label text="750" class="price-text" />
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_Buy_10" class="market-btn-buy">
+                            <ui:Label text="COMPRAR" class="market-btn-buy-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+
+            <!-- ── SECCIÓN MIS VENTAS (Figma Fidelity 100%) ───── -->
+            <ui:VisualElement name="MyListingsContainer" class="my-sales-container" style="display: none;">
+                
+                <!-- 1. Tus duplicados -->
+                <ui:VisualElement class="my-duplicates-section">
+                    <ui:VisualElement class="duplicates-grid">
+                        
+                        <!-- Duplicado 1: Musiala -->
+                        <ui:VisualElement name="Card_Dup_1" class="duplicate-card duplicate-card-common">
+                            <ui:VisualElement class="duplicate-badge">
+                                <ui:Label text="×3" class="duplicate-badge-text duplicate-badge-text-common" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="duplicate-card-body">
+                                <ui:Label text="JM" class="card-big-initials" />
+                                <ui:Label text="COMÚN" class="card-rarity-badge" />
+                                <ui:Label text="Musiala" class="duplicate-player-name" />
+                            </ui:VisualElement>
+                            <ui:Button name="Btn_Publish_1" class="btn-publish">
+                                <ui:Label text="PUBLICAR" class="btn-publish-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+
+                        <!-- Duplicado 2: Osimhen -->
+                        <ui:VisualElement name="Card_Dup_2" class="duplicate-card duplicate-card-uncommon">
+                            <ui:VisualElement class="duplicate-badge">
+                                <ui:Label text="×2" class="duplicate-badge-text duplicate-badge-text-uncommon" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="duplicate-card-body">
+                                <ui:Label text="VO" class="card-big-initials" />
+                                <ui:Label text="POCO COMÚN" class="card-rarity-badge" />
+                                <ui:Label text="Osimhen" class="duplicate-player-name" />
+                            </ui:VisualElement>
+                            <ui:Button name="Btn_Publish_2" class="btn-publish">
+                                <ui:Label text="PUBLICAR" class="btn-publish-text" />
+                            </ui:Button>
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- 2. Listados Activos -->
+                <ui:VisualElement class="active-listings-section">
+                    <ui:Label text="LISTADOS ACTIVOS" class="active-listings-title" />
+
+                    <ui:VisualElement class="active-listings-list">
+                        
+                        <!-- Listado Activo 1: De Bruyne -->
+                        <ui:VisualElement name="Card_Active_1" class="active-listing-card">
+                            <ui:VisualElement class="active-listing-top">
+                                <ui:VisualElement class="active-mini-card active-mini-card-rare">
+                                    <ui:Label text="KDB" class="active-mini-card-text" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="active-listing-info">
+                                    <ui:Label text="De Bruyne" class="active-listing-name" />
+                                    <ui:Label text="RARA" class="active-listing-rarity active-listing-rarity-rare" />
+                                    <ui:VisualElement class="active-price-pill">
+                                        <ui:VisualElement class="price-coin-icon" />
+                                        <ui:Label name="Price_Active_1" text="250" class="price-text" />
+                                    </ui:VisualElement>
+                                    <ui:Label text="Publicado hace 2 h" class="active-listing-time" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement class="active-listing-actions">
+                                <ui:Button name="Btn_EditPrice_1" class="btn-edit-price">
+                                    <ui:Label text="EDITAR PRECIO" class="btn-edit-price-text" />
+                                </ui:Button>
+                                <ui:Button name="Btn_Withdraw_1" class="btn-withdraw">
+                                    <ui:Label text="RETIRAR" class="btn-withdraw-text" />
+                                </ui:Button>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Listado Activo 2: Osimhen -->
+                        <ui:VisualElement name="Card_Active_2" class="active-listing-card">
+                            <ui:VisualElement class="active-listing-top">
+                                <ui:VisualElement class="active-mini-card active-mini-card-uncommon">
+                                    <ui:Label text="VO" class="active-mini-card-text" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="active-listing-info">
+                                    <ui:Label text="Osimhen" class="active-listing-name" />
+                                    <ui:Label text="POCO COMÚN" class="active-listing-rarity active-listing-rarity-uncommon" />
+                                    <ui:VisualElement class="active-price-pill">
+                                        <ui:VisualElement class="price-coin-icon" />
+                                        <ui:Label name="Price_Active_2" text="65" class="price-text" />
+                                    </ui:VisualElement>
+                                    <ui:Label text="Publicado hace 5 h" class="active-listing-time" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement class="active-listing-actions">
+                                <ui:Button name="Btn_EditPrice_2" class="btn-edit-price">
+                                    <ui:Label text="EDITAR PRECIO" class="btn-edit-price-text" />
+                                </ui:Button>
+                                <ui:Button name="Btn_Withdraw_2" class="btn-withdraw">
+                                    <ui:Label text="RETIRAR" class="btn-withdraw-text" />
+                                </ui:Button>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+
+        </ui:ScrollView>
+
+        <!-- Buy Confirmation Feedback Modal -->
+        <ui:VisualElement name="MarketFeedbackModal" class="market-modal-backdrop modal-hidden">
+            <ui:VisualElement class="market-modal-box">
+                <ui:Label text="¡COMPRA EXITOSA!" class="market-modal-title" />
+                <ui:Label name="ModalCardDesc" text="Has adquirido la carta por 25 monedas." class="market-modal-desc" />
+                <ui:Button name="Btn_CloseFeedback" class="market-btn-buy" style="width: 200px;">
+                    <ui:Label text="ACEPTAR" class="market-btn-buy-text" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Publish / Edit Price Modal -->
+        <ui:VisualElement name="PriceModal" class="market-modal-backdrop modal-hidden">
+            <ui:VisualElement class="market-modal-box">
+                <ui:Label name="PriceModalTitle" text="FIJAR PRECIO" class="market-modal-title" />
+                <ui:Label name="PriceModalCardName" text="Musiala (COMÚN)" class="market-modal-desc" style="margin-bottom: 20px;" />
+                
+                <ui:VisualElement class="price-input-row">
+                    <ui:VisualElement class="price-coin-icon" />
+                    <ui:TextField name="PriceInput" value="100" class="price-input-field" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="market-modal-actions" style="margin-top: 24px;">
+                    <ui:Button name="Btn_ConfirmPrice" class="market-modal-btn-confirm">
+                        <ui:Label text="CONFIRMAR" class="market-modal-btn-confirm-text" />
+                    </ui:Button>
+                    <ui:Button name="Btn_CancelPrice" class="market-modal-btn-cancel">
+                        <ui:Label text="CANCELAR" class="market-modal-btn-cancel-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
+    </ui:VisualElement>
+</ui:UXML>

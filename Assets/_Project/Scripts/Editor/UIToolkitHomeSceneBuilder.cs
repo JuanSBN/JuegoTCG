@@ -15,6 +15,8 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/✨ UI Toolkit (UXML + USS)/🏠 Inicio UI Toolkit", priority = 20)]
         public static void BuildUIToolkitHomeScene()
         {
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Styles/HomeScreen.uss", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Views/HomeScreen.uxml", ImportAssetOptions.ForceUpdate);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // Camera

@@ -1,0 +1,468 @@
+/* ==========================================================================
+   MY CARDS SCREEN - UI TOOLKIT USS (1080x2400 Mobile Layout)
+   Figma Fidelity: Docs/Pantallas 2.2 App.tsx lines 740-890
+   ========================================================================== */
+
+:root {
+    --dark-bg: #07120B;
+    --card-bg: #0D1A13;
+    --gold: #E8A820;
+    --gold-border: #D4960E;
+    --gold-bg: rgba(232, 168, 32, 0.12);
+    --border-subtle: rgba(255, 255, 255, 0.13);
+    --text-white: #FFFFFF;
+    --text-gray: rgba(255, 255, 255, 0.55);
+    --text-dim: rgba(255, 255, 255, 0.35);
+
+    --rarity-mythic: #E8A820;
+    --rarity-rare: #9B5CF6;
+    --rarity-uncommon: rgba(180, 200, 195, 0.75);
+    --rarity-uncommon-border: rgba(180, 200, 195, 0.55);
+    --rarity-common: #27C96A;
+}
+
+.screen-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--dark-bg);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: scale-and-crop;
+    overflow: hidden;
+    position: relative;
+    padding-top: 80px;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 0px;
+}
+
+#BottomNavBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+}
+
+/* Header */
+.cards-header {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.cards-title {
+    font-size: 52px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    letter-spacing: 4px;
+    margin-bottom: 24px;
+}
+
+/* Horizontal Filter Bar */
+.filter-bar {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+    height: 72px;
+}
+
+.filter-arrow-btn {
+    width: 48px;
+    height: 72px;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.filter-arrow-icon {
+    width: 24px;
+    height: 24px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--text-dim);
+}
+
+.filter-scroll {
+    flex-grow: 1;
+    flex-direction: row;
+    height: 72px;
+}
+
+.filter-scroll #unity-content-container {
+    flex-direction: row;
+    align-items: center;
+}
+
+.filter-pill {
+    height: 56px;
+    padding-left: 28px;
+    padding-right: 28px;
+    border-radius: 28px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.filter-pill-active {
+    background-color: var(--gold-bg);
+    border-color: var(--gold-border);
+}
+
+.filter-pill-text {
+    font-size: 24px;
+    color: var(--text-gray);
+    letter-spacing: 1px;
+}
+
+.filter-pill-text-active {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+/* Counter and Search Row */
+.meta-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    margin-bottom: 20px;
+}
+
+.cards-count-label {
+    font-size: 28px;
+    color: var(--text-gray);
+    letter-spacing: 1px;
+}
+
+.search-box {
+    flex-direction: row;
+    align-items: center;
+    width: 420px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 30px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.search-icon {
+    width: 24px;
+    height: 24px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_search.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--text-dim);
+    margin-right: 12px;
+}
+
+.search-text-field {
+    flex-grow: 1;
+    background-color: transparent;
+    border-width: 0;
+    color: var(--text-white);
+    font-size: 22px;
+    padding: 0;
+}
+
+.search-text-field > .unity-base-field__input {
+    background-color: transparent;
+    border-width: 0;
+    color: var(--text-white);
+    font-size: 22px;
+    padding: 0;
+}
+
+/* Cards Grid Scroll */
+.cards-scroll-view {
+    flex-grow: 1;
+    width: 100%;
+    position: relative;
+}
+
+.cards-scroll-view #unity-content-container {
+    padding-bottom: 240px;
+    width: 100%;
+}
+
+.cards-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Card Item (2 Columns - Exact Figma Ratio 3:4) */
+.card-item {
+    width: 48.5%;
+    height: 640px;
+    background-color: var(--card-bg);
+    border-radius: 24px;
+    border-width: 2px;
+    margin-bottom: 24px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 16px 24px;
+    transition-property: scale;
+    transition-duration: 0.15s;
+}
+
+.card-item:hover {
+    scale: 1.02;
+}
+
+/* ==========================================================================
+   INTEGRATED MOBILE SCROLLBAR (Figma Sleek Golden Style)
+   ========================================================================== */
+.cards-scroll-view .unity-scroller--vertical,
+.cards-scroll-view #unity-vertical-scroller,
+.unity-scroller--vertical {
+    width: 6px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    bottom: 220px;
+}
+
+/* Ocultar botones de flecha toscos */
+.cards-scroll-view .unity-scroller__low-button,
+.cards-scroll-view .unity-scroller__high-button,
+.cards-scroll-view #unity-low-button,
+.cards-scroll-view #unity-high-button,
+.unity-scroller__low-button,
+.unity-scroller__high-button {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+/* Slider contenedor transparente */
+.cards-scroll-view .unity-slider {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    width: 6px;
+}
+
+/* Pista translúcida muy sutil */
+.cards-scroll-view #unity-tracker,
+.cards-scroll-view .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    margin: 0;
+}
+
+/* Cápsula dorada deslizante estilizada (Figma) */
+.cards-scroll-view #unity-dragger,
+.cards-scroll-view .unity-base-slider__dragger {
+    background-color: var(--gold);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    min-height: 120px;
+    margin: 0;
+    opacity: 0.65;
+    transition-property: opacity;
+    transition-duration: 0.15s;
+}
+
+.cards-scroll-view #unity-dragger:hover,
+.cards-scroll-view #unity-dragger:active {
+    background-color: #FFD257;
+    opacity: 1;
+}
+
+.card-mythic {
+    border-color: var(--rarity-mythic);
+    background-color: rgba(232, 168, 32, 0.08);
+}
+
+.card-rare {
+    border-color: var(--rarity-rare);
+    background-color: rgba(155, 92, 246, 0.06);
+}
+
+.card-uncommon {
+    border-color: var(--rarity-uncommon-border);
+    background-color: rgba(180, 200, 195, 0.06);
+}
+
+.card-common {
+    border-color: var(--rarity-common);
+    background-color: rgba(39, 201, 106, 0.06);
+}
+
+/* Card Avatar */
+.card-avatar-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 80px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 2px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.avatar-mythic {
+    border-color: var(--rarity-mythic);
+}
+
+.avatar-rare {
+    border-color: var(--rarity-rare);
+}
+
+.avatar-uncommon {
+    border-color: var(--rarity-uncommon-border);
+}
+
+.avatar-common {
+    border-color: var(--rarity-common);
+}
+
+.card-avatar-initials {
+    font-size: 52px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+}
+
+.initials-mythic {
+    color: var(--rarity-mythic);
+}
+
+.initials-rare {
+    color: var(--rarity-rare);
+}
+
+.initials-uncommon {
+    color: var(--rarity-uncommon);
+}
+
+.initials-common {
+    color: var(--rarity-common);
+}
+
+.card-player-name {
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    text-align: center;
+    margin-bottom: 10px;
+    white-space: normal;
+}
+
+.card-rarity-badge {
+    font-size: 22px;
+    letter-spacing: 1.5px;
+    -unity-font-style: bold;
+}
+
+/* Card Inspect / Zoom Modal */
+.modal-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(4, 10, 6, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+.modal-hidden {
+    display: none;
+}
+
+.modal-card {
+    width: 860px;
+    background-color: #0c1c12;
+    border-radius: 36px;
+    border-width: 2px;
+    border-color: var(--gold);
+    padding: 40px;
+    align-items: center;
+}
+
+.modal-header {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.modal-title {
+    font-size: 36px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+}
+
+.modal-close-btn {
+    width: 64px;
+    height: 64px;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_close.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+}
+
+.modal-hero-card {
+    width: 520px;
+    height: 700px;
+    background-color: var(--card-bg);
+    border-radius: 32px;
+    border-width: 3px;
+    align-items: center;
+    justify-content: space-around;
+    padding: 40px 20px;
+    margin-bottom: 30px;
+}
+
+.modal-details-row {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    padding-top: 20px;
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+}
+
+.modal-stat-box {
+    align-items: center;
+}
+
+.modal-stat-label {
+    font-size: 20px;
+    color: var(--text-gray);
+    margin-bottom: 6px;
+}
+
+.modal-stat-value {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+}

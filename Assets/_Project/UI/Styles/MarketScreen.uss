@@ -1,0 +1,699 @@
+:root {
+    --bg-dark: #06110B;
+    --card-bg: rgba(13, 26, 19, 0.85);
+    --gold: #E8A820;
+    --gold-border: rgba(232, 168, 32, 0.70);
+    --gold-glow: rgba(232, 168, 32, 0.25);
+    --text-white: #F5F5F7;
+    --text-gray: rgba(255, 255, 255, 0.65);
+    --text-dim: rgba(255, 255, 255, 0.40);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+    --rarity-mythic: #E8A820;
+    --rarity-rare: #8B5CF6;
+    --rarity-uncommon: #38BDF8;
+    --rarity-common: #22C55E;
+}
+
+.screen-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-dark);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 56px;
+    padding-bottom: 0;
+    position: relative;
+}
+
+/* Header */
+.market-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.market-header-left {
+    flex-direction: row;
+    align-items: center;
+}
+
+.back-btn {
+    width: 56px;
+    height: 56px;
+    background-color: transparent;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    padding: 0;
+}
+
+.back-btn:active {
+    scale: 0.92;
+}
+
+.back-btn-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_back.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+}
+
+.market-title {
+    font-size: 52px;
+    -unity-font-style: bold;
+    letter-spacing: 8px;
+    color: var(--text-white);
+}
+
+/* Currency Pill */
+.currency-pill {
+    flex-direction: row;
+    align-items: center;
+    height: 64px;
+    background-color: rgba(0, 0, 0, 0.45);
+    border-width: 1.5px;
+    border-color: var(--gold-border);
+    border-radius: 32px;
+    padding-left: 18px;
+    padding-right: 22px;
+}
+
+.coin-icon {
+    width: 32px;
+    height: 32px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-right: 10px;
+}
+
+.coins-text {
+    font-size: 26px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+/* Main Mode Tabs (Comprar vs Mis Ventas) */
+.market-mode-tabs {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+.mode-tab-pill {
+    height: 64px;
+    border-radius: 32px;
+    padding-left: 32px;
+    padding-right: 32px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    background-color: transparent;
+    transition-property: background-color, border-color, scale;
+    transition-duration: 0.15s;
+}
+
+.mode-tab-pill:active {
+    scale: 0.95;
+}
+
+.mode-tab-pill-active {
+    background-color: var(--gold);
+    border-color: var(--gold);
+}
+
+.mode-tab-label {
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: var(--text-gray);
+}
+
+.mode-tab-pill-active .mode-tab-label {
+    color: #0D1A13;
+}
+
+/* Rarity Filters Row */
+.rarity-filters-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+.rarity-pill {
+    height: 54px;
+    border-radius: 27px;
+    padding-left: 24px;
+    padding-right: 24px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    background-color: transparent;
+    transition-property: background-color, border-color, scale;
+    transition-duration: 0.15s;
+}
+
+.rarity-pill:active {
+    scale: 0.95;
+}
+
+.rarity-pill-active {
+    background-color: var(--gold);
+    border-color: var(--gold);
+}
+
+.rarity-pill-label {
+    font-size: 20px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    color: var(--text-gray);
+}
+
+.rarity-pill-active .rarity-pill-label {
+    color: #0D1A13;
+}
+
+/* Scroll View & 2-Column Grid */
+.market-scroll-view {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.market-cards-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-bottom: 230px;
+}
+
+/* Market Card */
+.market-card {
+    width: 48.5%;
+    background-color: var(--card-bg);
+    border-radius: 22px;
+    border-width: 1.5px;
+    border-color: var(--rarity-common);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition-property: scale, border-color;
+    transition-duration: 0.15s;
+}
+
+.market-card:hover {
+    scale: 1.02;
+}
+
+.market-card-mythic { border-color: var(--rarity-mythic); }
+.market-card-rare { border-color: var(--rarity-rare); }
+.market-card-uncommon { border-color: var(--rarity-uncommon); }
+.market-card-common { border-color: var(--rarity-common); }
+
+/* Card Seller Header */
+.market-card-seller {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--border-subtle);
+    background-color: rgba(0, 0, 0, 0.20);
+}
+
+.seller-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.seller-avatar-text {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+}
+
+.seller-name {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    flex-grow: 1;
+}
+
+.seller-time {
+    font-size: 18px;
+    color: var(--text-dim);
+}
+
+/* Card Body */
+.market-card-body {
+    align-items: center;
+    justify-content: center;
+    padding: 24px 14px 16px;
+}
+
+.card-big-initials {
+    font-size: 56px;
+    -unity-font-style: bold;
+    color: rgba(255, 255, 255, 0.20);
+    margin-bottom: 4px;
+}
+
+.card-player-name {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin-bottom: 6px;
+}
+
+.card-rarity-badge {
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+}
+
+.market-card-mythic .card-rarity-badge { color: var(--rarity-mythic); }
+.market-card-rare .card-rarity-badge { color: var(--rarity-rare); }
+.market-card-uncommon .card-rarity-badge { color: var(--rarity-uncommon); }
+.market-card-common .card-rarity-badge { color: var(--rarity-common); }
+
+/* Card Footer (Price & Buy Button) */
+.market-card-footer {
+    padding: 14px 16px 16px;
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.market-price-pill {
+    flex-direction: row;
+    align-items: center;
+    height: 48px;
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.35);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    padding-left: 14px;
+    padding-right: 14px;
+    margin-bottom: 12px;
+}
+
+.price-coin-icon {
+    width: 22px;
+    height: 22px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-right: 8px;
+}
+
+.price-text {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+.market-btn-buy {
+    height: 60px;
+    border-radius: 14px;
+    background-color: var(--gold);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.market-btn-buy:active {
+    scale: 0.96;
+}
+
+.market-btn-buy-text {
+    font-size: 22px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: #0D1A13;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* SECCIÓN: MIS VENTAS (Figma Fidelity 100%)                   */
+/* ─────────────────────────────────────────────────────────── */
+.my-sales-container {
+    padding-bottom: 230px;
+}
+
+/* 1. Tus duplicados */
+.my-duplicates-section {
+    margin-bottom: 36px;
+}
+
+.duplicates-grid {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.duplicate-card {
+    width: 48.5%;
+    background-color: var(--card-bg);
+    border-radius: 22px;
+    border-width: 1.5px;
+    border-color: var(--rarity-common);
+    padding: 24px 18px 20px;
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.duplicate-card-common { border-color: var(--rarity-common); }
+.duplicate-card-uncommon { border-color: var(--rarity-uncommon); }
+.duplicate-card-rare { border-color: var(--rarity-rare); }
+.duplicate-card-mythic { border-color: var(--rarity-mythic); }
+
+.duplicate-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background-color: rgba(0, 0, 0, 0.65);
+    border-radius: 8px;
+    padding: 4px 8px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.duplicate-badge-text {
+    font-size: 18px;
+    -unity-font-style: bold;
+}
+
+.duplicate-badge-text-common { color: var(--rarity-common); }
+.duplicate-badge-text-uncommon { color: var(--rarity-uncommon); }
+
+.duplicate-card-body {
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.duplicate-player-name {
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 4px;
+}
+
+.btn-publish {
+    width: 100%;
+    height: 56px;
+    border-radius: 12px;
+    background-color: rgba(232, 168, 32, 0.12);
+    border-width: 1px;
+    border-color: rgba(232, 168, 32, 0.35);
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-publish:active {
+    scale: 0.96;
+}
+
+.btn-publish-text {
+    font-size: 20px;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+}
+
+/* 2. Listados Activos */
+.active-listings-section {
+    margin-top: 10px;
+}
+
+.active-listings-title {
+    font-size: 32px;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    color: var(--text-white);
+    margin-bottom: 20px;
+}
+
+.active-listings-list {
+    flex-direction: column;
+}
+
+.active-listing-card {
+    background-color: var(--card-bg);
+    border-radius: 22px;
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    padding: 22px 24px;
+    margin-bottom: 20px;
+}
+
+.active-listing-top {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.active-mini-card {
+    width: 90px;
+    height: 120px;
+    border-radius: 16px;
+    background-color: #090F0C;
+    border-width: 2px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 22px;
+    flex-shrink: 0;
+}
+
+.active-mini-card-rare { border-color: var(--rarity-rare); }
+.active-mini-card-uncommon { border-color: var(--rarity-uncommon); }
+.active-mini-card-mythic { border-color: var(--rarity-mythic); }
+.active-mini-card-common { border-color: var(--rarity-common); }
+
+.active-mini-card-text {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.active-listing-info {
+    flex-grow: 1;
+}
+
+.active-listing-name {
+    font-size: 30px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin-bottom: 4px;
+}
+
+.active-listing-rarity {
+    font-size: 18px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.active-listing-rarity-rare { color: var(--rarity-rare); }
+.active-listing-rarity-uncommon { color: var(--rarity-uncommon); }
+.active-listing-rarity-mythic { color: var(--rarity-mythic); }
+.active-listing-rarity-common { color: var(--rarity-common); }
+
+.active-price-pill {
+    flex-direction: row;
+    align-items: center;
+    height: 48px;
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.35);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    padding-left: 14px;
+    padding-right: 14px;
+    align-self: flex-start;
+    margin-bottom: 8px;
+}
+
+.active-listing-time {
+    font-size: 18px;
+    color: var(--text-dim);
+}
+
+.active-listing-actions {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn-edit-price {
+    flex: 1;
+    height: 60px;
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.btn-edit-price:active {
+    scale: 0.96;
+}
+
+.btn-edit-price-text {
+    font-size: 20px;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    color: var(--text-gray);
+}
+
+.btn-withdraw {
+    flex: 1;
+    height: 60px;
+    border-radius: 14px;
+    background-color: rgba(220, 50, 50, 0.08);
+    border-width: 1px;
+    border-color: rgba(220, 50, 50, 0.28);
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-withdraw:active {
+    scale: 0.96;
+}
+
+.btn-withdraw-text {
+    font-size: 20px;
+    -unity-font-style: bold;
+    letter-spacing: 1.5px;
+    color: rgba(248, 113, 113, 0.90);
+}
+
+/* Modals */
+.market-modal-backdrop {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.market-modal-box {
+    width: 100%;
+    background-color: #0A1810;
+    border-radius: 28px;
+    border-width: 1.5px;
+    border-color: var(--gold-border);
+    padding: 40px 32px;
+    align-items: center;
+}
+
+.market-modal-title {
+    font-size: 38px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    -unity-text-align: middle-center;
+}
+
+.market-modal-desc {
+    font-size: 24px;
+    color: var(--text-white);
+    margin-bottom: 24px;
+    -unity-text-align: middle-center;
+}
+
+.price-input-row {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 72px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 12px;
+}
+
+.price-input-field {
+    flex: 1;
+    font-size: 26px;
+    color: var(--text-white);
+    -unity-font-style: bold;
+    background-color: transparent;
+    border-width: 0;
+}
+
+.market-modal-actions {
+    flex-direction: row;
+    width: 100%;
+}
+
+.market-modal-btn-confirm {
+    flex: 1;
+    height: 68px;
+    border-radius: 16px;
+    background-color: var(--gold);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.market-modal-btn-confirm-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: #0D1A13;
+}
+
+.market-modal-btn-cancel {
+    flex: 1;
+    height: 68px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+}
+
+.market-modal-btn-cancel-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: var(--text-gray);
+}
+
+.modal-hidden {
+    display: none;
+}
+
+#BottomNavBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+}

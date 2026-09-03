@@ -10,7 +10,7 @@
         <ui:VisualElement name="NavActiveIndicator" class="nav-active-indicator" />
 
         <!-- Pestaña 1: Inicio -->
-        <ui:Button name="Nav_Inicio" class="nav-tab nav-tab-active">
+        <ui:Button name="Nav_Inicio" class="nav-tab">
             <ui:VisualElement class="nav-tab-content">
                 <ui:VisualElement class="nav-icon" style="background-image: url('project://database/Assets/_Project/Art/UI/ui_icon_home.png');" />
                 <ui:Label text="Inicio" class="nav-label" />
