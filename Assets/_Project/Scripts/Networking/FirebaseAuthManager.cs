@@ -10,12 +10,14 @@ namespace JuegoTCG.Networking
         public static FirebaseAuthManager Instance { get; private set; }
 
         public event Action<bool, string> OnAuthStateChanged;
+        public event Action<string> OnAvatarChanged;
         public event Action<int> OnCoinsChanged;
         public event Action<int> OnCollectionPowerChanged;
 
         [Header("User Session State")]
         [SerializeField] private string userId = "";
         [SerializeField] private string displayName = "JUGADOR_01";
+        [SerializeField] private string photoUrl = "";
         [SerializeField] private bool isAuthenticated = false;
         [SerializeField] private bool isAnonymous = true;
         [SerializeField] private bool isLinked = false;
@@ -28,6 +30,7 @@ namespace JuegoTCG.Networking
 
         public string UserId => userId;
         public string DisplayName => displayName;
+        public string PhotoUrl => photoUrl ?? "";
         public bool IsAuthenticated => isAuthenticated;
         public bool IsAnonymous => isAnonymous;
         public bool IsLinked => isLinked;
@@ -38,6 +41,7 @@ namespace JuegoTCG.Networking
 
         private const string PREF_UID = "Firebase_UserId";
         private const string PREF_NAME = "Firebase_DisplayName";
+        private const string PREF_PHOTO_URL = "Firebase_PhotoUrl";
         private const string PREF_LINKED = "User_IsLinked";
         private const string PREF_PROVIDER = "User_Provider";
         private const string PREF_COINS = "Firebase_Coins";
@@ -62,6 +66,7 @@ namespace JuegoTCG.Networking
             {
                 userId = PlayerPrefs.GetString(PREF_UID);
                 displayName = PlayerPrefs.GetString(PREF_NAME, "JUGADOR_01");
+                photoUrl = PlayerPrefs.GetString(PREF_PHOTO_URL, "");
                 isLinked = PlayerPrefs.GetInt(PREF_LINKED, 0) == 1;
                 authProvider = PlayerPrefs.GetString(PREF_PROVIDER, isLinked ? "google" : "anonymous");
                 isAnonymous = !isLinked;
@@ -69,7 +74,7 @@ namespace JuegoTCG.Networking
                 coins = PlayerPrefs.GetInt(PREF_COINS, 240);
                 collectionPower = PlayerPrefs.GetInt(PREF_POWER, 0);
 
-                Debug.Log($"<color=green>[Auth] Sesión en caché cargada: UID={userId}, Linked={isLinked}, Provider={authProvider}, Coins={coins}</color>");
+                Debug.Log($"<color=green>[Auth] Sesión en caché cargada: UID={userId}, Linked={isLinked}, Provider={authProvider}, Photo={photoUrl}, Coins={coins}</color>");
             }
         }
 
@@ -127,7 +132,7 @@ namespace JuegoTCG.Networking
         /// <summary>
         /// Vincula la cuenta anónima existente con Google o Email mediante linkWithCredential() (TDD 2.12).
         /// </summary>
-        public async Task<bool> LinkAccountAsync(string provider, string emailOrName)
+        public async Task<bool> LinkAccountAsync(string provider, string emailOrName, string newPhotoUrl = "")
         {
             try
             {
@@ -138,11 +143,13 @@ namespace JuegoTCG.Networking
                 isAnonymous = false;
                 authProvider = provider;
                 if (!string.IsNullOrEmpty(emailOrName)) displayName = emailOrName;
+                if (!string.IsNullOrEmpty(newPhotoUrl)) photoUrl = newPhotoUrl;
 
                 SaveSession();
 
                 Debug.Log($"<color=green>[Auth] ¡Cuenta vinculada exitosamente con {provider}! Progreso preservado al 100%.</color>");
                 OnAuthStateChanged?.Invoke(true, userId);
+                if (!string.IsNullOrEmpty(photoUrl)) OnAvatarChanged?.Invoke(photoUrl);
                 return true;
             }
             catch (Exception ex)
@@ -159,7 +166,20 @@ namespace JuegoTCG.Networking
         {
             if (googleUser == null) return false;
             string name = !string.IsNullOrEmpty(googleUser.DisplayName) ? googleUser.DisplayName : googleUser.Email;
-            return await LinkAccountAsync("google", name);
+            string photo = googleUser.PhotoUrl;
+            return await LinkAccountAsync("google", name, photo);
+        }
+
+        /// <summary>
+        /// Permite actualizar la URL del avatar directamente si se recupera de sesión externa.
+        /// </summary>
+        public void SetPhotoUrl(string newPhotoUrl)
+        {
+            if (string.IsNullOrEmpty(newPhotoUrl) || photoUrl == newPhotoUrl) return;
+            photoUrl = newPhotoUrl;
+            PlayerPrefs.SetString(PREF_PHOTO_URL, photoUrl);
+            PlayerPrefs.Save();
+            OnAvatarChanged?.Invoke(photoUrl);
         }
 
         public void UpdateEconomy(int newCoins, int newPower)
@@ -193,6 +213,7 @@ namespace JuegoTCG.Networking
         {
             PlayerPrefs.SetString(PREF_UID, userId);
             PlayerPrefs.SetString(PREF_NAME, displayName);
+            PlayerPrefs.SetString(PREF_PHOTO_URL, photoUrl ?? "");
             PlayerPrefs.SetInt(PREF_LINKED, isLinked ? 1 : 0);
             PlayerPrefs.SetString(PREF_PROVIDER, authProvider);
             PlayerPrefs.SetInt(PREF_COINS, coins);
@@ -211,16 +232,19 @@ namespace JuegoTCG.Networking
             Debug.Log("<color=red>[Auth] Cerrando sesión...</color>");
             PlayerPrefs.DeleteKey(PREF_UID);
             PlayerPrefs.DeleteKey(PREF_NAME);
+            PlayerPrefs.DeleteKey(PREF_PHOTO_URL);
             PlayerPrefs.DeleteKey(PREF_LINKED);
             PlayerPrefs.DeleteKey(PREF_PROVIDER);
             PlayerPrefs.Save();
 
             userId = "";
+            photoUrl = "";
             isAuthenticated = false;
             isLinked = false;
             isAnonymous = true;
 
             OnAuthStateChanged?.Invoke(false, "");
+            OnAvatarChanged?.Invoke("");
         }
     }
 }

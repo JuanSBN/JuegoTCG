@@ -18,6 +18,8 @@ namespace JuegoTCG.UI
         private Label playerNameLabel;
         private Label playerLevelLabel;
         private Label coinsLabel;
+        private VisualElement avatarCircle;
+        private VisualElement avatarIcon;
 
         private Button packAButton;
         private Button packBButton;
@@ -42,6 +44,10 @@ namespace JuegoTCG.UI
             playerNameLabel = root.Q<Label>("PlayerName");
             playerLevelLabel = root.Q<Label>("PlayerLevel");
             coinsLabel = root.Q<Label>("CoinsText");
+
+            // Bind Avatar Elements
+            avatarCircle = root.Q<VisualElement>("AvatarCircle") ?? root.Q<VisualElement>(className: "avatar-circle");
+            avatarIcon = root.Q<VisualElement>("AvatarIcon") ?? root.Q<VisualElement>(className: "avatar-icon");
 
             // Bind Buttons
             packAButton = root.Q<Button>("PackA");
@@ -134,7 +140,17 @@ namespace JuegoTCG.UI
 
                 FirebaseAuthManager.Instance.OnCoinsChanged -= OnCoinsChanged;
                 FirebaseAuthManager.Instance.OnCoinsChanged += OnCoinsChanged;
+
+                FirebaseAuthManager.Instance.OnAvatarChanged -= OnAvatarChanged;
+                FirebaseAuthManager.Instance.OnAvatarChanged += OnAvatarChanged;
+
+                UserAvatarLoader.LoadAvatar(this, avatarCircle, avatarIcon);
             }
+        }
+
+        private void OnAvatarChanged(string newPhotoUrl)
+        {
+            UserAvatarLoader.LoadAvatar(this, avatarCircle, avatarIcon);
         }
 
         private void OnCoinsChanged(int newCoins)
@@ -245,6 +261,7 @@ namespace JuegoTCG.UI
             if (FirebaseAuthManager.Instance != null)
             {
                 FirebaseAuthManager.Instance.OnCoinsChanged -= OnCoinsChanged;
+                FirebaseAuthManager.Instance.OnAvatarChanged -= OnAvatarChanged;
             }
 
             if (blurredTexture != null)

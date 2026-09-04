@@ -14,7 +14,7 @@ namespace JuegoTCG.Networking
 
         [Header("Configuración de Google OAuth")]
         [Tooltip("Web Client ID (Tipo 3) de Firebase Console para solicitar ID Token. Opcional para selector básico.")]
-        [SerializeField] private string webClientId = "";
+        [SerializeField] private string webClientId = "714078508972-c66d0p8mlbr3vbojbc5ufi6ve34kqn4j.apps.googleusercontent.com";
 
         private Action<GoogleSignInUser> pendingSuccessCallback;
         private Action<string> pendingFailureCallback;
@@ -30,6 +30,50 @@ namespace JuegoTCG.Networking
             Instance = this;
             gameObject.name = "GoogleSignInManager";
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void Start()
+        {
+            if (FirebaseAuthManager.Instance != null && FirebaseAuthManager.Instance.IsLinked && string.IsNullOrEmpty(FirebaseAuthManager.Instance.PhotoUrl))
+            {
+                CheckExistingGoogleAccount();
+            }
+        }
+
+        /// <summary>
+        /// Intenta consultar de manera silenciosa si el dispositivo ya tiene una cuenta Google seleccionada previamente
+        /// para sincronizar la foto de perfil en caso de que aún no estuviera guardada en caché.
+        /// </summary>
+        public void CheckExistingGoogleAccount()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                using (AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+                using (AndroidJavaClass googleSignIn = new AndroidJavaClass("com.google.android.gms.auth.api.signin.GoogleSignIn"))
+                {
+                    AndroidJavaObject account = googleSignIn.CallStatic<AndroidJavaObject>("getLastSignedInAccount", currentActivity);
+                    if (account != null)
+                    {
+                        AndroidJavaObject photoUri = account.Call<AndroidJavaObject>("getPhotoUrl");
+                        if (photoUri != null)
+                        {
+                            string photoStr = photoUri.Call<string>("toString");
+                            if (!string.IsNullOrEmpty(photoStr) && FirebaseAuthManager.Instance != null)
+                            {
+                                Debug.Log($"<color=green>[GoogleSignIn] Foto de perfil recuperada automáticamente: {photoStr}</color>");
+                                FirebaseAuthManager.Instance.SetPhotoUrl(photoStr);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[GoogleSignIn] Intento de recuperar cuenta previa: {ex.Message}");
+            }
+#endif
         }
 
         public static void EnsureExists()
@@ -101,7 +145,8 @@ namespace JuegoTCG.Networking
                 displayName = "Google Player",
                 email = "jugador.google@gmail.com",
                 idToken = "mock_google_id_token_" + Guid.NewGuid().ToString("N").Substring(0, 12),
-                id = "google_" + UnityEngine.Random.Range(100000, 999999)
+                id = "google_" + UnityEngine.Random.Range(100000, 999999),
+                photoUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200"
             };
 
             Debug.Log($"<color=green>[GoogleSignIn:Editor] Cuenta seleccionada: {mockUser.DisplayName} ({mockUser.Email})</color>");

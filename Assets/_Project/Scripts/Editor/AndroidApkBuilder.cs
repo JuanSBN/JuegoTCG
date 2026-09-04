@@ -47,6 +47,17 @@ namespace JuegoTCG.Editor
             PlayerSettings.productName = "JuegoTCG";
             PlayerSettings.companyName = "JuanSBN";
 
+            // Keystore fijado en el proyecto para firma determinista y coincidencia exacta con Firebase
+            string projectKeystore = Path.Combine(Directory.GetCurrentDirectory(), "debug.keystore");
+            if (File.Exists(projectKeystore))
+            {
+                PlayerSettings.Android.useCustomKeystore = true;
+                PlayerSettings.Android.keystoreName = projectKeystore;
+                PlayerSettings.Android.keystorePass = "android";
+                PlayerSettings.Android.keyaliasName = "androiddebugkey";
+                PlayerSettings.Android.keyaliasPass = "android";
+            }
+
             // 3. Desactivar Burst para el Player para evitar el error de bcl.exe
             EditorPrefs.SetBool("BurstEnableCompilation", false);
 

@@ -12,7 +12,20 @@
           "package_name": "com.juansbn.juegotcg"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "714078508972-bqt0f3mr3o3jso9igiehie1tbii9261g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.juansbn.juegotcg",
+            "certificate_hash": "209784e771c4e3e44a8d574576117be89765d6b8"
+          }
+        },
+        {
+          "client_id": "714078508972-c66d0p8mlbr3vbojbc5ufi6ve34kqn4j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBTk82R_Pvyf4NWtzN2yVcxadCE4bOCefg"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714078508972-c66d0p8mlbr3vbojbc5ufi6ve34kqn4j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

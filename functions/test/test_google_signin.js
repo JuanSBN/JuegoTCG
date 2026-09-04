@@ -93,6 +93,38 @@ assert(fs.existsSync(authPath), 'FirebaseAuthManager.cs existe');
 if (fs.existsSync(authPath)) {
     const auth = fs.readFileSync(authPath, 'utf8');
     assert(auth.includes('LinkGoogleAccountAsync(GoogleSignInUser googleUser)'), 'Método LinkGoogleAccountAsync presente');
+    assert(auth.includes('PhotoUrl') && auth.includes('PREF_PHOTO_URL'), 'Propiedad PhotoUrl y persistencia en PlayerPrefs presente');
+    assert(auth.includes('OnAvatarChanged'), 'Evento OnAvatarChanged implementado');
+}
+
+// 9. UserAvatarLoader.cs
+const avatarLoaderPath = path.join(rootDir, 'Assets/_Project/Scripts/UI/UserAvatarLoader.cs');
+assert(fs.existsSync(avatarLoaderPath), 'UserAvatarLoader.cs existe');
+if (fs.existsSync(avatarLoaderPath)) {
+    const loader = fs.readFileSync(avatarLoaderPath, 'utf8');
+    assert(loader.includes('LoadAvatar'), 'Método estático LoadAvatar implementado');
+    assert(loader.includes('persistentDataPath'), 'Caché en disco local con persistentDataPath implementado');
+    assert(loader.includes('ClearCache()'), 'Limpieza de caché ClearCache() implementada');
+}
+
+// 10. UIToolkit Controllers Avatar Integration
+const homePath = path.join(rootDir, 'Assets/_Project/Scripts/UI/UIToolkitHomeScreenController.cs');
+const profilePath = path.join(rootDir, 'Assets/_Project/Scripts/UI/UIToolkitProfileController.cs');
+if (fs.existsSync(homePath) && fs.existsSync(profilePath)) {
+    const home = fs.readFileSync(homePath, 'utf8');
+    const profile = fs.readFileSync(profilePath, 'utf8');
+    assert(home.includes('UserAvatarLoader.LoadAvatar'), 'UserAvatarLoader conectado en UIToolkitHomeScreenController');
+    assert(profile.includes('UserAvatarLoader.LoadAvatar'), 'UserAvatarLoader conectado en UIToolkitProfileController');
+}
+
+// 11. USS scale-and-crop y overflow hidden
+const homeUssPath = path.join(rootDir, 'Assets/_Project/UI/Styles/HomeScreen.uss');
+const profileUssPath = path.join(rootDir, 'Assets/_Project/UI/Styles/ProfileScreen.uss');
+if (fs.existsSync(homeUssPath) && fs.existsSync(profileUssPath)) {
+    const homeUss = fs.readFileSync(homeUssPath, 'utf8');
+    const profileUss = fs.readFileSync(profileUssPath, 'utf8');
+    assert(homeUss.includes('overflow: hidden;') && homeUss.includes('scale-and-crop'), 'HomeScreen.uss tiene overflow: hidden y scale-and-crop en avatar');
+    assert(profileUss.includes('overflow: hidden;') && profileUss.includes('scale-and-crop'), 'ProfileScreen.uss tiene overflow: hidden y scale-and-crop en avatar');
 }
 
 console.log('==========================================================================');

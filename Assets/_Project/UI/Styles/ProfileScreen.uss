@@ -172,6 +172,8 @@
     border-color: var(--gold-border);
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    -unity-background-scale-mode: scale-and-crop;
 }
 
 .profile-avatar-icon {

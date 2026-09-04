@@ -19,8 +19,8 @@
 
                     <!-- Avatar with Edit Badge -->
                     <ui:VisualElement class="avatar-wrapper">
-                        <ui:VisualElement class="profile-avatar-circle">
-                            <ui:VisualElement class="profile-avatar-icon" />
+                        <ui:VisualElement name="ProfileAvatarCircle" class="profile-avatar-circle">
+                            <ui:VisualElement name="ProfileAvatarIcon" class="profile-avatar-icon" />
                         </ui:VisualElement>
                         <ui:Button name="Btn_EditAvatar" class="avatar-edit-badge">
                             <ui:VisualElement class="avatar-edit-icon" />

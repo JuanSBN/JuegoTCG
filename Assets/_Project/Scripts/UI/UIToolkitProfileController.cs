@@ -25,6 +25,8 @@ namespace JuegoTCG.UI
         private Button btnCopyFriendCode;
         private Label friendCodeText;
         private Label usernameText;
+        private VisualElement profileAvatarCircle;
+        private VisualElement profileAvatarIcon;
 
         // Feedback Modal
         private VisualElement feedbackModal;
@@ -60,15 +62,14 @@ namespace JuegoTCG.UI
                 btnCopyFriendCode.clicked += CopyFriendCode;
             }
 
-            // Edit Profile Actions
+            // Edit Profile Actions & Avatar
             btnEditAvatar = root.Q<Button>("Btn_EditAvatar");
             btnEditUsername = root.Q<Button>("Btn_EditUsername");
             usernameText = root.Q<Label>("UsernameText");
+            profileAvatarCircle = root.Q<VisualElement>("ProfileAvatarCircle") ?? root.Q<VisualElement>(className: "profile-avatar-circle");
+            profileAvatarIcon = root.Q<VisualElement>("ProfileAvatarIcon") ?? root.Q<VisualElement>(className: "profile-avatar-icon");
 
-            if (FirebaseAuthManager.Instance != null && !string.IsNullOrEmpty(FirebaseAuthManager.Instance.DisplayName))
-            {
-                if (usernameText != null) usernameText.text = FirebaseAuthManager.Instance.DisplayName.ToUpper();
-            }
+            UpdateProfileData();
 
             if (btnEditAvatar != null)
             {
@@ -136,6 +137,35 @@ namespace JuegoTCG.UI
             GUIUtility.systemCopyBuffer = "4872-1093";
             ShowModal("CÓDIGO COPIADO", "Tu código de amigo (4872-1093) se ha copiado al portapapeles.");
             Debug.Log("<color=gold>[Perfil] Código 4872-1093 copiado.</color>");
+        }
+
+        private void UpdateProfileData()
+        {
+            if (FirebaseAuthManager.Instance != null)
+            {
+                if (!string.IsNullOrEmpty(FirebaseAuthManager.Instance.DisplayName) && usernameText != null)
+                {
+                    usernameText.text = FirebaseAuthManager.Instance.DisplayName.ToUpper();
+                }
+
+                FirebaseAuthManager.Instance.OnAvatarChanged -= OnAvatarChanged;
+                FirebaseAuthManager.Instance.OnAvatarChanged += OnAvatarChanged;
+
+                UserAvatarLoader.LoadAvatar(this, profileAvatarCircle, profileAvatarIcon);
+            }
+        }
+
+        private void OnAvatarChanged(string newPhotoUrl)
+        {
+            UserAvatarLoader.LoadAvatar(this, profileAvatarCircle, profileAvatarIcon);
+        }
+
+        private void OnDisable()
+        {
+            if (FirebaseAuthManager.Instance != null)
+            {
+                FirebaseAuthManager.Instance.OnAvatarChanged -= OnAvatarChanged;
+            }
         }
 
         private void ShowModal(string title, string desc)
