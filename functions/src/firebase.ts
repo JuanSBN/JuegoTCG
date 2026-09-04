@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from "firebase-admin/app";
 import { getFirestore, FieldValue, Timestamp, Transaction } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
+import { getMessaging } from "firebase-admin/messaging";
 
 if (!getApps().length) {
   initializeApp();
@@ -8,6 +9,7 @@ if (!getApps().length) {
 
 export const db = getFirestore();
 export const auth = getAuth();
+export const messaging = getMessaging();
 export { FieldValue, Timestamp, Transaction };
 
 // Collection Names (TDD Section 5)
@@ -23,4 +25,7 @@ export const COLLECTIONS = {
   PROCESSED_REQUESTS: "processedRequests",
   DATA_PACKS: "dataPacks",
   USER_MISSIONS: "userMissions",
+  FRIENDS: "friends", // Subcolección users/{uid}/friends
+  FRIEND_REQUESTS: "friendRequests", // Colección raíz friendRequests
+  ANALYTICS_EVENTS: "analyticsEvents", // TDD Sección 2.9
 } as const;

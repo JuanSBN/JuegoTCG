@@ -90,8 +90,6 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 8px;
-    overflow: hidden;
-    -unity-background-scale-mode: scale-and-crop;
 }
 
 .avatar-icon {

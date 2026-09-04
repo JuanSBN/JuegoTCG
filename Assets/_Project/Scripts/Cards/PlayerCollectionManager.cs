@@ -21,6 +21,9 @@ namespace JuegoTCG.Cards
         public static PlayerCollectionManager Instance { get; private set; }
 
         public event Action OnCollectionUpdated;
+        public event Action<int> OnCollectionPowerUpdated;
+
+        public int CollectionPower { get; private set; }
 
         [Header("Owned Cards (CardId -> Count)")]
         private Dictionary<string, int> ownedCards = new Dictionary<string, int>();
@@ -30,6 +33,23 @@ namespace JuegoTCG.Cards
 
         private const string PREF_COLLECTION_PREFIX = "Collection_Card_";
         private const string PREF_TOTAL_UNIQUE = "Collection_TotalUnique";
+
+        public static void EnsureExists()
+        {
+            if (Instance == null)
+            {
+                var existing = FindFirstObjectByType<PlayerCollectionManager>();
+                if (existing != null)
+                {
+                    Instance = existing;
+                }
+                else
+                {
+                    GameObject go = new GameObject("PlayerCollectionManager");
+                    Instance = go.AddComponent<PlayerCollectionManager>();
+                }
+            }
+        }
 
         private void Awake()
         {
@@ -84,7 +104,8 @@ namespace JuegoTCG.Cards
                 SaveCollection();
             }
 
-            Debug.Log($"<color=green>[Collection] Colección cargada: {ownedCards.Count}/{pilotAlbumCatalog.Count} cartas únicas desbloqueadas.</color>");
+            CalculateCollectionPower();
+            Debug.Log($"<color=green>[Collection] Colección cargada: {ownedCards.Count}/{pilotAlbumCatalog.Count} cartas únicas desbloqueadas. Poder: {CollectionPower}</color>");
         }
 
         public void SaveCollection()
@@ -96,7 +117,46 @@ namespace JuegoTCG.Cards
             PlayerPrefs.SetInt(PREF_TOTAL_UNIQUE, ownedCards.Count);
             PlayerPrefs.Save();
 
+            CalculateCollectionPower();
             OnCollectionUpdated?.Invoke();
+        }
+
+        /// <summary>
+        /// Calcula el poder de colección oficial según la fórmula del GDD Sección 7.2:
+        /// Suma de puntos fijos por rareza multiplicados por cartas ÚNICAS obtenidas (duplicados no suman).
+        /// Comun: 1, Especial: 2, Epica: 4, Legendaria: 8, Mitica: 15, FullArt: 25.
+        /// </summary>
+        public int CalculateCollectionPower()
+        {
+            int totalPower = 0;
+            foreach (var card in pilotAlbumCatalog)
+            {
+                if (IsCardOwned(card.cardId))
+                {
+                    totalPower += GetRarityPowerPoints(card.rarity);
+                }
+            }
+
+            CollectionPower = totalPower;
+            PlayerPrefs.SetInt("Player_CollectionPower", CollectionPower);
+            PlayerPrefs.Save();
+
+            OnCollectionPowerUpdated?.Invoke(CollectionPower);
+            return CollectionPower;
+        }
+
+        public static int GetRarityPowerPoints(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Comun: return 1;
+                case Rarity.Especial: return 2;
+                case Rarity.Epica: return 4;
+                case Rarity.Legendaria: return 8;
+                case Rarity.Mitica: return 15;
+                case Rarity.FullArt: return 25;
+                default: return 1;
+            }
         }
 
         public void AddCard(string cardId, int qty = 1)

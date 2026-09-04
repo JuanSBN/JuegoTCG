@@ -89,6 +89,12 @@
                         <ui:Label text="MIS AMIGOS" class="section-title" />
                     </ui:VisualElement>
 
+                    <!-- Estado vacío cuando no hay amigos -->
+                    <ui:VisualElement name="FriendsEmptyState" class="empty-state-box modal-hidden">
+                        <ui:VisualElement class="empty-state-icon" />
+                        <ui:Label text="Agrega amigos con su código de amigo" class="empty-state-text" />
+                    </ui:VisualElement>
+
                     <!-- Amigo 1: GoldenShot_7 -->
                     <ui:VisualElement name="Card_Friend_1" class="friend-card">
                         <ui:VisualElement class="friend-top-row">
@@ -314,14 +320,90 @@
             </ui:VisualElement>
         </ui:ScrollView>
 
-        <!-- Compare / Feedback Modal -->
+        <!-- Compare / Feedback Modal (Vista Lado a Lado Head-to-Head) -->
         <ui:VisualElement name="CompareModal" class="modal-backdrop modal-hidden">
-            <ui:VisualElement class="modal-box">
-                <ui:Label name="CompareModalTitle" text="COMPARAR COLECCIÓN" class="modal-title" />
-                <ui:Label name="CompareModalDesc" text="Comparando tu álbum con GoldenShot_7..." class="modal-desc" />
-                <ui:Button name="Btn_CloseCompare" class="modal-close-btn">
-                    <ui:Label text="CERRAR" class="modal-close-btn-text" />
-                </ui:Button>
+            <ui:VisualElement class="modal-box modal-box-compare">
+                
+                <!-- Header del Modal con Título y Botón Cerrar -->
+                <ui:VisualElement class="compare-modal-header">
+                    <ui:VisualElement class="compare-header-title-box">
+                        <ui:Label name="CompareModalTitle" text="COMPARAR COLECCIÓN" class="modal-title compare-main-title" />
+                        <ui:Label name="CompareModalDesc" text="Álbum Piloto - Temporada 1" class="modal-desc compare-subtitle" />
+                    </ui:VisualElement>
+                    <ui:Button name="Btn_CloseCompare" class="compare-close-icon-btn">
+                        <ui:Label text="✕" class="compare-close-icon-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Cabecera Comparativa Lado a Lado (Tú vs Amigo) -->
+                <ui:VisualElement name="CompareHeadToHead" class="compare-h2h-container">
+                    
+                    <!-- Lado Izquierdo: TÚ -->
+                    <ui:VisualElement name="CompareMeCol" class="compare-player-col">
+                        <ui:VisualElement class="compare-avatar-wrapper compare-avatar-me">
+                            <ui:Label name="CompareMeAvatar" text="YO" class="compare-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label name="CompareMeName" text="Tú" class="compare-player-name" />
+                        <ui:Label name="CompareMeCount" text="6 / 10 cartas" class="compare-player-count" />
+                        <ui:Label name="CompareMeProgressPct" text="60%" class="compare-player-pct compare-pct-gold" />
+                    </ui:VisualElement>
+
+                    <!-- Centro: VS Badge y Diferencia -->
+                    <ui:VisualElement class="compare-vs-center">
+                        <ui:VisualElement class="compare-vs-badge">
+                            <ui:Label text="VS" class="compare-vs-text" />
+                        </ui:VisualElement>
+                        <ui:Label name="CompareDiffTag" text="+2 cartas" class="compare-diff-pill" />
+                    </ui:VisualElement>
+
+                    <!-- Lado Derecho: AMIGO -->
+                    <ui:VisualElement name="CompareFriendCol" class="compare-player-col">
+                        <ui:VisualElement class="compare-avatar-wrapper compare-avatar-friend">
+                            <ui:Label name="CompareFriendAvatar" text="GS" class="compare-avatar-text" />
+                        </ui:VisualElement>
+                        <ui:Label name="CompareFriendName" text="GoldenShot_7" class="compare-player-name" />
+                        <ui:Label name="CompareFriendCount" text="4 / 10 cartas" class="compare-player-count" />
+                        <ui:Label name="CompareFriendProgressPct" text="40%" class="compare-player-pct" />
+                    </ui:VisualElement>
+
+                </ui:VisualElement>
+
+                <!-- Barra de Progreso Dual (Visual Comparativa) -->
+                <ui:VisualElement class="compare-dual-progress-track">
+                    <ui:VisualElement name="CompareDualProgressMe" class="compare-dual-fill-me" style="width: 60%;" />
+                    <ui:VisualElement name="CompareDualProgressFriend" class="compare-dual-fill-friend" style="width: 40%;" />
+                </ui:VisualElement>
+
+                <!-- Barra de Filtros Rápidos (Segmented Tabs) -->
+                <ui:VisualElement name="CompareFilterBar" class="compare-filter-tabs">
+                    <ui:Button name="Btn_Filter_All" class="compare-tab-btn compare-tab-active">
+                        <ui:Label name="Lbl_Filter_All" text="TODAS (10)" class="compare-tab-text" />
+                    </ui:Button>
+                    <ui:Button name="Btn_Filter_Need" class="compare-tab-btn">
+                        <ui:Label name="Lbl_Filter_Need" text="TE FALTAN (2)" class="compare-tab-text" />
+                    </ui:Button>
+                    <ui:Button name="Btn_Filter_Offers" class="compare-tab-btn">
+                        <ui:Label name="Lbl_Filter_Offers" text="LE FALTAN (3)" class="compare-tab-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Lista Scrolleable de Cartas Comparadas Lado a Lado -->
+                <ui:ScrollView name="CompareScrollView" class="compare-scroll-view" show-vertical-scroller="true">
+                    <ui:VisualElement name="CompareCardsList" class="compare-cards-container">
+                        <!-- Las filas de cartas se pueblan dinámicamente desde el controlador C# -->
+                    </ui:VisualElement>
+                </ui:ScrollView>
+
+                <!-- Footer del Modal con Acciones -->
+                <ui:VisualElement class="compare-footer-row">
+                    <ui:Button name="Btn_CloseCompareBottom" class="compare-btn-secondary">
+                        <ui:Label text="VOLVER" class="compare-btn-secondary-text" />
+                    </ui:Button>
+                    <ui:Button name="Btn_TradeWithFriend" class="compare-btn-primary">
+                        <ui:Label name="Btn_TradeWithFriendText" text="PROPONER INTERCAMBIO" class="compare-btn-primary-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
             </ui:VisualElement>
         </ui:VisualElement>
 

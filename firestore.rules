@@ -82,24 +82,83 @@ service cloud.firestore {
 
     // =========================================================================
     // 5. MERCADO DE CARTAS ENTRE JUGADORES (/marketListings/{listingId})
+    // TDD Secciones 2.11, 5.8b, 7 y GDD Sección 7.1
     // =========================================================================
+
+    // Validación de esquema y restricciones de integridad para listados de mercado
+    function isValidMarketListing(data) {
+      return data.keys().hasAll([
+               'listingId', 'sellerUid', 'sellerDisplayName', 
+               'cardId', 'cardName', 'rarity', 
+               'quantity', 'pricePerCard', 'status', 'createdAt'
+             ])
+             && data.listingId is string
+             && data.sellerUid is string
+             && data.sellerDisplayName is string
+             && data.cardId is string
+             && data.cardName is string
+             && data.rarity in ['comun', 'poco_comun', 'rara', 'legendaria', 'mitica', 'full_art']
+             && data.quantity is int
+             && data.quantity > 0
+             && data.pricePerCard is int
+             && data.pricePerCard > 0
+             && data.status in ['activo', 'vendido', 'cancelado']
+             && data.createdAt is timestamp;
+    }
+
     match /marketListings/{listingId} {
-      // Lectura pública para ver cartas en venta
+      // Lectura pública: Cualquier usuario autenticado puede explorar cartas a la venta
       allow read: if isAuthenticated();
-      // Escritura bloqueada: Las transacciones atómicas de compra/venta se ejecutan en Cloud Functions
+
+      // BLOQUEO ESTRICTO ANTI-FRAUDE (TDD 2.11 y 7):
+      // Bloquea escritura directa del cliente sobre precio, status y propiedad de la carta reservada.
+      // - No se permite 'create': La publicación y reserva de carta se realiza exclusivamente en listCardForSale().
+      // - No se permite 'update': Compra, cancelación y cambios de precio se ejecutan exclusivamente en Cloud Functions
+      //   (buyListedCard, cancelListing, updateListingPrice) garantizando transacciones atómicas.
+      // - No se permite 'delete': Prohibido borrar listados directamente para mantener auditoría.
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
       allow write: if false;
     }
 
     // =========================================================================
     // 6. OFERTAS DE INTERCAMBIO (/tradeOffers/{tradeId})
+    // TDD Secciones 2.5, 5.8, 7 y 7.2: Intercambio directo anti-fraude
     // =========================================================================
+
+    // Validación de esquema de datos para tradeOffers (TDD Sección 5.8 y 7.2)
+    function isValidTradeOffer(data) {
+      return data.keys().hasAll([
+               'tradeId', 'fromUid', 'toUid', 
+               'offeredCardId', 'offeredQty', 
+               'requestedCardId', 'requestedQty', 
+               'status', 'expiresAt'
+             ])
+             && data.tradeId is string
+             && data.fromUid is string
+             && data.toUid is string
+             && data.fromUid != data.toUid
+             && data.offeredCardId is string
+             && data.offeredQty is int
+             && data.offeredQty > 0
+             && data.requestedCardId is string
+             && data.requestedQty is int
+             && data.requestedQty > 0
+             && data.status in ['pendiente', 'aceptado', 'rechazado', 'cancelado', 'expirado']
+             && data.expiresAt is timestamp;
+    }
+
     match /tradeOffers/{tradeId} {
-      // Solo el proponente (fromUid) o el receptor (toUid) pueden ver la oferta
+      // Lectura privada: Solo el proponente (fromUid) o el receptor (toUid) pueden ver la oferta
       allow read: if isAuthenticated() && (
         resource.data.fromUid == request.auth.uid || 
         resource.data.toUid == request.auth.uid
       );
-      // Escritura bloqueada: Se procesa de forma atómica en Cloud Functions
+
+      // BLOQUEO ESTRICTO ANTI-FRAUDE (TDD 2.5 y 7):
+      // Ningún cliente puede escribir (crear, modificar o borrar) directamente en tradeOffers.
+      // Toda mutación corre autoritativamente por Cloud Functions (proposeTrade, acceptTrade, cancelTrade).
       allow write: if false;
     }
 

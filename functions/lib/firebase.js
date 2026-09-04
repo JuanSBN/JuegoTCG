@@ -1,17 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.COLLECTIONS = exports.Transaction = exports.Timestamp = exports.FieldValue = exports.auth = exports.db = void 0;
+exports.COLLECTIONS = exports.Transaction = exports.Timestamp = exports.FieldValue = exports.messaging = exports.auth = exports.db = void 0;
 const app_1 = require("firebase-admin/app");
 const firestore_1 = require("firebase-admin/firestore");
 Object.defineProperty(exports, "FieldValue", { enumerable: true, get: function () { return firestore_1.FieldValue; } });
 Object.defineProperty(exports, "Timestamp", { enumerable: true, get: function () { return firestore_1.Timestamp; } });
 Object.defineProperty(exports, "Transaction", { enumerable: true, get: function () { return firestore_1.Transaction; } });
 const auth_1 = require("firebase-admin/auth");
+const messaging_1 = require("firebase-admin/messaging");
 if (!(0, app_1.getApps)().length) {
     (0, app_1.initializeApp)();
 }
 exports.db = (0, firestore_1.getFirestore)();
 exports.auth = (0, auth_1.getAuth)();
+exports.messaging = (0, messaging_1.getMessaging)();
 // Collection Names (TDD Section 5)
 exports.COLLECTIONS = {
     USERS: "users",
@@ -25,5 +27,8 @@ exports.COLLECTIONS = {
     PROCESSED_REQUESTS: "processedRequests",
     DATA_PACKS: "dataPacks",
     USER_MISSIONS: "userMissions",
+    FRIENDS: "friends", // Subcolección users/{uid}/friends
+    FRIEND_REQUESTS: "friendRequests", // Colección raíz friendRequests
+    ANALYTICS_EVENTS: "analyticsEvents", // TDD Sección 2.9
 };
 //# sourceMappingURL=firebase.js.map

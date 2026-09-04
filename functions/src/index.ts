@@ -21,6 +21,21 @@ export { getActiveEvents } from "./events/getActiveEvents";
 // Export Maintenance Scheduled Operations (Fase 5.6)
 export { cleanupProcessedRequests, triggerManualCleanup } from "./maintenance/cleanupProcessedRequests";
 
+// Export Social & Friends Operations (Fase 8)
+export { sendFriendRequest } from "./social/sendFriendRequest";
+export { acceptFriendRequest, rejectFriendRequest } from "./social/manageFriendRequest";
+export { getSocialData } from "./social/getSocialData";
+export { compareAlbums } from "./social/compareAlbums";
+export { recalculateCollectionPower, recalculateCollectionPowerTrigger } from "./social/recalculateCollectionPower";
+export { getCollectionRanking } from "./social/getCollectionRanking";
+export { proposeTrade, acceptTrade, cancelTrade } from "./social/tradeOperations";
+
+// Export Marketplace Types & Operations (Fase 8.5)
+export * from "./market/marketTypes";
+export { listCardForSale } from "./market/listCardForSale";
+export { buyListedCard } from "./market/buyListedCard";
+export { cancelListing, updateListingPrice } from "./market/manageListing";
+
 /**
  * Health check / ping function to verify Firebase Functions connectivity.
  */

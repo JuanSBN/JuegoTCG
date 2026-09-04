@@ -41,3 +41,6 @@ scratch/
 .utmp/
 node_modules/
 functions/node_modules/
+
+# Temporary Office files
+~$*

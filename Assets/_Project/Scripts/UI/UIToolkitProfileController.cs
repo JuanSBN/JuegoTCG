@@ -134,9 +134,10 @@ namespace JuegoTCG.UI
 
         private void CopyFriendCode()
         {
-            GUIUtility.systemCopyBuffer = "4872-1093";
-            ShowModal("CÓDIGO COPIADO", "Tu código de amigo (4872-1093) se ha copiado al portapapeles.");
-            Debug.Log("<color=gold>[Perfil] Código 4872-1093 copiado.</color>");
+            string code = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.FriendCode : "4872-1093";
+            GUIUtility.systemCopyBuffer = code;
+            ShowModal("CÓDIGO COPIADO", $"Tu código de amigo ({code}) se ha copiado al portapapeles.");
+            Debug.Log($"<color=gold>[Perfil] Código {code} copiado.</color>");
         }
 
         private void UpdateProfileData()
@@ -146,6 +147,11 @@ namespace JuegoTCG.UI
                 if (!string.IsNullOrEmpty(FirebaseAuthManager.Instance.DisplayName) && usernameText != null)
                 {
                     usernameText.text = FirebaseAuthManager.Instance.DisplayName.ToUpper();
+                }
+
+                if (friendCodeText != null)
+                {
+                    friendCodeText.text = FirebaseAuthManager.Instance.FriendCode;
                 }
 
                 FirebaseAuthManager.Instance.OnAvatarChanged -= OnAvatarChanged;

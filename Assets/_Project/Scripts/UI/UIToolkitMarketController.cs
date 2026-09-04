@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using JuegoTCG.Networking;
+using JuegoTCG.Social;
 
 namespace JuegoTCG.UI
 {
@@ -49,6 +50,7 @@ namespace JuegoTCG.UI
         private Button btnConfirmPrice;
         private Button btnCancelPrice;
         private int currentEditingListingId = -1;
+        private string currentPublishCardId = "JM";
 
         // Active Listings elements
         private VisualElement cardActive1;
@@ -142,13 +144,13 @@ namespace JuegoTCG.UI
             var btnPublish1 = root.Q<Button>("Btn_Publish_1");
             if (btnPublish1 != null)
             {
-                btnPublish1.clicked += () => OpenPublishModal("Musiala", "COMÚN", 35);
+                btnPublish1.clicked += () => OpenPublishModal("JM", "Musiala", "COMÚN", 35);
             }
 
             var btnPublish2 = root.Q<Button>("Btn_Publish_2");
             if (btnPublish2 != null)
             {
-                btnPublish2.clicked += () => OpenPublishModal("Osimhen", "POCO COMÚN", 75);
+                btnPublish2.clicked += () => OpenPublishModal("VO", "Osimhen", "POCO COMÚN", 75);
             }
 
             // Wire Active Listings
@@ -260,6 +262,12 @@ namespace JuegoTCG.UI
                 UpdateCoinsDisplay();
                 if (cardEl != null) cardEl.style.display = DisplayStyle.None;
 
+                MarketService.EnsureExists();
+                if (MarketService.Instance != null)
+                {
+                    _ = MarketService.Instance.BuyListedCardAsync($"m_{id}");
+                }
+
                 if (modalCardDesc != null)
                 {
                     modalCardDesc.text = $"Has adquirido a {name} por {price} monedas.";
@@ -276,9 +284,10 @@ namespace JuegoTCG.UI
             }
         }
 
-        private void OpenPublishModal(string cardName, string rarity, int defaultPrice)
+        private void OpenPublishModal(string cardId, string cardName, string rarity, int defaultPrice)
         {
             currentEditingListingId = 0;
+            currentPublishCardId = cardId;
             if (priceModalTitle != null) priceModalTitle.text = "FIJAR PRECIO";
             if (priceModalCardName != null) priceModalCardName.text = $"{cardName} ({rarity})";
             if (priceInputField != null) priceInputField.value = defaultPrice.ToString();
@@ -298,17 +307,31 @@ namespace JuegoTCG.UI
         {
             if (priceInputField != null && int.TryParse(priceInputField.value, out int newPrice) && newPrice > 0)
             {
+                MarketService.EnsureExists();
+
                 if (currentEditingListingId == 1 && priceActive1 != null)
                 {
                     priceActive1.text = newPrice.ToString();
+                    if (MarketService.Instance != null)
+                    {
+                        _ = MarketService.Instance.UpdateListingPriceAsync("my_list_1", newPrice);
+                    }
                 }
                 else if (currentEditingListingId == 2 && priceActive2 != null)
                 {
                     priceActive2.text = newPrice.ToString();
+                    if (MarketService.Instance != null)
+                    {
+                        _ = MarketService.Instance.UpdateListingPriceAsync("my_list_2", newPrice);
+                    }
                 }
                 else if (currentEditingListingId == 0)
                 {
-                    Debug.Log($"<color=gold>[Mercado] Carta publicada por {newPrice} monedas.</color>");
+                    if (MarketService.Instance != null)
+                    {
+                        _ = MarketService.Instance.ListCardForSaleAsync(currentPublishCardId, newPrice, 1);
+                    }
+                    Debug.Log($"<color=gold>[Mercado] Carta {currentPublishCardId} publicada por {newPrice} monedas.</color>");
                 }
 
                 if (priceModal != null) priceModal.AddToClassList("modal-hidden");
@@ -318,7 +341,15 @@ namespace JuegoTCG.UI
         private void WithdrawListing(VisualElement card, string name)
         {
             if (card != null) card.style.display = DisplayStyle.None;
-            Debug.Log($"<color=yellow>[Mercado] Carta {name} retirada del mercado.</color>");
+
+            MarketService.EnsureExists();
+            if (MarketService.Instance != null)
+            {
+                string targetId = (card == cardActive1) ? "my_list_1" : "my_list_2";
+                _ = MarketService.Instance.CancelListingAsync(targetId);
+            }
+
+            Debug.Log($"<color=yellow>[Mercado] Carta {name} retirada del mercado y devuelta a tu colección.</color>");
         }
 
         private void UpdateCoinsDisplay()

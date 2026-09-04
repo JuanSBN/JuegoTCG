@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using JuegoTCG.Social;
 
 namespace JuegoTCG.UI
 {
@@ -137,7 +138,7 @@ namespace JuegoTCG.UI
             }
         }
 
-        private void AcceptTrade(VisualElement card, int id)
+        private async void AcceptTrade(VisualElement card, int id)
         {
             if (card != null)
             {
@@ -148,10 +149,14 @@ namespace JuegoTCG.UI
                 unreadCount--;
                 UpdateBadgeDisplay();
             }
-            Debug.Log($"<color=green>[UI Toolkit] ¡Intercambio #{id} aceptado exitosamente!</color>");
+
+            TradeService.EnsureExists();
+            string tradeId = $"trade_0{id}";
+            var result = await TradeService.Instance.AcceptTradeAsync(tradeId);
+            Debug.Log($"<color=green>[UI Toolkit] {result.message}</color>");
         }
 
-        private void RejectTrade(VisualElement card, int id)
+        private async void RejectTrade(VisualElement card, int id)
         {
             if (card != null)
             {
@@ -162,10 +167,14 @@ namespace JuegoTCG.UI
                 unreadCount--;
                 UpdateBadgeDisplay();
             }
-            Debug.Log($"<color=yellow>[UI Toolkit] Intercambio #{id} rechazado.</color>");
+
+            TradeService.EnsureExists();
+            string tradeId = $"trade_0{id}";
+            var result = await TradeService.Instance.RejectTradeAsync(tradeId);
+            Debug.Log($"<color=yellow>[UI Toolkit] {result.message}</color>");
         }
 
-        private void CancelSentTrade(VisualElement card)
+        private async void CancelSentTrade(VisualElement card)
         {
             if (card != null)
             {
@@ -179,7 +188,10 @@ namespace JuegoTCG.UI
                 if (emptyTitle != null) emptyTitle.text = "No has enviado ninguna oferta.";
                 if (emptyDesc != null) emptyDesc.text = "Propón un intercambio a un amigo y empieza a negociar.";
             }
-            Debug.Log("<color=orange>[UI Toolkit] Oferta de intercambio cancelada.</color>");
+
+            TradeService.EnsureExists();
+            var result = await TradeService.Instance.CancelSentTradeAsync("trade_sent_01");
+            Debug.Log($"<color=orange>[UI Toolkit] {result.message}</color>");
         }
 
         private void UpdateBadgeDisplay()

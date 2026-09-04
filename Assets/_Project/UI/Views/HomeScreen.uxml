@@ -15,8 +15,8 @@
 
             <!-- Center Avatar & Player Info -->
             <ui:VisualElement class="top-bar-center">
-                <ui:VisualElement name="AvatarCircle" class="avatar-circle">
-                    <ui:VisualElement name="AvatarIcon" class="avatar-icon" />
+                <ui:VisualElement class="avatar-circle">
+                    <ui:VisualElement class="avatar-icon" />
                 </ui:VisualElement>
                 <ui:Label name="PlayerName" text="JUGADOR_01" class="player-name" />
                 <ui:Label name="PlayerLevel" text="Nivel 7" class="player-level" />

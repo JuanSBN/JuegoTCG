@@ -11,6 +11,7 @@ namespace JuegoTCG.Networking
 
         public event Action<bool, string> OnAuthStateChanged;
         public event Action<string> OnAvatarChanged;
+        public event Action<string> OnFriendCodeChanged;
         public event Action<int> OnCoinsChanged;
         public event Action<int> OnCollectionPowerChanged;
 
@@ -18,6 +19,7 @@ namespace JuegoTCG.Networking
         [SerializeField] private string userId = "";
         [SerializeField] private string displayName = "JUGADOR_01";
         [SerializeField] private string photoUrl = "";
+        [SerializeField] private string friendCode = "";
         [SerializeField] private bool isAuthenticated = false;
         [SerializeField] private bool isAnonymous = true;
         [SerializeField] private bool isLinked = false;
@@ -31,6 +33,7 @@ namespace JuegoTCG.Networking
         public string UserId => userId;
         public string DisplayName => displayName;
         public string PhotoUrl => photoUrl ?? "";
+        public string FriendCode => !string.IsNullOrEmpty(friendCode) ? friendCode : GenerateFallbackFriendCode();
         public bool IsAuthenticated => isAuthenticated;
         public bool IsAnonymous => isAnonymous;
         public bool IsLinked => isLinked;
@@ -38,10 +41,12 @@ namespace JuegoTCG.Networking
         public int Coins => coins;
         public int CollectionPower => collectionPower;
         public int PlayerLevel => playerLevel;
+        public bool HasCachedSession() => PlayerPrefs.HasKey(PREF_UID) && !string.IsNullOrEmpty(PlayerPrefs.GetString(PREF_UID));
 
         private const string PREF_UID = "Firebase_UserId";
         private const string PREF_NAME = "Firebase_DisplayName";
         private const string PREF_PHOTO_URL = "Firebase_PhotoUrl";
+        private const string PREF_FRIEND_CODE = "Firebase_FriendCode";
         private const string PREF_LINKED = "User_IsLinked";
         private const string PREF_PROVIDER = "User_Provider";
         private const string PREF_COINS = "Firebase_Coins";
@@ -67,6 +72,7 @@ namespace JuegoTCG.Networking
                 userId = PlayerPrefs.GetString(PREF_UID);
                 displayName = PlayerPrefs.GetString(PREF_NAME, "JUGADOR_01");
                 photoUrl = PlayerPrefs.GetString(PREF_PHOTO_URL, "");
+                friendCode = PlayerPrefs.GetString(PREF_FRIEND_CODE, "");
                 isLinked = PlayerPrefs.GetInt(PREF_LINKED, 0) == 1;
                 authProvider = PlayerPrefs.GetString(PREF_PROVIDER, isLinked ? "google" : "anonymous");
                 isAnonymous = !isLinked;
@@ -74,7 +80,7 @@ namespace JuegoTCG.Networking
                 coins = PlayerPrefs.GetInt(PREF_COINS, 240);
                 collectionPower = PlayerPrefs.GetInt(PREF_POWER, 0);
 
-                Debug.Log($"<color=green>[Auth] Sesión en caché cargada: UID={userId}, Linked={isLinked}, Provider={authProvider}, Photo={photoUrl}, Coins={coins}</color>");
+                Debug.Log($"<color=green>[Auth] Sesión en caché cargada: UID={userId}, Linked={isLinked}, Provider={authProvider}, Photo={photoUrl}, Code={FriendCode}, Coins={coins}</color>");
             }
         }
 
@@ -182,6 +188,25 @@ namespace JuegoTCG.Networking
             OnAvatarChanged?.Invoke(photoUrl);
         }
 
+        /// <summary>
+        /// Permite actualizar el código de amigo del usuario.
+        /// </summary>
+        public void SetFriendCode(string newCode)
+        {
+            if (string.IsNullOrEmpty(newCode) || friendCode == newCode) return;
+            friendCode = newCode.Trim().ToUpper();
+            PlayerPrefs.SetString(PREF_FRIEND_CODE, friendCode);
+            PlayerPrefs.Save();
+            OnFriendCodeChanged?.Invoke(friendCode);
+        }
+
+        private string GenerateFallbackFriendCode()
+        {
+            if (string.IsNullOrEmpty(userId)) return "FC-1001";
+            int hash = Mathf.Abs(userId.GetHashCode()) % 9000 + 1000;
+            return $"FC-{hash}";
+        }
+
         public void UpdateEconomy(int newCoins, int newPower)
         {
             coins = newCoins;
@@ -214,6 +239,7 @@ namespace JuegoTCG.Networking
             PlayerPrefs.SetString(PREF_UID, userId);
             PlayerPrefs.SetString(PREF_NAME, displayName);
             PlayerPrefs.SetString(PREF_PHOTO_URL, photoUrl ?? "");
+            PlayerPrefs.SetString(PREF_FRIEND_CODE, friendCode ?? "");
             PlayerPrefs.SetInt(PREF_LINKED, isLinked ? 1 : 0);
             PlayerPrefs.SetString(PREF_PROVIDER, authProvider);
             PlayerPrefs.SetInt(PREF_COINS, coins);
@@ -233,18 +259,21 @@ namespace JuegoTCG.Networking
             PlayerPrefs.DeleteKey(PREF_UID);
             PlayerPrefs.DeleteKey(PREF_NAME);
             PlayerPrefs.DeleteKey(PREF_PHOTO_URL);
+            PlayerPrefs.DeleteKey(PREF_FRIEND_CODE);
             PlayerPrefs.DeleteKey(PREF_LINKED);
             PlayerPrefs.DeleteKey(PREF_PROVIDER);
             PlayerPrefs.Save();
 
             userId = "";
             photoUrl = "";
+            friendCode = "";
             isAuthenticated = false;
             isLinked = false;
             isAnonymous = true;
 
             OnAuthStateChanged?.Invoke(false, "");
             OnAvatarChanged?.Invoke("");
+            OnFriendCodeChanged?.Invoke("");
         }
     }
 }

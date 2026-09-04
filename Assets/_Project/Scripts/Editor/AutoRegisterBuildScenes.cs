@@ -13,6 +13,7 @@ namespace JuegoTCG.Editor
         private static readonly string[] RequiredScenes = new string[]
         {
             "Assets/_Project/Scenes/SplashScene.unity",
+            "Assets/_Project/Scenes/LoginSceneUIToolkit.unity",
             "Assets/_Project/Scenes/LoginScene.unity",
             "Assets/_Project/Scenes/HomeScreenUIToolkitScene.unity",
             "Assets/_Project/Scenes/MyCardsSceneUIToolkit.unity",

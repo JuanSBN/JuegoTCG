@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI/Styles/LoginScreen.uss" />
+
+    <ui:VisualElement name="LoginScreenRoot" class="screen-container">
+
+        <!-- Central Content Box (Figma Bias Centered) -->
+        <ui:VisualElement name="LoginContentBox" class="login-content-box">
+
+            <!-- 1. LogoMark (Cartas apiladas en ángulo + FUTCARD) -->
+            <ui:VisualElement name="LogoContainer" class="login-logo-container">
+                <ui:VisualElement class="logo-cards-stacked">
+                    <!-- Carta trasera inclinada -->
+                    <ui:VisualElement class="logo-card-back" />
+                    <!-- Carta frontal con borde dorado y balón -->
+                    <ui:VisualElement class="logo-card-front">
+                        <ui:VisualElement class="logo-card-ball-icon" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:Label text="FUTCARD" class="logo-title-futcard" />
+                <ui:Label text="TRADING CARD GAME" class="logo-subtitle-tcg" />
+            </ui:VisualElement>
+
+            <!-- 2. Header Textual -->
+            <ui:VisualElement name="HeaderBox" class="login-header-box">
+                <ui:Label name="TitleText" text="BIENVENIDO" class="login-title" />
+                <ui:Label name="SubtitleText" text="Inicia sesión para acceder a tu colección y conectarte con otros jugadores." class="login-subtitle" />
+            </ui:VisualElement>
+
+            <!-- 3. Botones de Proveedor -->
+            <ui:VisualElement name="ProvidersContainer" class="providers-container">
+                
+                <!-- Botón Google -->
+                <ui:Button name="Btn_Google" class="provider-btn">
+                    <ui:VisualElement class="provider-icon provider-icon-google" />
+                    <ui:Label text="Continuar con Google" class="provider-text" />
+                </ui:Button>
+
+                <!-- Botón Email -->
+                <ui:Button name="Btn_Email" class="provider-btn">
+                    <ui:VisualElement class="provider-icon provider-icon-email" />
+                    <ui:Label text="Continuar con email" class="provider-text" />
+                </ui:Button>
+
+            </ui:VisualElement>
+
+            <!-- 4. Botón Continuar como invitado / Ahora no -->
+            <ui:Button name="Btn_Guest" class="guest-btn">
+                <ui:Label name="GuestBtnText" text="Continuar como invitado" class="guest-btn-text" />
+            </ui:Button>
+
+            <!-- 5. Términos y Condiciones -->
+            <ui:Label name="TermsText" text="Al continuar, aceptas los Términos y la Política de Privacidad" class="login-terms" />
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

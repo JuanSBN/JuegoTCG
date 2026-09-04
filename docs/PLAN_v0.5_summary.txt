@@ -202,19 +202,19 @@ Fase 8 - Sistema social
 
 Objetivo de la fase: el motor de retencion principal del juego, segun el GDD.
 
-☐  Implementar agregar amigos por codigo.
+☑  Implementar agregar amigos por codigo.
 
-☐  Implementar la comparacion de albumes entre amigos (vista lado a lado).
+☑  Implementar la comparacion de albumes entre amigos (vista lado a lado).
 
-☐  Implementar el ranking por poder de coleccion, usando la formula ya definida en el GDD (seccion 7.2: puntos fijos por rareza x cartas unicas obtenidas, sin contar duplicados) y el trigger recalculateCollectionPower() del TDD (seccion 6) que mantiene el campo collectionPower cacheado en el documento de users.
+☑  Implementar el ranking por poder de coleccion, usando la formula ya definida en el GDD (seccion 7.2: puntos fijos por rareza x cartas unicas obtenidas, sin contar duplicados) y el trigger recalculateCollectionPower() del TDD (seccion 6) que mantiene el campo collectionPower cacheado en el documento de users.
 
-☐  Implementar proposeTrade(), acceptTrade() y cancelTrade() como transaccion atomica de Firestore - el intercambio directo ya esta confirmado para el MVP, con el diseno anti-fraude resuelto en el TDD (seccion 2.5).
+☑  Implementar proposeTrade(), acceptTrade() y cancelTrade() como transaccion atomica de Firestore - el intercambio directo ya esta confirmado para el MVP, con el diseno anti-fraude resuelto en el TDD (seccion 2.5).
 
-☐  Escribir las Firestore Rules de tradeOffers (TDD seccion 7) antes de exponer la funcion en el cliente.
+☑  Escribir las Firestore Rules de tradeOffers (TDD seccion 7) antes de exponer la funcion en el cliente.
 
-☐  Probar especificamente el caso limite: aceptar un intercambio cuando una de las cartas ya no esta disponible, y confirmar que ninguna carta se mueve.
+☑  Probar especificamente el caso limite: aceptar un intercambio cuando una de las cartas ya no esta disponible, y confirmar que ninguna carta se mueve.
 
-☐  Confirmar que proposeTrade() envie la notificacion push correspondiente y registre el evento trade_proposed de Analytics (TDD secciones 2.8 y 2.9).
+☑  Confirmar que proposeTrade() envie la notificacion push correspondiente y registre el evento trade_proposed de Analytics (TDD secciones 2.8 y 2.9).
 
 Ver: GDD seccion 7 y 7.2, TDD secciones 2.5, 2.8, 2.9, 5.8, 6 y 7.
 
@@ -223,19 +223,19 @@ Fase 8.5 - Mercado de cartas entre jugadores
 
 Objetivo de la fase: reemplazar la venta de duplicados al sistema por un mercado real entre jugadores, donde cualquiera puede publicar una carta duplicada a un precio libre y otro jugador comprarla directamente.
 
-☐  Crear la coleccion marketListings en Firestore (TDD seccion 5.8b).
+☑  Crear la coleccion marketListings en Firestore (TDD seccion 5.8b).
 
-☐  Implementar listCardForSale(), reservando la cantidad publicada desde userCollection al crear el listado (TDD seccion 2.11).
+☑  Implementar listCardForSale(), reservando la cantidad publicada desde userCollection al crear el listado (TDD seccion 2.11).
 
-☐  Implementar buyListedCard() como transaccion atomica: revalida que el listado siga activo, descuenta moneda del comprador, acredita el 100% al vendedor sin comision, y mueve la carta.
+☑  Implementar buyListedCard() como transaccion atomica: revalida que el listado siga activo, descuenta moneda del comprador, acredita el 100% al vendedor sin comision, y mueve la carta.
 
-☐  Implementar cancelListing() y updateListingPrice(), ambas restringidas al vendedor original del listado.
+☑  Implementar cancelListing() y updateListingPrice(), ambas restringidas al vendedor original del listado.
 
-☐  Escribir las Firestore Rules de marketListings para bloquear escritura directa del cliente sobre precio, status y propiedad de la carta reservada.
+☑  Escribir las Firestore Rules de marketListings para bloquear escritura directa del cliente sobre precio, status y propiedad de la carta reservada.
 
-☐  Construir la pantalla de 'Vender duplicados' como mercado: cuadricula de duplicados propios para publicar, mas la vista de listados de otros jugadores disponibles para comprar, con filtro por rareza.
+☑  Construir la pantalla de 'Vender duplicados' como mercado: cuadricula de duplicados propios para publicar, mas la vista de listados de otros jugadores disponibles para comprar, con filtro por rareza.
 
-☐  Probar el caso limite de dos compradores intentando comprar el mismo listado casi al mismo tiempo, confirmando que solo el primero tiene exito y el segundo falla limpiamente.
+☑  Probar el caso limite de dos compradores intentando comprar el mismo listado casi al mismo tiempo, confirmando que solo el primero tiene exito y el segundo falla limpiamente.
 
 Ver: GDD seccion 7.1 y 8.3, TDD secciones 2.11, 5.8b y 6.
 
