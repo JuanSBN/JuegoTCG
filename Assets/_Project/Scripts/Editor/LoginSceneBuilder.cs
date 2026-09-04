@@ -267,21 +267,7 @@ namespace JuegoTCG.EditorTools
 
         private static void UpdateBuildSettings()
         {
-            List<EditorBuildSettingsScene> buildScenes = new List<EditorBuildSettingsScene>();
-            if (File.Exists("Assets/_Project/Scenes/SplashScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/SplashScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/LoginScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/LoginScene.unity", true));
-            buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/HomeScreenScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/MyCardsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MyCardsScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/StoreScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/StoreScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/CommunityScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/CommunityScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/VitrinesScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/VitrinesScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/TradeScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/TradeScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/MarketScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/MarketScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/FriendsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/FriendsScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/ProfileScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/ProfileScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/SettingsScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/SettingsScene.unity", true));
-            if (File.Exists("Assets/_Project/Scenes/PackOpeningScene.unity")) buildScenes.Add(new EditorBuildSettingsScene("Assets/_Project/Scenes/PackOpeningScene.unity", true));
-            EditorBuildSettings.scenes = buildScenes.ToArray();
+            JuegoTCG.Editor.AutoRegisterBuildScenes.RegisterScenes();
         }
 
         private static TMP_FontAsset GetOrCreateTMPFont(string fontName)

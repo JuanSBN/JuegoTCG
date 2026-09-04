@@ -1,3 +1,9 @@
+/* ==========================================================================
+   PROFILE SCREEN - DESIGN TOKENS & FIGMA FIDELITY (1080x2400)
+   Figma Source: docs/Pantallas 2.2/src/App.tsx lines 3675-3915
+   Scale Factor: 2.75x (1080 / 393)
+   ========================================================================== */
+
 :root {
     --bg-dark: #06110B;
     --card-bg: rgba(13, 26, 19, 0.85);
@@ -22,50 +28,98 @@
     -unity-background-scale-mode: stretch-to-fill;
     padding-left: 44px;
     padding-right: 44px;
-    padding-top: 56px;
+    padding-top: 130px;
     padding-bottom: 0;
     position: relative;
+    overflow: hidden;
 }
 
 /* ─────────────────────────────────────────────────────────── */
 /* SCROLLBAR INTEGRADA (FIGMA GOLDEN PILL)                     */
 /* ─────────────────────────────────────────────────────────── */
 .profile-scroll-view {
-    flex: 1;
+    flex-grow: 1;
     margin-bottom: 0;
     width: 100%;
+    position: relative;
 }
 
-.profile-scroll-view .unity-scroller--vertical {
-    width: 8px;
-    margin-right: -28px;
+.profile-scroll-view #unity-content-container,
+.profile-scroll-content {
+    padding-bottom: 380px;
+    padding-right: 24px;
+    width: 100%;
 }
 
-.profile-scroll-view .unity-scroller--vertical .unity-base-slider__tracker {
+.profile-scroll-view .unity-scroller--vertical,
+.profile-scroll-view #unity-vertical-scroller,
+.profile-scroll-view .unity-scroller {
+    width: 6px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
     background-color: transparent;
-    border-width: 0;
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    bottom: 240px;
 }
 
-.profile-scroll-view .unity-scroller--vertical .unity-base-slider__dragger {
-    width: 8px;
-    background-color: rgba(232, 168, 32, 0.55);
-    border-radius: 4px;
-    border-width: 0;
-    left: 0;
-}
-
-.profile-scroll-view .unity-scroller--vertical .unity-scroller__low-button,
-.profile-scroll-view .unity-scroller--vertical .unity-scroller__high-button {
+.profile-scroll-view .unity-scroller--horizontal,
+.profile-scroll-view #unity-horizontal-scroller {
     display: none;
-    opacity: 0;
     width: 0;
     height: 0;
+    opacity: 0;
 }
 
-/* Safe Area Bottom Padding for Floating Nav Bar */
-.profile-scroll-content {
-    padding-bottom: 340px;
-    width: 100%;
+.profile-scroll-view .unity-scroller__low-button,
+.profile-scroll-view .unity-scroller__high-button,
+.profile-scroll-view #unity-low-button,
+.profile-scroll-view #unity-high-button,
+.profile-scroll-view .unity-repeat-button {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.profile-scroll-view .unity-slider {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    width: 6px;
+}
+
+.profile-scroll-view #unity-tracker,
+.profile-scroll-view .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    margin: 0;
+}
+
+.profile-scroll-view #unity-dragger,
+.profile-scroll-view .unity-scroller--vertical .unity-base-slider__dragger,
+.profile-scroll-view .unity-base-slider__dragger {
+    background-color: var(--gold);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    min-height: 120px;
+    margin: 0;
+    opacity: 0.65;
+    transition-property: opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
+}
+
+.profile-scroll-view #unity-dragger:hover,
+.profile-scroll-view #unity-dragger:active {
+    background-color: #FFD257;
+    opacity: 1;
 }
 
 /* ─────────────────────────────────────────────────────────── */
@@ -75,16 +129,16 @@
     align-items: center;
     position: relative;
     padding-top: 10px;
-    padding-bottom: 28px;
+    padding-bottom: 32px;
     width: 100%;
 }
 
 .settings-btn {
     position: absolute;
-    top: 6px;
-    right: 0;
-    width: 56px;
-    height: 56px;
+    top: 10px;
+    right: 4px;
+    width: 68px;
+    height: 68px;
     background-color: transparent;
     border-width: 0;
     align-items: center;
@@ -97,8 +151,8 @@
 }
 
 .settings-icon {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_gear.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.45);
@@ -106,23 +160,23 @@
 
 .avatar-wrapper {
     position: relative;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 }
 
 .profile-avatar-circle {
-    width: 140px;
-    height: 140px;
-    border-radius: 70px;
-    background-color: rgba(255, 255, 255, 0.06);
-    border-width: 2.5px;
+    width: 210px;
+    height: 210px;
+    border-radius: 105px;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-width: 3px;
     border-color: var(--gold-border);
     align-items: center;
     justify-content: center;
 }
 
 .profile-avatar-icon {
-    width: 68px;
-    height: 68px;
+    width: 96px;
+    height: 96px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_user.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.45);
@@ -130,13 +184,13 @@
 
 .avatar-edit-badge {
     position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 42px;
-    height: 42px;
-    border-radius: 21px;
+    bottom: 4px;
+    right: 4px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
     background-color: #06110B;
-    border-width: 2px;
+    border-width: 2.5px;
     border-color: var(--gold-border);
     align-items: center;
     justify-content: center;
@@ -148,8 +202,8 @@
 }
 
 .avatar-edit-icon {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_edit.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--gold);
@@ -158,20 +212,20 @@
 .username-row {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .profile-username {
-    font-size: 42px;
+    font-size: 52px;
     -unity-font-style: bold;
     letter-spacing: 4px;
     color: var(--text-white);
-    margin-right: 12px;
+    margin-right: 14px;
 }
 
 .btn-edit-username {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background-color: transparent;
     border-width: 0;
     align-items: center;
@@ -184,8 +238,8 @@
 }
 
 .edit-icon-small {
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_edit.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.35);
@@ -196,7 +250,7 @@
     align-items: center;
     background-color: transparent;
     border-width: 0;
-    padding: 4px 10px;
+    padding: 6px 14px;
 }
 
 .friend-code-pill-btn:active {
@@ -204,22 +258,22 @@
 }
 
 .code-pill-label {
-    font-size: 24px;
+    font-size: 30px;
     color: var(--text-gray);
     letter-spacing: 1px;
 }
 
 .code-pill-number {
-    font-size: 24px;
+    font-size: 30px;
     -unity-font-style: bold;
     color: rgba(255, 255, 255, 0.85);
-    margin-left: 6px;
-    margin-right: 10px;
+    margin-left: 8px;
+    margin-right: 12px;
 }
 
 .code-copy-icon {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_copy.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.40);
@@ -229,7 +283,8 @@
 /* SECCIÓN: MI 11 IDEAL (CANCHA TÁCTICA)                       */
 /* ─────────────────────────────────────────────────────────── */
 .formation-section {
-    margin-bottom: 40px;
+    margin-top: 12px;
+    margin-bottom: 44px;
     width: 100%;
 }
 
@@ -237,18 +292,18 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 }
 
 .profile-section-title {
-    font-size: 34px;
+    font-size: 44px;
     -unity-font-style: bold;
     letter-spacing: 4px;
     color: var(--text-white);
 }
 
 .formation-slots-count {
-    font-size: 22px;
+    font-size: 28px;
     color: var(--text-gray);
     letter-spacing: 1px;
 }
@@ -256,82 +311,82 @@
 /* Tactical Pitch Box */
 .tactical-pitch-box {
     width: 100%;
-    height: 880px;
-    background-color: rgba(8, 18, 12, 0.80);
-    border-radius: 26px;
+    height: 940px;
+    background-color: #08150D;
+    border-radius: 28px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
     position: relative;
     overflow: hidden;
 }
 
-/* Pitch Field Lines SVG/Vector Simulation */
+/* Pitch Field Lines */
 .pitch-boundary-line {
     position: absolute;
-    top: 16px;
-    bottom: 16px;
-    left: 16px;
-    right: 16px;
+    top: 18px;
+    bottom: 18px;
+    left: 18px;
+    right: 18px;
     border-width: 1.5px;
-    border-color: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    border-color: rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
 }
 
 .pitch-halfway-line {
     position: absolute;
     top: 50%;
-    left: 16px;
-    right: 16px;
+    left: 18px;
+    right: 18px;
     height: 1.5px;
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.14);
 }
 
 .pitch-center-circle {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 180px;
-    height: 180px;
-    margin-top: -90px;
-    margin-left: -90px;
-    border-radius: 90px;
+    width: 250px;
+    height: 250px;
+    margin-top: -125px;
+    margin-left: -125px;
+    border-radius: 125px;
     border-width: 1.5px;
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
     align-items: center;
     justify-content: center;
 }
 
 .pitch-center-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.15);
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
 .pitch-penalty-top {
     position: absolute;
-    top: 16px;
+    top: 18px;
     left: 50%;
-    width: 380px;
-    height: 150px;
-    margin-left: -190px;
+    width: 490px;
+    height: 200px;
+    margin-left: -245px;
     border-bottom-width: 1.5px;
     border-left-width: 1.5px;
     border-right-width: 1.5px;
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
 }
 
 .pitch-penalty-bottom {
     position: absolute;
-    bottom: 16px;
+    bottom: 18px;
     left: 50%;
-    width: 380px;
-    height: 150px;
-    margin-left: -190px;
+    width: 490px;
+    height: 200px;
+    margin-left: -245px;
     border-top-width: 1.5px;
     border-left-width: 1.5px;
     border-right-width: 1.5px;
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* ─────────────────────────────────────────────────────────── */
@@ -339,12 +394,12 @@
 /* ─────────────────────────────────────────────────────────── */
 .pitch-player-slot {
     position: absolute;
-    width: 104px;
-    height: 144px;
-    margin-left: -52px;
-    margin-top: -72px;
+    width: 132px;
+    height: 180px;
+    margin-left: -66px;
+    margin-top: -90px;
     background-color: var(--card-bg);
-    border-radius: 16px;
+    border-radius: 18px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
     align-items: center;
@@ -352,6 +407,7 @@
     opacity: 0.40;
     transition-property: scale;
     transition-duration: 0.15s;
+    transition-timing-function: ease-out;
 }
 
 .pitch-player-slot:active {
@@ -380,19 +436,20 @@
 
 .slot-pos-badge {
     position: absolute;
-    top: 6px;
-    left: 6px;
-    background-color: rgba(6, 14, 10, 0.90);
+    top: 8px;
+    left: 8px;
+    background-color: rgba(6, 14, 10, 0.92);
     border-width: 1px;
     border-color: var(--border-subtle);
-    border-radius: 6px;
-    padding: 2px 6px;
+    border-radius: 12px;
+    padding: 4px 10px;
 }
 
 .slot-pos-badge-text {
-    font-size: 13px;
+    font-size: 20px;
     -unity-font-style: bold;
     color: var(--text-dim);
+    -unity-text-align: middle-center;
 }
 
 .slot-mythic .slot-pos-badge-text { color: var(--rarity-mythic); }
@@ -401,13 +458,13 @@
 .slot-common .slot-pos-badge-text { color: var(--rarity-common); }
 
 .slot-token-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 19px;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
     background-color: rgba(255, 255, 255, 0.06);
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    margin-top: 14px;
+    margin-top: 18px;
 }
 
 .slot-mythic .slot-token-circle { border-color: var(--rarity-mythic); }
@@ -419,27 +476,30 @@
 /* SECCIÓN: CARTAS DESTACADAS                                  */
 /* ─────────────────────────────────────────────────────────── */
 .featured-section {
-    margin-bottom: 20px;
+    margin-top: 8px;
+    margin-bottom: 24px;
     width: 100%;
 }
 
 .featured-cards-row {
     flex-direction: row;
     justify-content: space-between;
+    width: 100%;
 }
 
 .featured-card {
     width: 31%;
-    aspect-ratio: 0.72;
+    height: 410px;
     background-color: var(--card-bg);
-    border-radius: 18px;
+    border-radius: 24px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    padding: 24px 12px 18px;
+    padding: 36px 14px 28px;
     align-items: center;
     justify-content: space-between;
     transition-property: scale;
     transition-duration: 0.15s;
+    transition-timing-function: ease-out;
 }
 
 .featured-card:active {
@@ -456,14 +516,15 @@
 
 .featured-card-empty {
     opacity: 0.40;
+    border-color: rgba(255, 255, 255, 0.15);
 }
 
 .featured-avatar-circle {
-    width: 80px;
-    height: 80px;
-    border-radius: 40px;
+    width: 104px;
+    height: 104px;
+    border-radius: 52px;
     background-color: rgba(255, 255, 255, 0.06);
-    border-width: 1.5px;
+    border-width: 2px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
@@ -473,7 +534,7 @@
 .featured-card-rare .featured-avatar-circle { border-color: var(--rarity-rare); }
 
 .featured-avatar-text {
-    font-size: 26px;
+    font-size: 34px;
     -unity-font-style: bold;
     color: var(--text-gray);
 }
@@ -482,16 +543,20 @@
 .featured-card-rare .featured-avatar-text { color: var(--rarity-rare); }
 
 .featured-card-name {
-    font-size: 22px;
+    font-size: 26px;
+    -unity-font-style: bold;
     color: var(--text-gray);
     -unity-text-align: middle-center;
 }
 
 .featured-card-empty .featured-card-name {
     color: var(--text-dim);
+    -unity-font-style: normal;
 }
 
-/* Modals */
+/* ─────────────────────────────────────────────────────────── */
+/* MODALES DE FEEDBACK                                         */
+/* ─────────────────────────────────────────────────────────── */
 .modal-backdrop {
     position: absolute;
     top: 0;
@@ -501,39 +566,39 @@
     background-color: rgba(0, 0, 0, 0.75);
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 44px;
 }
 
 .modal-box {
     width: 100%;
     background-color: #0A1810;
-    border-radius: 28px;
+    border-radius: 30px;
     border-width: 1.5px;
     border-color: var(--gold-border);
-    padding: 40px 32px;
+    padding: 48px 36px;
     align-items: center;
 }
 
 .modal-title {
-    font-size: 34px;
+    font-size: 40px;
     -unity-font-style: bold;
     color: var(--gold);
     letter-spacing: 2px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     -unity-text-align: middle-center;
 }
 
 .modal-desc {
-    font-size: 24px;
+    font-size: 28px;
     color: var(--text-white);
-    margin-bottom: 28px;
+    margin-bottom: 32px;
     -unity-text-align: middle-center;
 }
 
 .modal-close-btn {
-    width: 200px;
-    height: 64px;
-    border-radius: 16px;
+    width: 240px;
+    height: 72px;
+    border-radius: 18px;
     background-color: var(--gold);
     border-width: 0;
     align-items: center;
@@ -541,7 +606,7 @@
 }
 
 .modal-close-btn-text {
-    font-size: 22px;
+    font-size: 26px;
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: #0D1A13;
@@ -551,6 +616,9 @@
     display: none;
 }
 
+/* ─────────────────────────────────────────────────────────── */
+/* LIQUID GLASS BOTTOM NAV                                    */
+/* ─────────────────────────────────────────────────────────── */
 #BottomNavBar {
     position: absolute;
     bottom: 0;

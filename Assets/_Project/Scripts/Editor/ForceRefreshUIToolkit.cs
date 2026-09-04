@@ -28,6 +28,8 @@ namespace JuegoTCG.EditorTools
             AssetDatabase.ImportAsset("Assets/_Project/UI/Views/MyCardsScreen.uxml", ImportAssetOptions.ForceUpdate);
             AssetDatabase.ImportAsset("Assets/_Project/UI/Styles/CommunityScreen.uss", ImportAssetOptions.ForceUpdate);
             AssetDatabase.ImportAsset("Assets/_Project/UI/Views/CommunityScreen.uxml", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Styles/VitrinesScreen.uss", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Views/VitrinesScreen.uxml", ImportAssetOptions.ForceUpdate);
             AssetDatabase.ImportAsset("Assets/_Project/UI/Components/LiquidGlassNavBar.uss", ImportAssetOptions.ForceUpdate);
             AssetDatabase.ImportAsset("Assets/_Project/UI/Components/LiquidGlassNavBar.uxml", ImportAssetOptions.ForceUpdate);
 

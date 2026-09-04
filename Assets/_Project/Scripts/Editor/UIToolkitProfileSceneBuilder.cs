@@ -44,11 +44,20 @@ namespace JuegoTCG.EditorTools
                 panelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
                 panelSettings.referenceResolution = new Vector2Int(1080, 2400);
                 panelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
-                panelSettings.match = 0.5f;
+                panelSettings.match = 0.0f;
                 AssetDatabase.CreateAsset(panelSettings, PanelSettingsPath);
                 AssetDatabase.SaveAssets();
             }
+            else
+            {
+                panelSettings.match = 0.0f;
+                EditorUtility.SetDirty(panelSettings);
+            }
             uiDoc.panelSettings = panelSettings;
+
+            // Force refresh of UXML and USS
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Styles/ProfileScreen.uss", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Views/ProfileScreen.uxml", ImportAssetOptions.ForceUpdate);
 
             // Add Controllers
             uiDocGO.AddComponent<UIToolkitProfileController>();

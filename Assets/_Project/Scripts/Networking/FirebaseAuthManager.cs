@@ -152,6 +152,16 @@ namespace JuegoTCG.Networking
             }
         }
 
+        /// <summary>
+        /// Vincula la cuenta existente con una cuenta de Google nativa obtenida del selector del sistema.
+        /// </summary>
+        public async Task<bool> LinkGoogleAccountAsync(GoogleSignInUser googleUser)
+        {
+            if (googleUser == null) return false;
+            string name = !string.IsNullOrEmpty(googleUser.DisplayName) ? googleUser.DisplayName : googleUser.Email;
+            return await LinkAccountAsync("google", name);
+        }
+
         public void UpdateEconomy(int newCoins, int newPower)
         {
             coins = newCoins;

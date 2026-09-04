@@ -22,6 +22,10 @@ namespace JuegoTCG.EditorTools
                 return;
             }
 
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Styles/VitrinesScreen.uss", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Views/VitrinesScreen.uxml", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Components/LiquidGlassNavBar.uss", ImportAssetOptions.ForceUpdate);
+
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // Camera

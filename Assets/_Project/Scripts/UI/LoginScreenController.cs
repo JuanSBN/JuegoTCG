@@ -82,14 +82,28 @@ namespace JuegoTCG.UI
             }
         }
 
-        private async void OnClickGoogleLogin()
+        private void OnClickGoogleLogin()
         {
-            Debug.Log("<color=cyan>[Login] Autenticando con Google / Vinculando credencial (linkWithCredential)...</color>");
-            if (FirebaseAuthManager.Instance != null)
-            {
-                await FirebaseAuthManager.Instance.LinkAccountAsync("google", "Usuario Google");
-            }
-            SceneManager.LoadScene("HomeScreenScene");
+            Debug.Log("<color=cyan>[Login] Iniciando selector nativo de Google Sign-In...</color>");
+            if (googleButton != null) googleButton.interactable = false;
+
+            GoogleSignInManager.EnsureExists();
+            GoogleSignInManager.Instance.SignIn(
+                async (googleUser) =>
+                {
+                    Debug.Log($"<color=green>[Login] Cuenta seleccionada con éxito: {googleUser.DisplayName} ({googleUser.Email})</color>");
+                    if (FirebaseAuthManager.Instance != null)
+                    {
+                        await FirebaseAuthManager.Instance.LinkGoogleAccountAsync(googleUser);
+                    }
+                    SceneManager.LoadScene("HomeScreenUIToolkitScene");
+                },
+                (error) =>
+                {
+                    Debug.LogWarning($"<color=yellow>[Login] Google Sign-In cancelado o falló: {error}</color>");
+                    if (googleButton != null) googleButton.interactable = true;
+                }
+            );
         }
 
         private async void OnClickEmailLogin()
@@ -99,13 +113,13 @@ namespace JuegoTCG.UI
             {
                 await FirebaseAuthManager.Instance.LinkAccountAsync("email", "usuario@futbol.com");
             }
-            SceneManager.LoadScene("HomeScreenScene");
+            SceneManager.LoadScene("HomeScreenUIToolkitScene");
         }
 
         private void OnClickContinueAsGuest()
         {
             Debug.Log("<color=yellow>[Login] Continuando con cuenta anónima / invitado...</color>");
-            SceneManager.LoadScene("HomeScreenScene");
+            SceneManager.LoadScene("HomeScreenUIToolkitScene");
         }
     }
 }

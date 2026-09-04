@@ -40,38 +40,38 @@
     position: absolute;
     left: 0;
     top: 0;
-    padding-top: 80px;
-    padding-left: 36px;
-    padding-right: 36px;
-    padding-bottom: 220px;
+    padding-top: 140px;
+    padding-left: 44px;
+    padding-right: 44px;
+    padding-bottom: 260px;
 }
 
 /* Header */
 .catalog-header {
     flex-direction: row;
     align-items: center;
-    height: 70px;
-    margin-bottom: 24px;
+    height: 80px;
+    margin-bottom: 28px;
 }
 
 .back-btn {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     background-color: transparent;
     border-width: 0;
     color: var(--text-white);
-    font-size: 36px;
+    font-size: 42px;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     padding: 0;
-    margin-right: 16px;
+    margin-right: 18px;
 }
 
 .catalog-title {
-    font-size: 42px;
+    font-size: 56px;
     -unity-font-style: bold;
     color: var(--text-white);
-    letter-spacing: 4px;
+    letter-spacing: 5px;
 }
 
 /* Search Bar (Figma Integrated Design) */
@@ -85,18 +85,20 @@
     border-color: var(--border-subtle);
     padding-left: 28px;
     padding-right: 28px;
-    margin-bottom: 36px;
-    transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+    margin-bottom: 32px;
+    transition-property: border-color, background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
 }
 
-.search-container:focus-within {
+.search-container:hover {
     border-color: var(--gold);
     background-color: rgba(255, 255, 255, 0.08);
 }
 
 .search-icon {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_search.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--text-gray);
@@ -142,11 +144,11 @@
 }
 
 .section-label {
-    font-size: 34px;
+    font-size: 38px;
     -unity-font-style: bold;
     color: var(--text-white);
-    letter-spacing: 8px;
-    margin-top: 16px;
+    letter-spacing: 6px;
+    margin-top: 28px;
     margin-bottom: 24px;
 }
 
@@ -160,16 +162,18 @@
 
 /* Individual Vitrine Card in Catalog */
 .vitrine-card {
-    width: 48%;
-    height: 250px;
+    width: 48.2%;
+    height: 380px;
     background-color: var(--card-bg);
-    border-radius: 24px;
+    border-radius: 28px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    padding: 20px 22px;
+    padding: 24px 22px;
     justify-content: space-between;
     margin-bottom: 24px;
-    transition: scale 0.15s ease-out;
+    transition-property: scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
 }
 
 .vitrine-card:active {
@@ -183,25 +187,25 @@
 }
 
 .card-avatar-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 30px;
+    width: 68px;
+    height: 68px;
+    border-radius: 34px;
     background-color: rgba(255, 255, 255, 0.08);
     border-width: 1.5px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
-    margin-right: 14px;
+    margin-right: 16px;
 }
 
 .card-avatar-text {
-    font-size: 22px;
+    font-size: 26px;
     -unity-font-style: bold;
     color: var(--text-white);
 }
 
 .card-username {
-    font-size: 26px;
+    font-size: 30px;
     -unity-font-style: bold;
     color: var(--text-white);
 }
@@ -210,14 +214,18 @@
 .mini-cards-row {
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .mini-card-preview {
-    width: 50px;
-    height: 72px;
-    background-color: rgba(255, 255, 255, 0.04);
-    border-radius: 10px;
-    border-width: 1.5px;
+    width: 30%;
+    height: 160px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    border-width: 2px;
 }
 
 .mini-card-mythic {
@@ -244,16 +252,17 @@
 }
 
 .catalog-like-icon {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     background-image: url(project://database/Assets/_Project/Art/UI/ui_icon_like.png);
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--text-gray);
-    margin-right: 8px;
+    margin-right: 10px;
 }
 
 .catalog-like-text {
-    font-size: 22px;
+    font-size: 26px;
+    -unity-font-style: bold;
     color: var(--text-gray);
 }
 
@@ -268,10 +277,10 @@
     top: 0;
     background-color: var(--dark-bg);
     background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
-    -unity-background-scale-mode: scale-and-crop;
-    padding-top: 80px;
-    padding-left: 36px;
-    padding-right: 36px;
+    -unity-background-scale-mode: stretch-to-fill;
+    padding-top: 140px;
+    padding-left: 44px;
+    padding-right: 44px;
     padding-bottom: 0px;
 }
 
@@ -284,8 +293,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 110px;
-    margin-bottom: 24px;
+    height: 120px;
+    margin-bottom: 28px;
 }
 
 .detail-profile-info {
@@ -294,39 +303,39 @@
 }
 
 .detail-avatar-circle {
-    width: 88px;
-    height: 88px;
-    border-radius: 44px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
     background-color: rgba(255, 255, 255, 0.08);
-    border-width: 1.5px;
-    border-color: rgba(255, 255, 255, 0.25);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.30);
     align-items: center;
     justify-content: center;
-    margin-right: 20px;
+    margin-right: 22px;
 }
 
 .detail-avatar-text {
-    font-size: 34px;
+    font-size: 38px;
     -unity-font-style: bold;
     color: var(--text-white);
 }
 
 .detail-username {
-    font-size: 44px;
+    font-size: 48px;
     -unity-font-style: bold;
     color: var(--text-white);
     letter-spacing: 3px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .detail-card-count {
-    font-size: 24px;
-    color: var(--text-dim);
+    font-size: 28px;
+    color: var(--text-gray);
 }
 
 .detail-close-btn {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     background-color: transparent;
     border-width: 0;
     align-items: center;
@@ -335,11 +344,11 @@
 }
 
 .detail-close-icon {
-    width: 32px;
-    height: 32px;
-    background-image: url(project://database/Assets/_Project/Art/UI/ui_icon_close.png);
+    width: 36px;
+    height: 36px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_close.png");
     -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: rgba(255, 255, 255, 0.70);
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.85);
 }
 
 /* Detail Scroll View */
@@ -354,50 +363,57 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding-bottom: 340px;
+    padding-bottom: 380px;
+    width: 100%;
 }
 
 .showcase-card {
-    width: 48%;
-    height: 580px;
+    width: 48.2%;
+    height: 640px;
     background-color: var(--card-bg);
-    border-radius: 24px;
+    border-radius: 28px;
     border-width: 2px;
-    padding: 24px;
+    padding-top: 36px;
+    padding-bottom: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
     position: relative;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 24px;
 }
 
 .showcase-card-star {
     position: absolute;
-    right: 22px;
-    top: 22px;
-    width: 28px;
-    height: 28px;
-    background-image: url(project://database/Assets/_Project/Art/UI/ui_star.png);
+    right: 24px;
+    top: 24px;
+    width: 36px;
+    height: 36px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_star.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--gold);
 }
 
 .showcase-initials {
-    font-size: 96px;
+    font-size: 84px;
     -unity-font-style: bold;
-    color: rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.85);
     -unity-text-align: middle-center;
-    margin-bottom: 12px;
+    margin-top: 20px;
+    margin-bottom: 16px;
 }
 
 .showcase-rarity {
-    font-size: 24px;
+    font-size: 26px;
     -unity-font-style: bold;
-    letter-spacing: 5px;
+    letter-spacing: 4px;
     -unity-text-align: middle-center;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .showcase-name {
-    font-size: 30px;
+    font-size: 34px;
+    -unity-font-style: bold;
     color: var(--text-white);
     -unity-text-align: middle-center;
 }
@@ -405,18 +421,19 @@
 /* Floating Like Pill */
 .floating-like-pill {
     position: absolute;
-    right: 46px;
-    bottom: 215px;
-    height: 78px;
-    border-radius: 39px;
-    background-color: rgba(9, 19, 13, 0.94);
+    right: 44px;
+    bottom: 260px;
+    height: 84px;
+    border-radius: 42px;
+    background-color: rgba(9, 19, 13, 0.95);
     border-width: 2px;
     border-color: var(--gold);
     flex-direction: row;
     align-items: center;
-    padding-left: 28px;
-    padding-right: 28px;
-    transition: scale 0.1s ease-out;
+    padding-left: 30px;
+    padding-right: 32px;
+    transition-property: scale;
+    transition-duration: 0.1s;
 }
 
 .floating-like-pill:active {
@@ -424,11 +441,12 @@
 }
 
 .floating-like-icon {
-    width: 34px;
-    height: 34px;
-    background-image: url(project://database/Assets/_Project/Art/UI/ui_icon_like.png);
+    width: 36px;
+    height: 36px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_like.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--gold);
+    margin-right: 12px;
 }
 
 .floating-like-text {
@@ -499,7 +517,9 @@
     min-height: 100px;
     margin: 0;
     opacity: 0.75;
-    transition: opacity 0.15s ease-out;
+    transition-property: opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
 }
 
 .detail-scroll #unity-dragger:hover,

@@ -90,7 +90,24 @@ namespace JuegoTCG.UI
             btnLinkAccount = root.Q<Button>("Btn_LinkAccount");
             if (btnLinkAccount != null)
             {
-                btnLinkAccount.clicked += () => ShowFeedback("VINCULAR CUENTA", "Tu cuenta actual se encuentra sincronizada de manera anónima/Google Play Games.");
+                btnLinkAccount.clicked += () =>
+                {
+                    GoogleSignInManager.EnsureExists();
+                    GoogleSignInManager.Instance.SignIn(
+                        async (googleUser) =>
+                        {
+                            if (FirebaseAuthManager.Instance != null)
+                            {
+                                await FirebaseAuthManager.Instance.LinkGoogleAccountAsync(googleUser);
+                            }
+                            ShowFeedback("CUENTA VINCULADA", $"Tu cuenta ha sido vinculada exitosamente con Google:\n{googleUser.DisplayName} ({googleUser.Email})");
+                        },
+                        (error) =>
+                        {
+                            ShowFeedback("VINCULAR CUENTA", $"No se pudo vincular la cuenta: {error}");
+                        }
+                    );
+                };
             }
 
             // Logout Flow
@@ -117,7 +134,7 @@ namespace JuegoTCG.UI
                     {
                         FirebaseAuthManager.Instance.SignOut();
                     }
-                    SceneManager.LoadScene("SplashScreen");
+                    SceneManager.LoadScene("SplashScene");
                 };
             }
 

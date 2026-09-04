@@ -15,6 +15,9 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/✨ UI Toolkit (UXML + USS)/🏷️ Mercado UI Toolkit", priority = 26)]
         public static void BuildUIToolkitMarketScene()
         {
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Styles/MarketScreen.uss", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Views/MarketScreen.uxml", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Components/LiquidGlassNavBar.uss", ImportAssetOptions.ForceUpdate);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // Camera
@@ -43,8 +46,7 @@ namespace JuegoTCG.EditorTools
                 panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
                 panelSettings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
                 panelSettings.referenceResolution = new Vector2Int(1080, 2400);
-                panelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
-                panelSettings.match = 0.5f;
+                panelSettings.match = 0.0f;
                 AssetDatabase.CreateAsset(panelSettings, PanelSettingsPath);
                 AssetDatabase.SaveAssets();
             }

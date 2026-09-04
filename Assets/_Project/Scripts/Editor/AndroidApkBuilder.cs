@@ -21,26 +21,27 @@ namespace JuegoTCG.Editor
 
             Debug.Log("<color=cyan>[Build] Preparando compilación de APK Android...</color>");
 
-            // 1. Configurar escenas oficiales del juego
+            // 1. Configurar escenas oficiales del juego (UI Toolkit 100%)
             string[] scenes = new string[]
             {
                 "Assets/_Project/Scenes/SplashScene.unity",
                 "Assets/_Project/Scenes/LoginScene.unity",
-                "Assets/_Project/Scenes/HomeScreenScene.unity",
-                "Assets/_Project/Scenes/MyCardsScene.unity",
-                "Assets/_Project/Scenes/StoreScene.unity",
-                "Assets/_Project/Scenes/CommunityScene.unity",
-                "Assets/_Project/Scenes/VitrinesScene.unity",
-                "Assets/_Project/Scenes/TradeScene.unity",
-                "Assets/_Project/Scenes/MarketScene.unity",
-                "Assets/_Project/Scenes/FriendsScene.unity",
-                "Assets/_Project/Scenes/ProfileScene.unity",
-                "Assets/_Project/Scenes/SettingsScene.unity",
+                "Assets/_Project/Scenes/HomeScreenUIToolkitScene.unity",
+                "Assets/_Project/Scenes/MyCardsSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/StoreSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/CommunitySceneUIToolkit.unity",
+                "Assets/_Project/Scenes/VitrinesSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/TradeSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/MarketSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/FriendsSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/ProfileSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/SettingsSceneUIToolkit.unity",
                 "Assets/_Project/Scenes/PackOpeningScene.unity"
             };
 
             // 2. Ajustes de Player
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            PlayerSettings.Android.applicationEntry = AndroidApplicationEntry.Activity;
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.juansbn.juegotcg");
             PlayerSettings.productName = "JuegoTCG";
@@ -69,6 +70,16 @@ namespace JuegoTCG.Editor
             else if (summary.result == BuildResult.Failed)
             {
                 Debug.LogError($"<color=red>[Build:FALLO] La compilación falló con {summary.totalErrors} errores.</color>");
+                foreach (var step in report.steps)
+                {
+                    foreach (var msg in step.messages)
+                    {
+                        if (msg.type == LogType.Error || msg.type == LogType.Exception)
+                        {
+                            Debug.LogError($"[Build:Detalle] {msg.content}");
+                        }
+                    }
+                }
             }
         }
     }

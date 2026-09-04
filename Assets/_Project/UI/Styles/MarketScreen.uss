@@ -20,11 +20,12 @@
     background-color: var(--bg-dark);
     background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
     -unity-background-scale-mode: stretch-to-fill;
-    padding-left: 40px;
-    padding-right: 40px;
-    padding-top: 56px;
+    padding-left: 44px;
+    padding-right: 44px;
+    padding-top: 140px;
     padding-bottom: 0;
     position: relative;
+    overflow: hidden;
 }
 
 /* Header */
@@ -32,8 +33,10 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
     flex-shrink: 0;
+    height: 80px;
+    width: 100%;
 }
 
 .market-header-left {
@@ -42,13 +45,13 @@
 }
 
 .back-btn {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     background-color: transparent;
     border-width: 0;
     align-items: center;
     justify-content: center;
-    margin-right: 16px;
+    margin-right: 18px;
     padding: 0;
 }
 
@@ -57,17 +60,17 @@
 }
 
 .back-btn-icon {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_back.png");
     -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: rgba(255, 255, 255, 0.75);
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0.85);
 }
 
 .market-title {
-    font-size: 52px;
+    font-size: 56px;
     -unity-font-style: bold;
-    letter-spacing: 8px;
+    letter-spacing: 5px;
     color: var(--text-white);
 }
 
@@ -75,25 +78,25 @@
 .currency-pill {
     flex-direction: row;
     align-items: center;
-    height: 64px;
+    height: 74px;
     background-color: rgba(0, 0, 0, 0.45);
     border-width: 1.5px;
     border-color: var(--gold-border);
-    border-radius: 32px;
-    padding-left: 18px;
-    padding-right: 22px;
+    border-radius: 37px;
+    padding-left: 20px;
+    padding-right: 24px;
 }
 
 .coin-icon {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
     -unity-background-scale-mode: scale-to-fit;
     margin-right: 10px;
 }
 
 .coins-text {
-    font-size: 26px;
+    font-size: 28px;
     -unity-font-style: bold;
     color: var(--gold);
     letter-spacing: 1px;
@@ -108,13 +111,13 @@
 }
 
 .mode-tab-pill {
-    height: 64px;
-    border-radius: 32px;
-    padding-left: 32px;
-    padding-right: 32px;
+    height: 76px;
+    border-radius: 38px;
+    padding-left: 36px;
+    padding-right: 36px;
     align-items: center;
     justify-content: center;
-    margin-right: 16px;
+    margin-right: 18px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
     background-color: transparent;
@@ -132,7 +135,7 @@
 }
 
 .mode-tab-label {
-    font-size: 24px;
+    font-size: 28px;
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: var(--text-gray);
@@ -151,13 +154,13 @@
 }
 
 .rarity-pill {
-    height: 54px;
-    border-radius: 27px;
-    padding-left: 24px;
-    padding-right: 24px;
+    height: 64px;
+    border-radius: 32px;
+    padding-left: 26px;
+    padding-right: 26px;
     align-items: center;
     justify-content: center;
-    margin-right: 12px;
+    margin-right: 14px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
     background-color: transparent;
@@ -175,7 +178,7 @@
 }
 
 .rarity-pill-label {
-    font-size: 20px;
+    font-size: 24px;
     -unity-font-style: bold;
     letter-spacing: 1px;
     color: var(--text-gray);
@@ -195,17 +198,19 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding-bottom: 230px;
+    padding-bottom: 280px;
+    padding-right: 20px;
+    width: 100%;
 }
 
 /* Market Card */
 .market-card {
-    width: 48.5%;
+    width: 48.2%;
     background-color: var(--card-bg);
-    border-radius: 22px;
+    border-radius: 26px;
     border-width: 1.5px;
     border-color: var(--rarity-common);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     overflow: hidden;
     transition-property: scale, border-color;
     transition-duration: 0.15s;
@@ -224,39 +229,39 @@
 .market-card-seller {
     flex-direction: row;
     align-items: center;
-    padding: 12px 14px;
+    padding: 14px 18px;
     border-bottom-width: 1px;
     border-bottom-color: var(--border-subtle);
     background-color: rgba(0, 0, 0, 0.20);
 }
 
 .seller-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 18px;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
     background-color: rgba(255, 255, 255, 0.08);
     border-width: 1px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
-    margin-right: 10px;
+    margin-right: 12px;
 }
 
 .seller-avatar-text {
-    font-size: 14px;
+    font-size: 20px;
     -unity-font-style: bold;
     color: var(--text-gray);
 }
 
 .seller-name {
-    font-size: 20px;
+    font-size: 24px;
     -unity-font-style: bold;
     color: var(--text-white);
     flex-grow: 1;
 }
 
 .seller-time {
-    font-size: 18px;
+    font-size: 20px;
     color: var(--text-dim);
 }
 
@@ -264,25 +269,25 @@
 .market-card-body {
     align-items: center;
     justify-content: center;
-    padding: 24px 14px 16px;
+    padding: 26px 16px 20px;
 }
 
 .card-big-initials {
-    font-size: 56px;
+    font-size: 68px;
     -unity-font-style: bold;
-    color: rgba(255, 255, 255, 0.20);
-    margin-bottom: 4px;
-}
-
-.card-player-name {
-    font-size: 24px;
-    -unity-font-style: bold;
-    color: var(--text-white);
+    color: rgba(255, 255, 255, 0.45);
     margin-bottom: 6px;
 }
 
+.card-player-name {
+    font-size: 30px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin-bottom: 8px;
+}
+
 .card-rarity-badge {
-    font-size: 18px;
+    font-size: 22px;
     -unity-font-style: bold;
     letter-spacing: 2px;
 }
@@ -294,7 +299,7 @@
 
 /* Card Footer (Price & Buy Button) */
 .market-card-footer {
-    padding: 14px 16px 16px;
+    padding: 16px 18px 18px;
     border-top-width: 1px;
     border-top-color: var(--border-subtle);
     background-color: rgba(0, 0, 0, 0.15);
@@ -303,34 +308,34 @@
 .market-price-pill {
     flex-direction: row;
     align-items: center;
-    height: 48px;
-    border-radius: 12px;
+    height: 56px;
+    border-radius: 14px;
     background-color: rgba(0, 0, 0, 0.35);
     border-width: 1px;
     border-color: var(--border-subtle);
-    padding-left: 14px;
-    padding-right: 14px;
-    margin-bottom: 12px;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 14px;
 }
 
 .price-coin-icon {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
     -unity-background-scale-mode: scale-to-fit;
-    margin-right: 8px;
+    margin-right: 10px;
 }
 
 .price-text {
-    font-size: 22px;
+    font-size: 28px;
     -unity-font-style: bold;
     color: var(--gold);
     letter-spacing: 1px;
 }
 
 .market-btn-buy {
-    height: 60px;
-    border-radius: 14px;
+    height: 72px;
+    border-radius: 16px;
     background-color: var(--gold);
     border-width: 0;
     align-items: center;
@@ -366,15 +371,17 @@
 }
 
 .duplicate-card {
-    width: 48.5%;
+    width: 48.2%;
+    height: 480px;
     background-color: var(--card-bg);
-    border-radius: 22px;
+    border-radius: 26px;
     border-width: 1.5px;
     border-color: var(--rarity-common);
-    padding: 24px 18px 20px;
+    padding: 24px 20px;
     position: relative;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 24px;
 }
 
 .duplicate-card-common { border-color: var(--rarity-common); }
@@ -384,17 +391,17 @@
 
 .duplicate-badge {
     position: absolute;
-    top: 14px;
-    left: 14px;
+    top: 18px;
+    left: 18px;
     background-color: rgba(0, 0, 0, 0.65);
-    border-radius: 8px;
-    padding: 4px 8px;
+    border-radius: 12px;
+    padding: 6px 12px;
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.15);
 }
 
 .duplicate-badge-text {
-    font-size: 18px;
+    font-size: 22px;
     -unity-font-style: bold;
 }
 
@@ -403,23 +410,23 @@
 
 .duplicate-card-body {
     align-items: center;
-    margin-top: 10px;
+    margin-top: 16px;
     margin-bottom: 20px;
 }
 
 .duplicate-player-name {
     font-size: 22px;
-    color: rgba(255, 255, 255, 0.55);
-    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 6px;
 }
 
 .btn-publish {
     width: 100%;
-    height: 56px;
-    border-radius: 12px;
-    background-color: rgba(232, 168, 32, 0.12);
-    border-width: 1px;
-    border-color: rgba(232, 168, 32, 0.35);
+    height: 72px;
+    border-radius: 16px;
+    background-color: rgba(232, 168, 32, 0.15);
+    border-width: 1.5px;
+    border-color: rgba(232, 168, 32, 0.45);
     align-items: center;
     justify-content: center;
 }
@@ -429,9 +436,9 @@
 }
 
 .btn-publish-text {
-    font-size: 20px;
+    font-size: 24px;
     -unity-font-style: bold;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     color: var(--gold);
 }
 
@@ -441,11 +448,12 @@
 }
 
 .active-listings-title {
-    font-size: 32px;
+    font-size: 36px;
     -unity-font-style: bold;
     letter-spacing: 4px;
     color: var(--text-white);
-    margin-bottom: 20px;
+    margin-top: 32px;
+    margin-bottom: 24px;
 }
 
 .active-listings-list {
@@ -454,11 +462,11 @@
 
 .active-listing-card {
     background-color: var(--card-bg);
-    border-radius: 22px;
+    border-radius: 26px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    padding: 22px 24px;
-    margin-bottom: 20px;
+    padding: 26px 28px;
+    margin-bottom: 24px;
 }
 
 .active-listing-top {
@@ -468,14 +476,14 @@
 }
 
 .active-mini-card {
-    width: 90px;
-    height: 120px;
-    border-radius: 16px;
+    width: 110px;
+    height: 150px;
+    border-radius: 18px;
     background-color: #090F0C;
     border-width: 2px;
     align-items: center;
     justify-content: center;
-    margin-right: 22px;
+    margin-right: 24px;
     flex-shrink: 0;
 }
 
@@ -485,9 +493,9 @@
 .active-mini-card-common { border-color: var(--rarity-common); }
 
 .active-mini-card-text {
-    font-size: 28px;
+    font-size: 36px;
     -unity-font-style: bold;
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.45);
 }
 
 .active-listing-info {
@@ -495,17 +503,17 @@
 }
 
 .active-listing-name {
-    font-size: 30px;
+    font-size: 34px;
     -unity-font-style: bold;
     color: var(--text-white);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .active-listing-rarity {
-    font-size: 18px;
+    font-size: 22px;
     -unity-font-style: bold;
     letter-spacing: 2px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .active-listing-rarity-rare { color: var(--rarity-rare); }
@@ -516,19 +524,19 @@
 .active-price-pill {
     flex-direction: row;
     align-items: center;
-    height: 48px;
-    border-radius: 12px;
+    height: 56px;
+    border-radius: 14px;
     background-color: rgba(0, 0, 0, 0.35);
     border-width: 1px;
     border-color: var(--border-subtle);
-    padding-left: 14px;
-    padding-right: 14px;
+    padding-left: 18px;
+    padding-right: 20px;
     align-self: flex-start;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .active-listing-time {
-    font-size: 18px;
+    font-size: 22px;
     color: var(--text-dim);
 }
 
@@ -539,14 +547,14 @@
 
 .btn-edit-price {
     flex: 1;
-    height: 60px;
-    border-radius: 14px;
+    height: 72px;
+    border-radius: 16px;
     background-color: rgba(255, 255, 255, 0.05);
     border-width: 1px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
-    margin-right: 12px;
+    margin-right: 14px;
 }
 
 .btn-edit-price:active {
@@ -554,19 +562,19 @@
 }
 
 .btn-edit-price-text {
-    font-size: 20px;
+    font-size: 24px;
     -unity-font-style: bold;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     color: var(--text-gray);
 }
 
 .btn-withdraw {
     flex: 1;
-    height: 60px;
-    border-radius: 14px;
+    height: 72px;
+    border-radius: 16px;
     background-color: rgba(220, 50, 50, 0.08);
     border-width: 1px;
-    border-color: rgba(220, 50, 50, 0.28);
+    border-color: rgba(220, 50, 50, 0.32);
     align-items: center;
     justify-content: center;
 }
@@ -576,9 +584,9 @@
 }
 
 .btn-withdraw-text {
-    font-size: 20px;
+    font-size: 24px;
     -unity-font-style: bold;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     color: rgba(248, 113, 113, 0.90);
 }
 
@@ -687,6 +695,85 @@
 
 .modal-hidden {
     display: none;
+}
+
+
+/* ==========================================================================
+   INTEGRATED MOBILE SCROLLBAR (Figma Sleek Golden Style)
+   ========================================================================== */
+.market-scroll-view #unity-content-container {
+    padding-bottom: 280px;
+    padding-right: 24px;
+    width: 100%;
+}
+
+.market-scroll-view .unity-scroller--vertical,
+.market-scroll-view #unity-vertical-scroller,
+.market-scroll-view .unity-scroller {
+    width: 6px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    bottom: 240px;
+}
+
+.market-scroll-view .unity-scroller--horizontal,
+.market-scroll-view #unity-horizontal-scroller {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.market-scroll-view .unity-scroller__low-button,
+.market-scroll-view .unity-scroller__high-button,
+.market-scroll-view #unity-low-button,
+.market-scroll-view #unity-high-button,
+.market-scroll-view .unity-repeat-button {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.market-scroll-view .unity-slider {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    width: 6px;
+}
+
+.market-scroll-view #unity-tracker,
+.market-scroll-view .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    margin: 0;
+}
+
+.market-scroll-view #unity-dragger,
+.market-scroll-view .unity-base-slider__dragger {
+    background-color: var(--gold);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    min-height: 120px;
+    margin: 0;
+    opacity: 0.65;
+    transition-property: opacity;
+    transition-duration: 0.15s;
+}
+
+.market-scroll-view #unity-dragger:hover,
+.market-scroll-view #unity-dragger:active {
+    background-color: #FFD257;
+    opacity: 1;
 }
 
 #BottomNavBar {

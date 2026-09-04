@@ -12,6 +12,7 @@ namespace JuegoTCG.UI
     /// la cancha táctica con el 11 Ideal interactivo, las cartas destacadas
     /// y la navegación global de las 5 pestañas.
     /// </summary>
+    [ExecuteAlways]
     [RequireComponent(typeof(UIDocument))]
     public class UIToolkitProfileController : MonoBehaviour
     {

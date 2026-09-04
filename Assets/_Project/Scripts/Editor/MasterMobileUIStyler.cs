@@ -55,7 +55,7 @@ namespace JuegoTCG.Editor
             PixelPerfectFigmaOptimizer.ApplyPixelPerfectOptimization();
 
             // 7. Abrir HomeScreenScene para visualización inmediata
-            EditorSceneManager.OpenScene("Assets/_Project/Scenes/HomeScreenScene.unity");
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/HomeScreenUIToolkitScene.unity");
 
             Debug.Log("<color=gold>[Styler:COMPLETO] ¡Todas las pantallas tienen ahora el diseño pulido, estético y responsivo para celulares!</color>");
         }
@@ -71,7 +71,7 @@ namespace JuegoTCG.Editor
 
             RegisterAllProjectScenesInBuildSettings();
             EditorTools.HomeScreenSceneBuilder.BuildHomeScreenScene();
-            EditorSceneManager.OpenScene("Assets/_Project/Scenes/HomeScreenScene.unity");
+            EditorSceneManager.OpenScene("Assets/_Project/Scenes/HomeScreenUIToolkitScene.unity");
             Debug.Log("<color=gold>[Styler:Inicio] ¡Pantalla de Inicio reconstruida con calidad AAA!</color>");
         }
 
@@ -179,16 +179,16 @@ namespace JuegoTCG.Editor
             {
                 "Assets/_Project/Scenes/SplashScene.unity",
                 "Assets/_Project/Scenes/LoginScene.unity",
-                "Assets/_Project/Scenes/HomeScreenScene.unity",
-                "Assets/_Project/Scenes/MyCardsScene.unity",
-                "Assets/_Project/Scenes/StoreScene.unity",
-                "Assets/_Project/Scenes/CommunityScene.unity",
-                "Assets/_Project/Scenes/VitrinesScene.unity",
-                "Assets/_Project/Scenes/TradeScene.unity",
-                "Assets/_Project/Scenes/MarketScene.unity",
-                "Assets/_Project/Scenes/FriendsScene.unity",
-                "Assets/_Project/Scenes/ProfileScene.unity",
-                "Assets/_Project/Scenes/SettingsScene.unity",
+                "Assets/_Project/Scenes/HomeScreenUIToolkitScene.unity",
+                "Assets/_Project/Scenes/MyCardsSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/StoreSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/CommunitySceneUIToolkit.unity",
+                "Assets/_Project/Scenes/VitrinesSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/TradeSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/MarketSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/FriendsSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/ProfileSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/SettingsSceneUIToolkit.unity",
                 "Assets/_Project/Scenes/PackOpeningScene.unity"
             };
 

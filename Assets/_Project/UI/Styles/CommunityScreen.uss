@@ -1,11 +1,17 @@
+/* ==========================================================================
+   COMMUNITY SCREEN - UI TOOLKIT USS (1080x2400 Figma 1:1 Mobile Layout)
+   Figma Fidelity: Docs/Pantallas 2.2 App.tsx lines 890-960
+   ========================================================================== */
+
 :root {
     --bg-dark: #06110B;
     --card-bg: rgba(13, 26, 19, 0.85);
     --gold: #E8A820;
     --gold-border: rgba(232, 168, 32, 0.70);
     --text-white: #F5F5F7;
+    --text-silver: rgba(255, 255, 255, 0.88);
     --text-gray: rgba(255, 255, 255, 0.65);
-    --border-subtle: rgba(255, 255, 255, 0.12);
+    --border-subtle: rgba(255, 255, 255, 0.13);
 }
 
 .screen-container {
@@ -14,30 +20,36 @@
     background-color: var(--bg-dark);
     background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
     -unity-background-scale-mode: stretch-to-fill;
-    padding-left: 40px;
-    padding-right: 40px;
-    padding-top: 56px;
+    padding-left: 44px;
+    padding-right: 44px;
+    padding-top: 140px;
     padding-bottom: 0;
     position: relative;
+    overflow: hidden;
 }
 
-/* Header */
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
 .community-header {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
     flex-shrink: 0;
+    width: 100%;
 }
 
 .community-title {
-    font-size: 56px;
+    font-size: 60px;
     -unity-font-style: bold;
-    letter-spacing: 8px;
+    letter-spacing: 6px;
     color: var(--text-white);
 }
 
-/* 2x2 Grid */
+/* ==========================================================================
+   2x2 HUB GRID (Tarjetas 460px de alto, casi cuadradas estilo Figma)
+   ========================================================================== */
 .community-grid {
     flex-direction: row;
     flex-wrap: wrap;
@@ -46,16 +58,16 @@
 }
 
 .community-card {
-    width: 48.5%;
-    height: 380px;
+    width: 48.2%;
+    height: 460px;
     background-color: var(--card-bg);
-    border-radius: 24px;
+    border-radius: 32px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
-    padding: 24px;
-    margin-bottom: 24px;
+    padding: 28px;
+    margin-bottom: 28px;
     position: relative;
     transition-property: scale;
     transition-duration: 0.15s;
@@ -63,16 +75,21 @@
 
 .community-card:hover {
     scale: 1.03;
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.28);
 }
 
+.community-card:active {
+    scale: 0.96;
+}
+
+/* Notification Badge (Intercambio 3, Amigos 2) */
 .community-card-badge {
     position: absolute;
-    top: 18px;
-    right: 18px;
-    width: 44px;
-    height: 44px;
-    border-radius: 22px;
+    top: 24px;
+    right: 24px;
+    width: 54px;
+    height: 54px;
+    border-radius: 27px;
     border-width: 2px;
     border-color: var(--gold);
     background-color: rgba(6, 17, 11, 0.95);
@@ -81,26 +98,33 @@
 }
 
 .community-badge-text {
-    font-size: 24px;
+    font-size: 28px;
     -unity-font-style: bold;
     color: var(--gold);
     -unity-text-align: middle-center;
 }
 
+/* Card Icon (88x88px) */
 .community-card-icon {
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
     -unity-background-scale-mode: scale-to-fit;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
+    -unity-background-image-tint-color: var(--text-silver);
 }
 
+/* Card Label */
 .community-card-label {
-    font-size: 28px;
+    font-size: 34px;
     -unity-font-style: bold;
-    color: var(--text-gray);
+    color: var(--text-silver);
     -unity-text-align: middle-center;
+    letter-spacing: 1px;
 }
 
+/* ==========================================================================
+   LIQUID GLASS BOTTOM NAV
+   ========================================================================== */
 #BottomNavBar {
     position: absolute;
     bottom: 0;

@@ -91,8 +91,8 @@ namespace JuegoTCG.UI
             yield return new WaitForSeconds(0.2f);
 
             // Transición directa a Inicio sin pedir formulario de login (Fricción Cero - GDD 10.1)
-            Debug.Log("<color=green>[Splash] Sesión lista. Entrando a Inicio...</color>");
-            SceneManager.LoadScene("HomeScreenScene");
+            Debug.Log("<color=green>[Splash] Sesión lista. Entrando a Inicio UI Toolkit...</color>");
+            SceneManager.LoadScene("HomeScreenUIToolkitScene");
         }
     }
 }

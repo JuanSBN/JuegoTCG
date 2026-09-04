@@ -60,7 +60,7 @@
             <ui:Label text="VER ANUNCIO" class="section-heading" />
             <ui:Button name="AdBannerButton" class="ad-banner">
                 <ui:VisualElement class="ad-play-circle">
-                    <ui:Label text="▶" class="ad-play-icon" />
+                    <ui:VisualElement class="ad-play-icon" />
                 </ui:VisualElement>
                 <ui:VisualElement class="ad-info-container">
                     <ui:Label text="Ve un anuncio y gana 1 sobre" class="ad-title" />

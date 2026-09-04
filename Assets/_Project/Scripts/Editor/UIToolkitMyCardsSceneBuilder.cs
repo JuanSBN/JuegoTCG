@@ -15,6 +15,9 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/✨ UI Toolkit (UXML + USS)/🃏 Mis Cartas UI Toolkit", priority = 22)]
         public static void BuildUIToolkitMyCardsScene()
         {
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Styles/MyCardsScreen.uss", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Views/MyCardsScreen.uxml", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/_Project/UI/Components/LiquidGlassNavBar.uss", ImportAssetOptions.ForceUpdate);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             // Camera

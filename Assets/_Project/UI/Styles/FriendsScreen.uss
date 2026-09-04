@@ -1,3 +1,9 @@
+/* ==========================================================================
+   FRIENDS SCREEN - DESIGN TOKENS & FIGMA FIDELITY (1080x2400)
+   Figma Source: docs/Pantallas 2.2/src/App.tsx lines 3019-3250
+   Scale Factor: 2.75x (1080 / 393)
+   ========================================================================== */
+
 :root {
     --bg-dark: #06110B;
     --card-bg: rgba(13, 26, 19, 0.85);
@@ -18,17 +24,21 @@
     -unity-background-scale-mode: stretch-to-fill;
     padding-left: 44px;
     padding-right: 44px;
-    padding-top: 72px;
+    padding-top: 140px;
     padding-bottom: 0;
     position: relative;
+    overflow: hidden;
 }
 
-/* Header */
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
 .friends-header {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     flex-shrink: 0;
+    height: 80px;
     width: 100%;
 }
 
@@ -56,62 +66,109 @@
 }
 
 .friends-title {
-    font-size: 52px;
+    font-size: 56px;
     -unity-font-style: bold;
-    letter-spacing: 6px;
+    letter-spacing: 5px;
     color: var(--text-white);
 }
 
-/* ─────────────────────────────────────────────────────────── */
-/* SCROLLBAR INTEGRADA (FIGMA GOLDEN PILL)                     */
-/* ─────────────────────────────────────────────────────────── */
+/* ==========================================================================
+   SCROLLBAR INTEGRADA (FIGMA GOLDEN PILL)
+   ========================================================================== */
 .friends-scroll-view {
-    flex: 1;
+    flex-grow: 1;
     margin-bottom: 0;
     width: 100%;
+    position: relative;
 }
 
-.friends-scroll-view .unity-scroller--vertical {
-    width: 8px;
-    margin-right: -28px;
-}
-
-.friends-scroll-view .unity-scroller--vertical .unity-base-slider__tracker {
-    background-color: transparent;
-    border-width: 0;
-}
-
-.friends-scroll-view .unity-scroller--vertical .unity-base-slider__dragger {
-    width: 8px;
-    background-color: rgba(232, 168, 32, 0.55);
-    border-radius: 4px;
-    border-width: 0;
-    left: 0;
-}
-
-.friends-scroll-view .unity-scroller--vertical .unity-scroller__low-button,
-.friends-scroll-view .unity-scroller--vertical .unity-scroller__high-button {
-    display: none;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* Safe Area Bottom Padding for Floating Nav Bar */
+.friends-scroll-view #unity-content-container,
 .friends-scroll-content {
-    padding-bottom: 340px;
+    padding-bottom: 380px;
+    padding-right: 24px;
     width: 100%;
 }
 
-/* ─────────────────────────────────────────────────────────── */
-/* CARD 1: TU CÓDIGO DE AMIGO Y BÚSQUEDA INTEGRADA             */
-/* ─────────────────────────────────────────────────────────── */
+.friends-scroll-view .unity-scroller--vertical,
+.friends-scroll-view #unity-vertical-scroller,
+.friends-scroll-view .unity-scroller {
+    width: 6px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    bottom: 240px;
+}
+
+.friends-scroll-view .unity-scroller--horizontal,
+.friends-scroll-view #unity-horizontal-scroller {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.friends-scroll-view .unity-scroller__low-button,
+.friends-scroll-view .unity-scroller__high-button,
+.friends-scroll-view #unity-low-button,
+.friends-scroll-view #unity-high-button,
+.friends-scroll-view .unity-repeat-button {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.friends-scroll-view .unity-slider {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    width: 6px;
+}
+
+.friends-scroll-view #unity-tracker,
+.friends-scroll-view .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    margin: 0;
+}
+
+.friends-scroll-view #unity-dragger,
+.friends-scroll-view .unity-scroller--vertical .unity-base-slider__dragger,
+.friends-scroll-view .unity-base-slider__dragger {
+    background-color: var(--gold);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    min-height: 120px;
+    margin: 0;
+    opacity: 0.65;
+    transition-property: opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
+}
+
+.friends-scroll-view #unity-dragger:hover,
+.friends-scroll-view #unity-dragger:active {
+    background-color: #FFD257;
+    opacity: 1;
+}
+
+/* ==========================================================================
+   CARD 1: TU CÓDIGO DE AMIGO Y BÚSQUEDA INTEGRADA
+   ========================================================================== */
 .friend-code-box {
     background-color: var(--card-bg);
-    border-radius: 26px;
+    border-radius: 30px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    padding: 30px 32px;
+    padding: 34px 34px;
     margin-bottom: 36px;
     width: 100%;
 }
@@ -120,7 +177,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: 26px;
+    width: 100%;
 }
 
 .code-text-group {
@@ -134,22 +192,25 @@
 }
 
 .my-friend-code {
-    font-size: 52px;
+    font-size: 56px;
     -unity-font-style: bold;
     letter-spacing: 5px;
     color: var(--text-white);
 }
 
 .btn-copy {
-    height: 64px;
-    border-radius: 16px;
+    height: 68px;
+    border-radius: 18px;
     background-color: rgba(255, 255, 255, 0.06);
     border-width: 1px;
     border-color: var(--border-subtle);
     flex-direction: row;
     align-items: center;
-    padding-left: 22px;
-    padding-right: 24px;
+    padding-left: 24px;
+    padding-right: 26px;
+    transition-property: scale, background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
 }
 
 .btn-copy:active {
@@ -157,8 +218,8 @@
 }
 
 .copy-icon {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_copy.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.65);
@@ -166,7 +227,7 @@
 }
 
 .copy-text {
-    font-size: 22px;
+    font-size: 24px;
     -unity-font-style: bold;
     letter-spacing: 1.5px;
     color: var(--text-gray);
@@ -176,25 +237,26 @@
 .search-input-row {
     flex-direction: row;
     align-items: center;
+    width: 100%;
 }
 
 .search-box {
     flex: 1;
-    height: 76px;
-    border-radius: 18px;
+    height: 86px;
+    border-radius: 22px;
     background-color: rgba(255, 255, 255, 0.05);
     border-width: 1.5px;
     border-color: var(--border-subtle);
     flex-direction: row;
     align-items: center;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 22px;
+    padding-right: 22px;
     margin-right: 16px;
 }
 
 .search-icon {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_search.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.35);
@@ -213,26 +275,29 @@
     background-color: transparent;
     border-width: 0;
     color: var(--text-white);
-    font-size: 26px;
+    font-size: 28px;
     padding: 0;
     margin: 0;
 }
 
 .search-input-field > .unity-base-text-field__input--placeholder {
     color: var(--text-dim);
-    font-size: 26px;
+    font-size: 28px;
 }
 
 .btn-add-friend {
-    height: 76px;
-    padding-left: 32px;
-    padding-right: 32px;
-    min-width: 150px;
-    border-radius: 18px;
+    height: 86px;
+    padding-left: 34px;
+    padding-right: 34px;
+    min-width: 156px;
+    border-radius: 22px;
     background-color: var(--gold);
     border-width: 0;
     align-items: center;
     justify-content: center;
+    transition-property: scale;
+    transition-duration: 0.12s;
+    transition-timing-function: ease-out;
 }
 
 .btn-add-friend:active {
@@ -240,33 +305,34 @@
 }
 
 .btn-add-friend-text {
-    font-size: 24px;
+    font-size: 28px;
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: #0D1A13;
 }
 
-/* ─────────────────────────────────────────────────────────── */
-/* SECCIÓN: SOLICITUDES                                        */
-/* ─────────────────────────────────────────────────────────── */
+/* ==========================================================================
+   SECCIÓN: SOLICITUDES PENDIENTES
+   ========================================================================== */
 .section-header-row {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    width: 100%;
 }
 
 .section-title {
-    font-size: 34px;
+    font-size: 38px;
     -unity-font-style: bold;
     letter-spacing: 4px;
     color: var(--text-white);
-    margin-right: 14px;
+    margin-right: 16px;
 }
 
 .requests-badge {
-    width: 38px;
-    height: 38px;
-    border-radius: 19px;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
     background-color: rgba(0, 0, 0, 0.55);
     border-width: 1.5px;
     border-color: var(--gold-border);
@@ -276,7 +342,7 @@
 }
 
 .requests-badge-text {
-    font-size: 20px;
+    font-size: 24px;
     -unity-font-style: bold;
     color: var(--gold);
     -unity-text-align: middle-center;
@@ -284,20 +350,21 @@
 
 .request-card {
     background-color: var(--card-bg);
-    border-radius: 22px;
+    border-radius: 26px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    padding: 20px 24px;
+    padding: 0 28px;
+    height: 124px;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     width: 100%;
 }
 
 .avatar-circle {
-    width: 68px;
-    height: 68px;
-    border-radius: 34px;
+    width: 72px;
+    height: 72px;
+    border-radius: 36px;
     background-color: rgba(255, 255, 255, 0.08);
     border-width: 1.5px;
     border-color: var(--border-subtle);
@@ -308,13 +375,13 @@
 }
 
 .avatar-text {
-    font-size: 24px;
+    font-size: 28px;
     -unity-font-style: bold;
     color: var(--text-gray);
 }
 
 .request-user-name {
-    font-size: 28px;
+    font-size: 32px;
     -unity-font-style: bold;
     color: var(--text-white);
     flex: 1;
@@ -330,16 +397,19 @@
 }
 
 .btn-accept-request {
-    height: 60px;
-    min-width: 130px;
-    padding-left: 20px;
-    padding-right: 20px;
-    border-radius: 14px;
+    height: 68px;
+    min-width: 140px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border-radius: 18px;
     background-color: var(--gold);
     border-width: 0;
     align-items: center;
     justify-content: center;
-    margin-right: 10px;
+    margin-right: 12px;
+    transition-property: scale;
+    transition-duration: 0.12s;
+    transition-timing-function: ease-out;
 }
 
 .btn-accept-request:active {
@@ -347,23 +417,26 @@
 }
 
 .btn-accept-request-text {
-    font-size: 21px;
+    font-size: 24px;
     -unity-font-style: bold;
     letter-spacing: 1.5px;
     color: #0D1A13;
 }
 
 .btn-reject-request {
-    height: 60px;
-    min-width: 130px;
-    padding-left: 20px;
-    padding-right: 20px;
-    border-radius: 14px;
+    height: 68px;
+    min-width: 140px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border-radius: 18px;
     background-color: rgba(255, 255, 255, 0.05);
     border-width: 1px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
+    transition-property: scale;
+    transition-duration: 0.12s;
+    transition-timing-function: ease-out;
 }
 
 .btn-reject-request:active {
@@ -371,34 +444,47 @@
 }
 
 .btn-reject-request-text {
-    font-size: 21px;
+    font-size: 24px;
     -unity-font-style: bold;
     letter-spacing: 1.5px;
     color: var(--text-gray);
 }
 
-/* ─────────────────────────────────────────────────────────── */
-/* SECCIÓN: MIS AMIGOS (Espaciosa y Proporcional como Figma)   */
-/* ─────────────────────────────────────────────────────────── */
+/* ==========================================================================
+   SECCIÓN: MIS AMIGOS
+   ========================================================================== */
 .friends-section {
-    margin-top: 32px;
-    margin-bottom: 36px;
+    margin-top: 36px;
+    margin-bottom: 40px;
+    width: 100%;
 }
 
 .friend-card {
     background-color: var(--card-bg);
-    border-radius: 26px;
+    border-radius: 30px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    padding: 30px 32px;
-    margin-bottom: 24px;
+    padding: 34px 34px;
+    margin-bottom: 28px;
     width: 100%;
 }
 
 .friend-top-row {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.friend-top-row .avatar-circle {
+    width: 84px;
+    height: 84px;
+    border-radius: 42px;
+    margin-right: 20px;
+}
+
+.friend-top-row .avatar-text {
+    font-size: 30px;
 }
 
 .friend-info-block {
@@ -406,7 +492,7 @@
 }
 
 .friend-name {
-    font-size: 34px;
+    font-size: 36px;
     -unity-font-style: bold;
     color: var(--text-white);
     margin-bottom: 4px;
@@ -424,16 +510,16 @@
 }
 
 .lightning-icon {
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_lightning.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: var(--gold);
-    margin-right: 8px;
+    margin-right: 10px;
 }
 
 .friend-power-text {
-    font-size: 32px;
+    font-size: 36px;
     -unity-font-style: bold;
     color: var(--gold);
     letter-spacing: 1px;
@@ -443,39 +529,40 @@
 .friend-stats-row {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 26px;
+    width: 100%;
 }
 
 .stats-label {
-    font-size: 24px;
+    font-size: 26px;
     color: var(--text-dim);
 }
 
 .stats-dot {
-    font-size: 22px;
+    font-size: 24px;
     color: var(--text-dim);
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 12px;
+    margin-right: 12px;
 }
 
 .progress-track {
     flex: 1;
-    height: 12px;
-    border-radius: 6px;
+    height: 16px;
+    border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.10);
-    margin-left: 16px;
-    margin-right: 16px;
+    margin-left: 18px;
+    margin-right: 18px;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    border-radius: 6px;
+    border-radius: 8px;
     background-color: var(--gold);
 }
 
 .progress-pct {
-    font-size: 24px;
+    font-size: 26px;
     color: var(--text-gray);
     -unity-font-style: bold;
 }
@@ -484,22 +571,23 @@
 .friend-actions-row {
     flex-direction: row;
     justify-content: space-between;
+    width: 100%;
 }
 
 .btn-friend-action {
     flex: 1;
-    height: 72px;
-    border-radius: 16px;
+    height: 82px;
+    border-radius: 20px;
     background-color: rgba(255, 255, 255, 0.05);
-    border-width: 1px;
+    border-width: 1.5px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
-    margin-right: 14px;
-}
-
-.btn-friend-action {
-    margin-right: 0;
+    margin-left: 6px;
+    margin-right: 6px;
+    transition-property: scale;
+    transition-duration: 0.12s;
+    transition-timing-function: ease-out;
 }
 
 .btn-friend-action:active {
@@ -507,41 +595,44 @@
 }
 
 .btn-friend-action-text {
-    font-size: 24px;
+    font-size: 26px;
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: var(--text-gray);
 }
 
-/* ─────────────────────────────────────────────────────────── */
-/* SECCIÓN: RANKING DE AMIGOS (Figma Fidelity 100%)            */
-/* ─────────────────────────────────────────────────────────── */
+/* ==========================================================================
+   SECCIÓN: RANKING DE AMIGOS
+   ========================================================================== */
 .ranking-section {
-    margin-top: 14px;
+    margin-top: 28px;
     width: 100%;
 }
 
 .ranking-title {
-    font-size: 34px;
+    font-size: 38px;
     -unity-font-style: bold;
     letter-spacing: 4px;
     color: var(--text-white);
-    margin-bottom: 22px;
+    margin-top: 36px;
+    margin-bottom: 26px;
 }
 
 .ranking-list {
     flex-direction: column;
+    width: 100%;
 }
 
 .ranking-row {
     flex-direction: row;
     align-items: center;
-    padding: 20px 24px;
+    padding: 0 28px;
+    height: 110px;
     background-color: var(--card-bg);
-    border-radius: 20px;
+    border-radius: 24px;
     border-width: 1.5px;
     border-color: var(--border-subtle);
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     width: 100%;
 }
 
@@ -551,9 +642,9 @@
 }
 
 .ranking-pos {
-    font-size: 28px;
+    font-size: 32px;
     -unity-font-style: bold;
-    width: 44px;
+    width: 52px;
     color: var(--text-dim);
 }
 
@@ -566,15 +657,15 @@
 }
 
 .ranking-avatar {
-    width: 58px;
-    height: 58px;
-    border-radius: 29px;
+    width: 72px;
+    height: 72px;
+    border-radius: 36px;
     background-color: rgba(255, 255, 255, 0.08);
     border-width: 1px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
-    margin-right: 18px;
+    margin-right: 20px;
     flex-shrink: 0;
 }
 
@@ -584,7 +675,7 @@
 }
 
 .ranking-avatar-text {
-    font-size: 22px;
+    font-size: 26px;
     -unity-font-style: bold;
     color: var(--text-gray);
 }
@@ -595,7 +686,7 @@
 
 .ranking-name {
     flex: 1;
-    font-size: 28px;
+    font-size: 32px;
     -unity-font-style: bold;
     color: var(--text-gray);
     overflow: hidden;
@@ -613,8 +704,8 @@
 }
 
 .ranking-lightning {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     background-image: url("project://database/Assets/_Project/Art/UI/ui_icon_lightning.png");
     -unity-background-scale-mode: scale-to-fit;
     -unity-background-image-tint-color: rgba(255, 255, 255, 0.35);
@@ -626,7 +717,7 @@
 }
 
 .ranking-power-text {
-    font-size: 28px;
+    font-size: 32px;
     -unity-font-style: bold;
     color: var(--text-gray);
 }
@@ -635,7 +726,9 @@
     color: var(--gold);
 }
 
-/* Feedback / Compare Modal */
+/* ==========================================================================
+   FEEDBACK / COMPARE MODAL
+   ========================================================================== */
 .modal-backdrop {
     position: absolute;
     top: 0;
@@ -695,6 +788,9 @@
     display: none;
 }
 
+/* ==========================================================================
+   LIQUID GLASS BOTTOM NAV
+   ========================================================================== */
 #BottomNavBar {
     position: absolute;
     bottom: 0;
