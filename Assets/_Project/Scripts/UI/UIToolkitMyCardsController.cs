@@ -177,6 +177,10 @@ namespace JuegoTCG.UI
                 {
                     holoMaterial.SetFloat("_HoloIntensity", 0.85f);
                     holoMaterial.SetFloat("_ShimmerSpeed", 1.6f);
+                    // Para Graphics.Blit hacia RenderTexture: sobrescribir directamente (Blend Off / One Zero)
+                    // para que las zonas transparentes (alpha < 0.05) limpien cualquier basura de memoria GPU móvil
+                    holoMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    holoMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                 }
             }
         }
@@ -191,6 +195,13 @@ namespace JuegoTCG.UI
                 rt.wrapMode = TextureWrapMode.Clamp;
                 rt.filterMode = FilterMode.Bilinear;
                 rt.Create();
+
+                // Limpiar explícitamente el buffer a transparente puro en GPU móvil
+                RenderTexture prev = RenderTexture.active;
+                RenderTexture.active = rt;
+                GL.Clear(false, true, Color.clear);
+                RenderTexture.active = prev;
+
                 holoFrameRTs[rarityIndex] = rt;
             }
             return rt;

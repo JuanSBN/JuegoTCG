@@ -7,6 +7,8 @@ Shader "Shader Graphs/HolographicFoilShader"
         _TiltPos ("Tilt Position", Vector) = (0,0,0,0)
         _HoloIntensity ("Holo Intensity", Range(0, 1)) = 0.65
         _ShimmerSpeed ("Shimmer Speed", Float) = 1.5
+        [HideInInspector] _SrcBlend ("__src", Float) = 5.0
+        [HideInInspector] _DstBlend ("__dst", Float) = 10.0
     }
 
     SubShader
@@ -23,7 +25,7 @@ Shader "Shader Graphs/HolographicFoilShader"
         Cull Off
         Lighting Off
         ZWrite Off
-        Blend SrcAlpha OneMinusSrcAlpha
+        Blend [_SrcBlend] [_DstBlend]
 
         Pass
         {
@@ -77,7 +79,7 @@ Shader "Shader Graphs/HolographicFoilShader"
             {
                 fixed4 texColor = tex2D(_MainTex, IN.texcoord) * IN.color;
 
-                if (texColor.a < 0.02)
+                if (texColor.a < 0.05)
                 {
                     return fixed4(0, 0, 0, 0);
                 }
