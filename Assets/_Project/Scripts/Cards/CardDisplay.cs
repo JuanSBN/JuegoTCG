@@ -33,6 +33,8 @@ namespace JuegoTCG.Cards
 
         public CardData CardData => cardData;
         public bool IsShowingBack => backContainer != null && backContainer.activeSelf;
+        public Sprite[] RarityFrames => rarityFrames;
+        public Material HolographicMaterial => holographicMaterial;
 
         private void Awake()
         {

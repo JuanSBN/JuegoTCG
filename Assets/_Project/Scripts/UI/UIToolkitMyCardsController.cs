@@ -116,14 +116,30 @@ namespace JuegoTCG.UI
         {
             if (rarityFrames == null || rarityFrames.Length < 6 || rarityFrames[0] == null)
             {
-                rarityFrames = new Sprite[6];
-#if UNITY_EDITOR
-                for (int i = 0; i < 6; i++)
+                // 1. Cargar desde CardPrefab en Resources (Garantizado en Android/iOS y WebGL)
+                GameObject prefab = Resources.Load<GameObject>("CardPrefab");
+                if (prefab != null)
                 {
-                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(FrameGuids[i]);
-                    rarityFrames[i] = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                    CardDisplay cd = prefab.GetComponent<CardDisplay>();
+                    if (cd != null && cd.RarityFrames != null && cd.RarityFrames.Length >= 6 && cd.RarityFrames[0] != null)
+                    {
+                        rarityFrames = cd.RarityFrames;
+                    }
+                }
+
+#if UNITY_EDITOR
+                // 2. Fallback de Unity Editor vía AssetDatabase
+                if (rarityFrames == null || rarityFrames.Length < 6 || rarityFrames[0] == null)
+                {
+                    rarityFrames = new Sprite[6];
+                    for (int i = 0; i < 6; i++)
+                    {
+                        string path = UnityEditor.AssetDatabase.GUIDToAssetPath(FrameGuids[i]);
+                        rarityFrames[i] = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                    }
                 }
 #endif
+                Debug.Log($"[MyCards] EnsureRarityFrames: {(rarityFrames != null && rarityFrames.Length >= 6 && rarityFrames[0] != null ? "EXITO" : "FALLO")}");
             }
         }
 
@@ -131,15 +147,32 @@ namespace JuegoTCG.UI
         {
             if (holoMaterial == null)
             {
+                // 1. Cargar material desde CardPrefab en Resources (incluido en build de Android/iOS)
+                GameObject prefab = Resources.Load<GameObject>("CardPrefab");
+                if (prefab != null)
+                {
+                    CardDisplay cd = prefab.GetComponent<CardDisplay>();
+                    if (cd != null && cd.HolographicMaterial != null)
+                    {
+                        holoMaterial = new Material(cd.HolographicMaterial);
+                    }
+                }
+
 #if UNITY_EDITOR
-                Material baseMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Materials/HolographicFoilMaterial.mat");
-                if (baseMat != null) holoMaterial = new Material(baseMat);
+                // 2. Fallback de Unity Editor
+                if (holoMaterial == null)
+                {
+                    Material baseMat = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/_Project/Materials/HolographicFoilMaterial.mat");
+                    if (baseMat != null) holoMaterial = new Material(baseMat);
+                }
 #endif
+                // 3. Fallback directo por Shader.Find
                 if (holoMaterial == null)
                 {
                     Shader s = Shader.Find("Shader Graphs/HolographicFoilShader");
                     if (s != null) holoMaterial = new Material(s);
                 }
+
                 if (holoMaterial != null)
                 {
                     holoMaterial.SetFloat("_HoloIntensity", 0.85f);
@@ -360,14 +393,13 @@ namespace JuegoTCG.UI
                         VisualElement frameEl = new VisualElement();
                         frameEl.AddToClassList("card-art-frame");
 
-                        if (isHolo)
+                        EnsureRarityFrames();
+                        EnsureHoloMaterial();
+
+                        if (isHolo && holoMaterial != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
                         {
-                            EnsureHoloMaterial();
                             RenderTexture holoRT = GetHoloFrameRT(rIndex);
-                            if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                            {
-                                Graphics.Blit(rarityFrames[rIndex].texture, holoRT, holoMaterial);
-                            }
+                            Graphics.Blit(rarityFrames[rIndex].texture, holoRT, holoMaterial);
                             frameEl.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
                         }
                         else if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
@@ -534,14 +566,13 @@ namespace JuegoTCG.UI
                 {
                     int rIndex = (int)item.rarity;
                     bool isHolo = (item.rarity == Rarity.Epica || item.rarity == Rarity.Legendaria || item.rarity == Rarity.Mitica || item.rarity == Rarity.FullArt);
-                    if (isHolo)
+                    EnsureRarityFrames();
+                    EnsureHoloMaterial();
+
+                    if (isHolo && holoMaterial != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
                     {
-                        EnsureHoloMaterial();
                         RenderTexture holoRT = GetHoloFrameRT(rIndex);
-                        if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                        {
-                            Graphics.Blit(rarityFrames[rIndex].texture, holoRT, holoMaterial);
-                        }
+                        Graphics.Blit(rarityFrames[rIndex].texture, holoRT, holoMaterial);
                         inspectArtFrame.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
                     }
                     else if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
