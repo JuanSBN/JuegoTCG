@@ -28,8 +28,12 @@ namespace JuegoTCG.Cards
         [Header("Owned Cards (CardId -> Count)")]
         private Dictionary<string, int> ownedCards = new Dictionary<string, int>();
 
-        [Header("Pilot Album Catalog")]
+        [Header("Pilot Album Catalog (Fallback)")]
         [SerializeField] private List<CardCatalogItem> pilotAlbumCatalog = new List<CardCatalogItem>();
+
+        [Header("Multi-Album Management")]
+        private Dictionary<string, AlbumData> loadedAlbums = new Dictionary<string, AlbumData>();
+        private Dictionary<string, CardCatalogItem> allCardsCatalog = new Dictionary<string, CardCatalogItem>();
 
         private string GetPrefKey(string cardId)
         {
@@ -75,6 +79,7 @@ namespace JuegoTCG.Cards
             Instance = this;
             DontDestroyOnLoad(gameObject);
             InitializePilotCatalog();
+            LoadAllAlbums();
             LoadCollection();
         }
 
@@ -93,12 +98,87 @@ namespace JuegoTCG.Cards
                 new CardCatalogItem { cardId = "card_09", playerName = "Kylian Mbappé", initials = "KM", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Legendaria, albumId = "album_piloto_liga" },
                 new CardCatalogItem { cardId = "card_10", playerName = "Lamine Yamal", initials = "LY", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Mitica, albumId = "album_piloto_liga" }
             };
+
+            foreach (var card in pilotAlbumCatalog)
+            {
+                if (!allCardsCatalog.ContainsKey(card.cardId))
+                {
+                    allCardsCatalog[card.cardId] = card;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Carga automáticamente todos los AlbumData ubicados en Resources/Albums/ (y subcarpetas).
+        /// </summary>
+        public void LoadAllAlbums()
+        {
+            AlbumData[] resourceAlbums = Resources.LoadAll<AlbumData>("Albums");
+            if (resourceAlbums != null)
+            {
+                foreach (var album in resourceAlbums)
+                {
+                    RegisterAlbum(album);
+                }
+            }
+
+            // También comprobar si Album_Piloto existe en ScriptableObjects (Unity Editor)
+#if UNITY_EDITOR
+            string[] albumGuids = UnityEditor.AssetDatabase.FindAssets("t:AlbumData");
+            foreach (var guid in albumGuids)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                AlbumData album = UnityEditor.AssetDatabase.LoadAssetAtPath<AlbumData>(path);
+                if (album != null)
+                {
+                    RegisterAlbum(album);
+                }
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Registra un AlbumData dinámico y sus cartas asociadas en el catálogo global.
+        /// </summary>
+        public void RegisterAlbum(AlbumData album)
+        {
+            if (album == null || string.IsNullOrEmpty(album.albumId)) return;
+
+            loadedAlbums[album.albumId] = album;
+
+            if (album.cards != null)
+            {
+                foreach (var card in album.cards)
+                {
+                    if (card == null || string.IsNullOrEmpty(card.cardId)) continue;
+
+                    string inits = "TC";
+                    if (!string.IsNullOrEmpty(card.playerName))
+                    {
+                        var parts = card.playerName.Trim().Split(' ');
+                        inits = parts.Length >= 2
+                            ? $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper()
+                            : (card.playerName.Length >= 2 ? card.playerName.Substring(0, 2).ToUpper() : card.playerName.ToUpper());
+                    }
+
+                    allCardsCatalog[card.cardId] = new CardCatalogItem
+                    {
+                        cardId = card.cardId,
+                        playerName = card.playerName,
+                        initials = inits,
+                        teamName = card.teamName,
+                        position = card.position,
+                        rarity = card.rarity,
+                        albumId = album.albumId
+                    };
+                }
+            }
         }
 
         public void LoadCollection()
         {
             ownedCards.Clear();
-            foreach (var card in pilotAlbumCatalog)
+            foreach (var card in allCardsCatalog.Values)
             {
                 string key = GetPrefKey(card.cardId);
                 int count = PlayerPrefs.GetInt(key, 0);
@@ -110,7 +190,7 @@ namespace JuegoTCG.Cards
             }
 
             CalculateCollectionPower();
-            Debug.Log($"<color=green>[Collection] Colección cargada: {ownedCards.Count}/{pilotAlbumCatalog.Count} cartas únicas desbloqueadas. Poder: {CollectionPower}</color>");
+            Debug.Log($"<color=green>[Collection] Colección cargada: {ownedCards.Count}/{allCardsCatalog.Count} cartas únicas desbloqueadas en {loadedAlbums.Count} álbumes. Poder: {CollectionPower}</color>");
         }
 
         /// <summary>
@@ -220,7 +300,7 @@ namespace JuegoTCG.Cards
         public int CalculateCollectionPower(bool notify = true)
         {
             int totalPower = 0;
-            foreach (var card in pilotAlbumCatalog)
+            foreach (var card in allCardsCatalog.Values)
             {
                 if (IsCardOwned(card.cardId))
                 {
@@ -364,20 +444,82 @@ namespace JuegoTCG.Cards
 
         public List<CardCatalogItem> GetCatalog()
         {
-            return pilotAlbumCatalog;
+            return new List<CardCatalogItem>(allCardsCatalog.Values);
         }
 
-        public void GetAlbumProgress(out int ownedUnique, out int totalCards, out float percentage)
+        public List<AlbumData> GetAllAlbums()
         {
-            totalCards = pilotAlbumCatalog.Count;
-            ownedUnique = 0;
+            return new List<AlbumData>(loadedAlbums.Values);
+        }
 
-            foreach (var card in pilotAlbumCatalog)
+        public AlbumData GetAlbum(string albumId)
+        {
+            if (string.IsNullOrEmpty(albumId)) return null;
+            loadedAlbums.TryGetValue(albumId, out var album);
+            return album;
+        }
+
+        /// <summary>
+        /// Obtiene el progreso de un álbum específico en base a su albumId.
+        /// </summary>
+        public void GetAlbumProgress(string albumId, out int ownedUnique, out int totalCards, out float percentage)
+        {
+            ownedUnique = 0;
+            totalCards = 0;
+            percentage = 0f;
+
+            if (string.IsNullOrEmpty(albumId)) return;
+
+            // Si el álbum está registrado en loadedAlbums y tiene cartas
+            if (loadedAlbums.TryGetValue(albumId, out var album) && album.cards != null && album.cards.Count > 0)
             {
-                if (IsCardOwned(card.cardId)) ownedUnique++;
+                totalCards = album.cards.Count;
+                foreach (var c in album.cards)
+                {
+                    if (c != null && IsCardOwned(c.cardId)) ownedUnique++;
+                }
+            }
+            else
+            {
+                // Buscar en allCardsCatalog por albumId
+                foreach (var c in allCardsCatalog.Values)
+                {
+                    if (c.albumId == albumId)
+                    {
+                        totalCards++;
+                        if (IsCardOwned(c.cardId)) ownedUnique++;
+                    }
+                }
             }
 
             percentage = totalCards > 0 ? (float)ownedUnique / totalCards : 0f;
+        }
+
+        /// <summary>
+        /// Comprueba si un álbum ha sido completado al 100% (todas las cartas únicas obtenidas).
+        /// </summary>
+        public bool IsAlbumCompleted(string albumId)
+        {
+            GetAlbumProgress(albumId, out int ownedUnique, out int totalCards, out float pct);
+            return totalCards > 0 && ownedUnique >= totalCards;
+        }
+
+        /// <summary>
+        /// Sobrecarga heredada para compatibilidad con código existente (evalúa el álbum piloto).
+        /// </summary>
+        public void GetAlbumProgress(out int ownedUnique, out int totalCards, out float percentage)
+        {
+            GetAlbumProgress("album_piloto_liga", out ownedUnique, out totalCards, out percentage);
+            if (totalCards == 0)
+            {
+                totalCards = pilotAlbumCatalog.Count;
+                ownedUnique = 0;
+                foreach (var card in pilotAlbumCatalog)
+                {
+                    if (IsCardOwned(card.cardId)) ownedUnique++;
+                }
+                percentage = totalCards > 0 ? (float)ownedUnique / totalCards : 0f;
+            }
         }
     }
 }
