@@ -56,8 +56,10 @@ namespace JuegoTCG.Social
     /// <summary>
     /// Servicio singleton para el Mercado de Cartas entre Jugadores (Fase 8.5).
     /// Implementa el diseño del TDD Sección 2.11 y 5.8b:
-    /// - RESERVA AL PUBLICAR: listCardForSale() descuenta y aparta la carta al crear el listado.
+    /// - RESERVA AL PUBLICAR: Descuenta y aparta la carta al crear el listado.
     /// - PRECIO LIBRE: Fijado por el vendedor en monedas del juego, sin comisión del estudio (GDD 7.1).
+    /// - REINTEGRO AL CANCELAR: Devuelve la carta al inventario del vendedor.
+    /// - TRANSACCIÓN ATÓMICA AL COMPRAR: Descuenta monedas, entrega la carta y liquida al vendedor.
     /// </summary>
     public class MarketService : MonoBehaviour
     {
@@ -67,12 +69,14 @@ namespace JuegoTCG.Social
         public event Action<MarketListingData> OnListingPublished;
         public event Action<MarketListingData> OnListingPurchased;
         public event Action<MarketListingData> OnListingCancelled;
-        public event Action<MarketListingData, int, int> OnListingPriceUpdated; // listing, oldPrice, newPrice
+        public event Action<MarketListingData, int, int> OnListingPriceUpdated;
 
         private readonly List<MarketListingData> publicListings = new List<MarketListingData>();
         private readonly List<MarketListingData> myListings = new List<MarketListingData>();
+        private readonly HashSet<string> paidSellerListings = new HashSet<string>();
 
-        private const string PREF_MY_MARKET_LISTINGS = "Local_My_Market_Listings";
+        public IReadOnlyList<MarketListingData> PublicListings => publicListings;
+        public IReadOnlyList<MarketListingData> MyListings => myListings;
 
         private void Awake()
         {
@@ -80,7 +84,6 @@ namespace JuegoTCG.Social
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
-                InitializeDefaultMarketData();
             }
             else
             {
@@ -98,28 +101,55 @@ namespace JuegoTCG.Social
             }
         }
 
-        private void InitializeDefaultMarketData()
+        /// <summary>
+        /// Sincroniza en tiempo real los listados públicos y propios desde Firestore.
+        /// </summary>
+        public async Task RefreshCloudMarketAsync()
         {
-            // Listados públicos de otros jugadores (fieles a Figma Pantalla Mercado)
-            if (publicListings.Count == 0)
-            {
-                publicListings.Add(new MarketListingData { listingId = "m_1", sellerUid = "u_1", sellerDisplayName = "ProPlayer_99", cardId = "JM", cardName = "Musiala", initials = "JM", rarity = "Común", pricePerCard = 25, status = "activo", timeAgo = "1h" });
-                publicListings.Add(new MarketListingData { listingId = "m_2", sellerUid = "u_2", sellerDisplayName = "FutbolFan_22", cardId = "RO", cardName = "Rodri", initials = "RO", rarity = "Común", pricePerCard = 30, status = "activo", timeAgo = "2h" });
-                publicListings.Add(new MarketListingData { listingId = "m_3", sellerUid = "u_3", sellerDisplayName = "GoldenShot_7", cardId = "EH", cardName = "Haaland", initials = "EH", rarity = "Común", pricePerCard = 45, status = "activo", timeAgo = "4h" });
-                publicListings.Add(new MarketListingData { listingId = "m_4", sellerUid = "u_4", sellerDisplayName = "ElChampion", cardId = "MS", cardName = "Salah", initials = "MS", rarity = "Poco común", pricePerCard = 70, status = "activo", timeAgo = "5h" });
-                publicListings.Add(new MarketListingData { listingId = "m_5", sellerUid = "u_5", sellerDisplayName = "Goleador_X", cardId = "KM", cardName = "Mbappé", initials = "KM", rarity = "Poco común", pricePerCard = 80, status = "activo", timeAgo = "6h" });
-                publicListings.Add(new MarketListingData { listingId = "m_6", sellerUid = "u_6", sellerDisplayName = "MiAmigo_01", cardId = "PE", cardName = "Pedri", initials = "PE", rarity = "Rara", pricePerCard = 180, status = "activo", timeAgo = "8h" });
-                publicListings.Add(new MarketListingData { listingId = "m_7", sellerUid = "u_7", sellerDisplayName = "Táctico_Real", cardId = "JB", cardName = "Bellingham", initials = "JB", rarity = "Rara", pricePerCard = 195, status = "activo", timeAgo = "12h" });
-                publicListings.Add(new MarketListingData { listingId = "m_8", sellerUid = "u_8", sellerDisplayName = "Samba_Star", cardId = "VJ", cardName = "Vinicius Jr.", initials = "VJ", rarity = "Rara", pricePerCard = 220, status = "activo", timeAgo = "1d" });
-                publicListings.Add(new MarketListingData { listingId = "m_9", sellerUid = "u_9", sellerDisplayName = "Guajiro_Luchodiaz", cardId = "LD", cardName = "Luis Díaz", initials = "LD", rarity = "Mítica", pricePerCard = 650, status = "activo", timeAgo = "1d" });
-                publicListings.Add(new MarketListingData { listingId = "m_10", sellerUid = "u_10", sellerDisplayName = "GoldenBoy_Spain", cardId = "LY", cardName = "Lamine Yamal", initials = "LY", rarity = "Mítica", pricePerCard = 750, status = "activo", timeAgo = "2d" });
-            }
+            if (FirebaseAuthManager.Instance == null || !FirebaseAuthManager.Instance.IsAuthenticated) return;
+            string token = FirebaseAuthManager.Instance.IdToken;
+            string myUid = FirebaseAuthManager.Instance.UserId;
+            if (string.IsNullOrEmpty(token)) return;
 
-            // Listados activos propios iniciales
-            if (myListings.Count == 0)
+            try
             {
-                myListings.Add(new MarketListingData { listingId = "my_list_1", sellerUid = "me", sellerDisplayName = "Tú", cardId = "KDB", cardName = "De Bruyne", initials = "KDB", rarity = "Rara", pricePerCard = 250, status = "activo", isMine = true, timeAgo = "Ayer" });
-                myListings.Add(new MarketListingData { listingId = "my_list_2", sellerUid = "me", sellerDisplayName = "Tú", cardId = "VO", cardName = "Osimhen", initials = "VO", rarity = "Poco común", pricePerCard = 65, status = "activo", isMine = true, timeAgo = "Hace 3d" });
+                // 1. Cargar listados públicos activos
+                var activeCloud = await FirebaseRestClient.GetActiveMarketListingsAsync(token, myUid);
+                if (activeCloud != null)
+                {
+                    publicListings.Clear();
+                    publicListings.AddRange(activeCloud);
+                }
+
+                // 2. Cargar mis publicaciones para ver si se vendió alguna
+                if (!string.IsNullOrEmpty(myUid))
+                {
+                    var myCloud = await FirebaseRestClient.GetMyMarketListingsAsync(token, myUid);
+                    if (myCloud != null)
+                    {
+                        myListings.Clear();
+                        foreach (var item in myCloud)
+                        {
+                            myListings.Add(item);
+
+                            // Si se vendió una publicación propia y aún no liquidamos las monedas al vendedor:
+                            if (item.status == "vendido" && !paidSellerListings.Contains(item.listingId))
+                            {
+                                paidSellerListings.Add(item.listingId);
+                                int revenue = item.pricePerCard * Mathf.Max(1, item.quantity);
+                                FirebaseAuthManager.Instance.AddCoins(revenue);
+                                Debug.Log($"<color=green>[MarketService] ¡Tu carta {item.cardName} fue comprada por {item.buyerDisplayName}! Recibiste +{revenue} monedas.</color>");
+                                OnListingPurchased?.Invoke(item);
+                            }
+                        }
+                    }
+                }
+
+                OnMarketUpdated?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[MarketService] Error sincronizando mercado en la nube: {ex.Message}");
             }
         }
 
@@ -148,51 +178,46 @@ namespace JuegoTCG.Social
 
         /// <summary>
         /// Obtiene las cartas duplicadas que posee el jugador listas para vender o publicar (TDD 2.11).
-        /// Una carta es duplicada si tiene 2 o más copias (totalOwned > 1).
+        /// Una carta es duplicada si tiene 2 o más copias (totalOwned > 1) según el catálogo oficial del Álbum Piloto.
         /// </summary>
         public List<DuplicateCardInfo> GetMyDuplicateCards()
         {
             var duplicates = new List<DuplicateCardInfo>();
             PlayerCollectionManager.EnsureExists();
             var colMgr = PlayerCollectionManager.Instance;
+            var catalog = colMgr != null ? colMgr.GetCatalog() : null;
 
-            string[] catalogIds = { "JM", "VO", "EH", "RO", "MS", "KM", "PE", "JB", "VJ", "LD", "LY", "KDB" };
+            if (catalog == null || catalog.Count == 0) return duplicates;
 
-            foreach (var cardId in catalogIds)
+            foreach (var card in catalog)
             {
-                int count = colMgr != null ? colMgr.GetOwnedCount(cardId) : 0;
-                // Si la colección no está poblada localmente en pruebas, proveemos los 2 duplicados del diseño (Musiala y Osimhen)
-                if (count <= 1 && (cardId == "JM" || cardId == "VO") && count == 0)
-                {
-                    count = (cardId == "JM") ? 3 : 2;
-                }
+                int count = colMgr.GetOwnedCount(card.cardId);
+                if (count <= 1) continue;
 
-                if (count > 1)
+                duplicates.Add(new DuplicateCardInfo
                 {
-                    duplicates.Add(new DuplicateCardInfo
-                    {
-                        cardId = cardId,
-                        cardName = GetCardNameFromId(cardId),
-                        initials = cardId.Length <= 3 ? cardId : cardId.Substring(0, 2).ToUpper(),
-                        rarity = GetCardRarityFromId(cardId),
-                        totalOwned = count,
-                        duplicatesAvailable = count - 1,
-                        defaultPrice = GetSuggestedPrice(cardId)
-                    });
-                }
+                    cardId = card.cardId,
+                    cardName = card.playerName,
+                    initials = card.initials,
+                    rarity = card.rarity.ToString(),
+                    totalOwned = count,
+                    duplicatesAvailable = count - 1,
+                    defaultPrice = GetSuggestedPrice(card.rarity)
+                });
             }
 
             return duplicates;
         }
 
-        private int GetSuggestedPrice(string cardId)
+        public static int GetSuggestedPrice(Rarity rarity)
         {
-            string rarity = GetCardRarityFromId(cardId);
             switch (rarity)
             {
-                case "Mítica": return 700;
-                case "Rara": return 200;
-                case "Poco común": return 70;
+                case Rarity.Mitica: return 700;
+                case Rarity.Legendaria: return 350;
+                case Rarity.Epica: return 150;
+                case Rarity.Especial: return 70;
+                case Rarity.Comun:
                 default: return 30;
             }
         }
@@ -203,8 +228,6 @@ namespace JuegoTCG.Social
         /// </summary>
         public async Task<MarketOperationResult> ListCardForSaleAsync(string cardId, int pricePerCard, int quantity = 1)
         {
-            await Task.Delay(150);
-
             if (string.IsNullOrEmpty(cardId))
             {
                 return new MarketOperationResult(false, "El identificador de la carta es inválido.");
@@ -217,7 +240,6 @@ namespace JuegoTCG.Social
 
             if (quantity <= 0) quantity = 1;
 
-            // 1. Revalidar inventario del jugador
             PlayerCollectionManager.EnsureExists();
             var colMgr = PlayerCollectionManager.Instance;
             int ownedCount = colMgr != null ? colMgr.GetOwnedCount(cardId) : 0;
@@ -227,24 +249,23 @@ namespace JuegoTCG.Social
                 return new MarketOperationResult(false, $"No posees suficientes copias de esta carta (Tienes: {ownedCount}, Solicitadas: {quantity}).");
             }
 
-            // 2. RESERVA ATÓMICA: Descontar carta de la colección local
-            // Al publicarla, queda apartada en venta y ya no cuenta como disponible para jugar o intercambiar
-            if (colMgr != null)
-            {
-                // Simulamos el descuento de copias reservadas
-                Debug.Log($"<color=cyan>[MarketService] Carta {cardId} reservada ({quantity}x) desde el inventario del jugador.</color>");
-            }
+            // 1. RESERVA ATÓMICA: Descontar carta de la colección local
+            colMgr.RemoveCard(cardId, quantity);
 
-            string listingId = $"listing_{Guid.NewGuid().ToString().Substring(0, 8)}";
-            string cardName = GetCardNameFromId(cardId);
-            string rarity = GetCardRarityFromId(cardId);
-            string initials = cardId.Length <= 3 ? cardId : cardId.Substring(0, 2).ToUpper();
+            string listingId = "list_" + Guid.NewGuid().ToString("N").Substring(0, 10);
+            string sellerUid = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.UserId : "me";
+            string sellerName = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.DisplayName : "Tú";
+
+            var cardInfo = colMgr.GetCatalog().Find(c => c.cardId == cardId);
+            string cardName = cardInfo != null ? cardInfo.playerName : $"Carta_{cardId}";
+            string initials = cardInfo != null ? cardInfo.initials : cardId.Substring(0, 2).ToUpper();
+            string rarity = cardInfo != null ? cardInfo.rarity.ToString() : "Comun";
 
             var newListing = new MarketListingData
             {
                 listingId = listingId,
-                sellerUid = "me",
-                sellerDisplayName = "Tú",
+                sellerUid = sellerUid,
+                sellerDisplayName = sellerName,
                 cardId = cardId,
                 cardName = cardName,
                 initials = initials,
@@ -256,26 +277,38 @@ namespace JuegoTCG.Social
                 timeAgo = "Ahora"
             };
 
+            // 2. Guardar en Firestore si hay sesión autenticada
+            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+            if (!string.IsNullOrEmpty(token))
+            {
+                bool cloudOk = await FirebaseRestClient.CreateMarketListingAsync(token, newListing);
+                if (!cloudOk)
+                {
+                    // Si falla la nube, revertir la deducción
+                    colMgr.AddCard(cardId, quantity);
+                    return new MarketOperationResult(false, "Error al publicar la carta en el mercado de la nube.");
+                }
+            }
+
             myListings.Insert(0, newListing);
+            publicListings.Insert(0, newListing);
             OnMarketUpdated?.Invoke();
             OnListingPublished?.Invoke(newListing);
 
-            Debug.Log($"<color=green>[MarketService] ¡Listado {listingId} publicado exitosamente! {quantity}x {cardName} por {pricePerCard} monedas.</color>");
+            Debug.Log($"<color=green>[MarketService] ¡Listado {listingId} publicado! {quantity}x {cardName} por {pricePerCard} monedas.</color>");
             return new MarketOperationResult(true, $"¡Has publicado a {cardName} por {pricePerCard} monedas!", listingId);
         }
 
         /// <summary>
         /// Compra una carta listada en el mercado (buyListedCard).
         /// TRANSACCIÓN ATÓMICA (TDD 2.11, GDD 7.1):
-        /// - Valida status activo
+        /// - Valida status activo y monedas del comprador
         /// - Descuenta monedas al comprador
-        /// - Acredita 100% al vendedor sin comisión
-        /// - Acredita la carta en userCollection del comprador
+        /// - Acredita la carta en la colección del comprador
+        /// - Actualiza en Firestore a 'vendido'
         /// </summary>
         public async Task<MarketOperationResult> BuyListedCardAsync(string listingId)
         {
-            await Task.Delay(150);
-
             if (string.IsNullOrEmpty(listingId))
             {
                 return new MarketOperationResult(false, "El identificador del listado es inválido.");
@@ -284,7 +317,6 @@ namespace JuegoTCG.Social
             var listing = publicListings.Find(x => x.listingId == listingId);
             if (listing == null)
             {
-                // Buscar también en propios por consistencia
                 listing = myListings.Find(x => x.listingId == listingId);
             }
 
@@ -295,43 +327,69 @@ namespace JuegoTCG.Social
 
             if (listing.status != "activo")
             {
-                return new MarketOperationResult(false, $"El listado ya no está disponible para compra (Estado: {listing.status}).");
+                return new MarketOperationResult(false, $"El listado ya no está disponible (Estado: {listing.status}).");
             }
 
-            if (listing.isMine || listing.sellerUid == "me")
+            string myUid = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.UserId : "me";
+            string myDisplayName = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.DisplayName : "Comprador";
+
+            if (!string.IsNullOrEmpty(myUid) && listing.sellerUid == myUid)
             {
-                return new MarketOperationResult(false, "No puedes comprar tus propios listados en el mercado.");
+                return new MarketOperationResult(false, "No puedes comprar tus propias cartas publicadas.");
             }
 
             int totalPrice = listing.pricePerCard * Math.Max(1, listing.quantity);
+            int currentCoins = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.Coins : 0;
 
-            // Marcar localmente como vendido
+            if (currentCoins < totalPrice)
+            {
+                return new MarketOperationResult(false, $"Monedas insuficientes. Requiere {totalPrice} monedas (Tienes: {currentCoins}).");
+            }
+
+            // 1. Descontar monedas
+            FirebaseAuthManager.Instance.AddCoins(-totalPrice);
+
+            // 2. Actualizar en la nube a 'vendido'
+            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+            if (!string.IsNullOrEmpty(token))
+            {
+                bool cloudOk = await FirebaseRestClient.BuyMarketListingAsync(token, listingId, myUid, myDisplayName);
+                if (!cloudOk)
+                {
+                    // Revertir descuento de monedas si falla la nube
+                    FirebaseAuthManager.Instance.AddCoins(totalPrice);
+                    return new MarketOperationResult(false, "Error al procesar la compra en la nube.");
+                }
+            }
+
+            // 3. Acreditar carta al comprador
+            PlayerCollectionManager.EnsureExists();
+            PlayerCollectionManager.Instance.AddCard(listing.cardId, listing.quantity);
+
+            // 4. Actualizar estado local
             listing.status = "vendido";
-            listing.buyerUid = "me";
-            listing.buyerDisplayName = "Tú";
+            listing.buyerUid = myUid;
+            listing.buyerDisplayName = myDisplayName;
+            publicListings.Remove(listing);
 
             OnMarketUpdated?.Invoke();
             OnListingPurchased?.Invoke(listing);
 
-            Debug.Log($"<color=green>[MarketService] ¡Compra atómica exitosa! Listado {listingId} adquirido por {totalPrice} monedas.</color>");
+            Debug.Log($"<color=green>[MarketService] ¡Compra exitosa! Adquiriste {listing.quantity}x {listing.cardName} por {totalPrice} monedas.</color>");
             return new MarketOperationResult(true, $"¡Has adquirido a {listing.cardName} por {totalPrice} monedas!", listingId);
         }
 
         /// <summary>
         /// Cancela un listado propio activo en el mercado (cancelListing).
-        /// REINTEGRO ATÓMICO (TDD 2.11): Reintegra la carta reservada al inventario del jugador.
-        /// RESTRICCIÓN: Solo el vendedor original puede cancelar su publicación.
+        /// REINTEGRO ATÓMICO (TDD 2.11): Devuelve la carta reservada al inventario del jugador.
         /// </summary>
         public async Task<MarketOperationResult> CancelListingAsync(string listingId)
         {
-            await Task.Delay(150);
-
             if (string.IsNullOrEmpty(listingId))
             {
                 return new MarketOperationResult(false, "El identificador del listado es inválido.");
             }
 
-            // Buscar en listados propios
             var listing = myListings.Find(x => x.listingId == listingId);
             if (listing == null)
             {
@@ -343,10 +401,10 @@ namespace JuegoTCG.Social
                 return new MarketOperationResult(false, "El listado de mercado no existe.");
             }
 
-            // Restringido al vendedor original
-            if (!listing.isMine && listing.sellerUid != "me")
+            string myUid = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.UserId : "me";
+            if (!listing.isMine && listing.sellerUid != myUid)
             {
-                return new MarketOperationResult(false, "Solo el vendedor que publicó la carta puede cancelarla.");
+                return new MarketOperationResult(false, "Solo el vendedor que publicó la carta puede retirarla.");
             }
 
             if (listing.status != "activo")
@@ -354,24 +412,32 @@ namespace JuegoTCG.Social
                 return new MarketOperationResult(false, $"No se puede cancelar el listado porque su estado es '{listing.status}'.");
             }
 
-            // Reintegrar al inventario local
+            // 1. Actualizar en Firestore
+            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+            if (!string.IsNullOrEmpty(token))
+            {
+                await FirebaseRestClient.CancelMarketListingAsync(token, listingId);
+            }
+
+            // 2. Reintegrar carta a la colección
+            PlayerCollectionManager.EnsureExists();
+            PlayerCollectionManager.Instance.AddCard(listing.cardId, listing.quantity);
+
             listing.status = "cancelado";
-            Debug.Log($"<color=yellow>[MarketService] Reintegrada carta {listing.cardName} ({listing.quantity}x) al inventario del jugador.</color>");
+            publicListings.Remove(listing);
 
             OnMarketUpdated?.Invoke();
             OnListingCancelled?.Invoke(listing);
 
+            Debug.Log($"<color=yellow>[MarketService] Reintegrada carta {listing.cardName} ({listing.quantity}x) al inventario del jugador.</color>");
             return new MarketOperationResult(true, $"Has retirado {listing.cardName} del mercado. La carta ha sido devuelta a tu colección.", listingId);
         }
 
         /// <summary>
         /// Actualiza el precio por carta de un listado propio activo (updateListingPrice).
-        /// RESTRICCIÓN: Solo el vendedor original puede modificar el precio.
         /// </summary>
         public async Task<MarketOperationResult> UpdateListingPriceAsync(string listingId, int newPrice)
         {
-            await Task.Delay(150);
-
             if (string.IsNullOrEmpty(listingId))
             {
                 return new MarketOperationResult(false, "El identificador del listado es inválido.");
@@ -393,8 +459,8 @@ namespace JuegoTCG.Social
                 return new MarketOperationResult(false, "El listado de mercado no existe.");
             }
 
-            // Restringido al vendedor original
-            if (!listing.isMine && listing.sellerUid != "me")
+            string myUid = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.UserId : "me";
+            if (!listing.isMine && listing.sellerUid != myUid)
             {
                 return new MarketOperationResult(false, "Solo el vendedor que publicó la carta puede modificar su precio.");
             }
@@ -405,50 +471,19 @@ namespace JuegoTCG.Social
             }
 
             int oldPrice = listing.pricePerCard;
-            listing.pricePerCard = newPrice;
 
+            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+            if (!string.IsNullOrEmpty(token))
+            {
+                await FirebaseRestClient.UpdateMarketListingPriceAsync(token, listingId, newPrice);
+            }
+
+            listing.pricePerCard = newPrice;
             OnMarketUpdated?.Invoke();
             OnListingPriceUpdated?.Invoke(listing, oldPrice, newPrice);
 
-            Debug.Log($"<color=cyan>[MarketService] Precio del listado {listingId} actualizado de {oldPrice} a {newPrice} monedas.</color>");
+            Debug.Log($"<color=cyan>[MarketService] Precio de {listing.cardName} actualizado a {newPrice} monedas.</color>");
             return new MarketOperationResult(true, $"Precio actualizado a {newPrice} monedas.", listingId);
-        }
-
-        private string GetCardNameFromId(string cardId)
-        {
-            switch (cardId)
-            {
-                case "LD": return "Luis Díaz";
-                case "VJ": return "Vinicius Jr.";
-                case "EH": return "Erling Haaland";
-                case "KM": return "Kylian Mbappé";
-                case "PE": return "Pedri González";
-                case "RO": return "Rodri Hernández";
-                case "LY": return "Lamine Yamal";
-                case "JB": return "Jude Bellingham";
-                case "MS": return "Mohamed Salah";
-                case "KDB": return "Kevin De Bruyne";
-                case "JM": return "Jamal Musiala";
-                case "VO": return "Victor Osimhen";
-                default: return $"Carta_{cardId}";
-            }
-        }
-
-        private string GetCardRarityFromId(string cardId)
-        {
-            switch (cardId)
-            {
-                case "LD":
-                case "LY": return "Mítica";
-                case "PE":
-                case "JB":
-                case "VJ":
-                case "KDB": return "Rara";
-                case "KM":
-                case "MS":
-                case "VO": return "Poco común";
-                default: return "Común";
-            }
         }
     }
 }

@@ -8,45 +8,6 @@ namespace JuegoTCG.UI
 {
     public class UIToolkitMyCardsController : MonoBehaviour
     {
-        [System.Serializable]
-        public struct CardInfo
-        {
-            public int id;
-            public string name;
-            public string initials;
-            public string rarity;
-            public int count;
-            public string position;
-            public string team;
-
-            public CardInfo(int id, string name, string initials, string rarity, int count, string position, string team)
-            {
-                this.id = id;
-                this.name = name;
-                this.initials = initials;
-                this.rarity = rarity;
-                this.count = count;
-                this.position = position;
-                this.team = team;
-            }
-        }
-
-        private static readonly CardInfo[] DefaultCards = new CardInfo[]
-        {
-            new CardInfo(1, "Luis Díaz", "LD", "Mítica", 1, "Delantero", "Liverpool / Colombia"),
-            new CardInfo(2, "Vinicius Jr.", "VJ", "Rara", 2, "Delantero", "Real Madrid / Brasil"),
-            new CardInfo(3, "Haaland", "EH", "Común", 5, "Delantero", "Man City / Noruega"),
-            new CardInfo(4, "Mbappé", "KM", "Poco común", 3, "Delantero", "Real Madrid / Francia"),
-            new CardInfo(5, "Pedri", "PE", "Rara", 1, "Mediocampista", "Barcelona / España"),
-            new CardInfo(6, "Rodri", "RO", "Común", 4, "Mediocampista", "Man City / España"),
-            new CardInfo(7, "Lamine Yamal", "LY", "Mítica", 1, "Delantero", "Barcelona / España"),
-            new CardInfo(8, "Bellingham", "JB", "Rara", 2, "Mediocampista", "Real Madrid / Inglaterra"),
-            new CardInfo(9, "Salah", "MS", "Poco común", 6, "Delantero", "Liverpool / Egipto"),
-            new CardInfo(10, "De Bruyne", "KDB", "Rara", 1, "Mediocampista", "Man City / Bélgica"),
-            new CardInfo(11, "Musiala", "JM", "Común", 3, "Mediocampista", "Bayern / Alemania"),
-            new CardInfo(12, "Osimhen", "VO", "Poco común", 2, "Delantero", "Galatasaray / Nigeria")
-        };
-
         private VisualElement root;
         private VisualElement cardsGrid;
         private VisualElement cardInspectModal;
@@ -64,11 +25,15 @@ namespace JuegoTCG.UI
         private Label inspectStatCopies;
         private Button inspectCloseBtn;
 
-        private string currentFilter = "Rareza";
+        private string currentFilter = "Album";
         private string searchQuery = "";
+        private List<CardData> loadedCardAssets = new List<CardData>();
 
         private void OnEnable()
         {
+            PlayerCollectionManager.EnsureExists();
+            LoadCardAssets();
+
             var uiDoc = GetComponent<UIDocument>();
             if (uiDoc == null || uiDoc.rootVisualElement == null) return;
             root = uiDoc.rootVisualElement;
@@ -103,9 +68,36 @@ namespace JuegoTCG.UI
 
             WireFilterPills();
             WireSearch();
-            WireCards();
             WireBottomNav();
-            UpdateTotalCount();
+
+            if (PlayerCollectionManager.Instance != null)
+            {
+                PlayerCollectionManager.Instance.OnCollectionUpdated += PopulateAlbumGrid;
+            }
+
+            PopulateAlbumGrid();
+        }
+
+        private void OnDisable()
+        {
+            if (PlayerCollectionManager.Instance != null)
+            {
+                PlayerCollectionManager.Instance.OnCollectionUpdated -= PopulateAlbumGrid;
+            }
+        }
+
+        private void LoadCardAssets()
+        {
+            loadedCardAssets.Clear();
+#if UNITY_EDITOR
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:CardData", new[] { "Assets/_Project/ScriptableObjects/PilotAlbum" });
+            foreach (string guid in guids)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                CardData card = UnityEditor.AssetDatabase.LoadAssetAtPath<CardData>(path);
+                if (card != null) loadedCardAssets.Add(card);
+            }
+#endif
         }
 
         private void WireFilterPills()
@@ -138,7 +130,6 @@ namespace JuegoTCG.UI
         {
             currentFilter = filterName;
 
-            // Update active styling
             string[] filters = new string[] { "Album", "Recientes", "Rareza", "Cantidad", "Nacion" };
             foreach (var f in filters)
             {
@@ -159,7 +150,7 @@ namespace JuegoTCG.UI
                 }
             }
 
-            FilterCards();
+            PopulateAlbumGrid();
         }
 
         private void WireSearch()
@@ -168,81 +159,169 @@ namespace JuegoTCG.UI
             searchField.RegisterValueChangedCallback(evt =>
             {
                 searchQuery = (evt.newValue ?? "").Trim().ToLower();
-                FilterCards();
+                PopulateAlbumGrid();
             });
         }
 
-        private void WireCards()
+        public void PopulateAlbumGrid()
         {
-            for (int i = 0; i < DefaultCards.Length; i++)
-            {
-                int index = i;
-                var card = DefaultCards[index];
-                var cardBtn = root.Q<Button>($"Card_{card.id}");
-                if (cardBtn != null)
-                {
-                    cardBtn.clicked += () => OpenInspectModal(card);
-                }
-            }
-        }
+            if (cardsGrid == null || PlayerCollectionManager.Instance == null) return;
 
-        private void FilterCards()
-        {
+            cardsGrid.Clear();
+            var catalog = PlayerCollectionManager.Instance.GetCatalog();
             int visibleCount = 0;
-            for (int i = 0; i < DefaultCards.Length; i++)
+
+            for (int i = 0; i < catalog.Count; i++)
             {
-                var card = DefaultCards[i];
-                var cardBtn = root.Q<Button>($"Card_{card.id}");
-                if (cardBtn == null) continue;
+                var item = catalog[i];
+                bool isOwned = PlayerCollectionManager.Instance.IsCardOwned(item.cardId);
+                int count = PlayerCollectionManager.Instance.GetOwnedCount(item.cardId);
 
-                bool matchesSearch = string.IsNullOrEmpty(searchQuery) || card.name.ToLower().Contains(searchQuery);
-                bool matchesFilter = true;
-
-                if (currentFilter == "Album" && card.rarity == "Común") matchesFilter = true;
-
-                if (matchesSearch && matchesFilter)
+                // Search query match
+                if (!string.IsNullOrEmpty(searchQuery))
                 {
-                    cardBtn.style.display = DisplayStyle.Flex;
-                    visibleCount++;
+                    if (!item.playerName.ToLower().Contains(searchQuery))
+                    {
+                        continue;
+                    }
+                }
+
+                Button cardBtn = new Button();
+                cardBtn.AddToClassList("card-item");
+
+                CardData asset = loadedCardAssets.Find(c => c.cardId == item.cardId);
+
+                if (isOwned)
+                {
+                    string rarityClass = GetRarityClass(item.rarity);
+                    cardBtn.AddToClassList(rarityClass);
+
+                    // Avatar Circle
+                    VisualElement avatarCircle = new VisualElement();
+                    avatarCircle.AddToClassList("card-avatar-circle");
+
+                    if (asset != null && asset.defaultArt != null)
+                    {
+                        avatarCircle.style.backgroundImage = new StyleBackground(asset.defaultArt);
+                    }
+                    else
+                    {
+                        Label initials = new Label(item.initials);
+                        initials.AddToClassList("card-avatar-initials");
+                        initials.AddToClassList(GetInitialsClass(item.rarity));
+                        avatarCircle.Add(initials);
+                    }
+                    cardBtn.Add(avatarCircle);
+
+                    // Player Name
+                    Label nameLbl = new Label(item.playerName);
+                    nameLbl.AddToClassList("card-player-name");
+                    cardBtn.Add(nameLbl);
+
+                    // Rarity Badge
+                    string badgeText = $"{item.rarity} ×{count}";
+                    Label badgeLbl = new Label(badgeText);
+                    badgeLbl.AddToClassList("card-rarity-badge");
+                    badgeLbl.AddToClassList(GetInitialsClass(item.rarity));
+                    cardBtn.Add(badgeLbl);
+
+                    // Click to inspect
+                    var currentItem = item;
+                    var currentCount = count;
+                    var currentAsset = asset;
+                    cardBtn.clicked += () => OpenInspectModal(currentItem, currentCount, currentAsset);
                 }
                 else
                 {
-                    cardBtn.style.display = DisplayStyle.None;
+                    // Locked Card Slot
+                    cardBtn.AddToClassList("card-locked");
+
+                    VisualElement avatarCircle = new VisualElement();
+                    avatarCircle.AddToClassList("card-avatar-circle");
+                    Label lockIcon = new Label("🔒");
+                    lockIcon.AddToClassList("card-avatar-initials");
+                    avatarCircle.Add(lockIcon);
+                    cardBtn.Add(avatarCircle);
+
+                    Label nameLbl = new Label($"#{i + 1:D2} {item.playerName}");
+                    nameLbl.AddToClassList("card-player-name");
+                    cardBtn.Add(nameLbl);
+
+                    Label badgeLbl = new Label("🔒 BLOQUEADA");
+                    badgeLbl.AddToClassList("card-rarity-badge");
+                    cardBtn.Add(badgeLbl);
                 }
+
+                cardsGrid.Add(cardBtn);
+                visibleCount++;
             }
 
+            // Update Progress Header
+            PlayerCollectionManager.Instance.GetAlbumProgress(out int ownedUnique, out int totalCards, out float percentage);
             if (cardsCountLabel != null)
             {
-                cardsCountLabel.text = $"{visibleCount} de 1,232 cartas";
+                cardsCountLabel.text = $"{ownedUnique} de {totalCards} cartas ({Mathf.RoundToInt(percentage * 100)}%)";
             }
         }
 
-        public void OpenInspectModal(CardInfo card)
+        private string GetRarityClass(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Mitica:
+                case Rarity.FullArt: return "card-mythic";
+                case Rarity.Legendaria:
+                case Rarity.Epica: return "card-rare";
+                case Rarity.Especial: return "card-uncommon";
+                default: return "card-common";
+            }
+        }
+
+        private string GetInitialsClass(Rarity rarity)
+        {
+            switch (rarity)
+            {
+                case Rarity.Mitica:
+                case Rarity.FullArt: return "initials-mythic";
+                case Rarity.Legendaria:
+                case Rarity.Epica: return "initials-rare";
+                case Rarity.Especial: return "initials-uncommon";
+                default: return "initials-common";
+            }
+        }
+
+        public void OpenInspectModal(CardCatalogItem item, int count, CardData asset)
         {
             if (cardInspectModal == null) return;
 
-            if (inspectPlayerName != null) inspectPlayerName.text = card.name;
-            if (inspectAvatarInitials != null) inspectAvatarInitials.text = card.initials;
-            if (inspectRarityBadge != null) inspectRarityBadge.text = card.rarity.ToUpper();
-            if (inspectStatPosition != null) inspectStatPosition.text = card.position;
-            if (inspectStatTeam != null) inspectStatTeam.text = card.team;
-            if (inspectStatCopies != null) inspectStatCopies.text = $"×{card.count}";
+            if (inspectPlayerName != null) inspectPlayerName.text = item.playerName;
+            if (inspectAvatarInitials != null) inspectAvatarInitials.text = item.initials;
+            if (inspectRarityBadge != null) inspectRarityBadge.text = item.rarity.ToString().ToUpper();
+            if (inspectStatPosition != null) inspectStatPosition.text = item.position;
+            if (inspectStatTeam != null) inspectStatTeam.text = item.teamName;
+            if (inspectStatCopies != null) inspectStatCopies.text = $"×{count}";
 
-            // Rarity classes on hero card
+            if (inspectAvatarCircle != null)
+            {
+                if (asset != null && asset.defaultArt != null)
+                {
+                    inspectAvatarCircle.style.backgroundImage = new StyleBackground(asset.defaultArt);
+                    if (inspectAvatarInitials != null) inspectAvatarInitials.style.display = DisplayStyle.None;
+                }
+                else
+                {
+                    inspectAvatarCircle.style.backgroundImage = null;
+                    if (inspectAvatarInitials != null) inspectAvatarInitials.style.display = DisplayStyle.Flex;
+                }
+            }
+
             if (inspectHeroCard != null)
             {
                 inspectHeroCard.RemoveFromClassList("card-mythic");
                 inspectHeroCard.RemoveFromClassList("card-rare");
                 inspectHeroCard.RemoveFromClassList("card-uncommon");
                 inspectHeroCard.RemoveFromClassList("card-common");
-
-                switch (card.rarity)
-                {
-                    case "Mítica": inspectHeroCard.AddToClassList("card-mythic"); break;
-                    case "Rara": inspectHeroCard.AddToClassList("card-rare"); break;
-                    case "Poco común": inspectHeroCard.AddToClassList("card-uncommon"); break;
-                    default: inspectHeroCard.AddToClassList("card-common"); break;
-                }
+                inspectHeroCard.AddToClassList(GetRarityClass(item.rarity));
             }
 
             cardInspectModal.RemoveFromClassList("modal-hidden");
@@ -253,14 +332,6 @@ namespace JuegoTCG.UI
             if (cardInspectModal != null)
             {
                 cardInspectModal.AddToClassList("modal-hidden");
-            }
-        }
-
-        private void UpdateTotalCount()
-        {
-            if (cardsCountLabel != null)
-            {
-                cardsCountLabel.text = "1,232 cartas";
             }
         }
 

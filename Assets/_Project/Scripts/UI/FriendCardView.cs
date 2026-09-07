@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace JuegoTCG.UI
 {
     [Serializable]
-    public class FriendData
+    public class UIFriendData
     {
         public int id;
         public string userName;
@@ -34,11 +34,11 @@ namespace JuegoTCG.UI
         [SerializeField] private Button compareButton;
         [SerializeField] private Button tradeButton;
 
-        private FriendData currentData;
-        private Action<FriendData> onCompareCallback;
-        private Action<FriendData> onTradeCallback;
+        private UIFriendData currentData;
+        private Action<UIFriendData> onCompareCallback;
+        private Action<UIFriendData> onTradeCallback;
 
-        public void Setup(FriendData data, Action<FriendData> onCompare, Action<FriendData> onTrade)
+        public void Setup(UIFriendData data, Action<UIFriendData> onCompare, Action<UIFriendData> onTrade)
         {
             currentData = data;
             onCompareCallback = onCompare;

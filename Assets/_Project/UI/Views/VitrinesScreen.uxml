@@ -5,7 +5,7 @@
     <ui:VisualElement name="VitrinesScreen" class="screen-container">
 
         <!-- ========================================== -->
-        <!-- 1. VISTA CATÁLOGO (IMAGEN 2 DE FIGMA)      -->
+        <!-- 1. VISTA CATÁLOGO                          -->
         <!-- ========================================== -->
         <ui:VisualElement name="CatalogView" class="catalog-view">
             
@@ -24,138 +24,37 @@
             <!-- Scrollable Catalog -->
             <ui:ScrollView class="catalog-scroll" show-vertical-scroller="false">
                 
+                <!-- TU VITRINA PÚBLICA -->
+                <ui:VisualElement name="MyVitrineSection" class="my-vitrine-banner">
+                    <ui:VisualElement class="my-vitrine-top">
+                        <ui:VisualElement class="my-vitrine-title-group">
+                            <ui:VisualElement class="card-avatar-circle" style="width: 56px; height: 56px; border-radius: 28px;">
+                                <ui:Label name="MyVitrineAvatar" text="YO" class="card-avatar-text" style="font-size: 22px;" />
+                            </ui:VisualElement>
+                            <ui:VisualElement>
+                                <ui:Label text="TU VITRINA" class="my-vitrine-title" />
+                                <ui:Label name="MyVitrineLikesLabel" text="0 Me Gusta" class="card-username" style="font-size: 22px; color: var(--text-gray);" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:Button name="Btn_OpenEditVitrine" text="EDITAR" class="btn-edit-vitrine" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="MyVitrineCardsRow" class="mini-cards-row" />
+                </ui:VisualElement>
+
                 <!-- POPULARES -->
                 <ui:Label text="POPULARES" class="section-label" />
-                <ui:VisualElement name="PopularGrid" class="vitrines-grid">
-                    
-                    <!-- Card 1: ProPlayer_99 -->
-                    <ui:Button name="Card_ProPlayer_99" class="vitrine-card">
-                        <ui:VisualElement class="vitrine-card-top">
-                            <ui:VisualElement class="card-avatar-circle">
-                                <ui:Label text="PP" class="card-avatar-text" />
-                            </ui:VisualElement>
-                            <ui:Label text="ProPlayer_99" class="card-username" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="mini-cards-row">
-                            <ui:VisualElement class="mini-card-preview mini-card-mythic" />
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="vitrine-card-bottom">
-                            <ui:VisualElement class="catalog-like-icon" />
-                            <ui:Label text="234" class="catalog-like-text" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                    <!-- Card 2: FutbolFan_22 -->
-                    <ui:Button name="Card_FutbolFan_22" class="vitrine-card">
-                        <ui:VisualElement class="vitrine-card-top">
-                            <ui:VisualElement class="card-avatar-circle">
-                                <ui:Label text="FF" class="card-avatar-text" />
-                            </ui:VisualElement>
-                            <ui:Label text="FutbolFan_22" class="card-username" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="mini-cards-row">
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                            <ui:VisualElement class="mini-card-preview mini-card-uncommon" />
-                            <ui:VisualElement class="mini-card-preview mini-card-common" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="vitrine-card-bottom">
-                            <ui:VisualElement class="catalog-like-icon" />
-                            <ui:Label text="189" class="catalog-like-text" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                    <!-- Card 3: CardMaster_X -->
-                    <ui:Button name="Card_CardMaster_X" class="vitrine-card">
-                        <ui:VisualElement class="vitrine-card-top">
-                            <ui:VisualElement class="card-avatar-circle">
-                                <ui:Label text="CM" class="card-avatar-text" />
-                            </ui:VisualElement>
-                            <ui:Label text="CardMaster_X" class="card-username" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="mini-cards-row">
-                            <ui:VisualElement class="mini-card-preview mini-card-mythic" />
-                            <ui:VisualElement class="mini-card-preview mini-card-mythic" />
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="vitrine-card-bottom">
-                            <ui:VisualElement class="catalog-like-icon" />
-                            <ui:Label text="512" class="catalog-like-text" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                    <!-- Card 4: GoldenShot_7 -->
-                    <ui:Button name="Card_GoldenShot_7" class="vitrine-card">
-                        <ui:VisualElement class="vitrine-card-top">
-                            <ui:VisualElement class="card-avatar-circle">
-                                <ui:Label text="GS" class="card-avatar-text" />
-                            </ui:VisualElement>
-                            <ui:Label text="GoldenShot_7" class="card-username" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="mini-cards-row">
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                            <ui:VisualElement class="mini-card-preview mini-card-uncommon" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="vitrine-card-bottom">
-                            <ui:VisualElement class="catalog-like-icon" />
-                            <ui:Label text="97" class="catalog-like-text" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                </ui:VisualElement>
+                <ui:VisualElement name="PopularGrid" class="vitrines-grid" />
 
                 <!-- AMIGOS -->
                 <ui:Label text="AMIGOS" class="section-label" />
-                <ui:VisualElement name="FriendsGrid" class="vitrines-grid">
-                    
-                    <!-- Card 5: MiAmigo_01 -->
-                    <ui:Button name="Card_MiAmigo_01" class="vitrine-card">
-                        <ui:VisualElement class="vitrine-card-top">
-                            <ui:VisualElement class="card-avatar-circle">
-                                <ui:Label text="MA" class="card-avatar-text" />
-                            </ui:VisualElement>
-                            <ui:Label text="MiAmigo_01" class="card-username" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="mini-cards-row">
-                            <ui:VisualElement class="mini-card-preview mini-card-common" />
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                            <ui:VisualElement class="mini-card-preview mini-card-uncommon" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="vitrine-card-bottom">
-                            <ui:VisualElement class="catalog-like-icon" />
-                            <ui:Label text="45" class="catalog-like-text" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                    <!-- Card 6: ElChampion -->
-                    <ui:Button name="Card_ElChampion" class="vitrine-card">
-                        <ui:VisualElement class="vitrine-card-top">
-                            <ui:VisualElement class="card-avatar-circle">
-                                <ui:Label text="EC" class="card-avatar-text" />
-                            </ui:VisualElement>
-                            <ui:Label text="ElChampion" class="card-username" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="mini-cards-row">
-                            <ui:VisualElement class="mini-card-preview mini-card-mythic" />
-                            <ui:VisualElement class="mini-card-preview mini-card-rare" />
-                            <ui:VisualElement class="mini-card-preview mini-card-common" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="vitrine-card-bottom">
-                            <ui:VisualElement class="catalog-like-icon" />
-                            <ui:Label text="78" class="catalog-like-text" />
-                        </ui:VisualElement>
-                    </ui:Button>
-
-                </ui:VisualElement>
+                <ui:VisualElement name="FriendsGrid" class="vitrines-grid" />
 
             </ui:ScrollView>
 
         </ui:VisualElement>
 
         <!-- ========================================== -->
-        <!-- 2. VISTA DETALLE (IMAGEN 1 DE FIGMA)       -->
+        <!-- 2. VISTA DETALLE                           -->
         <!-- ========================================== -->
         <ui:VisualElement name="DetailView" class="detail-view detail-view-hidden">
             
@@ -177,60 +76,37 @@
 
             <!-- Scrollable 6 Showcase Cards Grid -->
             <ui:ScrollView name="DetailScrollView" class="detail-scroll" show-vertical-scroller="false">
-                <ui:VisualElement name="DetailCardsGrid" class="detail-cards-grid">
-                    
-                    <!-- Card 1: EH Haaland (Mítica) -->
-                    <ui:VisualElement name="Showcase_0" class="showcase-card mini-card-mythic">
-                        <ui:VisualElement class="showcase-card-star" />
-                        <ui:Label text="EH" class="showcase-initials" />
-                        <ui:Label text="MÍTICA" class="showcase-rarity" style="color: var(--rarity-mythic);" />
-                        <ui:Label text="Haaland" class="showcase-name" />
-                    </ui:VisualElement>
-
-                    <!-- Card 2: KM Mbappé (Rara) -->
-                    <ui:VisualElement name="Showcase_1" class="showcase-card mini-card-rare">
-                        <ui:Label text="KM" class="showcase-initials" />
-                        <ui:Label text="RARA" class="showcase-rarity" style="color: var(--rarity-rare);" />
-                        <ui:Label text="Mbappé" class="showcase-name" />
-                    </ui:VisualElement>
-
-                    <!-- Card 3: KDB De Bruyne (Rara) -->
-                    <ui:VisualElement name="Showcase_2" class="showcase-card mini-card-rare">
-                        <ui:Label text="KDB" class="showcase-initials" />
-                        <ui:Label text="RARA" class="showcase-rarity" style="color: var(--rarity-rare);" />
-                        <ui:Label text="De Bruyne" class="showcase-name" />
-                    </ui:VisualElement>
-
-                    <!-- Card 4: MS Salah (Poco común) -->
-                    <ui:VisualElement name="Showcase_3" class="showcase-card mini-card-uncommon">
-                        <ui:Label text="MS" class="showcase-initials" />
-                        <ui:Label text="POCO COMÚN" class="showcase-rarity" style="color: var(--rarity-uncommon);" />
-                        <ui:Label text="Salah" class="showcase-name" />
-                    </ui:VisualElement>
-
-                    <!-- Card 5: PE Pedri (Rara) -->
-                    <ui:VisualElement name="Showcase_4" class="showcase-card mini-card-rare">
-                        <ui:Label text="PE" class="showcase-initials" />
-                        <ui:Label text="RARA" class="showcase-rarity" style="color: var(--rarity-rare);" />
-                        <ui:Label text="Pedri" class="showcase-name" />
-                    </ui:VisualElement>
-
-                    <!-- Card 6: RO Rodri (Común) -->
-                    <ui:VisualElement name="Showcase_5" class="showcase-card mini-card-common">
-                        <ui:Label text="RO" class="showcase-initials" />
-                        <ui:Label text="COMÚN" class="showcase-rarity" style="color: var(--rarity-common);" />
-                        <ui:Label text="Rodri" class="showcase-name" />
-                    </ui:VisualElement>
-
-                </ui:VisualElement>
+                <ui:VisualElement name="DetailCardsGrid" class="detail-cards-grid" />
             </ui:ScrollView>
 
             <!-- Floating Like Pill -->
             <ui:Button name="FloatingLikeBtn" class="floating-like-pill">
                 <ui:VisualElement class="floating-like-icon" />
-                <ui:Label name="DetailLikeCount" text="234" class="floating-like-text" />
+                <ui:Label name="DetailLikeCount" text="0" class="floating-like-text" />
             </ui:Button>
 
+        </ui:VisualElement>
+
+        <!-- ========================================== -->
+        <!-- 3. MODAL EDITAR MI VITRINA                 -->
+        <!-- ========================================== -->
+        <ui:VisualElement name="ModalEditVitrine" class="modal-overlay modal-hidden">
+            <ui:VisualElement class="edit-vitrine-box">
+                <ui:VisualElement class="edit-vitrine-header">
+                    <ui:Label text="EDITAR VITRINA" class="edit-vitrine-title" />
+                    <ui:Label name="EditVitrineSelectedCount" text="0 / 6 seleccionadas" class="edit-vitrine-count-pill" />
+                </ui:VisualElement>
+                <ui:Label text="Elige hasta 6 cartas de tu colección para exhibirlas en la comunidad:" class="edit-vitrine-subtitle" />
+
+                <ui:ScrollView class="edit-cards-scroll" show-vertical-scroller="false">
+                    <ui:VisualElement name="EditCardsGrid" class="edit-cards-grid" />
+                </ui:ScrollView>
+
+                <ui:VisualElement class="edit-actions-row">
+                    <ui:Button name="Btn_CancelEditVitrine" text="CANCELAR" class="btn-cancel-edit" />
+                    <ui:Button name="Btn_SaveVitrine" text="PUBLICAR" class="btn-save-vitrine" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
 
         <!-- Modular Liquid Glass Navigation Bar -->

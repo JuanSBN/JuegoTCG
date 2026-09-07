@@ -516,3 +516,31 @@
     color: #07120B;
     letter-spacing: 2px;
 }
+
+/* ==========================================================================
+   LOCKED CARD SLOTS (ALBUM PILOTO ALPHA)
+   ========================================================================== */
+.card-locked {
+    border-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(10, 16, 12, 0.60);
+    opacity: 0.55;
+}
+
+.card-locked .card-avatar-circle {
+    border-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(0, 0, 0, 0.40);
+}
+
+.card-locked .card-avatar-initials {
+    color: var(--text-dim);
+}
+
+.card-locked .card-player-name {
+    color: var(--text-dim);
+}
+
+.card-locked .card-rarity-badge {
+    background-color: rgba(0, 0, 0, 0.40);
+    border-color: rgba(255, 255, 255, 0.10);
+    color: var(--text-dim);
+}

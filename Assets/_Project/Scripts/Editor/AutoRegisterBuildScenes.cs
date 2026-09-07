@@ -25,6 +25,7 @@ namespace JuegoTCG.Editor
             "Assets/_Project/Scenes/FriendsSceneUIToolkit.unity",
             "Assets/_Project/Scenes/ProfileSceneUIToolkit.unity",
             "Assets/_Project/Scenes/SettingsSceneUIToolkit.unity",
+            "Assets/_Project/Scenes/PackOpeningSceneUIToolkit.unity",
             "Assets/_Project/Scenes/PackOpeningScene.unity"
         };
 

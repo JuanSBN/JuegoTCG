@@ -11,6 +11,9 @@
                 <ui:VisualElement class="back-btn-icon" />
             </ui:Button>
             <ui:Label text="AMIGOS" class="friends-title" />
+            <ui:Button name="Btn_RefreshFriends" class="btn-refresh-friends">
+                <ui:Label name="Btn_RefreshIcon" text="↻" class="btn-refresh-text" />
+            </ui:Button>
         </ui:VisualElement>
 
         <!-- Scrollable Body -->
@@ -95,30 +98,30 @@
                         <ui:Label text="Agrega amigos con su código de amigo" class="empty-state-text" />
                     </ui:VisualElement>
 
-                    <!-- Amigo 1: GoldenShot_7 -->
+                    <!-- Amigo 1 -->
                     <ui:VisualElement name="Card_Friend_1" class="friend-card">
                         <ui:VisualElement class="friend-top-row">
                             <ui:VisualElement class="avatar-circle">
-                                <ui:Label text="GS" class="avatar-text" />
+                                <ui:Label name="FriendAvatar_1" text="AM" class="avatar-text" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-info-block">
-                                <ui:Label text="GoldenShot_7" class="friend-name" />
-                                <ui:Label text="Nivel 24" class="friend-level" />
+                                <ui:Label name="FriendName_1" text="Amigo" class="friend-name" />
+                                <ui:Label name="FriendLevel_1" text="Nivel 1" class="friend-level" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-power-pill">
                                 <ui:VisualElement class="lightning-icon" />
-                                <ui:Label text="9120" class="friend-power-text" />
+                                <ui:Label name="FriendPower_1" text="0" class="friend-power-text" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-stats-row">
-                            <ui:Label text="445 cartas" class="stats-label" />
+                            <ui:Label name="FriendCardsCount_1" text="0 cartas" class="stats-label friend-cards-count" />
                             <ui:Label text="•" class="stats-dot" />
                             <ui:Label text="Álbum" class="stats-label" />
                             <ui:VisualElement class="progress-track">
-                                <ui:VisualElement class="progress-fill" style="width: 89%;" />
+                                <ui:VisualElement name="FriendProgressFill_1" class="progress-fill" style="width: 0%;" />
                             </ui:VisualElement>
-                            <ui:Label text="89%" class="progress-pct" />
+                            <ui:Label name="FriendProgress_1" text="0%" class="progress-pct" />
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-actions-row">
@@ -131,30 +134,30 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
 
-                    <!-- Amigo 2: ElChampion -->
+                    <!-- Amigo 2 -->
                     <ui:VisualElement name="Card_Friend_2" class="friend-card">
                         <ui:VisualElement class="friend-top-row">
                             <ui:VisualElement class="avatar-circle">
-                                <ui:Label text="EC" class="avatar-text" />
+                                <ui:Label name="FriendAvatar_2" text="AM" class="avatar-text" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-info-block">
-                                <ui:Label text="ElChampion" class="friend-name" />
-                                <ui:Label text="Nivel 18" class="friend-level" />
+                                <ui:Label name="FriendName_2" text="Amigo" class="friend-name" />
+                                <ui:Label name="FriendLevel_2" text="Nivel 1" class="friend-level" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-power-pill">
                                 <ui:VisualElement class="lightning-icon" />
-                                <ui:Label text="6840" class="friend-power-text" />
+                                <ui:Label name="FriendPower_2" text="0" class="friend-power-text" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-stats-row">
-                            <ui:Label text="312 cartas" class="stats-label" />
+                            <ui:Label name="FriendCardsCount_2" text="0 cartas" class="stats-label friend-cards-count" />
                             <ui:Label text="•" class="stats-dot" />
                             <ui:Label text="Álbum" class="stats-label" />
                             <ui:VisualElement class="progress-track">
-                                <ui:VisualElement class="progress-fill" style="width: 71%;" />
+                                <ui:VisualElement name="FriendProgressFill_2" class="progress-fill" style="width: 0%;" />
                             </ui:VisualElement>
-                            <ui:Label text="71%" class="progress-pct" />
+                            <ui:Label name="FriendProgress_2" text="0%" class="progress-pct" />
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-actions-row">
@@ -167,30 +170,30 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
 
-                    <!-- Amigo 3: MiAmigo_01 -->
+                    <!-- Amigo 3 -->
                     <ui:VisualElement name="Card_Friend_3" class="friend-card">
                         <ui:VisualElement class="friend-top-row">
                             <ui:VisualElement class="avatar-circle">
-                                <ui:Label text="MA" class="avatar-text" />
+                                <ui:Label name="FriendAvatar_3" text="AM" class="avatar-text" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-info-block">
-                                <ui:Label text="MiAmigo_01" class="friend-name" />
-                                <ui:Label text="Nivel 12" class="friend-level" />
+                                <ui:Label name="FriendName_3" text="Amigo" class="friend-name" />
+                                <ui:Label name="FriendLevel_3" text="Nivel 1" class="friend-level" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-power-pill">
                                 <ui:VisualElement class="lightning-icon" />
-                                <ui:Label text="4250" class="friend-power-text" />
+                                <ui:Label name="FriendPower_3" text="0" class="friend-power-text" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-stats-row">
-                            <ui:Label text="187 cartas" class="stats-label" />
+                            <ui:Label name="FriendCardsCount_3" text="0 cartas" class="stats-label friend-cards-count" />
                             <ui:Label text="•" class="stats-dot" />
                             <ui:Label text="Álbum" class="stats-label" />
                             <ui:VisualElement class="progress-track">
-                                <ui:VisualElement class="progress-fill" style="width: 52%;" />
+                                <ui:VisualElement name="FriendProgressFill_3" class="progress-fill" style="width: 0%;" />
                             </ui:VisualElement>
-                            <ui:Label text="52%" class="progress-pct" />
+                            <ui:Label name="FriendProgress_3" text="0%" class="progress-pct" />
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-actions-row">
@@ -203,30 +206,30 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
 
-                    <!-- Amigo 4: FutbolFan_22 -->
+                    <!-- Amigo 4 -->
                     <ui:VisualElement name="Card_Friend_4" class="friend-card">
                         <ui:VisualElement class="friend-top-row">
                             <ui:VisualElement class="avatar-circle">
-                                <ui:Label text="FF" class="avatar-text" />
+                                <ui:Label name="FriendAvatar_4" text="AM" class="avatar-text" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-info-block">
-                                <ui:Label text="FutbolFan_22" class="friend-name" />
-                                <ui:Label text="Nivel 8" class="friend-level" />
+                                <ui:Label name="FriendName_4" text="Amigo" class="friend-name" />
+                                <ui:Label name="FriendLevel_4" text="Nivel 1" class="friend-level" />
                             </ui:VisualElement>
                             <ui:VisualElement class="friend-power-pill">
                                 <ui:VisualElement class="lightning-icon" />
-                                <ui:Label text="2180" class="friend-power-text" />
+                                <ui:Label name="FriendPower_4" text="0" class="friend-power-text" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-stats-row">
-                            <ui:Label text="94 cartas" class="stats-label" />
+                            <ui:Label name="FriendCardsCount_4" text="0 cartas" class="stats-label friend-cards-count" />
                             <ui:Label text="•" class="stats-dot" />
                             <ui:Label text="Álbum" class="stats-label" />
                             <ui:VisualElement class="progress-track">
-                                <ui:VisualElement class="progress-fill" style="width: 34%;" />
+                                <ui:VisualElement name="FriendProgressFill_4" class="progress-fill" style="width: 0%;" />
                             </ui:VisualElement>
-                            <ui:Label text="34%" class="progress-pct" />
+                            <ui:Label name="FriendProgress_4" text="0%" class="progress-pct" />
                         </ui:VisualElement>
 
                         <ui:VisualElement class="friend-actions-row">
@@ -320,7 +323,21 @@
             </ui:VisualElement>
         </ui:ScrollView>
 
-        <!-- Compare / Feedback Modal (Vista Lado a Lado Head-to-Head) -->
+        <!-- Modal Simple de Notificación / Alerta (Para Solicitudes de Amistad y Avisos) -->
+        <ui:VisualElement name="FeedbackModal" class="modal-backdrop modal-hidden">
+            <ui:VisualElement class="modal-box feedback-modal-box">
+                <ui:VisualElement class="feedback-icon-wrapper">
+                    <ui:VisualElement name="FeedbackIcon" class="feedback-icon" />
+                </ui:VisualElement>
+                <ui:Label name="FeedbackModalTitle" text="SOLICITUD ENVIADA" class="modal-title feedback-modal-title" />
+                <ui:Label name="FeedbackModalDesc" text="¡Solicitud enviada con éxito!" class="modal-desc feedback-modal-desc" />
+                <ui:Button name="Btn_CloseFeedback" class="modal-close-btn">
+                    <ui:Label text="ENTENDIDO" class="modal-close-btn-text" />
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Compare Modal (Vista Lado a Lado Head-to-Head para Amigos Aceptados) -->
         <ui:VisualElement name="CompareModal" class="modal-backdrop modal-hidden">
             <ui:VisualElement class="modal-box modal-box-compare">
                 

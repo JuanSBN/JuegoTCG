@@ -99,12 +99,15 @@ namespace JuegoTCG.UI
                     FirebaseAuthManager.Instance.AddCoins(-price);
                 }
 
-                ShowFeedback("🎁", "¡SOBRE ADQUIRIDO!", $"Has abierto {packName} por {price} monedas.");
-                Debug.Log($"<color=green>[Tienda] ¡Comprado {packName} por {price} monedas!</color>");
+                Debug.Log($"<color=green>[Tienda] ¡Comprado {packName} por {price} monedas! Abriendo experiencia cinemática...</color>");
+
+                bool isGuaranteedHolo = packName.Contains("C") || price >= 600;
+                UIToolkitPackOpeningController.ConfigureSession(packName, count: 1, forceHolo: isGuaranteedHolo);
+                SceneManager.LoadScene("PackOpeningSceneUIToolkit");
             }
             else
             {
-                ShowFeedback("⚠️", "MONEDAS INSUFICIENTES", $"Necesitas {price} monedas para comprar {packName}.");
+                ShowFeedback("⚠️", "MONEDAS INSUFICIENTES", $"Necesitas {price} monedas para comprar {packName}. Tienes {currentCoins} monedas.");
             }
         }
 
@@ -125,7 +128,9 @@ namespace JuegoTCG.UI
                     FirebaseAuthManager.Instance.AddCoins(50);
                 }
 
-                ShowFeedback("🎬", "¡RECOMPENSA GANADA!", "¡Gracias por ver el anuncio! Has ganado 1 sobre y 50 monedas.");
+                Debug.Log("<color=gold>[Tienda] ¡Anuncio visto! Recompensa: 1 Sobre Gratis + 50 Monedas. Abriendo sobre...</color>");
+                UIToolkitPackOpeningController.ConfigureSession("Sobre Anuncio Recompensa", count: 1, forceHolo: false);
+                SceneManager.LoadScene("PackOpeningSceneUIToolkit");
             }
             else
             {

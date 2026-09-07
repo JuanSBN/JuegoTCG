@@ -127,7 +127,6 @@
     margin: 0;
     -unity-text-align: middle-left;
     cursor: text;
-    selection-color: rgba(232, 168, 32, 0.35);
 }
 
 /* Color sutil e integrado para el texto de marcador (placeholder) */
@@ -585,4 +584,195 @@
     font-size: 18px;
     -unity-font-style: bold;
     color: var(--gold);
+}
+
+/* ==========================================================================
+   TU VITRINA BANNER & CARD
+   ========================================================================== */
+.my-vitrine-banner {
+    width: 100%;
+    background-color: var(--card-bg);
+    border-radius: 28px;
+    border-width: 1.5px;
+    border-color: rgba(232, 168, 32, 0.5);
+    padding: 24px 26px;
+    margin-bottom: 28px;
+}
+
+.my-vitrine-top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.my-vitrine-title-group {
+    flex-direction: row;
+    align-items: center;
+}
+
+.my-vitrine-title {
+    font-size: 30px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+}
+
+.my-vitrine-actions {
+    flex-direction: row;
+    align-items: center;
+}
+
+.btn-edit-vitrine {
+    height: 56px;
+    background-color: var(--gold);
+    border-radius: 28px;
+    border-width: 0;
+    color: #0d1a13;
+    font-size: 22px;
+    -unity-font-style: bold;
+    padding-left: 26px;
+    padding-right: 26px;
+    -unity-text-align: middle-center;
+}
+
+.btn-edit-vitrine:active {
+    scale: 0.96;
+}
+
+/* ==========================================================================
+   EDIT VITRINE MODAL
+   ========================================================================== */
+.modal-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.modal-hidden {
+    display: none;
+}
+
+.edit-vitrine-box {
+    width: 100%;
+    max-height: 85%;
+    background-color: #0e2016;
+    border-radius: 32px;
+    border-width: 2px;
+    border-color: var(--gold);
+    padding: 36px 30px;
+    justify-content: space-between;
+}
+
+.edit-vitrine-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.edit-vitrine-title {
+    font-size: 36px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 2px;
+}
+
+.edit-vitrine-subtitle {
+    font-size: 24px;
+    color: var(--text-gray);
+    margin-bottom: 16px;
+}
+
+.edit-vitrine-count-pill {
+    align-self: flex-start;
+    background-color: rgba(232, 168, 32, 0.15);
+    border-radius: 16px;
+    padding: 6px 18px;
+    color: var(--gold);
+    font-size: 22px;
+    -unity-font-style: bold;
+    margin-bottom: 16px;
+}
+
+.edit-cards-scroll {
+    max-height: 800px;
+    margin-bottom: 24px;
+}
+
+.edit-cards-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.pick-card-item {
+    width: 31%;
+    height: 220px;
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin-bottom: 16px;
+}
+
+.pick-card-item:active {
+    scale: 0.96;
+}
+
+.pick-card-selected {
+    border-color: var(--gold);
+    background-color: rgba(232, 168, 32, 0.22);
+}
+
+.pick-card-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background-color: var(--gold);
+    color: #0d1a13;
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.edit-actions-row {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.btn-cancel-edit {
+    width: 45%;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 40px;
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    color: var(--text-white);
+    font-size: 24px;
+    -unity-font-style: bold;
+}
+
+.btn-save-vitrine {
+    width: 52%;
+    height: 80px;
+    background-color: var(--gold);
+    border-radius: 40px;
+    border-width: 0;
+    color: #0d1a13;
+    font-size: 24px;
+    -unity-font-style: bold;
 }

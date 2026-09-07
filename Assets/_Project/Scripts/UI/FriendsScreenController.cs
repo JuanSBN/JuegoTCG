@@ -41,7 +41,7 @@ namespace JuegoTCG.UI
         private const int MyPower = 5430;
 
         private List<FriendRequestData> allRequests = new List<FriendRequestData>();
-        private List<FriendData> allFriends = new List<FriendData>();
+        private List<UIFriendData> allFriends = new List<UIFriendData>();
 
         private void Awake()
         {
@@ -83,12 +83,12 @@ namespace JuegoTCG.UI
                 new FriendRequestData { id = 2, userName = "FutbolFan_77", avatar = "F7" }
             };
 
-            allFriends = new List<FriendData>
+            allFriends = new List<UIFriendData>
             {
-                new FriendData { id = 1, userName = "GoldenShot_7", avatar = "GS", level = 24, cardsCount = 445, albumPct = 89, power = 9120 },
-                new FriendData { id = 2, userName = "ElChampion", avatar = "EC", level = 18, cardsCount = 312, albumPct = 71, power = 6840 },
-                new FriendData { id = 3, userName = "MiAmigo_01", avatar = "MA", level = 12, cardsCount = 187, albumPct = 52, power = 4250 },
-                new FriendData { id = 4, userName = "FutbolFan_22", avatar = "FF", level = 9, cardsCount = 98, albumPct = 28, power = 2180 }
+                new UIFriendData { id = 1, userName = "GoldenShot_7", avatar = "GS", level = 24, cardsCount = 445, albumPct = 89, power = 9120 },
+                new UIFriendData { id = 2, userName = "ElChampion", avatar = "EC", level = 18, cardsCount = 312, albumPct = 71, power = 6840 },
+                new UIFriendData { id = 3, userName = "MiAmigo_01", avatar = "MA", level = 12, cardsCount = 187, albumPct = 52, power = 4250 },
+                new UIFriendData { id = 4, userName = "FutbolFan_22", avatar = "FF", level = 9, cardsCount = 98, albumPct = 28, power = 2180 }
             };
         }
 
@@ -196,7 +196,7 @@ namespace JuegoTCG.UI
         private void OnAcceptRequest(FriendRequestData req)
         {
             allRequests.Remove(req);
-            allFriends.Add(new FriendData
+            allFriends.Add(new UIFriendData
             {
                 id = (int)DateTime.UtcNow.Ticks,
                 userName = req.userName,
@@ -217,12 +217,12 @@ namespace JuegoTCG.UI
             Debug.Log($"<color=yellow>[Amigos] Solicitud rechazada de {req.userName}.</color>");
         }
 
-        private void OnCompareFriend(FriendData friend)
+        private void OnCompareFriend(UIFriendData friend)
         {
             Debug.Log($"<color=cyan>[Amigos] Comparando colección con {friend.userName}...</color>");
         }
 
-        private void OnTradeWithFriend(FriendData friend)
+        private void OnTradeWithFriend(UIFriendData friend)
         {
             Debug.Log($"<color=green>[Amigos] Navegando a Intercambio con {friend.userName}...</color>");
             SceneManager.LoadScene("TradeScene");

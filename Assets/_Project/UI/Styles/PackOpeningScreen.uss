@@ -1,0 +1,502 @@
+/* ==========================================================================
+   PACK OPENING SCREEN - HIGH FIDELITY & DYNAMIC "JUICE" (1080x2400)
+   Inspirado en prototipo docs/prototipo_apertura_sobres.html y TCGs profesionales
+   ========================================================================== */
+
+:root, .screen-container {
+    --bg-deep: rgb(8, 14, 24);
+    --bg-pitch: rgb(10, 26, 18);
+    --gold: rgb(245, 166, 35);
+    --gold-2: rgb(255, 216, 115);
+    --coral: rgb(225, 91, 63);
+    --blue: rgb(62, 142, 222);
+    --purple: rgb(139, 92, 246);
+    --common: rgb(124, 139, 153);
+    --uncommon: rgb(79, 180, 119);
+    --text-light: rgb(250, 248, 244);
+    --text-dim: rgb(160, 172, 192);
+}
+
+.screen-container {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    background-color: var(--bg-deep);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    padding-left: 64px;
+    padding-right: 64px;
+    padding-top: 90px;
+    padding-bottom: 90px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Pantallazo de Destello Blanco (Flash Pop) ── */
+.screen-flash {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(255, 255, 255);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-out;
+    
+    
+}
+
+.screen-flash-visible {
+    opacity: 0.98;
+}
+
+.screen-flash-hidden {
+    opacity: 0;
+}
+
+/* ── Topbar ── */
+.topbar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    
+}
+
+.force-holo-toggle {
+    font-size: 28px;
+    color: var(--text-dim);
+}
+
+.force-holo-toggle .unity-toggle__text {
+    font-size: 28px;
+    color: var(--text-dim);
+    margin-left: 12px;
+}
+
+.pack-badge {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(245, 166, 35, 0.16);
+    border-width: 2px;
+    border-color: rgba(245, 166, 35, 0.5);
+    border-radius: 40px;
+    padding-left: 28px;
+    padding-right: 28px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.pack-badge-star {
+    font-size: 32px;
+    color: var(--gold-2);
+    margin-right: 12px;
+}
+
+.pack-badge-text {
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: var(--gold-2);
+}
+
+/* ── Escenario Central (Stage) ── */
+.stage-container {
+    flex-grow: 1;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.stage-view {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    transition-property: opacity, scale;
+    transition-duration: 0.3s;
+}
+
+.stage-view-active {
+    opacity: 1;
+    display: flex;
+    visibility: visible;
+}
+
+.stage-view-hidden {
+    opacity: 0;
+    display: none;
+    visibility: hidden;
+}
+
+/* ── VISTA 1: SOBRE CERRADO CON ANIMACIÓN ── */
+.pack-closed {
+    width: 580px;
+    height: 800px;
+    border-radius: 48px;
+    background-color: rgb(18, 32, 54);
+    border-width: 4px;
+    border-color: rgba(245, 166, 35, 0.65);
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition-property: scale;
+    transition-duration: 0.15s;
+}
+
+.pack-closed:active {
+    scale: 0.96;
+}
+
+.pack-rays {
+    position: absolute;
+    width: 760px;
+    height: 760px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_rays.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(245, 166, 35, 0.28);
+}
+
+.pack-star {
+    width: 220px;
+    height: 220px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_star.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--gold-2);
+}
+
+.pack-brand-badge {
+    position: absolute;
+    bottom: 64px;
+    background-color: rgba(11, 18, 32, 0.9);
+    border-width: 2px;
+    border-color: var(--gold);
+    border-radius: 24px;
+    padding-left: 36px;
+    padding-right: 36px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    align-items: center;
+}
+
+.pack-brand-text {
+    font-size: 38px;
+    -unity-font-style: bold;
+    letter-spacing: 5px;
+    color: var(--gold-2);
+}
+
+.pack-sub-text {
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-top: 4px;
+}
+
+.cta-label {
+    margin-top: 56px;
+    font-size: 50px;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    color: var(--text-light);
+    -unity-text-align: middle-center;
+}
+
+.cta-sub {
+    margin-top: 14px;
+    font-size: 30px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+}
+
+/* ── VISTA 2: REVELACIÓN CARTA POR CARTA (REVEAL) ── */
+.reveal-god-rays {
+    position: absolute;
+    width: 1400px;
+    height: 1400px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_rays.png");
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: rgba(245, 166, 35, 0.35);
+    
+    transition-property: opacity, scale;
+    transition-duration: 0.4s;
+}
+
+.reveal-god-rays-hidden {
+    opacity: 0;
+    scale: 0.6;
+}
+
+.reveal-god-rays-visible {
+    opacity: 1;
+    scale: 1;
+}
+
+.progress-container {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 44px;
+    
+}
+
+.progress-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.22);
+    margin-left: 10px;
+    margin-right: 10px;
+    transition-property: background-color, scale;
+    transition-duration: 0.25s;
+}
+
+.progress-dot-done {
+    background-color: var(--gold);
+}
+
+.progress-dot-current {
+    background-color: var(--text-light);
+    scale: 1.4;
+}
+
+/* ── Contenedor para el CardPrefab Nativo (uGUI Canvas) ── */
+.card-slot-area {
+    width: 680px;
+    height: 980px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.continue-hint {
+    margin-top: 48px;
+    font-size: 34px;
+    color: var(--text-light);
+    -unity-text-align: middle-center;
+}
+
+.tilt-hint {
+    margin-top: 14px;
+    font-size: 28px;
+    color: var(--gold-2);
+    -unity-text-align: middle-center;
+}
+
+.tilt-hint-hidden {
+    opacity: 0;
+}
+
+.tilt-hint-visible {
+    opacity: 1;
+}
+
+/* ── VISTA 3: RESUMEN DEL SOBRE (SUMMARY) ── */
+.summary-title {
+    font-size: 64px;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    color: var(--text-light);
+    margin-bottom: 14px;
+    -unity-text-align: middle-center;
+}
+
+.summary-sub {
+    font-size: 32px;
+    color: var(--text-dim);
+    margin-bottom: 64px;
+    -unity-text-align: middle-center;
+}
+
+.summary-grid {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 72px;
+}
+
+.mini-card {
+    width: 180px;
+    height: 270px;
+    border-radius: 18px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgb(13, 20, 33);
+    position: relative;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    transition-property: scale;
+    transition-duration: 0.2s;
+}
+
+.mini-card-art {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.mini-card-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.25);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.mini-card-initials {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: rgb(250, 248, 244);
+}
+
+.mini-card-frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.mini-card-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: rgba(0, 0, 0, 0.65);
+    border-radius: 8px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: rgb(255, 216, 115);
+}
+
+.mini-card-footer {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+    background-color: rgba(6, 12, 20, 0.88);
+    border-radius: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-card-name {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-card-rarity {
+    font-size: 10px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    margin-top: 1px;
+    -unity-text-align: middle-center;
+}
+
+/* Colores de rareza para mini-cards */
+.mini-rarity-comun { color: rgb(150, 165, 180); border-color: rgba(150, 165, 180, 0.4); }
+.mini-rarity-especial { color: rgb(79, 180, 119); border-color: rgba(79, 180, 119, 0.6); }
+.mini-rarity-epica { color: rgb(62, 142, 222); border-color: rgba(62, 142, 222, 0.7); }
+.mini-rarity-legendaria { color: rgb(168, 118, 255); border-color: rgba(168, 118, 255, 0.75); }
+.mini-rarity-mitica { color: rgb(255, 216, 115); border-color: rgba(245, 166, 35, 0.85); }
+.mini-rarity-fullart { color: rgb(255, 216, 115); border-color: rgba(255, 216, 115, 0.9); }
+
+.summary-actions-container {
+    width: 100%;
+    align-items: center;
+}
+
+.btn-primary {
+    width: 90%;
+    height: 136px;
+    background-color: rgb(245, 166, 35);
+    border-radius: 44px;
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: rgb(8, 14, 24);
+    font-size: 38px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    transition-property: scale, background-color;
+    transition-duration: 0.15s;
+}
+
+.btn-primary:hover {
+    background-color: rgb(255, 216, 115);
+}
+
+.btn-primary:active {
+    scale: 0.96;
+    background-color: rgb(225, 150, 20);
+}
+
+.btn-primary-text {
+    font-size: 38px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: rgb(8, 14, 24);
+}
+
+.btn-secondary {
+    width: 90%;
+    height: 104px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.25);
+    border-radius: 44px;
+    align-items: center;
+    justify-content: center;
+    color: rgb(250, 248, 244);
+    font-size: 32px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    transition-property: background-color, scale;
+    transition-duration: 0.15s;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+.btn-secondary:active {
+    scale: 0.96;
+    background-color: rgba(255, 255, 255, 0.22);
+}
+
+.btn-secondary-text {
+    font-size: 32px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    color: rgb(250, 248, 244);
+}

@@ -335,7 +335,11 @@ namespace JuegoTCG.Packs
 
             // Disable tilt during face-down
             var tilt = activeRevealCardGO.GetComponent<HolographicTilt>();
-            if (tilt != null) tilt.enabled = false;
+            if (tilt != null)
+            {
+                tilt.CanTilt = false;
+                tilt.enabled = false;
+            }
 
             // Hints
             if (continueHintText != null) continueHintText.text = "Toca la carta para revelar";
@@ -405,7 +409,11 @@ namespace JuegoTCG.Packs
                 {
                     // Enable Holographic Tilt component
                     var tilt = activeRevealCardGO.GetComponent<HolographicTilt>();
-                    if (tilt != null) tilt.enabled = true;
+                    if (tilt != null)
+                    {
+                        tilt.enabled = true;
+                        tilt.CanTilt = true;
+                    }
 
                     // Trigger Screen Shake
                     StartCoroutine(DoScreenShake(0.35f, 10f));

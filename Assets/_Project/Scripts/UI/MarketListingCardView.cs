@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace JuegoTCG.UI
 {
     [Serializable]
-    public class MarketListingData
+    public class UIMarketListingData
     {
         public int id;
         public string cardName;
@@ -35,10 +35,10 @@ namespace JuegoTCG.UI
         [SerializeField] private TMP_Text priceText;
         [SerializeField] private Button buyButton;
 
-        private MarketListingData currentData;
-        private Action<MarketListingData> onBuyCallback;
+        private UIMarketListingData currentData;
+        private Action<UIMarketListingData> onBuyCallback;
 
-        public void Setup(MarketListingData data, Action<MarketListingData> onBuy)
+        public void Setup(UIMarketListingData data, Action<UIMarketListingData> onBuy)
         {
             currentData = data;
             onBuyCallback = onBuy;

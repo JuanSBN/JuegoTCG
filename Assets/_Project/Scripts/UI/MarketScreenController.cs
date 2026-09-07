@@ -61,7 +61,7 @@ namespace JuegoTCG.UI
         private string activeRarityFilter = "Todas";
         private int userCoins = 1240;
 
-        private List<MarketListingData> allListings = new List<MarketListingData>();
+        private List<UIMarketListingData> allListings = new List<UIMarketListingData>();
         private List<DuplicateCardData> allDuplicates = new List<DuplicateCardData>();
         private List<ActiveListingData> allMyListings = new List<ActiveListingData>();
 
@@ -100,18 +100,18 @@ namespace JuegoTCG.UI
 
         private void InitializeData()
         {
-            allListings = new List<MarketListingData>
+            allListings = new List<UIMarketListingData>
             {
-                new MarketListingData { id = 1, cardName = "Musiala", initials = "JM", rarity = "Común", sellerName = "ProPlayer_99", sellerAvatar = "PP", price = 25, postedAt = "hace 5 min" },
-                new MarketListingData { id = 2, cardName = "Rodri", initials = "RO", rarity = "Común", sellerName = "ElChampion", sellerAvatar = "EC", price = 30, postedAt = "hace 3 h" },
-                new MarketListingData { id = 3, cardName = "Haaland", initials = "EH", rarity = "Común", sellerName = "GoldenShot_7", sellerAvatar = "GS", price = 45, postedAt = "hace 5 h" },
-                new MarketListingData { id = 4, cardName = "Salah", initials = "MS", rarity = "Poco común", sellerName = "CardMaster_X", sellerAvatar = "CM", price = 70, postedAt = "hace 8 h" },
-                new MarketListingData { id = 5, cardName = "Mbappé", initials = "KM", rarity = "Poco común", sellerName = "FutbolFan_22", sellerAvatar = "FF", price = 80, postedAt = "hace 12 min" },
-                new MarketListingData { id = 6, cardName = "Pedri", initials = "PE", rarity = "Rara", sellerName = "FutbolFan_22", sellerAvatar = "FF", price = 180, postedAt = "hace 5 h" },
-                new MarketListingData { id = 7, cardName = "Bellingham", initials = "JB", rarity = "Rara", sellerName = "MiAmigo_01", sellerAvatar = "MA", price = 195, postedAt = "hace 2 h" },
-                new MarketListingData { id = 8, cardName = "Vinicius Jr.", initials = "VJ", rarity = "Rara", sellerName = "CardMaster_X", sellerAvatar = "CM", price = 220, postedAt = "hace 23 min" },
-                new MarketListingData { id = 9, cardName = "Luis Díaz", initials = "LD", rarity = "Mítica", sellerName = "ProPlayer_99", sellerAvatar = "PP", price = 650, postedAt = "hace 1 h" },
-                new MarketListingData { id = 10, cardName = "Lamine Yamal", initials = "LY", rarity = "Mítica", sellerName = "GoldenShot_7", sellerAvatar = "GS", price = 750, postedAt = "hace 4 h" }
+                new UIMarketListingData { id = 1, cardName = "Musiala", initials = "JM", rarity = "Común", sellerName = "ProPlayer_99", sellerAvatar = "PP", price = 25, postedAt = "hace 5 min" },
+                new UIMarketListingData { id = 2, cardName = "Rodri", initials = "RO", rarity = "Común", sellerName = "ElChampion", sellerAvatar = "EC", price = 30, postedAt = "hace 3 h" },
+                new UIMarketListingData { id = 3, cardName = "Haaland", initials = "EH", rarity = "Común", sellerName = "GoldenShot_7", sellerAvatar = "GS", price = 45, postedAt = "hace 5 h" },
+                new UIMarketListingData { id = 4, cardName = "Salah", initials = "MS", rarity = "Poco común", sellerName = "CardMaster_X", sellerAvatar = "CM", price = 70, postedAt = "hace 8 h" },
+                new UIMarketListingData { id = 5, cardName = "Mbappé", initials = "KM", rarity = "Poco común", sellerName = "FutbolFan_22", sellerAvatar = "FF", price = 80, postedAt = "hace 12 min" },
+                new UIMarketListingData { id = 6, cardName = "Pedri", initials = "PE", rarity = "Rara", sellerName = "FutbolFan_22", sellerAvatar = "FF", price = 180, postedAt = "hace 5 h" },
+                new UIMarketListingData { id = 7, cardName = "Bellingham", initials = "JB", rarity = "Rara", sellerName = "MiAmigo_01", sellerAvatar = "MA", price = 195, postedAt = "hace 2 h" },
+                new UIMarketListingData { id = 8, cardName = "Vinicius Jr.", initials = "VJ", rarity = "Rara", sellerName = "CardMaster_X", sellerAvatar = "CM", price = 220, postedAt = "hace 23 min" },
+                new UIMarketListingData { id = 9, cardName = "Luis Díaz", initials = "LD", rarity = "Mítica", sellerName = "ProPlayer_99", sellerAvatar = "PP", price = 650, postedAt = "hace 1 h" },
+                new UIMarketListingData { id = 10, cardName = "Lamine Yamal", initials = "LY", rarity = "Mítica", sellerName = "GoldenShot_7", sellerAvatar = "GS", price = 750, postedAt = "hace 4 h" }
             };
 
             allDuplicates = new List<DuplicateCardData>
@@ -210,7 +210,7 @@ namespace JuegoTCG.UI
                 }
 
                 // Filter items
-                List<MarketListingData> filtered = new List<MarketListingData>();
+                List<UIMarketListingData> filtered = new List<UIMarketListingData>();
                 foreach (var item in allListings)
                 {
                     if (activeRarityFilter == "Todas" || item.rarity == activeRarityFilter)
@@ -266,7 +266,7 @@ namespace JuegoTCG.UI
             }
         }
 
-        private void OnBuyListing(MarketListingData listing)
+        private void OnBuyListing(UIMarketListingData listing)
         {
             if (userCoins >= listing.price)
             {

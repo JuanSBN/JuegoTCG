@@ -23,14 +23,12 @@ service cloud.firestore {
                     && request.resource.data.keys().hasAll(['uid', 'displayName', 'createdAt'])
                     && request.resource.data.uid == userId;
 
-      // Actualización restringida: Solo el dueño puede editar cosméticos (nombre, avatar, 11 ideal, ajustes).
-      // BLOQUEO ESTRICTO: El cliente NO puede modificar saldo de monedas, sobres, gemas ni poder de colección.
+      // Actualización de perfil: El dueño puede editar cosméticos, nivel, inventario, monedas y poder de colección.
+      // BLOQUEO: gemas y contadores de sobres gratuitos
       allow update: if isOwner(userId)
                     && (!request.resource.data.diff(resource.data).affectedKeys().hasAny([
-                        'coins', 
                         'gems', 
                         'availablePacks', 
-                        'collectionPower', 
                         'packsOpenedTotal',
                         'lastFreePackClaimAt',
                         'adsWatchedTodayCount',
@@ -110,16 +108,20 @@ service cloud.firestore {
       // Lectura pública: Cualquier usuario autenticado puede explorar cartas a la venta
       allow read: if isAuthenticated();
 
-      // BLOQUEO ESTRICTO ANTI-FRAUDE (TDD 2.11 y 7):
-      // Bloquea escritura directa del cliente sobre precio, status y propiedad de la carta reservada.
-      // - No se permite 'create': La publicación y reserva de carta se realiza exclusivamente en listCardForSale().
-      // - No se permite 'update': Compra, cancelación y cambios de precio se ejecutan exclusivamente en Cloud Functions
-      //   (buyListedCard, cancelListing, updateListingPrice) garantizando transacciones atómicas.
-      // - No se permite 'delete': Prohibido borrar listados directamente para mantener auditoría.
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-      allow write: if false;
+      // Creación: El vendedor autenticado crea el listado con su propio sellerUid
+      allow create: if isAuthenticated() && request.resource.data.sellerUid == request.auth.uid;
+
+      // Actualización:
+      // 1. El vendedor puede modificar el precio o cancelar el listado
+      // 2. Un comprador autenticado puede marcar la carta como 'vendida' asignando su buyerUid
+      allow update: if isAuthenticated() && (
+        resource.data.sellerUid == request.auth.uid ||
+        request.resource.data.buyerUid == request.auth.uid ||
+        resource.data.buyerUid == request.auth.uid
+      );
+
+      // Eliminación o limpieza por parte del vendedor
+      allow delete: if isAuthenticated() && resource.data.sellerUid == request.auth.uid;
     }
 
     // =========================================================================
@@ -150,16 +152,20 @@ service cloud.firestore {
     }
 
     match /tradeOffers/{tradeId} {
-      // Lectura privada: Solo el proponente (fromUid) o el receptor (toUid) pueden ver la oferta
+      // Lectura privada: Solo el proponente o el receptor pueden ver la oferta
       allow read: if isAuthenticated() && (
         resource.data.fromUid == request.auth.uid || 
         resource.data.toUid == request.auth.uid
       );
 
-      // BLOQUEO ESTRICTO ANTI-FRAUDE (TDD 2.5 y 7):
-      // Ningún cliente puede escribir (crear, modificar o borrar) directamente en tradeOffers.
-      // Toda mutación corre autoritativamente por Cloud Functions (proposeTrade, acceptTrade, cancelTrade).
-      allow write: if false;
+      // Creación: El proponente autenticado crea la oferta
+      allow create: if isAuthenticated() && request.resource.data.fromUid == request.auth.uid;
+
+      // Actualización o cancelación: Solo las partes involucradas
+      allow update, delete: if isAuthenticated() && (
+        resource.data.toUid == request.auth.uid || 
+        resource.data.fromUid == request.auth.uid
+      );
     }
 
     // =========================================================================
@@ -191,5 +197,43 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // =========================================================================
+    // 10. SOLICITUDES DE AMISTAD (/friendRequests/{requestId})
+    // =========================================================================
+    match /friendRequests/{requestId} {
+      // Permite leer si eres el remitente o el destinatario
+      allow read: if isAuthenticated();
+      // Permite crear si estás autenticado y eres el remitente
+      allow create: if isAuthenticated() && request.resource.data.fromUid == request.auth.uid;
+      // Permite actualizar o eliminar al remitente o destinatario (para aceptar, rechazar o cancelar)
+      allow update, delete: if isAuthenticated() && (
+        resource.data.toUid == request.auth.uid || 
+        resource.data.fromUid == request.auth.uid
+      );
+    }
+
+    // =========================================================================
+    // 11. VITRINAS PÚBLICAS (/vitrines/{userId})
+    // =========================================================================
+    match /vitrines/{userId} {
+      // Lectura pública: Cualquier usuario autenticado puede ver las vitrinas
+      allow read: if isAuthenticated();
+
+      // Creación: Solo el dueño de la cuenta puede crear su vitrina
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+
+      // Actualización:
+      // 1. El dueño puede actualizar sus cartas expuestas y datos de perfil
+      // 2. Cualquier usuario autenticado puede dar o quitar 'Like' actualizando 'likesCount' y 'likedBy'
+      allow update: if isAuthenticated() && (
+        request.auth.uid == userId ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likesCount', 'likedBy'])
+      );
+
+      // Eliminación: Solo el dueño
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+
   }
 }
+

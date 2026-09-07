@@ -43,7 +43,12 @@ namespace JuegoTCG.Cards
         {
             if (cardData != null)
             {
+                bool wasShowingBack = IsShowingBack;
                 SetCard(cardData);
+                if (wasShowingBack)
+                {
+                    ShowBack(true);
+                }
             }
         }
 
@@ -80,6 +85,13 @@ namespace JuegoTCG.Cards
         {
             if (backContainer != null) backContainer.SetActive(showBack);
             if (frontContainer != null) frontContainer.SetActive(!showBack);
+
+            HolographicTilt tilt = GetComponent<HolographicTilt>();
+            if (tilt != null && showBack)
+            {
+                tilt.CanTilt = false;
+                tilt.enabled = false;
+            }
         }
 
         public void SetCard(CardData data)
@@ -166,6 +178,11 @@ namespace JuegoTCG.Cards
                 if (tilt != null)
                 {
                     tilt.SetTargetMaterial(holoInstance);
+                    if (IsShowingBack)
+                    {
+                        tilt.CanTilt = false;
+                        tilt.enabled = false;
+                    }
                 }
             }
             else
@@ -176,6 +193,8 @@ namespace JuegoTCG.Cards
                 if (tilt != null)
                 {
                     tilt.SetTargetMaterial(null);
+                    tilt.CanTilt = false;
+                    tilt.enabled = false;
                 }
             }
         }

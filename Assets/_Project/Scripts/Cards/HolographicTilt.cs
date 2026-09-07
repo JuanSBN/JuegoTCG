@@ -13,11 +13,26 @@ namespace JuegoTCG.Cards
         [Header("3D Tilt Settings")]
         [SerializeField] private float maxTiltAngle = 14f;
         [SerializeField] private float returnSpeed = 8f;
+        [SerializeField] private bool canTilt = false;
 
         private RectTransform rectTransform;
         private static readonly int TiltPosID = Shader.PropertyToID("_TiltPos");
         private bool isPointerOver = false;
         private Quaternion targetRotation = Quaternion.identity;
+
+        public bool CanTilt
+        {
+            get => canTilt;
+            set
+            {
+                canTilt = value;
+                if (!canTilt)
+                {
+                    isPointerOver = false;
+                    ResetTilt();
+                }
+            }
+        }
 
         private void Awake()
         {
@@ -38,7 +53,7 @@ namespace JuegoTCG.Cards
         {
             if (rectTransform != null)
             {
-                if (isPointerOver)
+                if (isPointerOver && canTilt && holoMaterial != null)
                 {
                     rectTransform.localRotation = Quaternion.Slerp(rectTransform.localRotation, targetRotation, Time.deltaTime * 15f);
                 }
@@ -49,27 +64,41 @@ namespace JuegoTCG.Cards
             }
         }
 
+        private void OnDisable()
+        {
+            isPointerOver = false;
+            ResetTilt();
+            if (rectTransform != null)
+            {
+                rectTransform.localRotation = Quaternion.identity;
+            }
+        }
+
         public void OnPointerDown(PointerEventData eventData)
         {
+            if (!isActiveAndEnabled || !canTilt || holoMaterial == null) return;
             isPointerOver = true;
             ProcessTilt(eventData);
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            if (!isActiveAndEnabled) return;
             isPointerOver = false;
             ResetTilt();
         }
 
         public void OnPointerMove(PointerEventData eventData)
         {
-            if (rectTransform == null) return;
+            if (!isActiveAndEnabled || !canTilt || holoMaterial == null || rectTransform == null) return;
             isPointerOver = true;
             ProcessTilt(eventData);
         }
 
         private void ProcessTilt(PointerEventData eventData)
         {
+            if (!canTilt || holoMaterial == null) return;
+
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint))
             {
                 // Normalize tilt coordinates from -1 to 1
@@ -91,6 +120,7 @@ namespace JuegoTCG.Cards
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            if (!isActiveAndEnabled) return;
             isPointerOver = false;
             ResetTilt();
         }
@@ -98,7 +128,12 @@ namespace JuegoTCG.Cards
         public void SetTargetMaterial(Material mat)
         {
             holoMaterial = mat;
-            enabled = (mat != null);
+            // No habilitar automaticamente aqui. CanTilt y enabled se gestionan segun cara frontal vs reverso.
+            if (mat == null)
+            {
+                canTilt = false;
+                enabled = false;
+            }
         }
 
         public void ResetTilt()

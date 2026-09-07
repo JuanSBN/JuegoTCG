@@ -25,6 +25,7 @@ namespace JuegoTCG.Editor
             string[] scenes = new string[]
             {
                 "Assets/_Project/Scenes/SplashScene.unity",
+                "Assets/_Project/Scenes/LoginSceneUIToolkit.unity",
                 "Assets/_Project/Scenes/LoginScene.unity",
                 "Assets/_Project/Scenes/HomeScreenUIToolkitScene.unity",
                 "Assets/_Project/Scenes/MyCardsSceneUIToolkit.unity",
@@ -36,6 +37,7 @@ namespace JuegoTCG.Editor
                 "Assets/_Project/Scenes/FriendsSceneUIToolkit.unity",
                 "Assets/_Project/Scenes/ProfileSceneUIToolkit.unity",
                 "Assets/_Project/Scenes/SettingsSceneUIToolkit.unity",
+                "Assets/_Project/Scenes/PackOpeningSceneUIToolkit.unity",
                 "Assets/_Project/Scenes/PackOpeningScene.unity"
             };
 

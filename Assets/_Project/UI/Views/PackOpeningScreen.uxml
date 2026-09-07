@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI/Styles/PackOpeningScreen.uss" />
+
+    <ui:VisualElement name="PackOpeningRoot" class="screen-container">
+
+        <!-- Destello blanco al desgarrar el sobre -->
+        <ui:VisualElement name="ScreenFlash" class="screen-flash screen-flash-hidden" />
+
+        <!-- 1. Topbar -->
+        <ui:VisualElement name="Topbar" class="topbar">
+            <ui:Toggle name="Toggle_ForceHolo" label="Forzar holo (prueba)" class="force-holo-toggle" />
+            <ui:VisualElement name="PackBadge" class="pack-badge">
+                <ui:Label text="★" class="pack-badge-star" />
+                <ui:Label name="PackCountText" text="5 sobres" class="pack-badge-text" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Escenario Central Interactivo (Stage) -->
+        <ui:VisualElement name="StageContainer" class="stage-container">
+
+            <!-- VISTA 1: SOBRE CERRADO -->
+            <ui:VisualElement name="ClosedView" class="stage-view stage-view-active">
+                <ui:VisualElement name="PackElement" class="pack-closed">
+                    <!-- Rayos rotatorios continuos -->
+                    <ui:VisualElement name="PackRays" class="pack-rays" />
+                    <!-- Estrella brillante -->
+                    <ui:VisualElement class="pack-star" />
+                    <!-- Emblema de marca FUTCARD -->
+                    <ui:VisualElement class="pack-brand-badge">
+                        <ui:Label text="FUTCARD" class="pack-brand-text" />
+                        <ui:Label text="PREMIUM PACK" class="pack-sub-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="CtaLabel" text="TOCA PARA ABRIR" class="cta-label" />
+                <ui:Label text="Sobre oficial · 5 cartas coleccionables" class="cta-sub" />
+            </ui:VisualElement>
+
+            <!-- VISTA 2: REVELACIÓN CARTA POR CARTA -->
+            <ui:VisualElement name="RevealView" class="stage-view stage-view-hidden">
+
+                <!-- Rayos celestiales de impacto detrás de la carta -->
+                <ui:VisualElement name="RevealGodRays" class="reveal-god-rays reveal-god-rays-hidden" />
+
+                <!-- Barra de 5 dots de progreso -->
+                <ui:VisualElement name="ProgressContainer" class="progress-container">
+                    <ui:VisualElement name="Dot_0" class="progress-dot progress-dot-current" />
+                    <ui:VisualElement name="Dot_1" class="progress-dot" />
+                    <ui:VisualElement name="Dot_2" class="progress-dot" />
+                    <ui:VisualElement name="Dot_3" class="progress-dot" />
+                    <ui:VisualElement name="Dot_4" class="progress-dot" />
+                </ui:VisualElement>
+
+                <!-- Área reservada para el CardPrefab nativo -->
+                <ui:VisualElement name="CardSlotArea" class="card-slot-area" />
+
+                <!-- Textos de ayuda y acción -->
+                <ui:Label name="ContinueHint" text="Toca la carta para revelar" class="continue-hint" />
+                <ui:Label name="TiltHint" text="✦ Mueve el dedo sobre la carta para ver el efecto holográfico" class="tilt-hint tilt-hint-hidden" />
+            </ui:VisualElement>
+
+            <!-- VISTA 3: RESUMEN DEL SOBRE -->
+            <ui:VisualElement name="SummaryView" class="stage-view stage-view-hidden">
+                <ui:Label text="¡SOBRE COMPLETADO!" class="summary-title" />
+                <ui:Label name="SummarySub" text="Revisa las cartas conseguidas en esta apertura" class="summary-sub" />
+
+                <!-- Cuadrícula horizontal de 5 mini-cartas -->
+                <ui:VisualElement name="SummaryGrid" class="summary-grid">
+                    <!-- Rellenado con slots animados escalonadamente -->
+                </ui:VisualElement>
+
+                <!-- Botones de Acción -->
+                <ui:VisualElement class="summary-actions-container">
+                    <ui:Button name="Btn_OpenAnother" text="ABRIR OTRO SOBRE" class="btn-primary" />
+                    <ui:Button name="Btn_BackToShop" text="VOLVER AL INICIO" class="btn-secondary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

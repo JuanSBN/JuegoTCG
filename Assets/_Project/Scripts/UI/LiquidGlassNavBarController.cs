@@ -66,7 +66,7 @@ namespace JuegoTCG.UI
                 Button btn = tabButtons[i];
                 if (btn == null) continue;
 
-                btn.clicked += () => OnTabClicked((TabType)index);
+                btn.clickable = new Clickable(() => OnTabClicked((TabType)index));
             }
 
             SnapToTab(currentTab);
@@ -195,6 +195,19 @@ namespace JuegoTCG.UI
                 case TabType.Perfil:
                     SceneManager.LoadScene("ProfileSceneUIToolkit");
                     break;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (navBar != null)
+            {
+                navBar.UnregisterCallback<GeometryChangedEvent>(OnNavBarGeometryChanged);
+            }
+            if (slideCoroutine != null)
+            {
+                StopCoroutine(slideCoroutine);
+                slideCoroutine = null;
             }
         }
     }

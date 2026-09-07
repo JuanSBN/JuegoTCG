@@ -92,88 +92,79 @@ namespace JuegoTCG.Social
             }
         }
 
+        private readonly HashSet<string> processedTrades = new HashSet<string>();
+
         private void InitializeDefaultOffers()
         {
-            // Ofertas recibidas de demostración basadas en el prototipo Figma
-            if (receivedOffers.Count == 0)
+            // Alpha: el intercambio inicia vacío. Solo aparecerán ofertas reales de Firestore.
+        }
+
+        /// <summary>
+        /// Sincroniza las ofertas recibidas y enviadas en la nube en tiempo real.
+        /// </summary>
+        public async Task RefreshCloudTradesAsync()
+        {
+            if (FirebaseAuthManager.Instance == null || !FirebaseAuthManager.Instance.IsAuthenticated) return;
+            string token = FirebaseAuthManager.Instance.IdToken;
+            string myUid = FirebaseAuthManager.Instance.UserId;
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(myUid)) return;
+
+            try
             {
-                receivedOffers.Add(new TradeOfferItem
+                // 1. Ofertas recibidas (donde toUid == myUid y status == "pendiente")
+                var incoming = await FirebaseRestClient.GetIncomingTradeOffersAsync(token, myUid);
+                if (incoming != null)
                 {
-                    tradeId = "trade_01",
-                    fromUid = "friend_ma",
-                    fromDisplayName = "MiAmigo_01",
-                    toUid = "me",
-                    toDisplayName = "Tú",
-                    offeredCardId = "LD",
-                    offeredCardName = "Luis Díaz",
-                    offeredRarity = "Mitica",
-                    requestedCardId = "LY",
-                    requestedCardName = "Lamine Yamal",
-                    requestedRarity = "Mitica",
-                    timeAgo = "Hace 2h",
-                    isIncoming = true
-                });
+                    receivedOffers.Clear();
+                    receivedOffers.AddRange(incoming);
+                }
 
-                receivedOffers.Add(new TradeOfferItem
+                // 2. Ofertas enviadas (donde fromUid == myUid)
+                var outgoing = await FirebaseRestClient.GetSentTradeOffersAsync(token, myUid);
+                if (outgoing != null)
                 {
-                    tradeId = "trade_02",
-                    fromUid = "friend_ec",
-                    fromDisplayName = "ElChampion",
-                    toUid = "me",
-                    toDisplayName = "Tú",
-                    offeredCardId = "JB",
-                    offeredCardName = "Jude Bellingham",
-                    offeredRarity = "Epica",
-                    requestedCardId = "PE",
-                    requestedCardName = "Pedri González",
-                    requestedRarity = "Epica",
-                    timeAgo = "Ayer",
-                    isIncoming = true
-                });
+                    sentOffers.Clear();
+                    foreach (var offer in outgoing)
+                    {
+                        // Si una oferta que yo envié ya fue aceptada por mi amigo:
+                        if (offer.status == "aceptado" && !processedTrades.Contains(offer.tradeId))
+                        {
+                            processedTrades.Add(offer.tradeId);
+                            // Transferencia en mi celular:
+                            // Yo ofrecí offeredCardId -> la entrego
+                            // Mi amigo me dio requestedCardId -> la recibo
+                            PlayerCollectionManager.EnsureExists();
+                            if (PlayerCollectionManager.Instance != null)
+                            {
+                                PlayerCollectionManager.Instance.RemoveCard(offer.offeredCardId, 1);
+                                PlayerCollectionManager.Instance.AddCard(offer.requestedCardId, 1);
+                            }
 
-                receivedOffers.Add(new TradeOfferItem
-                {
-                    tradeId = "trade_03",
-                    fromUid = "friend_pp",
-                    fromDisplayName = "ProPlayer_99",
-                    toUid = "me",
-                    toDisplayName = "Tú",
-                    offeredCardId = "RO",
-                    offeredCardName = "Rodri Hernández",
-                    offeredRarity = "Comun",
-                    requestedCardId = "EH",
-                    requestedCardName = "Erling Haaland",
-                    requestedRarity = "Comun",
-                    timeAgo = "Hace 3d",
-                    isIncoming = true
-                });
+                            // Marcar como completada en Firestore
+                            _ = FirebaseRestClient.UpdateTradeOfferStatusAsync(token, offer.tradeId, "completado");
+                            offer.status = "completado";
+                            OnTradeCompleted?.Invoke(offer);
+                            Debug.Log($"<color=green>[TradeService] ¡Oferta {offer.tradeId} completada! Recibiste {offer.requestedCardName}</color>");
+                        }
+
+                        if (offer.status == "pendiente")
+                        {
+                            sentOffers.Add(offer);
+                        }
+                    }
+                }
+
+                OnOffersUpdated?.Invoke();
             }
-
-            // Oferta enviada de demostración
-            if (sentOffers.Count == 0)
+            catch (Exception ex)
             {
-                sentOffers.Add(new TradeOfferItem
-                {
-                    tradeId = "trade_sent_01",
-                    fromUid = "me",
-                    fromDisplayName = "Tú",
-                    toUid = "friend_gs",
-                    toDisplayName = "GoldenShot_7",
-                    offeredCardId = "EH",
-                    offeredCardName = "Erling Haaland",
-                    offeredRarity = "Comun",
-                    requestedCardId = "KM",
-                    requestedCardName = "Kylian Mbappé",
-                    requestedRarity = "Especial",
-                    timeAgo = "Hace 5h",
-                    isIncoming = false
-                });
+                Debug.LogWarning($"[TradeService] Error actualizando intercambios de la nube: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// Propone una nueva oferta de intercambio a un amigo (proposeTrade).
-        /// Anti-fraude (TDD 2.5): Las cartas NO se descuentan ni se congelan al proponer.
+        /// Propone una nueva oferta de intercambio a un amigo guardándola en Firestore.
+        /// Anti-fraude (TDD 2.5): Las cartas NO se descuentan al proponer.
         /// </summary>
         public async Task<TradeOperationResult> ProposeTradeAsync(
             string toUid, 
@@ -185,8 +176,6 @@ namespace JuegoTCG.Social
             string requestedCardName,
             string requestedRarity)
         {
-            await Task.Delay(150);
-
             // Validar que el jugador actualmente posea la carta ofrecida
             PlayerCollectionManager.EnsureExists();
             if (PlayerCollectionManager.Instance != null && !PlayerCollectionManager.Instance.IsCardOwned(offeredCardId))
@@ -194,13 +183,17 @@ namespace JuegoTCG.Social
                 return new TradeOperationResult(false, "No posees la carta que intentas ofrecer.");
             }
 
-            string newTradeId = "trade_" + Guid.NewGuid().ToString("N").Substring(0, 8);
+            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+            string myUid = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.UserId : "";
+            string myName = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.DisplayName : "Entrenador";
+
+            string newTradeId = "trade_" + Guid.NewGuid().ToString("N").Substring(0, 10);
 
             var newOffer = new TradeOfferItem
             {
                 tradeId = newTradeId,
-                fromUid = "me",
-                fromDisplayName = "Tú",
+                fromUid = myUid,
+                fromDisplayName = myName,
                 toUid = toUid,
                 toDisplayName = !string.IsNullOrEmpty(friendName) ? friendName : "Amigo",
                 offeredCardId = offeredCardId,
@@ -214,33 +207,33 @@ namespace JuegoTCG.Social
                 isIncoming = false
             };
 
+            if (!string.IsNullOrEmpty(token))
+            {
+                bool ok = await FirebaseRestClient.CreateTradeOfferAsync(token, newOffer);
+                if (!ok)
+                {
+                    return new TradeOperationResult(false, "Error al enviar la oferta a la nube.");
+                }
+            }
+
             sentOffers.Insert(0, newOffer);
             OnOffersUpdated?.Invoke();
 
-            // Registrar evento en Analytics (TDD 2.9)
             Networking.FirebaseAnalyticsManager.Instance?.LogTradeProposed(toUid, offeredCardId, requestedCardId);
-
-            Debug.Log($"<color=cyan>[TradeService] Oferta propuesta {newTradeId} enviada a {friendName} (Cartas NO bloqueadas).</color>");
+            Debug.Log($"<color=cyan>[TradeService] Oferta propuesta {newTradeId} enviada a {friendName} en Firestore.</color>");
             return new TradeOperationResult(true, "¡Oferta de intercambio enviada con éxito!", newTradeId);
         }
 
         /// <summary>
-        /// Acepta una oferta de intercambio recibida (acceptTrade).
-        /// Transacción atómica: revalida posesión in-situ y transfiere cartas simultáneamente.
+        /// Acepta una oferta de intercambio recibida.
+        /// Transfiere cartas atómicamente: entrega la carta pedida y recibe la ofrecida.
         /// </summary>
         public async Task<TradeOperationResult> AcceptTradeAsync(string tradeId)
         {
-            await Task.Delay(200);
-
             var offer = receivedOffers.Find(o => o.tradeId == tradeId);
             if (offer == null)
             {
                 return new TradeOperationResult(false, "La oferta de intercambio no existe.");
-            }
-
-            if (offer.status != "pendiente")
-            {
-                return new TradeOperationResult(false, $"La oferta ya no está pendiente (Estado: {offer.status}).");
             }
 
             // Revalidar que el jugador local todavía posea la carta solicitada
@@ -249,42 +242,49 @@ namespace JuegoTCG.Social
             {
                 if (!PlayerCollectionManager.Instance.IsCardOwned(offer.requestedCardId))
                 {
-                    offer.status = "cancelado";
-                    OnOffersUpdated?.Invoke();
                     return new TradeOperationResult(false, "Intercambio cancelado: Ya no tienes la carta que te fue solicitada.");
                 }
 
                 // Transferencia atómica de cartas:
                 // 1. Entregar la carta que pidieron
                 // 2. Recibir la carta ofrecida por el amigo
+                PlayerCollectionManager.Instance.RemoveCard(offer.requestedCardId, 1);
                 PlayerCollectionManager.Instance.AddCard(offer.offeredCardId, 1);
-                // Si tuviera método de remover, se restaría; en el catálogo aseguramos la actualización
-                PlayerCollectionManager.Instance.CalculateCollectionPower();
+            }
+
+            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+            if (!string.IsNullOrEmpty(token))
+            {
+                await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "aceptado");
             }
 
             offer.status = "aceptado";
             receivedOffers.Remove(offer);
+            processedTrades.Add(tradeId);
 
-            // Registrar evento en Analytics (TDD 2.9)
             Networking.FirebaseAnalyticsManager.Instance?.LogTradeAccepted(tradeId, offer.offeredCardId);
 
             OnOffersUpdated?.Invoke();
             OnTradeCompleted?.Invoke(offer);
 
-            Debug.Log($"<color=green>[TradeService] ¡Intercambio {tradeId} completado atómicamente! Recibiste: {offer.offeredCardName}</color>");
+            Debug.Log($"<color=green>[TradeService] ¡Intercambio {tradeId} completado! Recibiste: {offer.offeredCardName}</color>");
             return new TradeOperationResult(true, $"¡Intercambio completado! Has recibido a {offer.offeredCardName}.", tradeId);
         }
 
         /// <summary>
-        /// Rechaza una oferta de intercambio recibida (cancelTrade/rechazar).
+        /// Rechaza una oferta de intercambio recibida.
         /// </summary>
         public async Task<TradeOperationResult> RejectTradeAsync(string tradeId)
         {
-            await Task.Delay(100);
-
             var offer = receivedOffers.Find(o => o.tradeId == tradeId);
             if (offer != null)
             {
+                string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+                if (!string.IsNullOrEmpty(token))
+                {
+                    await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "rechazado");
+                }
+
                 offer.status = "rechazado";
                 receivedOffers.Remove(offer);
                 OnOffersUpdated?.Invoke();
@@ -296,15 +296,19 @@ namespace JuegoTCG.Social
         }
 
         /// <summary>
-        /// Cancela una oferta de intercambio enviada que sigue pendiente (cancelTrade/cancelar).
+        /// Cancela una oferta de intercambio enviada que sigue pendiente.
         /// </summary>
         public async Task<TradeOperationResult> CancelSentTradeAsync(string tradeId)
         {
-            await Task.Delay(100);
-
             var offer = sentOffers.Find(o => o.tradeId == tradeId);
             if (offer != null)
             {
+                string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+                if (!string.IsNullOrEmpty(token))
+                {
+                    await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "cancelado");
+                }
+
                 offer.status = "cancelado";
                 sentOffers.Remove(offer);
                 OnOffersUpdated?.Invoke();
