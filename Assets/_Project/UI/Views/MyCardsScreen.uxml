@@ -176,6 +176,13 @@
                 </ui:VisualElement>
 
                 <ui:VisualElement name="InspectHeroCard" class="modal-hero-card card-mythic">
+                    <!-- Art presentation for cards with image / Data Pack -->
+                    <ui:VisualElement name="InspectArtContainer" class="card-art-container modal-art-container" style="display: none;">
+                        <ui:VisualElement name="InspectArtPhoto" class="card-art-photo" />
+                        <ui:VisualElement name="InspectArtFrame" class="card-art-frame" />
+                        <ui:VisualElement name="InspectArtHolo" class="card-holo-glint" />
+                    </ui:VisualElement>
+
                     <ui:VisualElement name="InspectAvatarCircle" class="card-avatar-circle avatar-mythic" style="width: 220px; height: 220px; border-radius: 110px;">
                         <ui:Label name="InspectAvatarInitials" text="LD" class="card-avatar-initials initials-mythic" style="font-size: 72px;" />
                     </ui:VisualElement>

@@ -544,3 +544,171 @@
     border-color: rgba(255, 255, 255, 0.10);
     color: var(--text-dim);
 }
+
+/* ==========================================================================
+   CARD ART & HOLOGRAPHIC FOIL PRESENTATION (Lamine Yamal & Data Packs)
+   ========================================================================== */
+.card-item-art {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+    position: relative;
+    border-width: 0;
+    background-color: #071018;
+}
+
+.card-art-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 26px;
+    overflow: hidden;
+}
+
+.card-art-photo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.card-art-frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.card-holo-glint {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.card-player-name-framed {
+    position: absolute;
+    bottom: 106px;
+    left: 12px;
+    right: 12px;
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.95);
+}
+
+.card-frame-footer-box {
+    position: absolute;
+    bottom: 14px;
+    left: 20%;
+    right: 20%;
+    height: 82px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 6px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.card-frame-team-name {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-center;
+    margin-bottom: 2px;
+}
+
+.card-frame-sub-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.card-frame-pos-text {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-left;
+}
+
+.card-frame-rarity-text {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-right;
+}
+
+.card-copies-badge-framed {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border-radius: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 22px;
+    -unity-font-style: bold;
+    background-color: rgba(6, 12, 18, 0.82);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+}
+
+/* Modal Hero Card with Full Art */
+.modal-hero-card {
+    width: 440px;
+    height: 640px;
+    border-radius: 32px;
+    border-width: 2px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+    padding: 24px;
+}
+
+.modal-hero-art {
+    width: 440px;
+    height: 640px;
+    border-radius: 32px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 24px;
+    border-width: 0;
+    padding: 0;
+    background-color: #071018;
+}
+
+.modal-art-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+}

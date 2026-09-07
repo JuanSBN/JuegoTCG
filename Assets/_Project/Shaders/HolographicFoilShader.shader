@@ -57,7 +57,7 @@ Shader "Shader Graphs/HolographicFoilShader"
                 v2f OUT;
                 OUT.vertex = UnityObjectToClipPos(IN.vertex);
                 OUT.texcoord = IN.texcoord;
-                OUT.color = IN.color * _Color;
+                OUT.color = (IN.color.a > 0.001) ? (IN.color * _Color) : _Color;
                 return OUT;
             }
 
