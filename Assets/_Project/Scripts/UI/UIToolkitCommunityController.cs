@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using JuegoTCG.Social;
 
 namespace JuegoTCG.UI
 {
@@ -27,7 +28,36 @@ namespace JuegoTCG.UI
             root = uiDocument.rootVisualElement;
             if (root == null) return;
 
+            TradeService.EnsureExists();
+            SocialService.EnsureExists();
+
             BindUI();
+            UpdateBadges();
+
+            if (TradeService.Instance != null)
+            {
+                TradeService.Instance.OnOffersUpdated += UpdateBadges;
+                _ = TradeService.Instance.RefreshCloudTradesAsync();
+            }
+
+            if (SocialService.Instance != null)
+            {
+                SocialService.Instance.OnRequestsChanged += UpdateBadges;
+                _ = SocialService.Instance.RefreshCloudRequestsAndFriendsAsync();
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (TradeService.Instance != null)
+            {
+                TradeService.Instance.OnOffersUpdated -= UpdateBadges;
+            }
+
+            if (SocialService.Instance != null)
+            {
+                SocialService.Instance.OnRequestsChanged -= UpdateBadges;
+            }
         }
 
         private void BindUI()
@@ -61,6 +91,29 @@ namespace JuegoTCG.UI
             // Wire Liquid Glass Bottom Nav Bar (Tab Comunidad)
             var navCtrl = GetComponent<LiquidGlassNavBarController>() ?? gameObject.AddComponent<LiquidGlassNavBarController>();
             navCtrl.Initialize(root, LiquidGlassNavBarController.TabType.Comunidad);
+        }
+
+        private void UpdateBadges()
+        {
+            // Badge Intercambio
+            var badgeIntercambio = cardIntercambio?.Q<VisualElement>(className: "community-card-badge");
+            var labelIntercambio = cardIntercambio?.Q<Label>(className: "community-badge-text");
+            int tradeCount = TradeService.Instance != null ? TradeService.Instance.ReceivedOffers.Count : 0;
+            if (badgeIntercambio != null)
+            {
+                badgeIntercambio.style.display = tradeCount > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+                if (labelIntercambio != null) labelIntercambio.text = tradeCount.ToString();
+            }
+
+            // Badge Amigos
+            var badgeAmigos = cardAmigos?.Q<VisualElement>(className: "community-card-badge");
+            var labelAmigos = cardAmigos?.Q<Label>(className: "community-badge-text");
+            int reqCount = SocialService.Instance != null ? SocialService.Instance.PendingRequests.Count : 0;
+            if (badgeAmigos != null)
+            {
+                badgeAmigos.style.display = reqCount > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+                if (labelAmigos != null) labelAmigos.text = reqCount.ToString();
+            }
         }
     }
 }

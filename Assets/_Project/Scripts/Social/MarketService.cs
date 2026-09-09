@@ -138,6 +138,9 @@ namespace JuegoTCG.Social
                                 paidSellerListings.Add(item.listingId);
                                 int revenue = item.pricePerCard * Mathf.Max(1, item.quantity);
                                 FirebaseAuthManager.Instance.AddCoins(revenue);
+                                item.status = "completado";
+                                _ = FirebaseRestClient.UpdateMarketListingStatusAsync(token, item.listingId, "completado");
+                                _ = FirebaseAuthManager.Instance.SyncUserProfileToFirestoreAsync();
                                 Debug.Log($"<color=green>[MarketService] ¡Tu carta {item.cardName} fue comprada por {item.buyerDisplayName}! Recibiste +{revenue} monedas.</color>");
                                 OnListingPurchased?.Invoke(item);
                             }
@@ -251,6 +254,7 @@ namespace JuegoTCG.Social
 
             // 1. RESERVA ATÓMICA: Descontar carta de la colección local
             colMgr.RemoveCard(cardId, quantity);
+            _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
 
             string listingId = "list_" + Guid.NewGuid().ToString("N").Substring(0, 10);
             string sellerUid = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.UserId : "me";
@@ -286,6 +290,7 @@ namespace JuegoTCG.Social
                 {
                     // Si falla la nube, revertir la deducción
                     colMgr.AddCard(cardId, quantity);
+                    _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
                     return new MarketOperationResult(false, "Error al publicar la carta en el mercado de la nube.");
                 }
             }
@@ -365,6 +370,7 @@ namespace JuegoTCG.Social
             // 3. Acreditar carta al comprador
             PlayerCollectionManager.EnsureExists();
             PlayerCollectionManager.Instance.AddCard(listing.cardId, listing.quantity);
+            _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
 
             // 4. Actualizar estado local
             listing.status = "vendido";
@@ -422,6 +428,7 @@ namespace JuegoTCG.Social
             // 2. Reintegrar carta a la colección
             PlayerCollectionManager.EnsureExists();
             PlayerCollectionManager.Instance.AddCard(listing.cardId, listing.quantity);
+            _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
 
             listing.status = "cancelado";
             publicListings.Remove(listing);

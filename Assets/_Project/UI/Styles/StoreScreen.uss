@@ -487,57 +487,67 @@
 /* ==========================================================================
    FEEDBACK MODAL
    ========================================================================== */
-.modal-overlay {
+.modal-overlay,
+.store-modal-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(4, 10, 6, 0.85);
+    background-color: rgba(4, 10, 6, 0.88);
     align-items: center;
     justify-content: center;
     padding: 60px;
-    z-index: 100;
+    z-index: 1000;
 }
 
-.modal-hidden {
+.modal-hidden,
+.store-modal-hidden {
     display: none;
 }
 
-.feedback-card {
+.feedback-card,
+.store-modal-card {
     width: 860px;
-    background-color: #0c1c12;
+    max-width: 92%;
+    background-color: #0A1810;
     border-radius: 36px;
     border-width: 2px;
-    border-color: var(--gold);
+    border-color: var(--gold-border);
     padding: 48px;
     align-items: center;
 }
 
-.feedback-icon {
-    width: 140px;
-    height: 140px;
-    margin-bottom: 24px;
-    -unity-background-scale-mode: scale-to-fit;
+.feedback-icon,
+.store-modal-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    -unity-text-align: middle-center;
 }
 
-.feedback-title {
-    font-size: 46px;
+.feedback-title,
+.store-modal-title {
+    font-size: 44px;
     -unity-font-style: bold;
-    color: var(--text-white);
+    color: var(--gold);
     letter-spacing: 2px;
     margin-bottom: 14px;
     -unity-text-align: middle-center;
+    white-space: normal;
 }
 
-.feedback-message {
-    font-size: 30px;
+.feedback-message,
+.store-modal-desc {
+    font-size: 28px;
     color: var(--text-gray);
     -unity-text-align: middle-center;
     margin-bottom: 36px;
+    white-space: normal;
+    line-height: 36px;
 }
 
-.feedback-close-btn {
+.feedback-close-btn,
+.store-modal-close-btn {
     width: 100%;
     height: 94px;
     background-color: var(--gold);
@@ -545,15 +555,31 @@
     border-width: 0;
     align-items: center;
     justify-content: center;
+    color: #07120B !important;
+    font-size: 32px !important;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    transition-property: background-color, scale;
+    transition-duration: 0.15s;
 }
 
-.feedback-close-btn:active {
+.feedback-close-btn:hover,
+.store-modal-close-btn:hover {
+    background-color: #FFD257;
+    scale: 1.02;
+}
+
+.feedback-close-btn:active,
+.store-modal-close-btn:active {
     scale: 0.96;
 }
 
-.feedback-close-btn-text {
-    font-size: 34px;
+.feedback-close-btn-text,
+.store-modal-close-btn-text,
+.store-modal-close-btn > .unity-text-element {
+    font-size: 32px !important;
     -unity-font-style: bold;
-    color: #07120B;
+    color: #07120B !important;
     letter-spacing: 2px;
+    -unity-text-align: middle-center;
 }

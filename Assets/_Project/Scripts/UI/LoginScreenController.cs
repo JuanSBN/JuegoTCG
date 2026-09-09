@@ -106,19 +106,19 @@ namespace JuegoTCG.UI
             );
         }
 
-        private async void OnClickEmailLogin()
+        private void OnClickEmailLogin()
         {
-            Debug.Log("<color=cyan>[Login] Autenticando con Email / Vinculando credencial (linkWithCredential)...</color>");
-            if (FirebaseAuthManager.Instance != null)
-            {
-                await FirebaseAuthManager.Instance.LinkAccountAsync("email", "usuario@futbol.com");
-            }
-            SceneManager.LoadScene("HomeScreenUIToolkitScene");
+            Debug.Log("<color=cyan>[Login] Acceso por correo seleccionado. Redirigiendo a autenticación de Google/Gmail...</color>");
+            OnClickGoogleLogin();
         }
 
-        private void OnClickContinueAsGuest()
+        private async void OnClickContinueAsGuest()
         {
             Debug.Log("<color=yellow>[Login] Continuando con cuenta anónima / invitado...</color>");
+            if (FirebaseAuthManager.Instance != null && !FirebaseAuthManager.Instance.IsAuthenticated)
+            {
+                await FirebaseAuthManager.Instance.SignInAnonymouslyAsync();
+            }
             SceneManager.LoadScene("HomeScreenUIToolkitScene");
         }
     }

@@ -332,6 +332,19 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
+        <!-- Modal: Feedback / Alerta de Intercambio -->
+        <ui:VisualElement name="TradeFeedbackModal" class="modal-backdrop" style="display: none;">
+            <ui:VisualElement class="modal-card">
+                <ui:Label name="TradeFeedbackTitle" text="INTERCAMBIO" class="modal-header-title" />
+                <ui:Label name="TradeFeedbackMessage" text="" class="trade-feedback-message" />
+                <ui:VisualElement class="modal-actions-row">
+                    <ui:Button name="Btn_CloseTradeFeedback" class="btn-confirm-trade" style="width: 100%; margin-right: 0;">
+                        <ui:Label text="ENTENDIDO" class="btn-confirm-trade-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
         <!-- Liquid Glass Bottom Nav -->
         <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
 

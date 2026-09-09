@@ -49,6 +49,13 @@ namespace JuegoTCG.Editor
             PlayerSettings.productName = "JuegoTCG";
             PlayerSettings.companyName = "JuanSBN";
 
+            // Desactivar pantalla de inicio "Made with Unity" (permitido de forma gratuita en Unity 6)
+            PlayerSettings.SplashScreen.show = false;
+            PlayerSettings.SplashScreen.showUnityLogo = false;
+
+            // Desactivar Android Optimized Frame Pacing (Swappy) que capa a 30 FPS en teléfonos
+            PlayerSettings.Android.optimizedFramePacing = false;
+
             // Keystore fijado en el proyecto para firma determinista y coincidencia exacta con Firebase
             string projectKeystore = Path.Combine(Directory.GetCurrentDirectory(), "debug.keystore");
             if (File.Exists(projectKeystore))

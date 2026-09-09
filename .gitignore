@@ -44,3 +44,7 @@ functions/node_modules/
 
 # Temporary Office files
 ~$*
+
+# Unity auto-recovery
+[Aa]ssets/_Recovery/
+[Aa]ssets/_Recovery.meta

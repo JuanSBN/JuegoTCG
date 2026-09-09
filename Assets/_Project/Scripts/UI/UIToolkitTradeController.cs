@@ -56,9 +56,19 @@ namespace JuegoTCG.UI
         private Button btnSendTradeOffer;
         private Button btnCloseNewTradeModal;
 
+        // Modal: Feedback / Alertas
+        private VisualElement tradeFeedbackModal;
+        private Label tradeFeedbackTitle;
+        private Label tradeFeedbackMessage;
+        private Button btnCloseTradeFeedback;
+
         private readonly List<FriendData> cachedFriends = new List<FriendData>();
         private readonly List<CardCatalogItem> cachedOwnedCards = new List<CardCatalogItem>();
         private readonly List<CardCatalogItem> cachedCatalogCards = new List<CardCatalogItem>();
+
+        private int selectedFriendIndex = 0;
+        private int selectedOfferCardIndex = 0;
+        private int selectedRequestCardIndex = 0;
 
         private bool isReceivedTab = true;
         private Coroutine pollCoroutine;
@@ -83,6 +93,10 @@ namespace JuegoTCG.UI
             if (pollCoroutine != null) StopCoroutine(pollCoroutine);
             pollCoroutine = StartCoroutine(PollCloudTradesRoutine());
 
+            // Actualizar ofertas y lista de amigos en segundo plano
+            _ = TradeService.Instance.RefreshCloudTradesAsync();
+            _ = SocialService.Instance.RefreshCloudRequestsAndFriendsAsync();
+
             // Si el usuario vino desde la pantalla de Amigos para intercambiar con alguien específico:
             if (!string.IsNullOrEmpty(PreselectedFriendUid))
             {
@@ -91,10 +105,6 @@ namespace JuegoTCG.UI
                 PreselectedFriendUid = null;
                 PreselectedFriendName = null;
                 OpenNewTradeModal(fUid, fName);
-            }
-            else
-            {
-                _ = TradeService.Instance.RefreshCloudTradesAsync();
             }
 
             RefreshCurrentTab();
@@ -161,9 +171,19 @@ namespace JuegoTCG.UI
             for (int i = 0; i < 3; i++)
             {
                 int index = i + 1;
+                int slotIndex = i;
                 receivedSlots[i] = root.Q<VisualElement>($"Card_Trade_{index}");
                 receivedAcceptBtns[i] = root.Q<Button>($"Btn_Accept_{index}");
                 receivedRejectBtns[i] = root.Q<Button>($"Btn_Reject_{index}");
+
+                if (receivedAcceptBtns[i] != null)
+                {
+                    receivedAcceptBtns[i].clicked += () => OnAcceptClicked(slotIndex);
+                }
+                if (receivedRejectBtns[i] != null)
+                {
+                    receivedRejectBtns[i].clicked += () => OnRejectClicked(slotIndex);
+                }
             }
 
             // Ranuras Enviadas
@@ -173,8 +193,14 @@ namespace JuegoTCG.UI
             for (int i = 0; i < 3; i++)
             {
                 int index = i + 1;
+                int slotIndex = i;
                 sentSlots[i] = root.Q<VisualElement>($"Card_Trade_Sent_{index}");
                 sentCancelBtns[i] = root.Q<Button>($"Btn_Cancel_{index}");
+
+                if (sentCancelBtns[i] != null)
+                {
+                    sentCancelBtns[i].clicked += () => OnCancelClicked(slotIndex);
+                }
             }
 
             // Botón Flotante: Proponer Intercambio
@@ -193,6 +219,42 @@ namespace JuegoTCG.UI
             btnSendTradeOffer = root.Q<Button>("Btn_SendTradeOffer");
             btnCloseNewTradeModal = root.Q<Button>("Btn_CloseNewTradeModal");
 
+            if (dropdownFriend != null)
+            {
+                dropdownFriend.RegisterValueChangedCallback(evt =>
+                {
+                    if (dropdownFriend.choices != null && !string.IsNullOrEmpty(evt.newValue))
+                    {
+                        int idx = dropdownFriend.choices.IndexOf(evt.newValue);
+                        if (idx >= 0) selectedFriendIndex = idx;
+                    }
+                });
+            }
+
+            if (dropdownOfferCard != null)
+            {
+                dropdownOfferCard.RegisterValueChangedCallback(evt =>
+                {
+                    if (dropdownOfferCard.choices != null && !string.IsNullOrEmpty(evt.newValue))
+                    {
+                        int idx = dropdownOfferCard.choices.IndexOf(evt.newValue);
+                        if (idx >= 0) selectedOfferCardIndex = idx;
+                    }
+                });
+            }
+
+            if (dropdownRequestCard != null)
+            {
+                dropdownRequestCard.RegisterValueChangedCallback(evt =>
+                {
+                    if (dropdownRequestCard.choices != null && !string.IsNullOrEmpty(evt.newValue))
+                    {
+                        int idx = dropdownRequestCard.choices.IndexOf(evt.newValue);
+                        if (idx >= 0) selectedRequestCardIndex = idx;
+                    }
+                });
+            }
+
             if (btnSendTradeOffer != null)
             {
                 btnSendTradeOffer.clicked += async () => await SendTradeOfferAsync();
@@ -204,6 +266,22 @@ namespace JuegoTCG.UI
                 {
                     if (newTradeModal != null) newTradeModal.style.display = DisplayStyle.None;
                 };
+            }
+
+            // Modal de Feedback / Notificaciones
+            tradeFeedbackModal = root.Q<VisualElement>("TradeFeedbackModal");
+            if (tradeFeedbackModal != null)
+            {
+                tradeFeedbackTitle = tradeFeedbackModal.Q<Label>("TradeFeedbackTitle");
+                tradeFeedbackMessage = tradeFeedbackModal.Q<Label>("TradeFeedbackMessage");
+                btnCloseTradeFeedback = tradeFeedbackModal.Q<Button>("Btn_CloseTradeFeedback");
+                if (btnCloseTradeFeedback != null)
+                {
+                    btnCloseTradeFeedback.clicked += () =>
+                    {
+                        if (tradeFeedbackModal != null) tradeFeedbackModal.style.display = DisplayStyle.None;
+                    };
+                }
             }
 
             // Barra de Navegación Inferior (Comunidad)
@@ -302,16 +380,30 @@ namespace JuegoTCG.UI
                 var timeLbl = slot.Q<Label>(className: "trade-time-label");
                 if (timeLbl != null) timeLbl.text = offer.timeAgo;
 
+                // Validar si el usuario local posee la carta requerida
+                bool ownsRequested = PlayerCollectionManager.Instance != null && PlayerCollectionManager.Instance.IsCardOwned(offer.requestedCardId);
+
                 // Tú Das (lo que el proponente solicita)
                 var giveCol = slot.Q<VisualElement>(className: "trade-side-col");
                 if (giveCol != null)
                 {
                     var giveTitle = giveCol.Q<Label>(className: "trade-side-title");
-                    if (giveTitle != null) giveTitle.text = $"TÚ DAS: {offer.requestedCardName}";
+                    if (giveTitle != null)
+                    {
+                        giveTitle.text = ownsRequested 
+                            ? $"TÚ DAS: {offer.requestedCardName}" 
+                            : $"TÚ DAS: {offer.requestedCardName} (No disponible)";
+                    }
 
-                    var token = giveCol.Q<VisualElement>(className: "trade-token");
-                    var tokenLbl = token?.Q<Label>(className: "trade-token-text");
-                    SetTokenStyle(token, tokenLbl, offer.requestedRarity, offer.requestedCardName);
+                    var tokens = giveCol.Query<VisualElement>(className: "trade-token").ToList();
+                    if (tokens.Count > 0)
+                    {
+                        var token = tokens[0];
+                        token.style.display = DisplayStyle.Flex;
+                        var tokenLbl = token.Q<Label>(className: "trade-token-text");
+                        SetTokenStyle(token, tokenLbl, offer.requestedRarity, offer.requestedCardName);
+                        for (int t = 1; t < tokens.Count; t++) tokens[t].style.display = DisplayStyle.None;
+                    }
                 }
 
                 // Tú Recibes (lo que el proponente te entrega)
@@ -321,26 +413,40 @@ namespace JuegoTCG.UI
                     var receiveTitle = receiveCol.Q<Label>(className: "trade-side-title");
                     if (receiveTitle != null) receiveTitle.text = $"TÚ RECIBES: {offer.offeredCardName}";
 
-                    var token = receiveCol.Q<VisualElement>(className: "trade-token");
-                    var tokenLbl = token?.Q<Label>(className: "trade-token-text");
-                    SetTokenStyle(token, tokenLbl, offer.offeredRarity, offer.offeredCardName);
+                    var tokens = receiveCol.Query<VisualElement>(className: "trade-token").ToList();
+                    if (tokens.Count > 0)
+                    {
+                        var token = tokens[0];
+                        token.style.display = DisplayStyle.Flex;
+                        var tokenLbl = token.Q<Label>(className: "trade-token-text");
+                        SetTokenStyle(token, tokenLbl, offer.offeredRarity, offer.offeredCardName);
+                        for (int t = 1; t < tokens.Count; t++) tokens[t].style.display = DisplayStyle.None;
+                    }
                 }
 
-                // Botones Aceptar / Rechazar
-                string currentTradeId = offer.tradeId;
+                // Estado visual de los botones Aceptar / Rechazar
                 var btnAccept = receivedAcceptBtns[i];
                 var btnReject = receivedRejectBtns[i];
 
                 if (btnAccept != null)
                 {
                     btnAccept.SetEnabled(true);
-                    btnAccept.clickable = new Clickable(async () => await AcceptTradeOffer(currentTradeId, slot, btnAccept));
+                    var btnAcceptText = btnAccept.Q<Label>(className: "trade-btn-accept-text");
+                    if (!ownsRequested)
+                    {
+                        if (btnAcceptText != null) btnAcceptText.text = "NO LA TIENES";
+                        btnAccept.AddToClassList("trade-btn-disabled");
+                    }
+                    else
+                    {
+                        if (btnAcceptText != null) btnAcceptText.text = "ACEPTAR";
+                        btnAccept.RemoveFromClassList("trade-btn-disabled");
+                    }
                 }
 
                 if (btnReject != null)
                 {
                     btnReject.SetEnabled(true);
-                    btnReject.clickable = new Clickable(async () => await RejectTradeOffer(currentTradeId, slot, btnReject));
                 }
             }
         }
@@ -411,9 +517,15 @@ namespace JuegoTCG.UI
                     var giveTitle = giveCol.Q<Label>(className: "trade-side-title");
                     if (giveTitle != null) giveTitle.text = $"TÚ DAS: {offer.offeredCardName}";
 
-                    var token = giveCol.Q<VisualElement>(className: "trade-token");
-                    var tokenLbl = token?.Q<Label>(className: "trade-token-text");
-                    SetTokenStyle(token, tokenLbl, offer.offeredRarity, offer.offeredCardName);
+                    var tokens = giveCol.Query<VisualElement>(className: "trade-token").ToList();
+                    if (tokens.Count > 0)
+                    {
+                        var token = tokens[0];
+                        token.style.display = DisplayStyle.Flex;
+                        var tokenLbl = token.Q<Label>(className: "trade-token-text");
+                        SetTokenStyle(token, tokenLbl, offer.offeredRarity, offer.offeredCardName);
+                        for (int t = 1; t < tokens.Count; t++) tokens[t].style.display = DisplayStyle.None;
+                    }
                 }
 
                 // Tú Recibes (lo que pides a cambio)
@@ -423,61 +535,141 @@ namespace JuegoTCG.UI
                     var receiveTitle = receiveCol.Q<Label>(className: "trade-side-title");
                     if (receiveTitle != null) receiveTitle.text = $"TÚ RECIBES: {offer.requestedCardName}";
 
-                    var token = receiveCol.Q<VisualElement>(className: "trade-token");
-                    var tokenLbl = token?.Q<Label>(className: "trade-token-text");
-                    SetTokenStyle(token, tokenLbl, offer.requestedRarity, offer.requestedCardName);
+                    var tokens = receiveCol.Query<VisualElement>(className: "trade-token").ToList();
+                    if (tokens.Count > 0)
+                    {
+                        var token = tokens[0];
+                        token.style.display = DisplayStyle.Flex;
+                        var tokenLbl = token.Q<Label>(className: "trade-token-text");
+                        SetTokenStyle(token, tokenLbl, offer.requestedRarity, offer.requestedCardName);
+                        for (int t = 1; t < tokens.Count; t++) tokens[t].style.display = DisplayStyle.None;
+                    }
                 }
 
                 // Botón Cancelar
-                string currentTradeId = offer.tradeId;
                 var btnCancel = sentCancelBtns[i];
                 if (btnCancel != null)
                 {
                     btnCancel.SetEnabled(true);
-                    btnCancel.clickable = new Clickable(async () => await CancelSentTradeOffer(currentTradeId, slot, btnCancel));
                 }
             }
         }
 
-        private async Task AcceptTradeOffer(string tradeId, VisualElement slot, Button btn)
+        private async void OnAcceptClicked(int slotIndex)
         {
+            var offers = TradeService.Instance != null ? TradeService.Instance.ReceivedOffers : null;
+            if (offers == null || slotIndex >= offers.Count) return;
+
+            var offer = offers[slotIndex];
+            var slot = (receivedSlots != null && slotIndex < receivedSlots.Length) ? receivedSlots[slotIndex] : null;
+            var btn = (receivedAcceptBtns != null && slotIndex < receivedAcceptBtns.Length) ? receivedAcceptBtns[slotIndex] : null;
+
+            bool ownsRequested = PlayerCollectionManager.Instance != null && PlayerCollectionManager.Instance.IsCardOwned(offer.requestedCardId);
+            if (!ownsRequested)
+            {
+                ShowFeedbackModal("Carta No Disponible", 
+                    $"Tu amigo '{offer.fromDisplayName}' solicita tu carta '{offer.requestedCardName}', pero actualmente no tienes ninguna copia en tu inventario.\n\nConsíguela abriendo sobres en la tienda para poder completar este intercambio.", 
+                    isError: true);
+                return;
+            }
+
+            await AcceptTradeOffer(offer, slot, btn);
+        }
+
+        private async void OnRejectClicked(int slotIndex)
+        {
+            var offers = TradeService.Instance != null ? TradeService.Instance.ReceivedOffers : null;
+            if (offers == null || slotIndex >= offers.Count) return;
+
+            var offer = offers[slotIndex];
+            var slot = (receivedSlots != null && slotIndex < receivedSlots.Length) ? receivedSlots[slotIndex] : null;
+            var btn = (receivedRejectBtns != null && slotIndex < receivedRejectBtns.Length) ? receivedRejectBtns[slotIndex] : null;
+
             if (btn != null) btn.SetEnabled(false);
-            var result = await TradeService.Instance.AcceptTradeAsync(tradeId);
+            var result = await TradeService.Instance.RejectTradeAsync(offer.tradeId);
+            if (slot != null) slot.style.display = DisplayStyle.None;
+            RefreshCurrentTab();
+            Debug.Log($"<color=yellow>[TradeController] {result.message}</color>");
+            ShowFeedbackModal("Intercambio Rechazado", $"Has rechazado la oferta de intercambio de {offer.fromDisplayName}.", isError: false);
+        }
+
+        private async void OnCancelClicked(int slotIndex)
+        {
+            var offers = TradeService.Instance != null ? TradeService.Instance.SentOffers : null;
+            if (offers == null || slotIndex >= offers.Count) return;
+
+            var offer = offers[slotIndex];
+            var slot = (sentSlots != null && slotIndex < sentSlots.Length) ? sentSlots[slotIndex] : null;
+            var btn = (sentCancelBtns != null && slotIndex < sentCancelBtns.Length) ? sentCancelBtns[slotIndex] : null;
+
+            if (btn != null) btn.SetEnabled(false);
+            var result = await TradeService.Instance.CancelSentTradeAsync(offer.tradeId);
+            if (slot != null) slot.style.display = DisplayStyle.None;
+            RefreshCurrentTab();
+            Debug.Log($"<color=orange>[TradeController] {result.message}</color>");
+            ShowFeedbackModal("Oferta Cancelada", $"Has cancelado tu propuesta enviada a {offer.toDisplayName}.", isError: false);
+        }
+
+        private async Task AcceptTradeOffer(TradeOfferItem offer, VisualElement slot, Button btn)
+        {
+            if (btn != null)
+            {
+                btn.SetEnabled(false);
+                var lbl = btn.Q<Label>(className: "trade-btn-accept-text");
+                if (lbl != null) lbl.text = "PROCESANDO...";
+            }
+
+            var result = await TradeService.Instance.AcceptTradeAsync(offer.tradeId);
             if (result.success)
             {
                 if (slot != null) slot.style.display = DisplayStyle.None;
                 Debug.Log($"<color=green>[TradeController] {result.message}</color>");
+                ShowFeedbackModal("¡Intercambio Completado!", 
+                    $"¡Has completado el intercambio con {offer.fromDisplayName} exitosamente!\n\nEntregaste: {offer.requestedCardName}\nRecibiste: {offer.offeredCardName}", 
+                    isError: false);
             }
             else
             {
-                if (btn != null) btn.SetEnabled(true);
+                if (btn != null)
+                {
+                    btn.SetEnabled(true);
+                    var lbl = btn.Q<Label>(className: "trade-btn-accept-text");
+                    if (lbl != null) lbl.text = "ACEPTAR";
+                }
                 Debug.LogWarning($"[TradeController] Fallo al aceptar intercambio: {result.message}");
+                ShowFeedbackModal("No Se Pudo Intercambiar", result.message, isError: true);
             }
             RefreshCurrentTab();
         }
 
-        private async Task RejectTradeOffer(string tradeId, VisualElement slot, Button btn)
+        private void ShowFeedbackModal(string title, string message, bool isError = false)
         {
-            if (btn != null) btn.SetEnabled(false);
-            var result = await TradeService.Instance.RejectTradeAsync(tradeId);
-            if (slot != null) slot.style.display = DisplayStyle.None;
-            RefreshCurrentTab();
-            Debug.Log($"<color=yellow>[TradeController] {result.message}</color>");
-        }
-
-        private async Task CancelSentTradeOffer(string tradeId, VisualElement slot, Button btn)
-        {
-            if (btn != null) btn.SetEnabled(false);
-            var result = await TradeService.Instance.CancelSentTradeAsync(tradeId);
-            if (slot != null) slot.style.display = DisplayStyle.None;
-            RefreshCurrentTab();
-            Debug.Log($"<color=orange>[TradeController] {result.message}</color>");
+            if (tradeFeedbackModal == null) return;
+            if (tradeFeedbackTitle != null)
+            {
+                tradeFeedbackTitle.text = title;
+                tradeFeedbackTitle.style.color = isError 
+                    ? new StyleColor(new Color(1f, 0.42f, 0.42f)) 
+                    : new StyleColor(new Color(0.91f, 0.66f, 0.12f));
+            }
+            if (tradeFeedbackMessage != null)
+            {
+                tradeFeedbackMessage.text = message;
+            }
+            tradeFeedbackModal.style.display = DisplayStyle.Flex;
+            tradeFeedbackModal.BringToFront();
         }
 
         private void OnTradeCompletedHandler(TradeOfferItem completedTrade)
         {
             Debug.Log($"<color=green>[TradeController] ¡Intercambio {completedTrade.tradeId} completado exitosamente!</color>");
             RefreshCurrentTab();
+            if (FirebaseAuthManager.Instance != null && completedTrade.fromUid == FirebaseAuthManager.Instance.UserId)
+            {
+                ShowFeedbackModal("¡Intercambio Aceptado!", 
+                    $"¡Tu amigo {completedTrade.toDisplayName} aceptó tu propuesta de intercambio!\n\nRecibiste: {completedTrade.requestedCardName}", 
+                    isError: false);
+            }
         }
 
         private void UpdateBadgeDisplay()
@@ -518,12 +710,38 @@ namespace JuegoTCG.UI
             if (dropdownFriend != null)
             {
                 dropdownFriend.choices = friendChoices;
-                dropdownFriend.index = 0;
+                selectedFriendIndex = 0;
 
                 if (!string.IsNullOrEmpty(preselectedUid))
                 {
                     int foundIdx = cachedFriends.FindIndex(f => f.friendUid == preselectedUid);
-                    if (foundIdx >= 0) dropdownFriend.index = foundIdx;
+                    if (foundIdx >= 0)
+                    {
+                        selectedFriendIndex = foundIdx;
+                    }
+                    else
+                    {
+                        var preselectedFriend = new FriendData
+                        {
+                            friendUid = preselectedUid,
+                            displayName = !string.IsNullOrEmpty(preselectedName) ? preselectedName : "Amigo",
+                            level = 1
+                        };
+                        if (friendChoices.Count == 1 && friendChoices[0] == "No tienes amigos agregados")
+                        {
+                            friendChoices.Clear();
+                        }
+                        cachedFriends.Add(preselectedFriend);
+                        friendChoices.Add($"{preselectedFriend.DisplayName} (Nv. {preselectedFriend.level})");
+                        dropdownFriend.choices = friendChoices;
+                        selectedFriendIndex = friendChoices.Count - 1;
+                    }
+                }
+
+                if (selectedFriendIndex >= 0 && selectedFriendIndex < friendChoices.Count)
+                {
+                    dropdownFriend.SetValueWithoutNotify(friendChoices[selectedFriendIndex]);
+                    dropdownFriend.index = selectedFriendIndex;
                 }
             }
 
@@ -553,7 +771,12 @@ namespace JuegoTCG.UI
             if (dropdownOfferCard != null)
             {
                 dropdownOfferCard.choices = offerChoices;
-                dropdownOfferCard.index = 0;
+                selectedOfferCardIndex = 0;
+                if (offerChoices.Count > 0)
+                {
+                    dropdownOfferCard.SetValueWithoutNotify(offerChoices[0]);
+                    dropdownOfferCard.index = 0;
+                }
             }
 
             // 3. Cargar catálogo de cartas para pedir
@@ -572,7 +795,12 @@ namespace JuegoTCG.UI
             if (dropdownRequestCard != null)
             {
                 dropdownRequestCard.choices = requestChoices;
-                dropdownRequestCard.index = 0;
+                selectedRequestCardIndex = 0;
+                if (requestChoices.Count > 0)
+                {
+                    dropdownRequestCard.SetValueWithoutNotify(requestChoices[0]);
+                    dropdownRequestCard.index = 0;
+                }
             }
 
             // Resetear feedback
@@ -588,27 +816,49 @@ namespace JuegoTCG.UI
 
         private async Task SendTradeOfferAsync()
         {
-            if (cachedFriends.Count == 0 || dropdownFriend == null || dropdownFriend.index < 0 || dropdownFriend.index >= cachedFriends.Count)
+            // Resolver índices exactos comparando value contra choices o usando el índice rastreado
+            int friendIdx = selectedFriendIndex;
+            if (dropdownFriend != null && dropdownFriend.choices != null && !string.IsNullOrEmpty(dropdownFriend.value))
+            {
+                int valIdx = dropdownFriend.choices.IndexOf(dropdownFriend.value);
+                if (valIdx >= 0) friendIdx = valIdx;
+            }
+
+            int offerIdx = selectedOfferCardIndex;
+            if (dropdownOfferCard != null && dropdownOfferCard.choices != null && !string.IsNullOrEmpty(dropdownOfferCard.value))
+            {
+                int valIdx = dropdownOfferCard.choices.IndexOf(dropdownOfferCard.value);
+                if (valIdx >= 0) offerIdx = valIdx;
+            }
+
+            int requestIdx = selectedRequestCardIndex;
+            if (dropdownRequestCard != null && dropdownRequestCard.choices != null && !string.IsNullOrEmpty(dropdownRequestCard.value))
+            {
+                int valIdx = dropdownRequestCard.choices.IndexOf(dropdownRequestCard.value);
+                if (valIdx >= 0) requestIdx = valIdx;
+            }
+
+            if (cachedFriends.Count == 0 || friendIdx < 0 || friendIdx >= cachedFriends.Count)
             {
                 ShowModalFeedback("Debes tener al menos un amigo para proponer un intercambio.", true);
                 return;
             }
 
-            if (cachedOwnedCards.Count == 0 || dropdownOfferCard == null || dropdownOfferCard.index < 0 || dropdownOfferCard.index >= cachedOwnedCards.Count)
+            if (cachedOwnedCards.Count == 0 || offerIdx < 0 || offerIdx >= cachedOwnedCards.Count)
             {
                 ShowModalFeedback("No posees ninguna carta para ofrecer.", true);
                 return;
             }
 
-            if (cachedCatalogCards.Count == 0 || dropdownRequestCard == null || dropdownRequestCard.index < 0 || dropdownRequestCard.index >= cachedCatalogCards.Count)
+            if (cachedCatalogCards.Count == 0 || requestIdx < 0 || requestIdx >= cachedCatalogCards.Count)
             {
                 ShowModalFeedback("Selecciona una carta válida para pedir.", true);
                 return;
             }
 
-            var friend = cachedFriends[dropdownFriend.index];
-            var offered = cachedOwnedCards[dropdownOfferCard.index];
-            var requested = cachedCatalogCards[dropdownRequestCard.index];
+            var friend = cachedFriends[friendIdx];
+            var offered = cachedOwnedCards[offerIdx];
+            var requested = cachedCatalogCards[requestIdx];
 
             if (offered.cardId == requested.cardId)
             {
@@ -618,6 +868,8 @@ namespace JuegoTCG.UI
 
             btnSendTradeOffer?.SetEnabled(false);
             ShowModalFeedback("Enviando oferta a la nube...", false);
+
+            Debug.Log($"<color=cyan>[TradeController] Enviando oferta: Amigo={friend.DisplayName} (UID={friend.friendUid}), Ofreces={offered.playerName} ({offered.cardId}), Pides={requested.playerName} ({requested.cardId})</color>");
 
             var result = await TradeService.Instance.ProposeTradeAsync(
                 friend.friendUid,

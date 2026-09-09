@@ -105,7 +105,8 @@ namespace JuegoTCG.Social
         public async Task RefreshCloudTradesAsync()
         {
             if (FirebaseAuthManager.Instance == null || !FirebaseAuthManager.Instance.IsAuthenticated) return;
-            string token = FirebaseAuthManager.Instance.IdToken;
+            
+            string token = await FirebaseAuthManager.Instance.EnsureValidTokenAsync();
             string myUid = FirebaseAuthManager.Instance.UserId;
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(myUid)) return;
 
@@ -138,6 +139,7 @@ namespace JuegoTCG.Social
                             {
                                 PlayerCollectionManager.Instance.RemoveCard(offer.offeredCardId, 1);
                                 PlayerCollectionManager.Instance.AddCard(offer.requestedCardId, 1);
+                                _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
                             }
 
                             // Marcar como completada en Firestore
@@ -183,9 +185,29 @@ namespace JuegoTCG.Social
                 return new TradeOperationResult(false, "No posees la carta que intentas ofrecer.");
             }
 
-            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
-            string myUid = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.UserId : "";
-            string myName = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.DisplayName : "Entrenador";
+            if (string.IsNullOrEmpty(toUid))
+            {
+                return new TradeOperationResult(false, "El amigo destinatario no es válido.");
+            }
+
+            string token = "";
+            string myUid = "";
+            string myName = "Entrenador";
+
+            if (FirebaseAuthManager.Instance != null)
+            {
+                token = await FirebaseAuthManager.Instance.EnsureValidTokenAsync();
+                myUid = FirebaseAuthManager.Instance.UserId;
+                if (!string.IsNullOrEmpty(FirebaseAuthManager.Instance.DisplayName))
+                {
+                    myName = FirebaseAuthManager.Instance.DisplayName;
+                }
+            }
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(myUid))
+            {
+                return new TradeOperationResult(false, "No has iniciado sesión o no tienes conexión con Firebase.");
+            }
 
             string newTradeId = "trade_" + Guid.NewGuid().ToString("N").Substring(0, 10);
 
@@ -207,20 +229,18 @@ namespace JuegoTCG.Social
                 isIncoming = false
             };
 
-            if (!string.IsNullOrEmpty(token))
+            Debug.Log($"<color=cyan>[TradeService] Guardando oferta {newTradeId} en Firestore hacia toUid={toUid} ({friendName})...</color>");
+            bool ok = await FirebaseRestClient.CreateTradeOfferAsync(token, newOffer);
+            if (!ok)
             {
-                bool ok = await FirebaseRestClient.CreateTradeOfferAsync(token, newOffer);
-                if (!ok)
-                {
-                    return new TradeOperationResult(false, "Error al enviar la oferta a la nube.");
-                }
+                return new TradeOperationResult(false, "Error al enviar la oferta a los servidores de Firestore. Revisa tu conexión a internet.");
             }
 
             sentOffers.Insert(0, newOffer);
             OnOffersUpdated?.Invoke();
 
             Networking.FirebaseAnalyticsManager.Instance?.LogTradeProposed(toUid, offeredCardId, requestedCardId);
-            Debug.Log($"<color=cyan>[TradeService] Oferta propuesta {newTradeId} enviada a {friendName} en Firestore.</color>");
+            Debug.Log($"<color=green>[TradeService] Oferta propuesta {newTradeId} guardada con éxito en Firestore para {friendName}.</color>");
             return new TradeOperationResult(true, "¡Oferta de intercambio enviada con éxito!", newTradeId);
         }
 
@@ -250,9 +270,10 @@ namespace JuegoTCG.Social
                 // 2. Recibir la carta ofrecida por el amigo
                 PlayerCollectionManager.Instance.RemoveCard(offer.requestedCardId, 1);
                 PlayerCollectionManager.Instance.AddCard(offer.offeredCardId, 1);
+                _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
             }
 
-            string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+            string token = FirebaseAuthManager.Instance != null ? await FirebaseAuthManager.Instance.EnsureValidTokenAsync() : "";
             if (!string.IsNullOrEmpty(token))
             {
                 await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "aceptado");
@@ -279,7 +300,7 @@ namespace JuegoTCG.Social
             var offer = receivedOffers.Find(o => o.tradeId == tradeId);
             if (offer != null)
             {
-                string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+                string token = FirebaseAuthManager.Instance != null ? await FirebaseAuthManager.Instance.EnsureValidTokenAsync() : "";
                 if (!string.IsNullOrEmpty(token))
                 {
                     await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "rechazado");
@@ -303,7 +324,7 @@ namespace JuegoTCG.Social
             var offer = sentOffers.Find(o => o.tradeId == tradeId);
             if (offer != null)
             {
-                string token = FirebaseAuthManager.Instance != null ? FirebaseAuthManager.Instance.IdToken : "";
+                string token = FirebaseAuthManager.Instance != null ? await FirebaseAuthManager.Instance.EnsureValidTokenAsync() : "";
                 if (!string.IsNullOrEmpty(token))
                 {
                     await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "cancelado");

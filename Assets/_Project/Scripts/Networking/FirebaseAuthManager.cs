@@ -261,12 +261,12 @@ namespace JuegoTCG.Networking
         public async Task<bool> LinkGoogleAccountAsync(GoogleSignInUser googleUser)
         {
             if (googleUser == null) return false;
-            string name = !string.IsNullOrEmpty(googleUser.DisplayName) ? googleUser.DisplayName : googleUser.Email;
+            string googleName = !string.IsNullOrEmpty(googleUser.DisplayName) ? googleUser.DisplayName : googleUser.Email;
             string photo = googleUser.PhotoUrl;
 
             try
             {
-                Debug.Log($"<color=cyan>[Auth] Autenticando token de Google con Firebase: {name}</color>");
+                Debug.Log($"<color=cyan>[Auth] Autenticando token de Google con Firebase: {googleName}</color>");
                 var authRes = await FirebaseRestClient.SignInWithGoogleIdTokenAsync(googleUser.idToken);
 
                 if (authRes != null && authRes.success)
@@ -279,7 +279,7 @@ namespace JuegoTCG.Networking
                 isLinked = true;
                 isAnonymous = false;
                 authProvider = "google";
-                if (!string.IsNullOrEmpty(name)) displayName = name;
+                if (!string.IsNullOrEmpty(googleName)) displayName = googleName;
                 if (!string.IsNullOrEmpty(photo)) photoUrl = photo;
                 if (string.IsNullOrEmpty(friendCode)) friendCode = GenerateFallbackFriendCode();
                 isAuthenticated = true;
@@ -290,8 +290,8 @@ namespace JuegoTCG.Networking
                 OnAuthStateChanged?.Invoke(true, userId);
                 if (!string.IsNullOrEmpty(photoUrl)) OnAvatarChanged?.Invoke(photoUrl);
 
-                // Restaurar perfil e inventario desde Firestore antes de cualquier otra acción
-                await RestoreUserProfileFromFirestoreAsync(userId);
+                // Restaurar perfil e inventario desde Firestore antes de cualquier otra acción, preservando el nombre oficial de Google
+                await RestoreUserProfileFromFirestoreAsync(userId, forceKeepGoogleName: !string.IsNullOrEmpty(googleName));
                 return true;
             }
             catch (Exception ex)
@@ -338,7 +338,15 @@ namespace JuegoTCG.Networking
         {
             try
             {
-                Debug.Log($"<color=cyan>[Auth] Vinculando cuenta anónima {userId} con {provider}...</color>");
+                // Si el usuario cerró sesión o no está autenticado, inicializar sesión de dispositivo primero
+                if (string.IsNullOrEmpty(userId) || !isAuthenticated)
+                {
+                    Debug.LogWarning("[Auth] No hay sesión activa para vincular. Conectando sesión de dispositivo primero...");
+                    bool initOk = await SignInAnonymouslyAsync();
+                    if (!initOk) return false;
+                }
+
+                Debug.Log($"<color=cyan>[Auth] Vinculando cuenta {userId} con {provider}...</color>");
                 await Task.Delay(200);
 
                 isLinked = true;
@@ -525,6 +533,15 @@ namespace JuegoTCG.Networking
                 Social.SocialService.Instance.ClearSocialData();
             }
 
+            // 5. Borrar caché de avatar en disco local y memoria para evitar que persista la foto anterior
+            JuegoTCG.UI.UserAvatarLoader.ClearCache();
+
+            // 6. Cerrar sesión nativa de Google en Android si estaba vinculada
+            if (GoogleSignInManager.Instance != null)
+            {
+                GoogleSignInManager.Instance.SignOut();
+            }
+
             OnAuthStateChanged?.Invoke(false, "");
             OnAvatarChanged?.Invoke("");
             OnFriendCodeChanged?.Invoke("");
@@ -539,7 +556,7 @@ namespace JuegoTCG.Networking
         /// Si el documento existe en la nube, restaura cartas, monedas, nivel, amigos y avatar.
         /// Si no existe (usuario nuevo), inicializa su documento en la nube.
         /// </summary>
-        public async Task<bool> RestoreUserProfileFromFirestoreAsync(string uid)
+        public async Task<bool> RestoreUserProfileFromFirestoreAsync(string uid, bool forceKeepGoogleName = false)
         {
             if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(uid)) return false;
 
@@ -555,16 +572,36 @@ namespace JuegoTCG.Networking
                 {
                     Debug.Log($"<color=green>[Auth] ¡Perfil existente en Firestore encontrado! Restaurando datos: {cloudDoc.displayName} ({cloudDoc.friendCode}), Monedas={cloudDoc.coins}, Cartas={cloudDoc.ownedCards?.Count ?? 0}</color>");
 
-                    if (!string.IsNullOrEmpty(cloudDoc.displayName)) displayName = cloudDoc.displayName;
-                    if (!string.IsNullOrEmpty(cloudDoc.friendCode) && cloudDoc.friendCode.Length >= 9)
+                    // 1. Restaurar nombre del jugador: priorizar el nombre real de Google si la sesión proviene de Google
+                    if (forceKeepGoogleName || (authProvider == "google" && !string.IsNullOrEmpty(displayName) && displayName != "JUGADOR_01"))
                     {
-                        friendCode = cloudDoc.friendCode;
+                        if (cloudDoc.displayName != displayName)
+                        {
+                            Debug.Log($"<color=yellow>[Auth] Sincronizando nombre canónico de Google ({displayName}) en lugar del nombre desactualizado en Firestore ({cloudDoc.displayName})...</color>");
+                            _ = SyncUserProfileToFirestoreAsync();
+                        }
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(cloudDoc.displayName))
+                    {
+                        displayName = cloudDoc.displayName;
+                    }
+
+                    // 2. Conservar código de amigo canónico registrado en Firestore
+                    if (!string.IsNullOrEmpty(cloudDoc.friendCode) && cloudDoc.friendCode.StartsWith("FC-") && cloudDoc.friendCode.Length >= 6)
+                    {
+                        friendCode = cloudDoc.friendCode.Trim().ToUpper();
+                    }
+                    else if (string.IsNullOrEmpty(friendCode))
                     {
                         friendCode = GenerateFallbackFriendCode();
                     }
-                    if (!string.IsNullOrEmpty(cloudDoc.photoUrl)) photoUrl = cloudDoc.photoUrl;
+
+                    // 3. Foto de perfil: preservar la de Google si ya se recuperó en esta sesión
+                    if (string.IsNullOrEmpty(photoUrl) && !string.IsNullOrEmpty(cloudDoc.photoUrl))
+                    {
+                        photoUrl = cloudDoc.photoUrl;
+                    }
+
                     coins = cloudDoc.coins;
                     playerLevel = cloudDoc.level;
                     collectionPower = cloudDoc.collectionPower;

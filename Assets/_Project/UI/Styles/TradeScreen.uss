@@ -354,6 +354,7 @@
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: #0D1A13;
+    picking-mode: ignore;
 }
 
 .trade-btn-reject {
@@ -378,6 +379,7 @@
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: var(--text-gray);
+    picking-mode: ignore;
 }
 
 .trade-btn-cancel {
@@ -396,6 +398,19 @@
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: var(--text-gray);
+    picking-mode: ignore;
+}
+
+/* Disabled state when user doesn't own requested card */
+.trade-btn-disabled {
+    background-color: rgba(255, 255, 255, 0.10);
+    border-width: 1.5px;
+    border-color: rgba(255, 255, 255, 0.18);
+    opacity: 0.7;
+}
+
+.trade-btn-disabled .trade-btn-accept-text {
+    color: var(--text-dim);
 }
 
 /* ==========================================================================
@@ -432,6 +447,7 @@
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: #0D1A13;
+    picking-mode: ignore;
 }
 
 /* ==========================================================================
@@ -647,6 +663,7 @@
     -unity-font-style: bold;
     color: #06110B;
     letter-spacing: 2px;
+    picking-mode: ignore;
 }
 
 .btn-cancel-trade {
@@ -664,6 +681,7 @@
     font-size: 26px;
     -unity-font-style: bold;
     color: var(--text-white);
+    picking-mode: ignore;
 }
 
 .modal-feedback {
@@ -673,4 +691,14 @@
     -unity-text-align: middle-center;
     margin-top: 14px;
     white-space: normal;
+}
+
+.trade-feedback-message {
+    font-size: 28px;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    margin-bottom: 28px;
+    margin-top: 10px;
+    line-height: 38px;
 }

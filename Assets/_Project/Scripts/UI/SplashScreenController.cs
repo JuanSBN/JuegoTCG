@@ -23,6 +23,7 @@ namespace JuegoTCG.UI
 
         private void Start()
         {
+            JuegoTCG.Core.MobilePerformanceOptimizer.InitializePerformance();
             EnsureAuthManager();
             StartCoroutine(StartupSequence());
         }

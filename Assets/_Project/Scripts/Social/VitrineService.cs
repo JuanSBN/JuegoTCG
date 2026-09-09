@@ -70,7 +70,8 @@ namespace JuegoTCG.Social
         {
             if (FirebaseAuthManager.Instance == null || !FirebaseAuthManager.Instance.IsAuthenticated)
             {
-                PopulateCuratedFallbacks();
+                popularVitrines.Clear();
+                friendVitrines.Clear();
                 OnVitrinesUpdated?.Invoke();
                 return;
             }
@@ -90,8 +91,12 @@ namespace JuegoTCG.Social
                     }
                     else
                     {
-                        // Si aún no tiene vitrina en la nube, crear borrador inicial con sus mejores cartas
+                        // Si aún no tiene vitrina en la nube, crear borrador inicial con sus mejores cartas y publicarlo
                         myVitrine = CreateDefaultLocalDraft(myUid);
+                        if (myVitrine.cardIds != null && myVitrine.cardIds.Count > 0)
+                        {
+                            _ = SaveMyVitrineAsync(myVitrine.cardIds);
+                        }
                     }
                     OnMyVitrineUpdated?.Invoke(myVitrine);
                 }
@@ -105,23 +110,41 @@ namespace JuegoTCG.Social
                     popularVitrines.AddRange(cloudVitrines);
                 }
 
-                // 3. Cargar vitrinas de amigos
+                // 3. Cargar vitrinas de amigos desde Firestore
                 friendVitrines.Clear();
-                if (SocialService.Instance != null && SocialService.Instance.Friends != null)
+                SocialService.EnsureExists();
+                if (SocialService.Instance != null)
                 {
-                    var friends = SocialService.Instance.Friends;
-                    foreach (var f in friends)
+                    if (SocialService.Instance.Friends == null || SocialService.Instance.Friends.Count == 0)
                     {
-                        var fVitrine = popularVitrines.Find(v => v.userId == f.friendUid);
-                        if (fVitrine != null)
+                        await SocialService.Instance.RefreshCloudRequestsAndFriendsAsync();
+                    }
+
+                    var friends = SocialService.Instance.Friends;
+                    if (friends != null)
+                    {
+                        foreach (var f in friends)
                         {
-                            friendVitrines.Add(fVitrine);
+                            if (string.IsNullOrEmpty(f.friendUid)) continue;
+
+                            // Si ya vino en populares
+                            var fVitrine = popularVitrines.Find(v => v.userId == f.friendUid);
+                            if (fVitrine != null)
+                            {
+                                friendVitrines.Add(fVitrine);
+                            }
+                            else
+                            {
+                                // Consultar directamente la vitrina del amigo
+                                var friendDoc = await FirebaseRestClient.GetVitrineDocAsync(token, f.friendUid);
+                                if (friendDoc != null && friendDoc.cardIds != null && friendDoc.cardIds.Count > 0)
+                                {
+                                    friendVitrines.Add(friendDoc);
+                                }
+                            }
                         }
                     }
                 }
-
-                // Si la base de datos tiene pocas vitrinas, agregar vitrinas de muestra curadas para que se vea viva
-                EnsureCuratedEntriesIfEmpty();
 
                 OnVitrinesUpdated?.Invoke();
                 Debug.Log($"<color=green>[VitrineService] Vitrinas actualizadas: {popularVitrines.Count} populares, {friendVitrines.Count} de amigos.</color>");
@@ -129,7 +152,8 @@ namespace JuegoTCG.Social
             catch (Exception ex)
             {
                 Debug.LogWarning($"[VitrineService] Error refrescando vitrinas: {ex.Message}");
-                PopulateCuratedFallbacks();
+                popularVitrines.Clear();
+                friendVitrines.Clear();
                 OnVitrinesUpdated?.Invoke();
             }
         }
@@ -284,61 +308,6 @@ namespace JuegoTCG.Social
             };
         }
 
-        private void EnsureCuratedEntriesIfEmpty()
-        {
-            if (popularVitrines.Count < 3)
-            {
-                popularVitrines.Add(new VitrineCloudData
-                {
-                    userId = "curated_pro_99",
-                    displayName = "ProPlayer_99",
-                    friendCode = "FC-9901",
-                    avatarText = "PP",
-                    likesCount = 234,
-                    cardIds = new List<string> { "card_10", "card_09", "card_08", "card_07", "card_06", "card_05" }
-                });
-
-                popularVitrines.Add(new VitrineCloudData
-                {
-                    userId = "curated_cardmaster",
-                    displayName = "CardMaster_X",
-                    friendCode = "FC-8802",
-                    avatarText = "CM",
-                    likesCount = 189,
-                    cardIds = new List<string> { "card_08", "card_07", "card_06", "card_05", "card_04", "card_02" }
-                });
-
-                popularVitrines.Add(new VitrineCloudData
-                {
-                    userId = "curated_futbolfan",
-                    displayName = "FutbolFan_22",
-                    friendCode = "FC-7703",
-                    avatarText = "FF",
-                    likesCount = 152,
-                    cardIds = new List<string> { "card_09", "card_08", "card_05", "card_04", "card_03", "card_01" }
-                });
-            }
-
-            if (friendVitrines.Count == 0)
-            {
-                friendVitrines.Add(new VitrineCloudData
-                {
-                    userId = "curated_amigo_01",
-                    displayName = "MiAmigo_01",
-                    friendCode = "FC-4404",
-                    avatarText = "MA",
-                    likesCount = 67,
-                    cardIds = new List<string> { "card_10", "card_06", "card_05", "card_04", "card_02", "card_01" }
-                });
-            }
-        }
-
-        private void PopulateCuratedFallbacks()
-        {
-            popularVitrines.Clear();
-            friendVitrines.Clear();
-            EnsureCuratedEntriesIfEmpty();
-        }
 
         private string GetPrefKey()
         {

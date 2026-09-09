@@ -70,6 +70,12 @@ namespace JuegoTCG.UI
 
             VitrineService.EnsureExists();
             PlayerCollectionManager.EnsureExists();
+            SocialService.EnsureExists();
+
+            if (SocialService.Instance != null)
+            {
+                _ = SocialService.Instance.RefreshCloudRequestsAndFriendsAsync();
+            }
 
             if (VitrineService.Instance != null)
             {
@@ -224,7 +230,9 @@ namespace JuegoTCG.UI
 
                 if (count == 0)
                 {
-                    var empty = new Label("No se encontraron vitrinas que coincidan con la búsqueda.");
+                    var empty = new Label(string.IsNullOrEmpty(activeFilterQuery)
+                        ? "Aún no hay vitrinas públicas. ¡Sé el primero en configurar la tuya arriba!"
+                        : "No se encontraron vitrinas que coincidan con la búsqueda.");
                     empty.style.color = new Color(1f, 1f, 1f, 0.4f);
                     empty.style.fontSize = 24;
                     empty.style.marginTop = 16;

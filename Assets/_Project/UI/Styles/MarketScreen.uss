@@ -265,57 +265,210 @@
     color: var(--text-dim);
 }
 
-/* Card Body */
-.market-card-body {
-    align-items: center;
-    justify-content: center;
-    padding: 26px 16px 20px;
+/* Card Body (Elongated authentic TCG aspect ratio) */
+.market-card-body,
+.duplicate-card-body {
+    width: 100%;
+    height: 580px;
+    position: relative;
+    overflow: hidden;
+    background-color: #071018;
 }
 
-.card-big-initials {
-    font-size: 68px;
+/* ----------------------------------------------------
+   CARTA CON ARTE OFICIAL (Lamine Yamal & Data Packs)
+   ---------------------------------------------------- */
+.card-art-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-art-photo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.card-art-frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.card-player-name-framed {
+    position: absolute;
+    bottom: 96px;
+    left: 10px;
+    right: 10px;
+    font-size: 30px;
     -unity-font-style: bold;
-    color: rgba(255, 255, 255, 0.45);
-    margin-bottom: 6px;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.95);
+}
+
+.card-frame-footer-box {
+    position: absolute;
+    bottom: 12px;
+    left: 18%;
+    right: 18%;
+    height: 76px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.card-frame-team-name {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-center;
+    margin-bottom: 2px;
+}
+
+.card-frame-sub-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-frame-pos-text {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: #1e293b;
+    margin-right: 6px;
+}
+
+.card-frame-rarity-text {
+    font-size: 15px;
+    -unity-font-style: bold;
+    color: #eab308;
+}
+
+/* ----------------------------------------------------
+   DISEÑO FALLBACK ALARGADO (Arte normal sin foto)
+   ---------------------------------------------------- */
+.card-fallback-container {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 50px;
+    padding-bottom: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: rgba(13, 26, 19, 0.95);
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.card-avatar-circle {
+    width: 176px;
+    height: 176px;
+    border-radius: 88px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 2.5px;
+    border-color: rgba(255, 255, 255, 0.15);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.card-avatar-initials {
+    font-size: 64px;
+    -unity-font-style: bold;
+    color: var(--text-white);
 }
 
 .card-player-name {
-    font-size: 30px;
+    font-size: 32px;
     -unity-font-style: bold;
     color: var(--text-white);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.card-player-team {
+    font-size: 20px;
+    color: var(--text-gray);
+    margin-bottom: 16px;
+    -unity-text-align: middle-center;
 }
 
 .card-rarity-badge {
-    font-size: 22px;
+    border-radius: 14px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 18px;
+    padding-right: 18px;
+    font-size: 20px;
     -unity-font-style: bold;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
+    border-width: 1.5px;
 }
 
-.market-card-mythic .card-rarity-badge { color: var(--rarity-mythic); }
-.market-card-rare .card-rarity-badge { color: var(--rarity-rare); }
-.market-card-uncommon .card-rarity-badge { color: var(--rarity-uncommon); }
-.market-card-common .card-rarity-badge { color: var(--rarity-common); }
+.card-rarity-badge-mythic {
+    color: var(--rarity-mythic);
+    border-color: var(--rarity-mythic);
+    background-color: rgba(232, 168, 32, 0.12);
+}
+
+.card-rarity-badge-rare {
+    color: var(--rarity-rare);
+    border-color: var(--rarity-rare);
+    background-color: rgba(139, 92, 246, 0.12);
+}
+
+.card-rarity-badge-uncommon {
+    color: var(--rarity-uncommon);
+    border-color: var(--rarity-uncommon);
+    background-color: rgba(56, 189, 248, 0.12);
+}
+
+.card-rarity-badge-common {
+    color: var(--rarity-common);
+    border-color: var(--rarity-common);
+    background-color: rgba(34, 197, 94, 0.12);
+}
 
 /* Card Footer (Price & Buy Button) */
 .market-card-footer {
-    padding: 16px 18px 18px;
+    padding: 14px 16px 16px;
     border-top-width: 1px;
     border-top-color: var(--border-subtle);
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.35);
+    flex-shrink: 0;
 }
 
 .market-price-pill {
     flex-direction: row;
     align-items: center;
-    height: 56px;
+    justify-content: center;
+    height: 52px;
     border-radius: 14px;
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.45);
     border-width: 1px;
     border-color: var(--border-subtle);
     padding-left: 16px;
     padding-right: 16px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .price-coin-icon {
@@ -334,7 +487,7 @@
 }
 
 .market-btn-buy {
-    height: 72px;
+    height: 64px;
     border-radius: 16px;
     background-color: var(--gold);
     border-width: 0;
@@ -367,21 +520,20 @@
 
 .duplicates-grid {
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 
 .duplicate-card {
     width: 48.2%;
-    height: 480px;
     background-color: var(--card-bg);
     border-radius: 26px;
     border-width: 1.5px;
     border-color: var(--rarity-common);
-    padding: 24px 20px;
-    position: relative;
-    align-items: center;
-    justify-content: space-between;
     margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    align-items: stretch;
 }
 
 .duplicate-card-common { border-color: var(--rarity-common); }
@@ -391,38 +543,34 @@
 
 .duplicate-badge {
     position: absolute;
-    top: 18px;
-    left: 18px;
-    background-color: rgba(0, 0, 0, 0.65);
+    top: 14px;
+    left: 14px;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.75);
     border-radius: 12px;
-    padding: 6px 12px;
-    border-width: 1px;
-    border-color: rgba(255, 255, 255, 0.15);
+    padding: 6px 14px;
+    border-width: 1.5px;
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .duplicate-badge-text {
-    font-size: 22px;
+    font-size: 24px;
     -unity-font-style: bold;
 }
 
 .duplicate-badge-text-common { color: var(--rarity-common); }
 .duplicate-badge-text-uncommon { color: var(--rarity-uncommon); }
 
-.duplicate-card-body {
-    align-items: center;
-    margin-top: 16px;
-    margin-bottom: 20px;
-}
-
-.duplicate-player-name {
-    font-size: 22px;
-    color: rgba(255, 255, 255, 0.65);
-    margin-top: 6px;
+.duplicate-card-footer {
+    padding: 14px 16px 16px;
+    border-top-width: 1px;
+    border-top-color: var(--border-subtle);
+    background-color: rgba(0, 0, 0, 0.35);
 }
 
 .btn-publish {
     width: 100%;
-    height: 72px;
+    height: 64px;
     border-radius: 16px;
     background-color: rgba(232, 168, 32, 0.15);
     border-width: 1.5px;
@@ -436,7 +584,7 @@
 }
 
 .btn-publish-text {
-    font-size: 24px;
+    font-size: 22px;
     -unity-font-style: bold;
     letter-spacing: 2px;
     color: var(--gold);
@@ -607,7 +755,7 @@
     width: 100%;
     background-color: #0A1810;
     border-radius: 28px;
-    border-width: 1.5px;
+    border-width: 2px;
     border-color: var(--gold-border);
     padding: 40px 32px;
     align-items: center;
@@ -622,10 +770,35 @@
     -unity-text-align: middle-center;
 }
 
-.market-modal-desc {
-    font-size: 24px;
+.modal-card-preview-pill {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+    padding: 10px 22px;
+    margin-bottom: 20px;
+}
+
+.modal-card-preview-name {
+    font-size: 26px;
+    -unity-font-style: bold;
     color: var(--text-white);
-    margin-bottom: 24px;
+    margin-right: 12px;
+}
+
+.modal-card-preview-rarity {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+}
+
+.price-input-hint {
+    font-size: 22px;
+    color: var(--text-gray);
+    margin-bottom: 12px;
     -unity-text-align: middle-center;
 }
 
@@ -633,23 +806,58 @@
     flex-direction: row;
     align-items: center;
     width: 100%;
-    height: 72px;
-    border-radius: 16px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-width: 1px;
-    border-color: var(--border-subtle);
-    padding-left: 20px;
-    padding-right: 20px;
-    margin-bottom: 12px;
+    height: 90px;
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.55);
+    border-width: 2px;
+    border-color: rgba(232, 168, 32, 0.50);
+    padding-left: 22px;
+    padding-right: 22px;
+    margin-top: 10px;
+    margin-bottom: 24px;
+    transition-property: border-color, background-color;
+    transition-duration: 0.15s;
+}
+
+.price-input-row:focus-within {
+    border-color: var(--gold);
+    background-color: rgba(232, 168, 32, 0.08);
+}
+
+.price-coin-icon-lg {
+    width: 44px;
+    height: 44px;
+    background-image: url("project://database/Assets/_Project/Art/UI/ui_coin.png");
+    -unity-background-scale-mode: scale-to-fit;
+    margin-right: 14px;
+    flex-shrink: 0;
 }
 
 .price-input-field {
     flex: 1;
-    font-size: 26px;
-    color: var(--text-white);
-    -unity-font-style: bold;
     background-color: transparent;
     border-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* OVERRIDE DEFINITIVO: Elimina la caja blanca por defecto de Unity UI Toolkit */
+.price-input-field,
+.price-input-field > .unity-base-field__input,
+.price-input-field #unity-text-input,
+.price-input-field .unity-text-field__input {
+    background-color: transparent !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+    color: #FFD257 !important;
+    font-size: 38px !important;
+    -unity-font-style: bold !important;
+    -unity-text-align: middle-left !important;
+    selection-color: rgba(232, 168, 32, 0.45) !important;
+    cursor-color: #FFD257 !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    margin: 0 !important;
 }
 
 .market-modal-actions {
@@ -659,13 +867,17 @@
 
 .market-modal-btn-confirm {
     flex: 1;
-    height: 68px;
-    border-radius: 16px;
+    height: 72px;
+    border-radius: 18px;
     background-color: var(--gold);
     border-width: 0;
     align-items: center;
     justify-content: center;
     margin-right: 12px;
+}
+
+.market-modal-btn-confirm:active {
+    scale: 0.96;
 }
 
 .market-modal-btn-confirm-text {
@@ -677,13 +889,17 @@
 
 .market-modal-btn-cancel {
     flex: 1;
-    height: 68px;
-    border-radius: 16px;
+    height: 72px;
+    border-radius: 18px;
     background-color: rgba(255, 255, 255, 0.08);
     border-width: 1.5px;
-    border-color: var(--border-subtle);
+    border-color: rgba(255, 255, 255, 0.18);
     align-items: center;
     justify-content: center;
+}
+
+.market-modal-btn-cancel:active {
+    scale: 0.96;
 }
 
 .market-modal-btn-cancel-text {

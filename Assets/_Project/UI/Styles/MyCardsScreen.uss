@@ -205,6 +205,7 @@
     flex-grow: 1;
     width: 100%;
     position: relative;
+    overflow: hidden;
 }
 
 .cards-scroll-view #unity-content-container {
@@ -234,16 +235,10 @@
     padding-bottom: 30px;
     padding-left: 20px;
     padding-right: 20px;
-    transition-property: scale;
-    transition-duration: 0.15s;
-}
-
-.card-item:hover {
-    scale: 1.02;
 }
 
 .card-item:active {
-    scale: 0.96;
+    opacity: 0.88;
 }
 
 /* ==========================================================================
@@ -408,113 +403,261 @@
 }
 
 /* ==========================================================================
-   CARD INSPECT / ZOOM MODAL
+   CARD HERO INSPECT / ZOOM MODAL (POKÉMON TCG POCKET STYLE)
    ========================================================================== */
+.inspect-overlay,
 .modal-overlay {
     position: absolute;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(4, 10, 6, 0.85);
+    background-color: rgba(3, 8, 5, 0.93);
     align-items: center;
-    justify-content: center;
-    padding: 60px;
-    z-index: 100;
+    justify-content: space-between;
+    padding-top: 130px;
+    padding-bottom: 70px;
+    padding-left: 40px;
+    padding-right: 40px;
+    z-index: 1000;
 }
 
 .modal-hidden {
     display: none;
 }
 
-.modal-card {
-    width: 900px;
-    background-color: #0c1c12;
-    border-radius: 36px;
-    border-width: 2px;
-    border-color: var(--gold);
-    padding: 48px;
-    align-items: center;
-}
-
-.modal-avatar {
-    width: 240px;
-    height: 240px;
-    border-radius: 120px;
-    background-color: rgba(255, 255, 255, 0.08);
-    border-width: 3px;
-    border-color: var(--gold);
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-}
-
-.modal-initials {
-    font-size: 80px;
-    -unity-font-style: bold;
-    color: var(--gold);
-}
-
-.modal-player-name {
-    font-size: 48px;
-    -unity-font-style: bold;
-    color: var(--text-white);
-    margin-bottom: 12px;
-}
-
-.modal-rarity {
-    font-size: 30px;
-    color: var(--gold);
-    -unity-font-style: bold;
-    letter-spacing: 2px;
-    margin-bottom: 36px;
-}
-
-.modal-stats-grid {
+/* Top bar */
+.inspect-top-bar {
+    width: 100%;
+    max-width: 820px;
     flex-direction: row;
-    justify-content: space-around;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.04);
-    border-radius: 24px;
-    padding: 24px 16px;
-    margin-bottom: 36px;
-}
-
-.modal-stat-item {
     align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
-.modal-stat-label {
-    font-size: 26px;
-    color: var(--text-gray);
-    margin-bottom: 8px;
-}
-
-.modal-stat-val {
-    font-size: 38px;
+.inspect-tilt-hint {
+    font-size: 28px;
     -unity-font-style: bold;
-    color: var(--text-white);
+    color: var(--gold);
+    letter-spacing: 1px;
 }
 
-.modal-close-btn {
-    width: 100%;
-    height: 94px;
-    background-color: var(--gold);
-    border-radius: 26px;
-    border-width: 0;
+.inspect-tilt-hint-hidden {
+    opacity: 0;
+}
+
+.inspect-close-btn {
+    width: 76px;
+    height: 76px;
+    border-radius: 38px;
+    background-color: rgba(255, 255, 255, 0.10);
+    border-width: 1.5px;
+    border-color: rgba(255, 255, 255, 0.22);
     align-items: center;
     justify-content: center;
+    transition-property: background-color, scale;
+    transition-duration: 0.15s;
 }
 
-.modal-close-btn:active {
-    scale: 0.96;
+.inspect-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.20);
+    scale: 1.05;
 }
 
-.modal-close-btn-text {
+.inspect-close-btn:active {
+    scale: 0.94;
+}
+
+.inspect-close-icon-text {
     font-size: 34px;
     -unity-font-style: bold;
-    color: #07120B;
-    letter-spacing: 2px;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+}
+
+/* Stage & Large Hero Card */
+.inspect-card-stage {
+    flex-grow: 1;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.inspect-hero-card {
+    width: 720px;
+    height: 1044px;
+    border-radius: 46px;
+    position: relative;
+    overflow: hidden;
+    background-color: #071018;
+    align-items: center;
+    justify-content: center;
+    border-width: 0;
+}
+
+/* Photo + Frame Art */
+.inspect-art-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 46px;
+    overflow: hidden;
+}
+
+.inspect-art-photo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.inspect-art-frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.inspect-player-name-framed {
+    position: absolute;
+    bottom: 172px;
+    left: 20px;
+    right: 20px;
+    font-size: 52px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    white-space: normal;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.95);
+}
+
+.inspect-frame-footer-box {
+    position: absolute;
+    bottom: 24px;
+    left: 18%;
+    right: 18%;
+    height: 130px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 8px;
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.inspect-frame-team-name {
+    font-size: 30px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
+.inspect-frame-sub-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.inspect-frame-pos-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: #1e293b;
+}
+
+.inspect-frame-rarity-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: #b45309;
+}
+
+.inspect-art-photo-default {
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: #0c1825;
+}
+
+/* Card Grid Placeholder Avatar (Para cartas sin foto en el álbum) */
+.card-placeholder-avatar {
+    position: absolute;
+    top: 36%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 130px;
+    height: 130px;
+    border-radius: 65px;
+    background-color: rgba(22, 34, 52, 0.90);
+    border-width: 3.5px;
+    border-color: rgba(255, 255, 255, 0.28);
+    align-items: center;
+    justify-content: center;
+}
+
+/* Default Placeholder Avatar (Centered in card when no photo exists) */
+.inspect-placeholder-avatar {
+    position: absolute;
+    top: 36%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 270px;
+    height: 270px;
+    border-radius: 135px;
+    background-color: rgba(22, 34, 52, 0.90);
+    border-width: 5px;
+    border-color: rgba(255, 255, 255, 0.28);
+    align-items: center;
+    justify-content: center;
+}
+
+.inspect-avatar-initials {
+    font-size: 104px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+}
+
+/* Copies Badge */
+.inspect-copies-badge {
+    position: absolute;
+    top: 26px;
+    right: 26px;
+    border-radius: 18px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-size: 30px;
+    -unity-font-style: bold;
+    background-color: rgba(6, 12, 18, 0.88);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #FFFFFF;
+}
+
+/* Dismiss Hint */
+.inspect-dismiss-hint {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.45);
+    -unity-text-align: middle-center;
+    letter-spacing: 1.5px;
+    margin-top: 20px;
 }
 
 /* ==========================================================================
@@ -673,42 +816,4 @@
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.25);
     color: #FFFFFF;
-}
-
-/* Modal Hero Card with Full Art */
-.modal-hero-card {
-    width: 440px;
-    height: 640px;
-    border-radius: 32px;
-    border-width: 2px;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 24px;
-    padding: 24px;
-}
-
-.modal-hero-art {
-    width: 440px;
-    height: 640px;
-    border-radius: 32px;
-    overflow: hidden;
-    position: relative;
-    margin-bottom: 24px;
-    border-width: 0;
-    padding: 0;
-    background-color: #071018;
-}
-
-.modal-art-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 30px;
-    overflow: hidden;
 }

@@ -32,6 +32,16 @@ namespace JuegoTCG.Editor
         static AutoRegisterBuildScenes()
         {
             RegisterScenes();
+            ApplyPlayerPerformanceSettings();
+        }
+
+        [MenuItem("JuegoTCG/⚙️ Herramientas y Build/⚡ Aplicar 60 FPS y Quitar Made with Unity", priority = 41)]
+        public static void ApplyPlayerPerformanceSettings()
+        {
+            PlayerSettings.SplashScreen.show = false;
+            PlayerSettings.SplashScreen.showUnityLogo = false;
+            PlayerSettings.Android.optimizedFramePacing = false;
+            Debug.Log("<color=green>[PlayerSettings] Splash Screen 'Made with Unity' desactivado y Android Optimized Frame Pacing desactivado (60 FPS desbloqueados).</color>");
         }
 
         [MenuItem("JuegoTCG/⚙️ Herramientas y Build/🛠️ Registrar Escenas en Build Settings", priority = 42)]

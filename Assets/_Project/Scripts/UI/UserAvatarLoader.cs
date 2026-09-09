@@ -168,6 +168,7 @@ namespace JuegoTCG.UI
             {
                 Debug.LogWarning($"[UserAvatarLoader] Error borrando archivo de caché de avatar: {ex.Message}");
             }
+            OnAvatarLoaded?.Invoke(null);
         }
     }
 }

@@ -14,20 +14,41 @@ namespace JuegoTCG.UI
         private Label cardsCountLabel;
         private TextField searchField;
 
-        // Modal elements
+        // Modal elements (Hero Card Showcase)
+        private VisualElement inspectCardStage;
         private VisualElement inspectHeroCard;
+        private Label inspectTiltHint;
+        private Button inspectCloseBtn;
+
+        // Framed card elements
         private VisualElement inspectArtContainer;
         private VisualElement inspectArtPhoto;
-        private VisualElement inspectArtFrame;
-        private VisualElement inspectArtHolo;
-        private VisualElement inspectAvatarCircle;
+        private VisualElement inspectPlaceholderAvatar;
         private Label inspectAvatarInitials;
-        private Label inspectPlayerName;
-        private Label inspectRarityBadge;
-        private Label inspectStatPosition;
-        private Label inspectStatTeam;
-        private Label inspectStatCopies;
-        private Button inspectCloseBtn;
+        private VisualElement inspectArtFrame;
+        private Label inspectPlayerNameFramed;
+        private VisualElement inspectFrameFooterBox;
+        private Label inspectFrameTeamName;
+        private Label inspectFramePosText;
+        private Label inspectFrameRarityText;
+
+        // Badges
+        private Label inspectCopiesBadge;
+
+        // Touch & 3D Tilt interaction state
+        private bool isInspectOpen = false;
+        private bool isInspectDragging = false;
+        private bool hasMovedDrag = false;
+        private Vector3 dragStartPos;
+        private float targetTiltX = 0f;
+        private float targetTiltY = 0f;
+        private float currentTiltX = 0f;
+        private float currentTiltY = 0f;
+        private float currentInspectScale = 1.0f;
+        private bool currentInspectIsHolo = false;
+        private int currentInspectRIndex = -1;
+        private RenderTexture inspectHoloRT;
+        private Material inspectHoloMaterial;
 
         [Header("Marcos Oficiales de Rareza")]
         [SerializeField] private Sprite[] rarityFrames = new Sprite[6];
@@ -72,20 +93,23 @@ namespace JuegoTCG.UI
             cardsCountLabel = root.Q<Label>("CardsCountLabel");
             searchField = root.Q<TextField>("SearchField");
 
+            inspectCardStage = root.Q<VisualElement>("InspectCardStage");
             inspectHeroCard = root.Q<VisualElement>("InspectHeroCard");
+            inspectTiltHint = root.Q<Label>("InspectTiltHint");
+            inspectCloseBtn = root.Q<Button>("InspectCloseBtn");
+
             inspectArtContainer = root.Q<VisualElement>("InspectArtContainer");
             inspectArtPhoto = root.Q<VisualElement>("InspectArtPhoto");
-            inspectArtFrame = root.Q<VisualElement>("InspectArtFrame");
-            inspectArtHolo = root.Q<VisualElement>("InspectArtHolo");
-
-            inspectAvatarCircle = root.Q<VisualElement>("InspectAvatarCircle");
+            inspectPlaceholderAvatar = root.Q<VisualElement>("InspectPlaceholderAvatar");
             inspectAvatarInitials = root.Q<Label>("InspectAvatarInitials");
-            inspectPlayerName = root.Q<Label>("InspectPlayerName");
-            inspectRarityBadge = root.Q<Label>("InspectRarityBadge");
-            inspectStatPosition = root.Q<Label>("InspectStatPosition");
-            inspectStatTeam = root.Q<Label>("InspectStatTeam");
-            inspectStatCopies = root.Q<Label>("InspectStatCopies");
-            inspectCloseBtn = root.Q<Button>("InspectCloseBtn");
+            inspectArtFrame = root.Q<VisualElement>("InspectArtFrame");
+            inspectPlayerNameFramed = root.Q<Label>("InspectPlayerNameFramed");
+            inspectFrameFooterBox = root.Q<VisualElement>("InspectFrameFooterBox");
+            inspectFrameTeamName = root.Q<Label>("InspectFrameTeamName");
+            inspectFramePosText = root.Q<Label>("InspectFramePosText");
+            inspectFrameRarityText = root.Q<Label>("InspectFrameRarityText");
+
+            inspectCopiesBadge = root.Q<Label>("InspectCopiesBadge");
 
             if (inspectCloseBtn != null)
             {
@@ -96,7 +120,55 @@ namespace JuegoTCG.UI
             {
                 cardInspectModal.RegisterCallback<ClickEvent>(evt =>
                 {
-                    if (evt.target == cardInspectModal) CloseInspectModal();
+                    if (!hasMovedDrag && (evt.target == cardInspectModal || evt.target == inspectCardStage || (evt.target is VisualElement ve && ve.name == "InspectDismissHint")))
+                    {
+                        CloseInspectModal();
+                    }
+                });
+            }
+
+            var cardsScrollView = root.Q<ScrollView>("CardsScrollView");
+            if (cardsScrollView != null)
+            {
+                JuegoTCG.Core.MobilePerformanceOptimizer.ApplyOptimalScrollSettings(cardsScrollView);
+            }
+
+            if (inspectCardStage != null)
+            {
+                inspectCardStage.RegisterCallback<PointerDownEvent>(evt =>
+                {
+                    if (!isInspectOpen) return;
+                    isInspectDragging = true;
+                    hasMovedDrag = false;
+                    dragStartPos = evt.position;
+                    inspectCardStage.CapturePointer(evt.pointerId);
+                    UpdateTiltFromPointer(evt.localPosition);
+                });
+
+                inspectCardStage.RegisterCallback<PointerMoveEvent>(evt =>
+                {
+                    if (!isInspectOpen || !isInspectDragging) return;
+                    if ((evt.position - dragStartPos).sqrMagnitude > 25f)
+                    {
+                        hasMovedDrag = true;
+                    }
+                    UpdateTiltFromPointer(evt.localPosition);
+                });
+
+                inspectCardStage.RegisterCallback<PointerUpEvent>(evt =>
+                {
+                    if (!isInspectDragging) return;
+                    isInspectDragging = false;
+                    inspectCardStage.ReleasePointer(evt.pointerId);
+                    targetTiltX = 0f;
+                    targetTiltY = 0f;
+                });
+
+                inspectCardStage.RegisterCallback<PointerCaptureOutEvent>(evt =>
+                {
+                    isInspectDragging = false;
+                    targetTiltX = 0f;
+                    targetTiltY = 0f;
                 });
             }
 
@@ -183,13 +255,58 @@ namespace JuegoTCG.UI
                     holoMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
                 }
             }
+
+            if (inspectHoloMaterial == null && holoMaterial != null)
+            {
+                inspectHoloMaterial = new Material(holoMaterial);
+                inspectHoloMaterial.SetFloat("_HoloIntensity", 1.0f);
+                inspectHoloMaterial.SetFloat("_ShimmerSpeed", 1.2f);
+                inspectHoloMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                inspectHoloMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+            }
+        }
+
+        private void UpdateTiltFromPointer(Vector2 localPos)
+        {
+            if (inspectCardStage == null) return;
+            float w = inspectCardStage.contentRect.width;
+            float h = inspectCardStage.contentRect.height;
+            if (w <= 0f || h <= 0f) return;
+
+            // Mapear localPos (0 a w, 0 a h) a [-1, 1]
+            float normX = (localPos.x / w) * 2f - 1f;
+            float normY = (localPos.y / h) * 2f - 1f;
+
+            targetTiltX = Mathf.Clamp(normX, -1f, 1f);
+            targetTiltY = Mathf.Clamp(normY, -1f, 1f);
+        }
+
+        private RenderTexture GetInspectHoloRT()
+        {
+            if (inspectHoloRT == null)
+            {
+                inspectHoloRT = new RenderTexture(720, 1080, 0, RenderTextureFormat.ARGB32);
+                inspectHoloRT.name = "InspectHolo_RT";
+                inspectHoloRT.antiAliasing = 1;
+                inspectHoloRT.wrapMode = TextureWrapMode.Clamp;
+                inspectHoloRT.filterMode = FilterMode.Bilinear;
+                inspectHoloRT.Create();
+
+                RenderTexture prev = RenderTexture.active;
+                RenderTexture.active = inspectHoloRT;
+                GL.Clear(false, true, Color.clear);
+                RenderTexture.active = prev;
+            }
+            return inspectHoloRT;
         }
 
         private RenderTexture GetHoloFrameRT(int rarityIndex)
         {
             if (!holoFrameRTs.TryGetValue(rarityIndex, out RenderTexture rt) || rt == null)
             {
-                rt = new RenderTexture(720, 1080, 0, RenderTextureFormat.ARGB32);
+                // Para las cartas de la cuadrícula, 360x540 ofrece una nitidez retina cristalina
+                // y consume 4 veces menos ancho de banda de GPU móvil que 720x1080
+                rt = new RenderTexture(360, 540, 0, RenderTextureFormat.ARGB32);
                 rt.name = $"HoloFrame_RT_{rarityIndex}";
                 rt.antiAliasing = 1;
                 rt.wrapMode = TextureWrapMode.Clamp;
@@ -209,15 +326,43 @@ namespace JuegoTCG.UI
 
         private void Update()
         {
-            if (holoMaterial == null || holoFrameRTs.Count == 0) return;
-
-            foreach (var kvp in holoFrameRTs)
+            // 1. Actualizar marcos holográficos animados en la cuadrícula de álbum
+            if (holoMaterial != null && rarityFrames != null && holoFrameRTs.Count > 0)
             {
-                int rIndex = kvp.Key;
-                RenderTexture rt = kvp.Value;
-                if (rt != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
+                foreach (var kvp in holoFrameRTs)
                 {
-                    Graphics.Blit(rarityFrames[rIndex].texture, rt, holoMaterial);
+                    int r = kvp.Key;
+                    RenderTexture rt = kvp.Value;
+                    if (r >= 0 && r < rarityFrames.Length && rarityFrames[r] != null && rt != null)
+                    {
+                        Graphics.Blit(rarityFrames[r].texture, rt, holoMaterial);
+                    }
+                }
+            }
+
+            // 2. 3D Tilt y reacción holográfica en Hero Card Showcase (sólo cuando la inspección está activa)
+            if (isInspectOpen)
+            {
+                float lerpSpeed = isInspectDragging ? 18f : 8f;
+                currentTiltX = Mathf.Lerp(currentTiltX, targetTiltX, Time.deltaTime * lerpSpeed);
+                currentTiltY = Mathf.Lerp(currentTiltY, targetTiltY, Time.deltaTime * lerpSpeed);
+
+                float targetScale = isInspectDragging ? 1.03f : 1.0f;
+                currentInspectScale = Mathf.Lerp(currentInspectScale, targetScale, Time.deltaTime * 12f);
+
+                if (inspectHeroCard != null)
+                {
+                    // 3D Pitch (rot X invertido) & Roll (rot Y) con leve Yaw (rot Z) estilo Pokémon Pocket
+                    inspectHeroCard.transform.rotation = Quaternion.Euler(-currentTiltY * 18f, currentTiltX * 18f, currentTiltX * 3.5f);
+                    inspectHeroCard.transform.position = new Vector3(currentTiltX * 24f, -currentTiltY * 24f, 0f);
+                    inspectHeroCard.transform.scale = new Vector3(currentInspectScale, currentInspectScale, 1f);
+                }
+
+                if (currentInspectIsHolo && inspectHoloMaterial != null && inspectHoloRT != null && rarityFrames != null && currentInspectRIndex >= 0 && currentInspectRIndex < rarityFrames.Length && rarityFrames[currentInspectRIndex] != null)
+                {
+                    // Inyectar inclinación táctil interactiva al shader del marco holográfico
+                    inspectHoloMaterial.SetVector("_TiltPos", new Vector4(currentTiltX * 0.9f, currentTiltY * 0.9f, 0, 0));
+                    Graphics.Blit(rarityFrames[currentInspectRIndex].texture, inspectHoloRT, inspectHoloMaterial);
                 }
             }
         }
@@ -234,9 +379,23 @@ namespace JuegoTCG.UI
             }
             holoFrameRTs.Clear();
 
+            if (inspectHoloRT != null)
+            {
+                inspectHoloRT.Release();
+                Destroy(inspectHoloRT);
+                inspectHoloRT = null;
+            }
+
             if (holoMaterial != null)
             {
                 Destroy(holoMaterial);
+                holoMaterial = null;
+            }
+
+            if (inspectHoloMaterial != null)
+            {
+                Destroy(inspectHoloMaterial);
+                inspectHoloMaterial = null;
             }
         }
 
@@ -380,105 +539,88 @@ namespace JuegoTCG.UI
                 {
                     string rarityClass = GetRarityClass(item.rarity);
                     cardBtn.AddToClassList(rarityClass);
+                    cardBtn.AddToClassList("card-item-art");
 
+                    VisualElement artContainer = new VisualElement();
+                    artContainer.AddToClassList("card-art-container");
+
+                    // 1. Foto del Jugador o Arte por defecto si no tiene imagen
+                    VisualElement photoEl = new VisualElement();
+                    photoEl.AddToClassList("card-art-photo");
                     if (cardArt != null)
                     {
-                        // ----------------------------------------------------
-                        // CARTA CON ARTE OFICIAL (Lamine Yamal / Data Packs)
-                        // ----------------------------------------------------
-                        cardBtn.AddToClassList("card-item-art");
-
-                        VisualElement artContainer = new VisualElement();
-                        artContainer.AddToClassList("card-art-container");
-
-                        // 1. Foto del Jugador (Full-bleed)
-                        VisualElement photoEl = new VisualElement();
-                        photoEl.AddToClassList("card-art-photo");
                         photoEl.style.backgroundImage = new StyleBackground(cardArt);
-                        artContainer.Add(photoEl);
-
-                        // 2. Marco Oficial de Rareza (Con Shader Holográfico activo en tiempo real si es Épica/Legendaria/Mítica/FullArt)
-                        int rIndex = (int)item.rarity;
-                        bool isHolo = (item.rarity == Rarity.Epica || item.rarity == Rarity.Legendaria || item.rarity == Rarity.Mitica || item.rarity == Rarity.FullArt);
-
-                        VisualElement frameEl = new VisualElement();
-                        frameEl.AddToClassList("card-art-frame");
-
-                        EnsureRarityFrames();
-                        EnsureHoloMaterial();
-
-                        if (isHolo && holoMaterial != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                        {
-                            RenderTexture holoRT = GetHoloFrameRT(rIndex);
-                            Graphics.Blit(rarityFrames[rIndex].texture, holoRT, holoMaterial);
-                            frameEl.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
-                        }
-                        else if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                        {
-                            frameEl.style.backgroundImage = new StyleBackground(rarityFrames[rIndex]);
-                        }
-                        artContainer.Add(frameEl);
-
-                        // 3. Nombre del Jugador (Ubicado justo sobre la caja inferior, en blanco nítido con sombra)
-                        Label nameLbl = new Label(item.playerName);
-                        nameLbl.AddToClassList("card-player-name-framed");
-                        artContainer.Add(nameLbl);
-
-                        // 4. Caja de Información Inferior (Dentro de la caja holográfica de la carta, como en Imagen 2)
-                        VisualElement footerBox = new VisualElement();
-                        footerBox.AddToClassList("card-frame-footer-box");
-
-                        Label teamLbl = new Label(!string.IsNullOrEmpty(item.teamName) ? item.teamName : (asset != null ? asset.teamName : "FC Barca"));
-                        teamLbl.AddToClassList("card-frame-team-name");
-                        footerBox.Add(teamLbl);
-
-                        VisualElement footerSubRow = new VisualElement();
-                        footerSubRow.AddToClassList("card-frame-sub-row");
-
-                        Label posLbl = new Label(!string.IsNullOrEmpty(item.position) ? item.position : (asset != null ? asset.position : "Delantero"));
-                        posLbl.AddToClassList("card-frame-pos-text");
-                        footerSubRow.Add(posLbl);
-
-                        Label rarityLbl = new Label(item.rarity.ToString().ToUpper());
-                        rarityLbl.AddToClassList("card-frame-rarity-text");
-                        footerSubRow.Add(rarityLbl);
-
-                        footerBox.Add(footerSubRow);
-                        artContainer.Add(footerBox);
-
-                        // 5. Badge de copias (Esquina superior derecha)
-                        Label countBadge = new Label($"×{count}");
-                        countBadge.AddToClassList("card-copies-badge-framed");
-                        artContainer.Add(countBadge);
-
-                        cardBtn.Add(artContainer);
                     }
                     else
                     {
-                        // ----------------------------------------------------
-                        // DISEÑO FALLBACK ORIGINAL (Cartas sin imagen)
-                        // ----------------------------------------------------
-                        VisualElement avatarCircle = new VisualElement();
-                        avatarCircle.AddToClassList("card-avatar-circle");
-
-                        Label initials = new Label(item.initials);
-                        initials.AddToClassList("card-avatar-initials");
-                        initials.AddToClassList(GetInitialsClass(item.rarity));
-                        avatarCircle.Add(initials);
-                        cardBtn.Add(avatarCircle);
-
-                        // Player Name
-                        Label nameLbl = new Label(item.playerName);
-                        nameLbl.AddToClassList("card-player-name");
-                        cardBtn.Add(nameLbl);
-
-                        // Rarity Badge
-                        string badgeText = $"{item.rarity} ×{count}";
-                        Label badgeLbl = new Label(badgeText);
-                        badgeLbl.AddToClassList("card-rarity-badge");
-                        badgeLbl.AddToClassList(GetInitialsClass(item.rarity));
-                        cardBtn.Add(badgeLbl);
+                        photoEl.AddToClassList("inspect-art-photo-default");
+                        VisualElement placeholderAvatar = new VisualElement();
+                        placeholderAvatar.AddToClassList("card-placeholder-avatar");
+                        Label initialsLbl = new Label(item.initials);
+                        initialsLbl.AddToClassList("card-avatar-initials");
+                        initialsLbl.AddToClassList(GetInitialsClass(item.rarity));
+                        placeholderAvatar.Add(initialsLbl);
+                        photoEl.Add(placeholderAvatar);
                     }
+                    artContainer.Add(photoEl);
+
+                    // 2. Marco Oficial de Rareza (Con Shader Holográfico activo en tiempo real si es Épica/Legendaria/Mítica/FullArt)
+                    int rIndex = (int)item.rarity;
+                    bool isHolo = (item.rarity == Rarity.Epica || item.rarity == Rarity.Legendaria || item.rarity == Rarity.Mitica || item.rarity == Rarity.FullArt);
+
+                    VisualElement frameEl = new VisualElement();
+                    frameEl.AddToClassList("card-art-frame");
+
+                    EnsureRarityFrames();
+                    EnsureHoloMaterial();
+
+                    if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
+                    {
+                        if (isHolo)
+                        {
+                            RenderTexture holoRT = GetHoloFrameRT(rIndex);
+                            frameEl.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
+                        }
+                        else
+                        {
+                            frameEl.style.backgroundImage = new StyleBackground(rarityFrames[rIndex]);
+                        }
+                    }
+                    artContainer.Add(frameEl);
+
+                    // 3. Nombre del Jugador
+                    Label nameLbl = new Label(item.playerName);
+                    nameLbl.AddToClassList("card-player-name-framed");
+                    artContainer.Add(nameLbl);
+
+                    // 4. Caja de Información Inferior
+                    VisualElement footerBox = new VisualElement();
+                    footerBox.AddToClassList("card-frame-footer-box");
+
+                    Label teamLbl = new Label(!string.IsNullOrEmpty(item.teamName) ? item.teamName : (asset != null ? asset.teamName : "FC Barca"));
+                    teamLbl.AddToClassList("card-frame-team-name");
+                    footerBox.Add(teamLbl);
+
+                    VisualElement footerSubRow = new VisualElement();
+                    footerSubRow.AddToClassList("card-frame-sub-row");
+
+                    Label posLbl = new Label(!string.IsNullOrEmpty(item.position) ? item.position : (asset != null ? asset.position : "DEL"));
+                    posLbl.AddToClassList("card-frame-pos-text");
+                    footerSubRow.Add(posLbl);
+
+                    Label rarityLbl = new Label(item.rarity.ToString().ToUpper());
+                    rarityLbl.AddToClassList("card-frame-rarity-text");
+                    footerSubRow.Add(rarityLbl);
+
+                    footerBox.Add(footerSubRow);
+                    artContainer.Add(footerBox);
+
+                    // 5. Badge de copias
+                    Label countBadge = new Label($"×{count}");
+                    countBadge.AddToClassList("card-copies-badge-framed");
+                    artContainer.Add(countBadge);
+
+                    cardBtn.Add(artContainer);
 
                     // Click to inspect
                     var currentItem = item;
@@ -507,6 +649,7 @@ namespace JuegoTCG.UI
                     cardBtn.Add(badgeLbl);
                 }
 
+                cardBtn.usageHints = UsageHints.DynamicTransform;
                 cardsGrid.Add(cardBtn);
                 visibleCount++;
             }
@@ -549,17 +692,22 @@ namespace JuegoTCG.UI
         {
             if (cardInspectModal == null) return;
 
-            if (inspectPlayerName != null) inspectPlayerName.text = item.playerName;
-            if (inspectAvatarInitials != null) inspectAvatarInitials.text = item.initials;
-            if (inspectRarityBadge != null) inspectRarityBadge.text = item.rarity.ToString().ToUpper();
-            if (inspectStatPosition != null) inspectStatPosition.text = item.position;
-            if (inspectStatTeam != null) inspectStatTeam.text = item.teamName;
-            if (inspectStatCopies != null) inspectStatCopies.text = $"×{count}";
-
-            Sprite inspectArt = DataPackManager.GetCardArt(item.cardId, asset != null ? asset.defaultArt : null);
+            // Reset transforms & tilt
+            isInspectOpen = true;
+            isInspectDragging = false;
+            hasMovedDrag = false;
+            targetTiltX = 0f;
+            targetTiltY = 0f;
+            currentTiltX = 0f;
+            currentTiltY = 0f;
+            currentInspectScale = 1.0f;
 
             if (inspectHeroCard != null)
             {
+                inspectHeroCard.transform.rotation = Quaternion.identity;
+                inspectHeroCard.transform.position = Vector3.zero;
+                inspectHeroCard.transform.scale = Vector3.one;
+
                 inspectHeroCard.RemoveFromClassList("card-mythic");
                 inspectHeroCard.RemoveFromClassList("card-rare");
                 inspectHeroCard.RemoveFromClassList("card-uncommon");
@@ -567,53 +715,89 @@ namespace JuegoTCG.UI
                 inspectHeroCard.AddToClassList(GetRarityClass(item.rarity));
             }
 
+            if (inspectCopiesBadge != null)
+            {
+                inspectCopiesBadge.text = $"×{count}";
+            }
+
+            int rIndex = (int)item.rarity;
+            currentInspectRIndex = rIndex;
+            currentInspectIsHolo = (item.rarity == Rarity.Epica || item.rarity == Rarity.Legendaria || item.rarity == Rarity.Mitica || item.rarity == Rarity.FullArt);
+
+            Sprite inspectArt = DataPackManager.GetCardArt(item.cardId, asset != null ? asset.defaultArt : null);
+
+            EnsureRarityFrames();
+            EnsureHoloMaterial();
+
+            // El mensaje de brillo SOLO se muestra si la carta cuenta con shader holográfico
+            if (inspectTiltHint != null)
+            {
+                if (currentInspectIsHolo)
+                {
+                    inspectTiltHint.text = "✦ Mueve el dedo sobre la carta para ver el brillo";
+                    inspectTiltHint.style.display = DisplayStyle.Flex;
+                }
+                else
+                {
+                    inspectTiltHint.style.display = DisplayStyle.None;
+                }
+            }
+
+            // Información del jugador y metadatos (siempre visible en el marco oficial)
+            if (inspectPlayerNameFramed != null) inspectPlayerNameFramed.text = item.playerName;
+            if (inspectFrameTeamName != null) inspectFrameTeamName.text = string.IsNullOrEmpty(item.teamName) ? "SIN EQUIPO" : item.teamName.ToUpper();
+            if (inspectFramePosText != null) inspectFramePosText.text = string.IsNullOrEmpty(item.position) ? "MED" : item.position.ToUpper();
+            if (inspectFrameRarityText != null) inspectFrameRarityText.text = item.rarity.ToString().ToUpper();
+
             if (inspectArt != null)
             {
-                // Modo Carta Completa con Arte
-                if (inspectHeroCard != null) inspectHeroCard.AddToClassList("modal-hero-art");
-                if (inspectArtContainer != null) inspectArtContainer.style.display = DisplayStyle.Flex;
-                if (inspectArtPhoto != null) inspectArtPhoto.style.backgroundImage = new StyleBackground(inspectArt);
-                if (inspectArtFrame != null)
+                // Tiene imagen personalizada (DataPack o defaultArt)
+                if (inspectArtPhoto != null)
                 {
-                    int rIndex = (int)item.rarity;
-                    bool isHolo = (item.rarity == Rarity.Epica || item.rarity == Rarity.Legendaria || item.rarity == Rarity.Mitica || item.rarity == Rarity.FullArt);
-                    EnsureRarityFrames();
-                    EnsureHoloMaterial();
-
-                    if (isHolo && holoMaterial != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                    {
-                        RenderTexture holoRT = GetHoloFrameRT(rIndex);
-                        Graphics.Blit(rarityFrames[rIndex].texture, holoRT, holoMaterial);
-                        inspectArtFrame.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
-                    }
-                    else if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                    {
-                        inspectArtFrame.style.backgroundImage = new StyleBackground(rarityFrames[rIndex]);
-                    }
+                    inspectArtPhoto.RemoveFromClassList("inspect-art-photo-default");
+                    inspectArtPhoto.style.backgroundImage = new StyleBackground(inspectArt);
                 }
-
-                if (inspectArtHolo != null)
+                if (inspectPlaceholderAvatar != null)
                 {
-                    inspectArtHolo.style.display = DisplayStyle.None;
+                    inspectPlaceholderAvatar.style.display = DisplayStyle.None;
                 }
-
-                if (inspectAvatarCircle != null) inspectAvatarCircle.style.display = DisplayStyle.None;
-                if (inspectPlayerName != null) inspectPlayerName.style.display = DisplayStyle.None;
-                if (inspectRarityBadge != null) inspectRarityBadge.style.display = DisplayStyle.None;
             }
             else
             {
-                // Fallback a iniciales circulares
-                if (inspectHeroCard != null) inspectHeroCard.RemoveFromClassList("modal-hero-art");
-                if (inspectArtContainer != null) inspectArtContainer.style.display = DisplayStyle.None;
-                if (inspectAvatarCircle != null)
+                // No tiene imagen: Arte por defecto (fondo deportivo táctico + avatar con iniciales)
+                if (inspectArtPhoto != null)
                 {
-                    inspectAvatarCircle.style.display = DisplayStyle.Flex;
-                    inspectAvatarCircle.style.backgroundImage = null;
+                    inspectArtPhoto.AddToClassList("inspect-art-photo-default");
+                    inspectArtPhoto.style.backgroundImage = null;
                 }
-                if (inspectAvatarInitials != null) inspectAvatarInitials.style.display = DisplayStyle.Flex;
-                if (inspectPlayerName != null) inspectPlayerName.style.display = DisplayStyle.Flex;
-                if (inspectRarityBadge != null) inspectRarityBadge.style.display = DisplayStyle.Flex;
+                if (inspectPlaceholderAvatar != null)
+                {
+                    inspectPlaceholderAvatar.style.display = DisplayStyle.Flex;
+                }
+                if (inspectAvatarInitials != null)
+                {
+                    inspectAvatarInitials.text = item.initials;
+                }
+            }
+
+            // Marco Oficial de Rareza (siempre visible, reactivo con shader si es holo)
+            if (inspectArtFrame != null)
+            {
+                if (currentInspectIsHolo && inspectHoloMaterial != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
+                {
+                    RenderTexture hRT = GetInspectHoloRT();
+                    inspectHoloMaterial.SetVector("_TiltPos", Vector4.zero);
+                    Graphics.Blit(rarityFrames[rIndex].texture, hRT, inspectHoloMaterial);
+                    inspectArtFrame.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(hRT));
+                }
+                else if (rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
+                {
+                    inspectArtFrame.style.backgroundImage = new StyleBackground(rarityFrames[rIndex]);
+                }
+                else
+                {
+                    inspectArtFrame.style.backgroundImage = null;
+                }
             }
 
             cardInspectModal.RemoveFromClassList("modal-hidden");
@@ -621,6 +805,21 @@ namespace JuegoTCG.UI
 
         public void CloseInspectModal()
         {
+            isInspectOpen = false;
+            isInspectDragging = false;
+            hasMovedDrag = false;
+            targetTiltX = 0f;
+            targetTiltY = 0f;
+            currentTiltX = 0f;
+            currentTiltY = 0f;
+
+            if (inspectHeroCard != null)
+            {
+                inspectHeroCard.transform.rotation = Quaternion.identity;
+                inspectHeroCard.transform.position = Vector3.zero;
+                inspectHeroCard.transform.scale = Vector3.one;
+            }
+
             if (cardInspectModal != null)
             {
                 cardInspectModal.AddToClassList("modal-hidden");

@@ -317,33 +317,30 @@
                     <ui:VisualElement class="duplicates-grid">
                         
                         <!-- Duplicado 1: Musiala -->
+                        <!-- Duplicado 1 -->
                         <ui:VisualElement name="Card_Dup_1" class="duplicate-card duplicate-card-common">
                             <ui:VisualElement class="duplicate-badge">
-                                <ui:Label text="×3" class="duplicate-badge-text duplicate-badge-text-common" />
+                                <ui:Label text="×2" class="duplicate-badge-text duplicate-badge-text-common" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="duplicate-card-body">
-                                <ui:Label text="JM" class="card-big-initials" />
-                                <ui:Label text="COMÚN" class="card-rarity-badge" />
-                                <ui:Label text="Musiala" class="duplicate-player-name" />
+                            <ui:VisualElement class="duplicate-card-body" />
+                            <ui:VisualElement class="duplicate-card-footer">
+                                <ui:Button name="Btn_Publish_1" class="btn-publish">
+                                    <ui:Label text="PUBLICAR" class="btn-publish-text" />
+                                </ui:Button>
                             </ui:VisualElement>
-                            <ui:Button name="Btn_Publish_1" class="btn-publish">
-                                <ui:Label text="PUBLICAR" class="btn-publish-text" />
-                            </ui:Button>
                         </ui:VisualElement>
 
-                        <!-- Duplicado 2: Osimhen -->
+                        <!-- Duplicado 2 -->
                         <ui:VisualElement name="Card_Dup_2" class="duplicate-card duplicate-card-uncommon">
                             <ui:VisualElement class="duplicate-badge">
                                 <ui:Label text="×2" class="duplicate-badge-text duplicate-badge-text-uncommon" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="duplicate-card-body">
-                                <ui:Label text="VO" class="card-big-initials" />
-                                <ui:Label text="POCO COMÚN" class="card-rarity-badge" />
-                                <ui:Label text="Osimhen" class="duplicate-player-name" />
+                            <ui:VisualElement class="duplicate-card-body" />
+                            <ui:VisualElement class="duplicate-card-footer">
+                                <ui:Button name="Btn_Publish_2" class="btn-publish">
+                                    <ui:Label text="PUBLICAR" class="btn-publish-text" />
+                                </ui:Button>
                             </ui:VisualElement>
-                            <ui:Button name="Btn_Publish_2" class="btn-publish">
-                                <ui:Label text="PUBLICAR" class="btn-publish-text" />
-                            </ui:Button>
                         </ui:VisualElement>
 
                     </ui:VisualElement>
@@ -429,14 +426,20 @@
         <ui:VisualElement name="PriceModal" class="market-modal-backdrop modal-hidden">
             <ui:VisualElement class="market-modal-box">
                 <ui:Label name="PriceModalTitle" text="FIJAR PRECIO" class="market-modal-title" />
-                <ui:Label name="PriceModalCardName" text="Musiala (COMÚN)" class="market-modal-desc" style="margin-bottom: 20px;" />
                 
+                <ui:VisualElement class="modal-card-preview-pill">
+                    <ui:Label name="PriceModalCardName" text="Lamine Yamal" class="modal-card-preview-name" />
+                    <ui:Label name="PriceModalCardRarity" text="MÍTICA" class="modal-card-preview-rarity" />
+                </ui:VisualElement>
+
+                <ui:Label text="Ingresa el precio de venta en monedas:" class="price-input-hint" />
+
                 <ui:VisualElement class="price-input-row">
-                    <ui:VisualElement class="price-coin-icon" />
+                    <ui:VisualElement class="price-coin-icon-lg" />
                     <ui:TextField name="PriceInput" value="100" class="price-input-field" />
                 </ui:VisualElement>
 
-                <ui:VisualElement class="market-modal-actions" style="margin-top: 24px;">
+                <ui:VisualElement class="market-modal-actions">
                     <ui:Button name="Btn_ConfirmPrice" class="market-modal-btn-confirm">
                         <ui:Label text="CONFIRMAR" class="market-modal-btn-confirm-text" />
                     </ui:Button>

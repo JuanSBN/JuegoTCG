@@ -165,46 +165,52 @@
         <!-- Modular Liquid Glass Navigation Bar -->
         <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
 
-        <!-- Card Zoom / Inspect Modal -->
-        <ui:VisualElement name="CardInspectModal" class="modal-overlay modal-hidden">
-            <ui:VisualElement class="modal-card">
-                <ui:VisualElement class="modal-header">
-                    <ui:Label text="DETALLE DE CARTA" class="modal-title" />
-                    <ui:Button name="InspectCloseBtn" class="modal-close-btn">
-                        <ui:VisualElement class="modal-close-icon" />
-                    </ui:Button>
-                </ui:VisualElement>
+        <!-- Card Zoom / Hero Inspect Modal (Pokémon TCG Pocket Style) -->
+        <ui:VisualElement name="CardInspectModal" class="inspect-overlay modal-hidden">
+            <!-- Top Controls Bar -->
+            <ui:VisualElement class="inspect-top-bar">
+                <ui:Label name="InspectTiltHint" text="✦ Mueve el dedo sobre la carta para ver el brillo" class="inspect-tilt-hint" />
+                <ui:Button name="InspectCloseBtn" class="inspect-close-btn">
+                    <ui:Label text="✕" class="inspect-close-icon-text" />
+                </ui:Button>
+            </ui:VisualElement>
 
-                <ui:VisualElement name="InspectHeroCard" class="modal-hero-card card-mythic">
-                    <!-- Art presentation for cards with image / Data Pack -->
-                    <ui:VisualElement name="InspectArtContainer" class="card-art-container modal-art-container" style="display: none;">
-                        <ui:VisualElement name="InspectArtPhoto" class="card-art-photo" />
-                        <ui:VisualElement name="InspectArtFrame" class="card-art-frame" />
-                        <ui:VisualElement name="InspectArtHolo" class="card-holo-glint" />
+            <!-- Card Stage (Touch area for 3D Tilt) -->
+            <ui:VisualElement name="InspectCardStage" class="inspect-card-stage">
+                <ui:VisualElement name="InspectHeroCard" class="inspect-hero-card">
+                    <!-- Unified Art Container (Always displays official frame and metadata) -->
+                    <ui:VisualElement name="InspectArtContainer" class="inspect-art-container">
+                        <!-- Photo or Default Tactical Pitch Background -->
+                        <ui:VisualElement name="InspectArtPhoto" class="inspect-art-photo" />
+
+                        <!-- Default Player Avatar (when no player image is available) -->
+                        <ui:VisualElement name="InspectPlaceholderAvatar" class="inspect-placeholder-avatar">
+                            <ui:Label name="InspectAvatarInitials" text="VO" class="inspect-avatar-initials" />
+                        </ui:VisualElement>
+
+                        <!-- Official Rarity Border Frame (RenderTexture / Holo or Static) -->
+                        <ui:VisualElement name="InspectArtFrame" class="inspect-art-frame" />
+
+                        <!-- Player Name inside card -->
+                        <ui:Label name="InspectPlayerNameFramed" text="Player Name" class="inspect-player-name-framed" />
+
+                        <!-- Footer Box inside card (Club, Position, Rarity) -->
+                        <ui:VisualElement name="InspectFrameFooterBox" class="inspect-frame-footer-box">
+                            <ui:Label name="InspectFrameTeamName" text="FC BARCELONA" class="inspect-frame-team-name" />
+                            <ui:VisualElement class="inspect-frame-sub-row">
+                                <ui:Label name="InspectFramePosText" text="DEL" class="inspect-frame-pos-text" />
+                                <ui:Label name="InspectFrameRarityText" text="MÍTICA" class="inspect-frame-rarity-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
                     </ui:VisualElement>
 
-                    <ui:VisualElement name="InspectAvatarCircle" class="card-avatar-circle avatar-mythic" style="width: 220px; height: 220px; border-radius: 110px;">
-                        <ui:Label name="InspectAvatarInitials" text="LD" class="card-avatar-initials initials-mythic" style="font-size: 72px;" />
-                    </ui:VisualElement>
-                    <ui:Label name="InspectPlayerName" text="Luis Díaz" class="card-player-name" style="font-size: 44px;" />
-                    <ui:Label name="InspectRarityBadge" text="MÍTICA" class="card-rarity-badge initials-mythic" style="font-size: 26px;" />
-                </ui:VisualElement>
-
-                <ui:VisualElement class="modal-details-row">
-                    <ui:VisualElement class="modal-stat-box">
-                        <ui:Label text="POSICIÓN" class="modal-stat-label" />
-                        <ui:Label name="InspectStatPosition" text="Extremo Izq." class="modal-stat-value" />
-                    </ui:VisualElement>
-                    <ui:VisualElement class="modal-stat-box">
-                        <ui:Label text="CLUB / PAÍS" class="modal-stat-label" />
-                        <ui:Label name="InspectStatTeam" text="Liverpool" class="modal-stat-value" />
-                    </ui:VisualElement>
-                    <ui:VisualElement class="modal-stat-box">
-                        <ui:Label text="COPIAS" class="modal-stat-label" />
-                        <ui:Label name="InspectStatCopies" text="×1" class="modal-stat-value" />
-                    </ui:VisualElement>
+                    <!-- Copies Badge (Top Right) -->
+                    <ui:Label name="InspectCopiesBadge" text="×1" class="inspect-copies-badge" />
                 </ui:VisualElement>
             </ui:VisualElement>
+
+            <!-- Dismiss Hint -->
+            <ui:Label text="Toca en cualquier parte para cerrar" class="inspect-dismiss-hint" />
         </ui:VisualElement>
 
     </ui:VisualElement>

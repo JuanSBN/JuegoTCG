@@ -128,8 +128,11 @@
 
         </ui:ScrollView>
 
+        <!-- Liquid Glass Bottom Nav -->
+        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
+
         <!-- Feedback Modal -->
-        <ui:VisualElement name="StoreFeedbackModal" class="store-modal-overlay">
+        <ui:VisualElement name="StoreFeedbackModal" class="store-modal-overlay modal-hidden" style="display: none;">
             <ui:VisualElement class="store-modal-card">
                 <ui:Label name="ModalIcon" text="🎉" class="store-modal-icon" />
                 <ui:Label name="ModalTitle" text="¡COMPRA EXITOSA!" class="store-modal-title" />
@@ -137,9 +140,6 @@
                 <ui:Button name="Btn_CloseFeedback" text="ACEPTAR" class="store-modal-close-btn" />
             </ui:VisualElement>
         </ui:VisualElement>
-
-        <!-- Liquid Glass Bottom Nav -->
-        <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />
 
     </ui:VisualElement>
 </ui:UXML>

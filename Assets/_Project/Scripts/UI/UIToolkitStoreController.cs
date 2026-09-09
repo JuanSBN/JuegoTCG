@@ -38,6 +38,11 @@ namespace JuegoTCG.UI
 
             // Modal Elements
             storeFeedbackModal = root.Q<VisualElement>("StoreFeedbackModal");
+            if (storeFeedbackModal != null)
+            {
+                storeFeedbackModal.style.display = DisplayStyle.None;
+                storeFeedbackModal.AddToClassList("modal-hidden");
+            }
             modalIcon = root.Q<Label>("ModalIcon");
             modalTitle = root.Q<Label>("ModalTitle");
             modalDesc = root.Q<Label>("ModalDesc");
@@ -172,6 +177,7 @@ namespace JuegoTCG.UI
                 if (modalIcon != null) modalIcon.text = icon;
                 if (modalTitle != null) modalTitle.text = title;
                 if (modalDesc != null) modalDesc.text = desc;
+                storeFeedbackModal.RemoveFromClassList("modal-hidden");
                 storeFeedbackModal.style.display = DisplayStyle.Flex;
             }
         }
@@ -180,6 +186,7 @@ namespace JuegoTCG.UI
         {
             if (storeFeedbackModal != null)
             {
+                storeFeedbackModal.AddToClassList("modal-hidden");
                 storeFeedbackModal.style.display = DisplayStyle.None;
             }
         }

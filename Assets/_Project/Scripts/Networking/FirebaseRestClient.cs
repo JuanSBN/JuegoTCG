@@ -595,11 +595,16 @@ namespace JuegoTCG.Networking
             string url = $"{FirestoreBaseUrl}:runQuery";
             string queryJson = "{\"structuredQuery\":{\"from\":[{\"collectionId\":\"tradeOffers\"}],\"where\":{\"compositeFilter\":{\"op\":\"AND\",\"filters\":[" +
                 "{\"fieldFilter\":{\"field\":{\"fieldPath\":\"toUid\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"" + Escape(myUid) + "\"}}}," +
-                "{\"fieldFilter\":{\"field\":{\"fieldPath\":\"status\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"pendiente\"?}}}" +
-                "]}}}}".Replace("?", "");
+                "{\"fieldFilter\":{\"field\":{\"fieldPath\":\"status\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"pendiente\"}}}" +
+                "]}}}}";
 
             string res = await PostJsonAsync(url, queryJson, idToken);
-            if (string.IsNullOrEmpty(res) || res.Contains("\"error\"")) return list;
+            if (string.IsNullOrEmpty(res)) return list;
+            if (res.Contains("\"error\""))
+            {
+                Debug.LogWarning($"[FirebaseRest] Error en GetIncomingTradeOffersAsync (myUid={myUid}): {res}");
+                return list;
+            }
 
             return ParseTradeOffers(res, isIncoming: true);
         }
@@ -615,7 +620,12 @@ namespace JuegoTCG.Networking
                 "}}}";
 
             string res = await PostJsonAsync(url, queryJson, idToken);
-            if (string.IsNullOrEmpty(res) || res.Contains("\"error\"")) return list;
+            if (string.IsNullOrEmpty(res)) return list;
+            if (res.Contains("\"error\""))
+            {
+                Debug.LogWarning($"[FirebaseRest] Error en GetSentTradeOffersAsync (myUid={myUid}): {res}");
+                return list;
+            }
 
             return ParseTradeOffers(res, isIncoming: false);
         }
@@ -625,7 +635,7 @@ namespace JuegoTCG.Networking
             if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(tradeId)) return false;
 
             string url = $"{FirestoreBaseUrl}/tradeOffers/{tradeId}?updateMask.fieldPaths=status";
-            string body = "{\"fields\":{\"status\":{\"stringValue\":\"" + newStatus + "\"}?}}".Replace("?", "");
+            string body = "{\"fields\":{\"status\":{\"stringValue\":\"" + Escape(newStatus) + "\"}}}";
 
             string res = await PatchJsonAsync(url, body, idToken);
             return !string.IsNullOrEmpty(res) && !res.Contains("\"error\"");
@@ -710,15 +720,20 @@ namespace JuegoTCG.Networking
             return !string.IsNullOrEmpty(res) && !res.Contains("\"error\"");
         }
 
-        public static async Task<bool> CancelMarketListingAsync(string idToken, string listingId)
+        public static async Task<bool> UpdateMarketListingStatusAsync(string idToken, string listingId, string newStatus)
         {
             if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(listingId)) return false;
 
             string url = $"{FirestoreBaseUrl}/marketListings/{listingId}?updateMask.fieldPaths=status";
-            string body = "{\"fields\":{\"status\":{\"stringValue\":\"cancelado\"}}}";
+            string body = "{\"fields\":{\"status\":{\"stringValue\":\"" + Escape(newStatus) + "\"}}}";
 
             string res = await PatchJsonAsync(url, body, idToken);
             return !string.IsNullOrEmpty(res) && !res.Contains("\"error\"");
+        }
+
+        public static async Task<bool> CancelMarketListingAsync(string idToken, string listingId)
+        {
+            return await UpdateMarketListingStatusAsync(idToken, listingId, "cancelado");
         }
 
         public static async Task<bool> UpdateMarketListingPriceAsync(string idToken, string listingId, int newPrice)
@@ -900,8 +915,8 @@ namespace JuegoTCG.Networking
             var docs = Regex.Matches(json, "\"document\"\\s*:\\s*\\{([\\s\\S]*?)\"createTime\"");
             foreach (Match m in docs)
             {
-                string block = m.Groups[1].Value;
-                var v = ParseVitrineDoc("{\"fields\":{" + ExtractDocumentFields(block) + "}}");
+                string block = m.Value;
+                var v = ParseVitrineDoc(block);
                 if (v != null && !string.IsNullOrEmpty(v.userId))
                 {
                     list.Add(v);
@@ -1127,11 +1142,20 @@ namespace JuegoTCG.Networking
             var list = new List<FriendRequestData>();
             if (string.IsNullOrEmpty(json)) return list;
 
-            // Extraer cada bloque de documento
-            var docMatches = Regex.Matches(json, "\"document\"\\s*:\\s*\\{([\\s\\S]*?)\"createTime\"");
-            foreach (Match m in docMatches)
+            var docIndices = new List<int>();
+            int idx = json.IndexOf("\"document\"");
+            while (idx >= 0)
             {
-                string block = m.Value;
+                docIndices.Add(idx);
+                idx = json.IndexOf("\"document\"", idx + 10);
+            }
+
+            for (int i = 0; i < docIndices.Count; i++)
+            {
+                int start = docIndices[i];
+                int end = (i + 1 < docIndices.Count) ? docIndices[i + 1] : json.Length;
+                string block = json.Substring(start, end - start);
+
                 string reqId = ExtractFieldString(block, "requestId");
                 string fromUid = ExtractFieldString(block, "fromUid");
                 string fromName = ExtractFieldString(block, "fromName");
@@ -1181,10 +1205,20 @@ namespace JuegoTCG.Networking
             var list = new List<TradeOfferItem>();
             if (string.IsNullOrEmpty(json)) return list;
 
-            var docMatches = Regex.Matches(json, "\"document\"\\s*:\\s*\\{([\\s\\S]*?)\"createTime\"");
-            foreach (Match m in docMatches)
+            var docIndices = new List<int>();
+            int idx = json.IndexOf("\"document\"");
+            while (idx >= 0)
             {
-                string block = m.Value;
+                docIndices.Add(idx);
+                idx = json.IndexOf("\"document\"", idx + 10);
+            }
+
+            for (int i = 0; i < docIndices.Count; i++)
+            {
+                int start = docIndices[i];
+                int end = (i + 1 < docIndices.Count) ? docIndices[i + 1] : json.Length;
+                string block = json.Substring(start, end - start);
+
                 string tradeId = ExtractFieldString(block, "tradeId");
                 if (string.IsNullOrEmpty(tradeId)) continue;
 
@@ -1214,10 +1248,20 @@ namespace JuegoTCG.Networking
             var list = new List<MarketListingData>();
             if (string.IsNullOrEmpty(json)) return list;
 
-            var docMatches = Regex.Matches(json, "\"document\"\\s*:\\s*\\{([\\s\\S]*?)\"createTime\"");
-            foreach (Match m in docMatches)
+            var docIndices = new List<int>();
+            int idx = json.IndexOf("\"document\"");
+            while (idx >= 0)
             {
-                string block = m.Value;
+                docIndices.Add(idx);
+                idx = json.IndexOf("\"document\"", idx + 10);
+            }
+
+            for (int i = 0; i < docIndices.Count; i++)
+            {
+                int start = docIndices[i];
+                int end = (i + 1 < docIndices.Count) ? docIndices[i + 1] : json.Length;
+                string block = json.Substring(start, end - start);
+
                 string listingId = ExtractFieldString(block, "listingId");
                 if (string.IsNullOrEmpty(listingId)) continue;
 

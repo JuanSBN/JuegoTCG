@@ -136,6 +136,37 @@ namespace JuegoTCG.Networking
 #endif
         }
 
+        /// <summary>
+        /// Cierra la sesión nativa de Google Play Services en Android para limpiar la cuenta en caché.
+        /// </summary>
+        public void SignOut()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+                using (AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+                using (AndroidJavaClass googleSignIn = new AndroidJavaClass("com.google.android.gms.auth.api.signin.GoogleSignIn"))
+                using (AndroidJavaClass gsoClass = new AndroidJavaClass("com.google.android.gms.auth.api.signin.GoogleSignInOptions"))
+                using (AndroidJavaObject defaultGso = gsoClass.GetStatic<AndroidJavaObject>("DEFAULT_SIGN_IN"))
+                {
+                    AndroidJavaObject client = googleSignIn.CallStatic<AndroidJavaObject>("getClient", currentActivity, defaultGso);
+                    if (client != null)
+                    {
+                        client.Call<AndroidJavaObject>("signOut");
+                        Debug.Log("<color=green>[GoogleSignIn] Sesión nativa de Google en Android cerrada correctamente.</color>");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[GoogleSignIn] Aviso al cerrar sesión nativa de Google: {ex.Message}");
+            }
+#else
+            Debug.Log("[GoogleSignIn] Sesión Google cerrada (Editor / Mock).");
+#endif
+        }
+
         private void SimulateEditorSignIn()
         {
             // Simulación en Editor de Unity para desarrollo fluido
