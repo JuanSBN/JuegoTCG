@@ -1934,6 +1934,63 @@ function TradeScreen({ onBack }: { onBack: () => void }) {
   const [received, setReceived] = useState(TRADES_RECEIVED);
   const [sent, setSent]         = useState(TRADES_SENT);
 
+  // New trade sub-flow
+  type NewStep = "friend" | "cards-give" | "cards-receive" | "confirm" | null;
+  const [newStep, setNewStep]           = useState<NewStep>(null);
+  const [newFriend, setNewFriend]       = useState<Friend | null>(null);
+  const [newGive, setNewGive]           = useState<SlotCard[]>([]);
+  const [newGiveIds, setNewGiveIds]     = useState<number[]>([]);
+  const [newReceive, setNewReceive]     = useState<SlotCard[]>([]);
+
+  function resetNew() {
+    setNewStep(null); setNewFriend(null);
+    setNewGive([]); setNewGiveIds([]); setNewReceive([]);
+  }
+  function handleSend() {
+    if (!newFriend) return;
+    const newTrade: Trade = {
+      id: Date.now(),
+      user: newFriend.user, avatar: newFriend.avatar, time: "ahora",
+      youGive:    newGive.map((c) => ({ ini: c.ini, rarity: c.rarity })),
+      youReceive: newReceive.map((c) => ({ ini: c.ini, rarity: c.rarity })),
+    };
+    setSent((prev) => [newTrade, ...prev]);
+    setActiveTab("sent");
+    resetNew();
+  }
+
+  if (newStep === "friend") {
+    return <ChooseFriendScreen
+      onBack={resetNew}
+      onSelect={(f) => { setNewFriend(f); setNewStep("cards-give"); }}
+    />;
+  }
+  if (newStep === "cards-give" && newFriend) {
+    return <GiveCardsScreen
+      friend={newFriend}
+      initialIds={newGiveIds}
+      onBack={() => setNewStep("friend")}
+      onContinue={(ids, give) => { setNewGiveIds(ids); setNewGive(give); setNewStep("cards-receive"); }}
+    />;
+  }
+  if (newStep === "cards-receive" && newFriend) {
+    return <ReceiveCardsScreen
+      friend={newFriend}
+      give={newGive}
+      onBack={() => setNewStep("cards-give")}
+      onContinue={(receive) => { setNewReceive(receive); setNewStep("confirm"); }}
+    />;
+  }
+  if (newStep === "confirm" && newFriend) {
+    return <ConfirmTradeScreen
+      friend={newFriend}
+      give={newGive}
+      receive={newReceive}
+      onBack={() => setNewStep("cards-receive")}
+      onSend={handleSend}
+    />;
+  }
+
   const unreadCount = received.filter((t) => t.unread).length;
 
   function markRead(id: number) {
@@ -2029,7 +2086,7 @@ function TradeScreen({ onBack }: { onBack: () => void }) {
 
       {/* Floating CTA */}
       <div style={{ position: "fixed", bottom: 104, right: 20, zIndex: 35 }}>
-        <button style={{
+        <button onClick={() => setNewStep("friend")} style={{
           display: "flex", alignItems: "center", gap: 8,
           padding: "11px 20px",
           background: GOLD, border: "none", borderRadius: 999,
@@ -3044,6 +3101,613 @@ const FRIENDS_LIST_INIT: Friend[] = [
   { id: 3, user: "MiAmigo_01",   avatar: "MA", level: 12, cards: 187, albumPct: 52, power: 4250 },
   { id: 4, user: "FutbolFan_22", avatar: "FF", level: 9,  cards: 98,  albumPct: 28, power: 2180 },
 ];
+
+// Mock card collections per friend (subset of CARDS)
+const FRIEND_CARDS: Record<number, SlotCard[]> = {
+  1: [
+    { id: 2,  name: "Vinicius Jr.", ini: "VJ",  rarity: "Rara"       },
+    { id: 5,  name: "Pedri",        ini: "PE",  rarity: "Rara"       },
+    { id: 17, name: "Courtois",     ini: "TC",  rarity: "Mítica"     },
+    { id: 3,  name: "Haaland",      ini: "EH",  rarity: "Común"      },
+    { id: 12, name: "Osimhen",      ini: "VO",  rarity: "Poco común" },
+    { id: 14, name: "Van Dijk",     ini: "VD",  rarity: "Poco común" },
+  ],
+  2: [
+    { id: 10, name: "De Bruyne",    ini: "KDB", rarity: "Rara"       },
+    { id: 13, name: "Rüdiger",      ini: "AR",  rarity: "Rara"       },
+    { id: 9,  name: "Salah",        ini: "MS",  rarity: "Poco común" },
+    { id: 18, name: "Alisson",      ini: "AB",  rarity: "Poco común" },
+    { id: 11, name: "Musiala",      ini: "JM",  rarity: "Común"      },
+  ],
+  3: [
+    { id: 8,  name: "Bellingham",   ini: "JB",  rarity: "Rara"       },
+    { id: 4,  name: "Mbappé",       ini: "KM",  rarity: "Poco común" },
+    { id: 6,  name: "Rodri",        ini: "RO",  rarity: "Común"      },
+    { id: 15, name: "Alaba",        ini: "DA",  rarity: "Común"      },
+  ],
+  4: [
+    { id: 3,  name: "Haaland",      ini: "EH",  rarity: "Común"      },
+    { id: 9,  name: "Salah",        ini: "MS",  rarity: "Poco común" },
+    { id: 14, name: "Van Dijk",     ini: "VD",  rarity: "Poco común" },
+  ],
+};
+
+// ── New trade flow: Step 1 — Choose friend ────────────────────────────────
+function ChooseFriendScreen({ onBack, onSelect }: {
+  onBack: () => void;
+  onSelect: (friend: Friend) => void;
+}) {
+  return (
+    <>
+      <div style={{
+        padding: "max(56px,calc(env(safe-area-inset-top) + 14px)) 16px 14px",
+        display: "flex", alignItems: "center", gap: 12, flexShrink: 0,
+      }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 2px", flexShrink: 0 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(255,255,255,0.55)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15,18 9,12 15,6" />
+          </svg>
+        </button>
+        <h1 style={{
+          fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 24,
+          letterSpacing: "0.10em", textTransform: "uppercase", color: TEXT_WHITE, margin: 0,
+        }}>Elegir amigo</h1>
+      </div>
+
+      <div className="card-grid-scroll" style={{
+        flex: 1, overflowY: "auto", padding: "0 16px", paddingBottom: 108,
+        display: "flex", flexDirection: "column", gap: 10,
+      }}>
+        <p style={{ fontSize: 12, color: TEXT_DIM, margin: "0 0 4px", letterSpacing: "0.02em" }}>
+          Toca un amigo para continuar
+        </p>
+        {FRIENDS_LIST_INIT.map((friend) => (
+          <button
+            key={friend.id}
+            onClick={() => onSelect(friend)}
+            style={{
+              width: "100%", background: CARD_BG,
+              border: `1px solid ${BORDER_SUBTLE}`,
+              borderRadius: 10, padding: "12px 14px",
+              display: "flex", alignItems: "center", gap: 12,
+              cursor: "pointer", textAlign: "left",
+              transition: "border-color 0.15s",
+            }}
+          >
+            {/* Avatar */}
+            <div style={{
+              width: 44, height: 44, borderRadius: "50%", flexShrink: 0,
+              background: "rgba(255,255,255,0.07)",
+              border: `1.5px solid ${BORDER_SUBTLE}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: TEXT_GRAY, letterSpacing: "0.04em" }}>
+                {friend.avatar}
+              </span>
+            </div>
+
+            {/* Name + level */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: 14, fontWeight: 600, color: TEXT_WHITE,
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>{friend.user}</div>
+              <div style={{ fontSize: 11, color: TEXT_DIM, marginTop: 2 }}>
+                Nivel {friend.level} · {friend.cards} cartas
+              </div>
+            </div>
+
+            {/* Chevron */}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,0.22)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9,18 15,12 9,6" />
+            </svg>
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// ── New trade flow: Step 2 — Pick cards ───────────────────────────────────
+// ── Shared: selectable card grid used in both pick steps ─────────────────
+const PICK_FILTERS = ["Álbum", "Rareza", "Cantidad"];
+
+function sortPickCards(cards: SlotCard[], filter: string): SlotCard[] {
+  return [...cards].sort((a, b) => {
+    if (filter === "Rareza")   return (RARITY_TIER[b.rarity] ?? 0) - (RARITY_TIER[a.rarity] ?? 0);
+    if (filter === "Cantidad") {
+      const ca = CARDS.find((c) => c.id === a.id)?.count ?? 0;
+      const cb = CARDS.find((c) => c.id === b.id)?.count ?? 0;
+      return cb - ca;
+    }
+    return a.id - b.id; // Álbum
+  });
+}
+
+function TradeSelectGrid({ cards, selected, onToggle }: {
+  cards: SlotCard[]; selected: Set<number>; onToggle: (id: number) => void;
+}) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+      {cards.map((card) => {
+        const r        = RARITY[card.rarity];
+        const isMythic = card.rarity === "Mítica";
+        const isSel    = selected.has(card.id);
+        const inner = (
+          <div
+            onClick={() => onToggle(card.id)}
+            style={{
+              background: isSel ? "rgba(232,168,32,0.08)" : CARD_BG,
+              borderRadius: isMythic ? 6 : 7,
+              width: "100%", height: "100%",
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center",
+              padding: "10px 6px 8px",
+              cursor: "pointer", position: "relative",
+              transition: "background 0.12s", gap: 5,
+            }}
+          >
+            {isSel && (
+              <div style={{
+                position: "absolute", top: 5, right: 5,
+                width: 15, height: 15, borderRadius: "50%",
+                background: GOLD,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                zIndex: 2,
+              }}>
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none"
+                  stroke="#0d1a13" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20,6 9,17 4,12" />
+                </svg>
+              </div>
+            )}
+            <div style={{
+              width: 34, height: 34, borderRadius: "50%",
+              background: isSel ? "rgba(232,168,32,0.12)" : "rgba(255,255,255,0.06)",
+              border: `1.5px solid ${isSel ? GOLD : r.border}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: isSel ? GOLD : r.label, letterSpacing: "0.03em" }}>
+                {card.ini}
+              </span>
+            </div>
+            <span style={{
+              fontSize: 9, fontWeight: 500, color: isSel ? TEXT_WHITE : "rgba(255,255,255,0.65)",
+              textAlign: "center", lineHeight: 1.2,
+              overflow: "hidden", display: "-webkit-box",
+              WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+            }}>{card.name}</span>
+          </div>
+        );
+        return (
+          <div key={card.id} style={{ aspectRatio: "3/4.2" }}>
+            {isMythic ? (
+              <div style={{
+                width: "100%", height: "100%",
+                background: RARITY["Mítica"].gradient,
+                borderRadius: isSel ? 9 : 8,
+                padding: isSel ? "2px" : "1.5px",
+                boxShadow: isSel ? `0 0 0 1px ${GOLD}` : "none",
+                transition: "box-shadow 0.12s",
+              }}>{inner}</div>
+            ) : (
+              <div style={{
+                width: "100%", height: "100%",
+                border: `${isSel ? "2px" : "1.5px"} solid ${isSel ? GOLD : r.border}`,
+                borderRadius: 8, transition: "border 0.12s",
+              }}>{inner}</div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Reusable filter chip row + counter header used by both pick steps
+function PickHeader({ step, title, subtitle, count, filter, onFilter, children }: {
+  step: 1 | 2; title: string; subtitle: string;
+  count: number; filter: string; onFilter: (f: string) => void;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div style={{ flexShrink: 0 }}>
+      {/* Title row */}
+      <div style={{
+        padding: "max(56px,calc(env(safe-area-inset-top) + 14px)) 16px 10px",
+        display: "flex", alignItems: "center", gap: 12,
+      }}>
+        {children /* back button slot */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 22,
+            letterSpacing: "0.10em", textTransform: "uppercase", color: TEXT_WHITE,
+          }}>{title}</div>
+          <div style={{ fontSize: 11, color: TEXT_DIM, marginTop: 1 }}>{subtitle}</div>
+        </div>
+        {/* Step progress bar + label */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
+          <div style={{ display: "flex", gap: 4 }}>
+            <div style={{ width: 18, height: 3, borderRadius: 999, background: GOLD }} />
+            <div style={{ width: 18, height: 3, borderRadius: 999, background: step >= 2 ? GOLD : "rgba(255,255,255,0.15)" }} />
+          </div>
+          <span style={{ fontSize: 9, color: TEXT_DIM, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            Paso {step} de 2
+          </span>
+        </div>
+      </div>
+
+      {/* Counter pill */}
+      <div style={{ padding: "0 16px 8px" }}>
+        {count > 0 ? (
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            background: "rgba(232,168,32,0.12)",
+            border: `1px solid rgba(232,168,32,0.30)`,
+            borderRadius: 999, padding: "4px 12px",
+          }}>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: GOLD, flexShrink: 0 }} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: GOLD }}>
+              {count} {count === 1 ? "seleccionada" : "seleccionadas"}
+            </span>
+          </div>
+        ) : (
+          <span style={{ fontSize: 12, color: TEXT_DIM }}>Elige al menos 1 carta</span>
+        )}
+      </div>
+
+      {/* Filter chips */}
+      <div style={{
+        padding: "0 16px 10px", display: "flex", gap: 7, overflowX: "auto",
+        scrollbarWidth: "none", msOverflowStyle: "none",
+      }}>
+        {PICK_FILTERS.map((f) => {
+          const isActive = f === filter;
+          return (
+            <button key={f} onClick={() => onFilter(f)} style={{
+              flexShrink: 0,
+              background: isActive ? "rgba(232,168,32,0.10)" : "rgba(255,255,255,0.05)",
+              border: `1px solid ${isActive ? GOLD_BORDER : BORDER_SUBTLE}`,
+              borderRadius: 999, padding: "5px 13px",
+              color: isActive ? GOLD : TEXT_GRAY,
+              fontSize: 12, fontWeight: isActive ? 600 : 400,
+              letterSpacing: "0.03em", cursor: "pointer", whiteSpace: "nowrap",
+            }}>{f}</button>
+          );
+        })}
+      </div>
+
+      <div style={{ height: 1, background: BORDER_SUBTLE }} />
+    </div>
+  );
+}
+
+// Fixed CTA button shared by both steps
+function PickCTA({ label, enabled, onClick }: { label: string; enabled: boolean; onClick: () => void }) {
+  return (
+    <div style={{
+      position: "fixed", bottom: 104, left: 0, right: 0,
+      padding: "0 16px", pointerEvents: "none", zIndex: 35,
+    }}>
+      <button
+        onClick={onClick}
+        disabled={!enabled}
+        style={{
+          width: "100%", padding: "14px 0",
+          background: enabled ? GOLD : "rgba(255,255,255,0.07)",
+          border: `1px solid ${enabled ? GOLD : BORDER_SUBTLE}`,
+          borderRadius: 10,
+          fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
+          fontSize: 16, letterSpacing: "0.10em", textTransform: "uppercase",
+          color: enabled ? "#0d1a13" : TEXT_DIM,
+          cursor: enabled ? "pointer" : "default",
+          pointerEvents: "auto",
+          transition: "background 0.18s, color 0.18s",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+        }}
+      >
+        {label}
+        {enabled && (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="#0d1a13" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9,18 15,12 9,6" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}
+
+// ── New trade flow: Step 2a — Give cards ──────────────────────────────────
+function GiveCardsScreen({ friend, initialIds, onBack, onContinue }: {
+  friend: Friend;
+  initialIds: number[];
+  onBack: () => void;
+  onContinue: (ids: number[], give: SlotCard[]) => void;
+}) {
+  const [selSet, setSelSet] = useState<Set<number>>(new Set(initialIds));
+  const [filter, setFilter] = useState("Álbum");
+
+  const myCards = CARDS as SlotCard[];
+  const sorted  = sortPickCards(myCards, filter);
+
+  function toggle(id: number) {
+    setSelSet((prev) => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  }
+  function handleContinue() {
+    const give = myCards.filter((c) => selSet.has(c.id));
+    onContinue([...selSet], give);
+  }
+
+  return (
+    <>
+      <PickHeader step={1} title="Elige qué dar" subtitle={`Con ${friend.user}`}
+        count={selSet.size} filter={filter} onFilter={setFilter}>
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 2px", flexShrink: 0 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(255,255,255,0.55)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15,18 9,12 15,6" />
+          </svg>
+        </button>
+      </PickHeader>
+
+      <div className="card-grid-scroll" style={{ flex: 1, overflowY: "auto", padding: "12px 16px", paddingBottom: 120 }}>
+        <TradeSelectGrid cards={sorted} selected={selSet} onToggle={toggle} />
+      </div>
+
+      <PickCTA label="Continuar" enabled={selSet.size > 0} onClick={handleContinue} />
+    </>
+  );
+}
+
+// ── New trade flow: Step 2b — Receive cards ───────────────────────────────
+function ReceiveCardsScreen({ friend, give, onBack, onContinue }: {
+  friend: Friend;
+  give: SlotCard[];
+  onBack: () => void;
+  onContinue: (receive: SlotCard[]) => void;
+}) {
+  const [selSet, setSelSet] = useState<Set<number>>(new Set());
+  const [filter, setFilter] = useState("Álbum");
+
+  const hisCards = FRIEND_CARDS[friend.id] ?? [];
+  const sorted   = sortPickCards(hisCards, filter);
+
+  function toggle(id: number) {
+    setSelSet((prev) => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  }
+  function handleContinue() {
+    const receive = hisCards.filter((c) => selSet.has(c.id));
+    onContinue(receive);
+  }
+
+  const giveLabel = give.map((c) => c.name).join(", ");
+
+  return (
+    <>
+      <PickHeader step={2} title="Elige qué recibir" subtitle={`Cartas de ${friend.user}`}
+        count={selSet.size} filter={filter} onFilter={setFilter}>
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 2px", flexShrink: 0 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(255,255,255,0.55)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15,18 9,12 15,6" />
+          </svg>
+        </button>
+      </PickHeader>
+
+      {/* Context strip: what you're giving, with edit shortcut */}
+      <div style={{
+        margin: "8px 16px 0",
+        background: "rgba(232,168,32,0.06)",
+        border: `1px solid rgba(232,168,32,0.20)`,
+        borderRadius: 8, padding: "8px 12px",
+        display: "flex", alignItems: "center", gap: 8, flexShrink: 0,
+      }}>
+        <span style={{
+          fontSize: 10, fontWeight: 700, color: "rgba(232,168,32,0.70)",
+          letterSpacing: "0.09em", textTransform: "uppercase", flexShrink: 0,
+        }}>Das</span>
+        <span style={{
+          fontSize: 11, color: "rgba(255,255,255,0.55)", flex: 1,
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+        }}>{giveLabel}</span>
+        <button
+          onClick={onBack}
+          style={{
+            background: "none", border: "none", cursor: "pointer",
+            padding: "1px 0", fontSize: 11, color: GOLD, fontWeight: 600, flexShrink: 0,
+          }}
+        >Editar</button>
+      </div>
+
+      <div className="card-grid-scroll" style={{ flex: 1, overflowY: "auto", padding: "12px 16px", paddingBottom: 120 }}>
+        {hisCards.length === 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, paddingTop: 40 }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+              stroke={TEXT_DIM} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="4" y="5" width="12" height="16" rx="2" /><rect x="7" y="3" width="12" height="16" rx="2" />
+            </svg>
+            <p style={{ fontSize: 13, color: TEXT_DIM, textAlign: "center", margin: 0 }}>
+              {friend.user} aún no tiene cartas para intercambiar.
+            </p>
+          </div>
+        ) : (
+          <TradeSelectGrid cards={sorted} selected={selSet} onToggle={toggle} />
+        )}
+      </div>
+
+      <PickCTA label="Revisar oferta" enabled={selSet.size > 0} onClick={handleContinue} />
+    </>
+  );
+}
+
+// ── New trade flow: Step 3 — Confirm offer ────────────────────────────────
+function ConfirmTradeScreen({ friend, give, receive, onBack, onSend }: {
+  friend: Friend;
+  give: SlotCard[];
+  receive: SlotCard[];
+  onBack: () => void;
+  onSend: () => void;
+}) {
+  return (
+    <>
+      {/* Header */}
+      <div style={{
+        padding: "max(56px,calc(env(safe-area-inset-top) + 14px)) 16px 14px",
+        display: "flex", alignItems: "center", gap: 12, flexShrink: 0,
+      }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 2px", flexShrink: 0 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(255,255,255,0.55)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15,18 9,12 15,6" />
+          </svg>
+        </button>
+        <h1 style={{
+          fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 24,
+          letterSpacing: "0.10em", textTransform: "uppercase", color: TEXT_WHITE, margin: 0,
+        }}>Confirmar oferta</h1>
+      </div>
+
+      <div className="card-grid-scroll" style={{ flex: 1, overflowY: "auto", padding: "0 16px", paddingBottom: 108 }}>
+
+        {/* Offer preview card — mirrors TradeScreen offer cards */}
+        <div style={{
+          background: CARD_BG,
+          border: `1px solid ${BORDER_SUBTLE}`,
+          borderRadius: 12,
+          overflow: "hidden",
+        }}>
+
+          {/* Friend header strip */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 10,
+            padding: "14px 14px 12px",
+            borderBottom: `1px solid ${BORDER_SUBTLE}`,
+          }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+              background: "rgba(255,255,255,0.07)",
+              border: `1.5px solid ${BORDER_SUBTLE}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: TEXT_GRAY, letterSpacing: "0.04em" }}>
+                {friend.avatar}
+              </span>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: TEXT_WHITE }}>{friend.user}</div>
+              <div style={{ fontSize: 11, color: TEXT_DIM, marginTop: 1 }}>Nivel {friend.level}</div>
+            </div>
+            <div style={{
+              background: "rgba(232,168,32,0.10)",
+              border: `1px solid rgba(232,168,32,0.28)`,
+              borderRadius: 6, padding: "3px 8px",
+              fontSize: 10, fontWeight: 700, color: GOLD, letterSpacing: "0.08em",
+            }}>Pendiente</div>
+          </div>
+
+          {/* Cards exchange body */}
+          <div style={{ padding: "14px 14px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
+
+            {/* Tú das */}
+            <div>
+              <span style={{
+                fontSize: 10, fontWeight: 700, color: TEXT_DIM,
+                letterSpacing: "0.10em", textTransform: "uppercase",
+                display: "block", marginBottom: 8,
+              }}>Tú das</span>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {give.map((c) => (
+                  <TradeCardPreview key={c.id} rarity={c.rarity} />
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: 6, marginTop: 5, flexWrap: "wrap" }}>
+                {give.map((c) => (
+                  <span key={c.id} style={{
+                    fontSize: 9, color: TEXT_DIM, width: 34, textAlign: "center",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>{c.ini}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Swap arrow */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ flex: 1, height: 1, background: BORDER_SUBTLE }} />
+              <div style={{
+                width: 26, height: 26, borderRadius: "50%",
+                background: "rgba(255,255,255,0.05)",
+                border: `1px solid ${BORDER_SUBTLE}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(255,255,255,0.30)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 16V4m0 0L3 8m4-4l4 4" /><path d="M17 8v12m0 0l4-4m-4 4l-4-4" />
+                </svg>
+              </div>
+              <div style={{ flex: 1, height: 1, background: BORDER_SUBTLE }} />
+            </div>
+
+            {/* Tú recibes */}
+            <div>
+              <span style={{
+                fontSize: 10, fontWeight: 700, color: TEXT_DIM,
+                letterSpacing: "0.10em", textTransform: "uppercase",
+                display: "block", marginBottom: 8,
+              }}>Tú recibes</span>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {receive.map((c) => (
+                  <TradeCardPreview key={c.id} rarity={c.rarity} />
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: 6, marginTop: 5, flexWrap: "wrap" }}>
+                {receive.map((c) => (
+                  <span key={c.id} style={{
+                    fontSize: 9, color: TEXT_DIM, width: 34, textAlign: "center",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>{c.ini}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Disclaimer */}
+        <p style={{
+          fontSize: 11, color: TEXT_DIM, textAlign: "center",
+          lineHeight: 1.55, margin: "18px 0 0",
+        }}>
+          Tu amigo recibirá una notificación y podrá aceptar o rechazar la oferta.
+        </p>
+
+        {/* Action buttons */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 24 }}>
+          <button onClick={onSend} style={{
+            width: "100%", padding: "15px 0",
+            background: GOLD, border: "none", borderRadius: 10,
+            fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
+            fontSize: 16, letterSpacing: "0.10em", textTransform: "uppercase",
+            color: "#0d1a13", cursor: "pointer",
+            boxShadow: `0 4px 18px rgba(232,168,32,0.35)`,
+          }}>Enviar oferta</button>
+
+          <button onClick={onBack} style={{
+            width: "100%", padding: "13px 0",
+            background: "transparent",
+            border: `1px solid ${BORDER_SUBTLE}`,
+            borderRadius: 10,
+            fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
+            fontSize: 14, letterSpacing: "0.08em", textTransform: "uppercase",
+            color: TEXT_GRAY, cursor: "pointer",
+          }}>Cancelar</button>
+        </div>
+      </div>
+    </>
+  );
+}
 
 function LightningIcon({ size = 12, color = GOLD }: { size?: number; color?: string }) {
   return (
