@@ -19,18 +19,24 @@ const RARITY: Record<string, { border: string; label: string; gradient?: string 
 
 // ── Mock card data ────────────────────────────────────────────────────────
 const CARDS = [
-  { id:  1, name: "Luis Díaz",      ini: "LD",  rarity: "Mítica",      count: 1 },
-  { id:  2, name: "Vinicius Jr.",   ini: "VJ",  rarity: "Rara",        count: 2 },
-  { id:  3, name: "Haaland",        ini: "EH",  rarity: "Común",       count: 5 },
-  { id:  4, name: "Mbappé",         ini: "KM",  rarity: "Poco común",  count: 3 },
-  { id:  5, name: "Pedri",          ini: "PE",  rarity: "Rara",        count: 1 },
-  { id:  6, name: "Rodri",          ini: "RO",  rarity: "Común",       count: 4 },
-  { id:  7, name: "Lamine Yamal",   ini: "LY",  rarity: "Mítica",      count: 1 },
-  { id:  8, name: "Bellingham",     ini: "JB",  rarity: "Rara",        count: 2 },
-  { id:  9, name: "Salah",          ini: "MS",  rarity: "Poco común",  count: 6 },
-  { id: 10, name: "De Bruyne",      ini: "KDB", rarity: "Rara",        count: 1 },
-  { id: 11, name: "Musiala",        ini: "JM",  rarity: "Común",       count: 3 },
-  { id: 12, name: "Osimhen",        ini: "VO",  rarity: "Poco común",  count: 2 },
+  { id:  1, name: "Luis Díaz",        ini: "LD",  rarity: "Mítica",      count: 1, position: "DEL" },
+  { id:  2, name: "Vinicius Jr.",     ini: "VJ",  rarity: "Rara",        count: 2, position: "DEL" },
+  { id:  3, name: "Haaland",          ini: "EH",  rarity: "Común",       count: 5, position: "DEL" },
+  { id:  4, name: "Mbappé",           ini: "KM",  rarity: "Poco común",  count: 3, position: "DEL" },
+  { id:  5, name: "Pedri",            ini: "PE",  rarity: "Rara",        count: 1, position: "MED" },
+  { id:  6, name: "Rodri",            ini: "RO",  rarity: "Común",       count: 4, position: "MED" },
+  { id:  7, name: "Lamine Yamal",     ini: "LY",  rarity: "Mítica",      count: 1, position: "DEL" },
+  { id:  8, name: "Bellingham",       ini: "JB",  rarity: "Rara",        count: 2, position: "MED" },
+  { id:  9, name: "Salah",            ini: "MS",  rarity: "Poco común",  count: 6, position: "DEL" },
+  { id: 10, name: "De Bruyne",        ini: "KDB", rarity: "Rara",        count: 1, position: "MED" },
+  { id: 11, name: "Musiala",          ini: "JM",  rarity: "Común",       count: 3, position: "MED" },
+  { id: 12, name: "Osimhen",          ini: "VO",  rarity: "Poco común",  count: 2, position: "DEL" },
+  { id: 13, name: "Rüdiger",          ini: "AR",  rarity: "Rara",        count: 2, position: "DEF" },
+  { id: 14, name: "Van Dijk",         ini: "VD",  rarity: "Poco común",  count: 3, position: "DEF" },
+  { id: 15, name: "Alaba",            ini: "DA",  rarity: "Común",       count: 4, position: "DEF" },
+  { id: 16, name: "T. Alexander-A.", ini: "TA",   rarity: "Rara",        count: 1, position: "DEF" },
+  { id: 17, name: "Courtois",         ini: "TC",  rarity: "Mítica",      count: 1, position: "POR" },
+  { id: 18, name: "Alisson",          ini: "AB",  rarity: "Poco común",  count: 2, position: "POR" },
 ];
 
 const FILTERS = ["Álbum", "Recientes", "Rareza", "Cantidad", "Nación"];
@@ -1677,28 +1683,31 @@ function VitrinesScreen({ onBack }: { onBack: () => void }) {
 // ── Screen: Perfil ───────────────────────────────────────────────────────
 
 // Tactical formation: x/y = % within the pitch container (top=attack, bottom=defense)
-const FORMATION_SLOTS = [
+type SlotCard = { id: number; name: string; ini: string; rarity: string };
+type FormationSlot = { id: string; pos: string; card: SlotCard | null; x: string; y: string };
+
+const INITIAL_FORMATION: FormationSlot[] = [
   // FWD (3)
-  { id: "f1", pos: "DEL", rarity: "Rara",        x: "22%", y: "11%" },
-  { id: "f2", pos: "DEL", rarity: null,           x: "50%", y: "11%" },
-  { id: "f3", pos: "DEL", rarity: null,           x: "78%", y: "11%" },
+  { id: "f1", pos: "DEL", card: { id: 8,  name: "Bellingham",   ini: "JB",  rarity: "Rara"       }, x: "22%", y: "11%" },
+  { id: "f2", pos: "DEL", card: null,                                                                 x: "50%", y: "11%" },
+  { id: "f3", pos: "DEL", card: null,                                                                 x: "78%", y: "11%" },
   // MID (3)
-  { id: "m1", pos: "MED", rarity: "Mítica",       x: "18%", y: "35%" },
-  { id: "m2", pos: "MED", rarity: null,           x: "50%", y: "35%" },
-  { id: "m3", pos: "MED", rarity: "Común",        x: "82%", y: "35%" },
+  { id: "m1", pos: "MED", card: { id: 1,  name: "Luis Díaz",    ini: "LD",  rarity: "Mítica"     }, x: "18%", y: "35%" },
+  { id: "m2", pos: "MED", card: null,                                                                 x: "50%", y: "35%" },
+  { id: "m3", pos: "MED", card: { id: 6,  name: "Rodri",        ini: "RO",  rarity: "Común"      }, x: "82%", y: "35%" },
   // DEF (4)
-  { id: "d1", pos: "DEF", rarity: "Poco común",   x: "11%", y: "62%" },
-  { id: "d2", pos: "DEF", rarity: null,           x: "36%", y: "62%" },
-  { id: "d3", pos: "DEF", rarity: null,           x: "64%", y: "62%" },
-  { id: "d4", pos: "DEF", rarity: "Rara",         x: "89%", y: "62%" },
+  { id: "d1", pos: "DEF", card: { id: 14, name: "Van Dijk",     ini: "VD",  rarity: "Poco común" }, x: "11%", y: "62%" },
+  { id: "d2", pos: "DEF", card: null,                                                                 x: "36%", y: "62%" },
+  { id: "d3", pos: "DEF", card: null,                                                                 x: "64%", y: "62%" },
+  { id: "d4", pos: "DEF", card: { id: 13, name: "Rüdiger",      ini: "AR",  rarity: "Rara"       }, x: "89%", y: "62%" },
   // GK (1)
-  { id: "g1", pos: "POR", rarity: null,           x: "50%", y: "86%" },
+  { id: "g1", pos: "POR", card: null,                                                                 x: "50%", y: "86%" },
 ];
 
-const FEATURED_SLOTS: Array<{ rarity: string | null; ini: string | null; name: string | null }> = [
-  { rarity: "Mítica",  ini: "LD",  name: "Luis Díaz" },
-  { rarity: "Rara",    ini: "JB",  name: "Bellingham" },
-  { rarity: null,      ini: null,  name: null },
+const INITIAL_FEATURED: (SlotCard | null)[] = [
+  { id: 1,  name: "Luis Díaz",  ini: "LD", rarity: "Mítica" },
+  { id: 8,  name: "Bellingham", ini: "JB", rarity: "Rara"   },
+  null,
 ];
 
 // ── Screen: Intercambio ──────────────────────────────────────────────────
@@ -3438,7 +3447,10 @@ function rarityBorder(rarity: string | null): string {
 const SLOT_W = 50;
 const SLOT_H = 68;
 
-function PlayerSlot({ pos, rarity, x, y }: { pos: string; rarity: string | null; x: string; y: string }) {
+function PlayerSlot({ pos, card, x, y, onClick }: {
+  pos: string; card: SlotCard | null; x: string; y: string; onClick?: () => void;
+}) {
+  const rarity = card?.rarity ?? null;
   const empty = rarity === null;
   const isMythic = rarity === "Mítica";
   const rl = rarity ? RARITY[rarity] : null;
@@ -3452,7 +3464,8 @@ function PlayerSlot({ pos, rarity, x, y }: { pos: string; rarity: string | null;
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center",
       position: "relative",
-      gap: 6,
+      gap: 3,
+      cursor: "pointer",
     }}>
       {/* Position chip — top-left corner */}
       <div style={{
@@ -3468,25 +3481,50 @@ function PlayerSlot({ pos, rarity, x, y }: { pos: string; rarity: string | null;
         zIndex: 1,
       }}>{pos}</div>
 
-      {/* Inner indicator dot when occupied */}
-      {!empty && (
-        <div style={{
-          width: 16, height: 16, borderRadius: "50%",
-          background: "rgba(255,255,255,0.07)",
-          border: `1px solid ${borderColor}`,
-          marginTop: 8,
-        }} />
+      {empty ? (
+        /* Plus icon when empty */
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke={TEXT_DIM} strokeWidth="1.8" strokeLinecap="round">
+          <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      ) : (
+        <>
+          {/* Initials avatar when occupied */}
+          <div style={{
+            width: 22, height: 22, borderRadius: "50%",
+            background: "rgba(255,255,255,0.07)",
+            border: `1px solid ${borderColor}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            marginTop: 10,
+          }}>
+            <span style={{ fontSize: 7, fontWeight: 700, color: rl?.label ?? TEXT_WHITE, letterSpacing: "0.02em" }}>
+              {card!.ini}
+            </span>
+          </div>
+          {/* Player name — truncated */}
+          <span style={{
+            fontSize: 7, fontWeight: 500, color: "rgba(255,255,255,0.65)",
+            textAlign: "center", lineHeight: 1.2,
+            padding: "0 3px",
+            overflow: "hidden", display: "-webkit-box",
+            WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+            maxWidth: SLOT_W - 4,
+          }}>{card!.name}</span>
+        </>
       )}
     </div>
   );
 
   return (
-    <div style={{
-      position: "absolute", left: x, top: y,
-      transform: "translate(-50%, -50%)",
-      opacity: empty ? 0.42 : 1,
-      zIndex: 2,
-    }}>
+    <div
+      onClick={onClick}
+      style={{
+        position: "absolute", left: x, top: y,
+        transform: "translate(-50%, -50%)",
+        opacity: empty ? 0.52 : 1,
+        zIndex: 2,
+      }}
+    >
       {isMythic ? (
         <div style={{
           width: SLOT_W + 3, height: SLOT_H + 3,
@@ -3498,12 +3536,457 @@ function PlayerSlot({ pos, rarity, x, y }: { pos: string; rarity: string | null;
       ) : (
         <div style={{
           width: SLOT_W + 3, height: SLOT_H + 3,
-          border: `1.5px solid ${borderColor}`,
+          border: `1.5px solid ${empty ? "rgba(255,255,255,0.18)" : borderColor}`,
           borderRadius: 8,
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>{inner}</div>
       )}
     </div>
+  );
+}
+
+// ── Modal: Slot picker (11 ideal) ────────────────────────────────────────
+const POS_LABEL: Record<string, string> = {
+  DEL: "DELANTERO",
+  MED: "MEDIOCENTRO",
+  DEF: "DEFENSA",
+  POR: "PORTERO",
+};
+
+function SlotPickerModal({ slot, onAssign, onRemove, onClose }: {
+  slot: FormationSlot;
+  onAssign: (card: SlotCard) => void;
+  onRemove: () => void;
+  onClose: () => void;
+}) {
+  const posCards = CARDS.filter((c) => c.position === slot.pos);
+  const title = `ELEGIR ${POS_LABEL[slot.pos] ?? slot.pos}`;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div onClick={onClose} style={{
+        position: "fixed", inset: 0, zIndex: 70,
+        background: "rgba(0,0,0,0.72)",
+        backdropFilter: "blur(4px)",
+        WebkitBackdropFilter: "blur(4px)",
+      }} />
+
+      {/* Modal */}
+      <div style={{
+        position: "fixed",
+        top: "50%", left: "50%",
+        transform: "translate(-50%,-50%)",
+        width: "calc(100% - 32px)",
+        maxWidth: 368,
+        maxHeight: "78dvh",
+        background: "#0c1810",
+        border: `1px solid ${BORDER_SUBTLE}`,
+        borderRadius: 14,
+        boxShadow: "0 24px 64px rgba(0,0,0,0.75), 0 4px 16px rgba(0,0,0,0.55)",
+        zIndex: 71,
+        display: "flex", flexDirection: "column",
+        overflow: "hidden",
+      }}>
+
+        {/* ── Header ── */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "18px 18px 14px", flexShrink: 0,
+          borderBottom: `1px solid ${BORDER_SUBTLE}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {/* Position badge */}
+            <div style={{
+              background: "rgba(232,168,32,0.10)",
+              border: `1px solid rgba(232,168,32,0.28)`,
+              borderRadius: 6,
+              padding: "3px 8px",
+              fontSize: 10, fontWeight: 700,
+              color: GOLD, letterSpacing: "0.10em",
+            }}>{slot.pos}</div>
+            <h2 style={{
+              fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
+              fontSize: 18, letterSpacing: "0.12em", textTransform: "uppercase",
+              color: TEXT_WHITE, margin: 0,
+            }}>{title}</h2>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,0.40)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* ── Scrollable card grid ── */}
+        <div className="card-grid-scroll" style={{
+          flex: 1, overflowY: "auto", padding: "14px 14px 6px",
+        }}>
+          {posCards.length === 0 ? (
+            /* Empty state */
+            <div style={{
+              display: "flex", flexDirection: "column", alignItems: "center",
+              justifyContent: "center", gap: 10, padding: "36px 16px",
+            }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+                stroke={TEXT_DIM} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="4" y="5" width="12" height="16" rx="2" /><rect x="7" y="3" width="12" height="16" rx="2" />
+                <line x1="9" y1="10" x2="15" y2="10" /><line x1="9" y1="14" x2="13" y2="14" />
+              </svg>
+              <p style={{
+                fontSize: 13, color: TEXT_DIM, textAlign: "center", margin: 0, lineHeight: 1.55,
+              }}>
+                Aún no tienes {POS_LABEL[slot.pos]?.toLowerCase() ?? "cartas de esta posición"}s en tu colección
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              {posCards.map((card) => {
+                const r = RARITY[card.rarity];
+                const isMythic = card.rarity === "Mítica";
+                const isSelected = slot.card?.id === card.id;
+
+                const inner = (
+                  <div
+                    onClick={() => onAssign({ id: card.id, name: card.name, ini: card.ini, rarity: card.rarity })}
+                    style={{
+                      background: isSelected ? "rgba(232,168,32,0.08)" : CARD_BG,
+                      borderRadius: isMythic ? 7 : 8,
+                      display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "space-between",
+                      padding: "14px 10px 12px",
+                      height: "100%",
+                      cursor: "pointer",
+                      position: "relative",
+                      transition: "background 0.15s",
+                    }}
+                  >
+                    {/* Checkmark overlay when selected */}
+                    {isSelected && (
+                      <div style={{
+                        position: "absolute", top: 8, right: 8,
+                        width: 18, height: 18, borderRadius: "50%",
+                        background: GOLD,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        zIndex: 2,
+                      }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                          stroke="#0d1a13" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20,6 9,17 4,12" />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Avatar */}
+                    <div style={{
+                      width: 46, height: 46, borderRadius: "50%",
+                      background: isSelected ? "rgba(232,168,32,0.12)" : "rgba(255,255,255,0.06)",
+                      border: `1.5px solid ${isSelected ? GOLD : r.border}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      marginBottom: 8, flexShrink: 0,
+                    }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: isSelected ? GOLD : r.label, letterSpacing: "0.04em" }}>
+                        {card.ini}
+                      </span>
+                    </div>
+
+                    {/* Name */}
+                    <span style={{
+                      fontSize: 11, fontWeight: 500, color: isSelected ? TEXT_WHITE : "rgba(255,255,255,0.80)",
+                      textAlign: "center", lineHeight: 1.3,
+                      overflow: "hidden", textOverflow: "ellipsis",
+                      display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                    }}>{card.name}</span>
+
+                    {/* Rarity chip */}
+                    <div style={{
+                      marginTop: 6,
+                      background: "rgba(0,0,0,0.30)",
+                      border: `1px solid ${r.border}`,
+                      borderRadius: 999,
+                      padding: "2px 7px",
+                      fontSize: 9, fontWeight: 700,
+                      color: r.label, letterSpacing: "0.06em",
+                    }}>{card.rarity}</div>
+                  </div>
+                );
+
+                return (
+                  <div key={card.id} style={{ aspectRatio: "3/4" }}>
+                    {isMythic ? (
+                      <div style={{
+                        width: "100%", height: "100%",
+                        background: RARITY["Mítica"].gradient,
+                        borderRadius: isSelected ? 10 : 9,
+                        padding: isSelected ? "2px" : "1.5px",
+                        boxShadow: isSelected ? `0 0 0 1.5px ${GOLD}` : "none",
+                        transition: "box-shadow 0.15s",
+                      }}>{inner}</div>
+                    ) : (
+                      <div style={{
+                        width: "100%", height: "100%",
+                        border: `${isSelected ? "2px" : "1.5px"} solid ${isSelected ? GOLD : r.border}`,
+                        borderRadius: 9,
+                        transition: "border 0.15s",
+                      }}>{inner}</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* ── Footer: remove button (only when slot is filled) ── */}
+        {slot.card && (
+          <div style={{
+            padding: "10px 14px 16px", flexShrink: 0,
+            borderTop: `1px solid ${BORDER_SUBTLE}`,
+          }}>
+            <button onClick={onRemove} style={{
+              width: "100%", padding: "11px 0",
+              background: "transparent",
+              border: "1px solid rgba(215,65,65,0.30)",
+              borderRadius: 8,
+              fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
+              fontSize: 13, letterSpacing: "0.09em", textTransform: "uppercase",
+              color: "rgba(225,75,75,0.82)",
+              cursor: "pointer",
+            }}>
+              Quitar del 11 ideal
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ── Modal: Featured card picker ───────────────────────────────────────────
+const RARITY_TIER: Record<string, number> = { "Mítica": 4, "Rara": 3, "Poco común": 2, "Común": 1 };
+const FEAT_FILTERS = ["Álbum", "Recientes", "Rareza", "Cantidad"];
+
+function FeaturedPickerModal({ currentCard, onAssign, onRemove, onClose }: {
+  currentCard: SlotCard | null;
+  onAssign: (card: SlotCard) => void;
+  onRemove: () => void;
+  onClose: () => void;
+}) {
+  const [activeFilter, setActiveFilter] = useState("Álbum");
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  const sortedCards = [...CARDS].sort((a, b) => {
+    if (activeFilter === "Recientes")  return b.id - a.id;
+    if (activeFilter === "Rareza")     return (RARITY_TIER[b.rarity] ?? 0) - (RARITY_TIER[a.rarity] ?? 0);
+    if (activeFilter === "Cantidad")   return b.count - a.count;
+    return a.id - b.id; // Álbum
+  });
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div onClick={onClose} style={{
+        position: "fixed", inset: 0, zIndex: 70,
+        background: "rgba(0,0,0,0.72)",
+        backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)",
+      }} />
+
+      {/* Modal */}
+      <div style={{
+        position: "fixed",
+        top: "50%", left: "50%",
+        transform: "translate(-50%,-50%)",
+        width: "calc(100% - 32px)",
+        maxWidth: 368,
+        maxHeight: "80dvh",
+        background: "#0c1810",
+        border: `1px solid ${BORDER_SUBTLE}`,
+        borderRadius: 14,
+        boxShadow: "0 24px 64px rgba(0,0,0,0.75), 0 4px 16px rgba(0,0,0,0.55)",
+        zIndex: 71,
+        display: "flex", flexDirection: "column",
+        overflow: "hidden",
+      }}>
+
+        {/* ── Header ── */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "18px 18px 0", flexShrink: 0,
+        }}>
+          <h2 style={{
+            fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
+            fontSize: 18, letterSpacing: "0.12em", textTransform: "uppercase",
+            color: TEXT_WHITE, margin: 0,
+          }}>Elegir carta destacada</h2>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="rgba(255,255,255,0.40)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* ── Filter chips ── */}
+        <div style={{ padding: "12px 14px 0", flexShrink: 0 }}>
+          <div ref={filterRef} style={{
+            display: "flex", gap: 7, overflowX: "auto",
+            scrollbarWidth: "none", msOverflowStyle: "none",
+            paddingBottom: 12,
+            borderBottom: `1px solid ${BORDER_SUBTLE}`,
+          }}>
+            {FEAT_FILTERS.map((f) => {
+              const isActive = f === activeFilter;
+              return (
+                <button key={f} onClick={() => setActiveFilter(f)} style={{
+                  flexShrink: 0,
+                  background: isActive ? "rgba(232,168,32,0.10)" : "rgba(255,255,255,0.05)",
+                  border: `1px solid ${isActive ? GOLD_BORDER : BORDER_SUBTLE}`,
+                  borderRadius: 999,
+                  padding: "5px 13px",
+                  color: isActive ? GOLD : TEXT_GRAY,
+                  fontSize: 12, fontWeight: isActive ? 600 : 400,
+                  letterSpacing: "0.03em", cursor: "pointer", whiteSpace: "nowrap",
+                }}>{f}</button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Card grid ── */}
+        <div className="card-grid-scroll" style={{ flex: 1, overflowY: "auto", padding: "12px 14px 8px" }}>
+          {sortedCards.length === 0 ? (
+            <div style={{
+              display: "flex", flexDirection: "column", alignItems: "center",
+              justifyContent: "center", gap: 10, padding: "36px 16px",
+            }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+                stroke={TEXT_DIM} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="4" y="5" width="12" height="16" rx="2" /><rect x="7" y="3" width="12" height="16" rx="2" />
+                <line x1="9" y1="10" x2="15" y2="10" /><line x1="9" y1="14" x2="13" y2="14" />
+              </svg>
+              <p style={{ fontSize: 13, color: TEXT_DIM, textAlign: "center", margin: 0, lineHeight: 1.55 }}>
+                Aún no tienes cartas en tu colección
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              {sortedCards.map((card) => {
+                const r = RARITY[card.rarity];
+                const isMythic = card.rarity === "Mítica";
+                const isSelected = currentCard?.id === card.id;
+
+                const inner = (
+                  <div
+                    onClick={() => onAssign({ id: card.id, name: card.name, ini: card.ini, rarity: card.rarity })}
+                    style={{
+                      background: isSelected ? "rgba(232,168,32,0.08)" : CARD_BG,
+                      borderRadius: isMythic ? 7 : 8,
+                      display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "space-between",
+                      padding: "14px 10px 10px",
+                      height: "100%", cursor: "pointer", position: "relative",
+                      transition: "background 0.15s",
+                    }}
+                  >
+                    {/* Checkmark when selected */}
+                    {isSelected && (
+                      <div style={{
+                        position: "absolute", top: 8, right: 8,
+                        width: 18, height: 18, borderRadius: "50%",
+                        background: GOLD,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        zIndex: 2,
+                      }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                          stroke="#0d1a13" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20,6 9,17 4,12" />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Avatar */}
+                    <div style={{
+                      width: 44, height: 44, borderRadius: "50%",
+                      background: isSelected ? "rgba(232,168,32,0.12)" : "rgba(255,255,255,0.06)",
+                      border: `1.5px solid ${isSelected ? GOLD : r.border}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      marginBottom: 8, flexShrink: 0,
+                    }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: isSelected ? GOLD : r.label, letterSpacing: "0.04em" }}>
+                        {card.ini}
+                      </span>
+                    </div>
+
+                    {/* Name */}
+                    <span style={{
+                      fontSize: 11, fontWeight: 500, color: isSelected ? TEXT_WHITE : "rgba(255,255,255,0.80)",
+                      textAlign: "center", lineHeight: 1.3,
+                      overflow: "hidden", display: "-webkit-box",
+                      WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                    }}>{card.name}</span>
+
+                    {/* Rarity chip */}
+                    <div style={{
+                      marginTop: 6,
+                      background: "rgba(0,0,0,0.30)",
+                      border: `1px solid ${r.border}`,
+                      borderRadius: 999,
+                      padding: "2px 7px",
+                      fontSize: 9, fontWeight: 700,
+                      color: r.label, letterSpacing: "0.06em",
+                    }}>{card.rarity}</div>
+                  </div>
+                );
+
+                return (
+                  <div key={card.id} style={{ aspectRatio: "3/4" }}>
+                    {isMythic ? (
+                      <div style={{
+                        width: "100%", height: "100%",
+                        background: RARITY["Mítica"].gradient,
+                        borderRadius: isSelected ? 10 : 9,
+                        padding: isSelected ? "2px" : "1.5px",
+                        boxShadow: isSelected ? `0 0 0 1.5px ${GOLD}` : "none",
+                        transition: "box-shadow 0.15s",
+                      }}>{inner}</div>
+                    ) : (
+                      <div style={{
+                        width: "100%", height: "100%",
+                        border: `${isSelected ? "2px" : "1.5px"} solid ${isSelected ? GOLD : r.border}`,
+                        borderRadius: 9,
+                        transition: "border 0.15s",
+                      }}>{inner}</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* ── Footer: remove button (only when slot is filled) ── */}
+        {currentCard && (
+          <div style={{
+            padding: "10px 14px 16px", flexShrink: 0,
+            borderTop: `1px solid ${BORDER_SUBTLE}`,
+          }}>
+            <button onClick={onRemove} style={{
+              width: "100%", padding: "11px 0",
+              background: "transparent",
+              border: "1px solid rgba(215,65,65,0.30)",
+              borderRadius: 8,
+              fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700,
+              fontSize: 13, letterSpacing: "0.09em", textTransform: "uppercase",
+              color: "rgba(225,75,75,0.82)",
+              cursor: "pointer",
+            }}>
+              Quitar de destacadas
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -3675,6 +4158,10 @@ function SettingsScreen({ onBack, onSignOut, onLinkAccount }: {
 function ProfileScreen({ onSignOut, onLinkAccount }: { onSignOut: () => void; onLinkAccount: () => void }) {
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [formation, setFormation] = useState<FormationSlot[]>(INITIAL_FORMATION);
+  const [pickerSlot, setPickerSlot] = useState<FormationSlot | null>(null);
+  const [featured, setFeatured] = useState<(SlotCard | null)[]>(INITIAL_FEATURED);
+  const [featuredPickerIdx, setFeaturedPickerIdx] = useState<number | null>(null);
   const friendCode = "4872-1093";
 
   const handleCopy = () => {
@@ -3683,7 +4170,31 @@ function ProfileScreen({ onSignOut, onLinkAccount }: { onSignOut: () => void; on
     setTimeout(() => setCopied(false), 1800);
   };
 
-  const assigned = FORMATION_SLOTS.filter((s) => s.rarity !== null).length;
+  const handleAssign = (card: SlotCard) => {
+    if (!pickerSlot) return;
+    setFormation((prev) => prev.map((s) => s.id === pickerSlot.id ? { ...s, card } : s));
+    setPickerSlot(null);
+  };
+
+  const handleRemove = () => {
+    if (!pickerSlot) return;
+    setFormation((prev) => prev.map((s) => s.id === pickerSlot.id ? { ...s, card: null } : s));
+    setPickerSlot(null);
+  };
+
+  const handleFeaturedAssign = (card: SlotCard) => {
+    if (featuredPickerIdx === null) return;
+    setFeatured((prev) => prev.map((c, i) => i === featuredPickerIdx ? card : c));
+    setFeaturedPickerIdx(null);
+  };
+
+  const handleFeaturedRemove = () => {
+    if (featuredPickerIdx === null) return;
+    setFeatured((prev) => prev.map((c, i) => i === featuredPickerIdx ? null : c));
+    setFeaturedPickerIdx(null);
+  };
+
+  const assigned = formation.filter((s) => s.card !== null).length;
 
   if (showSettings) {
     return (
@@ -3840,8 +4351,15 @@ function ProfileScreen({ onSignOut, onLinkAccount }: { onSignOut: () => void; on
             </svg>
 
             {/* Player slots — absolutely positioned on pitch */}
-            {FORMATION_SLOTS.map((slot) => (
-              <PlayerSlot key={slot.id} pos={slot.pos} rarity={slot.rarity} x={slot.x} y={slot.y} />
+            {formation.map((slot) => (
+              <PlayerSlot
+                key={slot.id}
+                pos={slot.pos}
+                card={slot.card}
+                x={slot.x}
+                y={slot.y}
+                onClick={() => setPickerSlot(slot)}
+              />
             ))}
           </div>
         </section>
@@ -3855,37 +4373,51 @@ function ProfileScreen({ onSignOut, onLinkAccount }: { onSignOut: () => void; on
           }}>Cartas destacadas</h2>
 
           <div style={{ display: "flex", gap: 10 }}>
-            {FEATURED_SLOTS.map((slot, i) => {
-              const borderColor = rarityBorder(slot.rarity);
-              const isMythic = slot.rarity === "Mítica";
-              const rl = slot.rarity ? RARITY[slot.rarity] : null;
+            {featured.map((card, i) => {
+              const rarity = card?.rarity ?? null;
+              const borderColor = rarityBorder(rarity);
+              const isMythic = rarity === "Mítica";
+              const rl = rarity ? RARITY[rarity] : null;
+              const empty = card === null;
 
               const inner = (
-                <div style={{
-                  background: CARD_BG,
-                  borderRadius: isMythic ? 7 : 8,
-                  width: "100%", height: "100%",
-                  display: "flex", flexDirection: "column",
-                  alignItems: "center", justifyContent: "space-between",
-                  padding: "16px 8px 12px",
-                }}>
+                <div
+                  onClick={() => setFeaturedPickerIdx(i)}
+                  style={{
+                    background: CARD_BG,
+                    borderRadius: isMythic ? 7 : 8,
+                    width: "100%", height: "100%",
+                    display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "space-between",
+                    padding: "16px 8px 12px",
+                    cursor: "pointer",
+                    position: "relative",
+                  }}
+                >
                   <div style={{
                     width: 40, height: 40, borderRadius: "50%",
-                    background: "rgba(255,255,255,0.06)",
-                    border: `1px solid ${borderColor}`,
+                    background: empty ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.06)",
+                    border: `1px solid ${empty ? "rgba(255,255,255,0.13)" : borderColor}`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                   }}>
-                    {slot.ini && (
+                    {card ? (
                       <span style={{ fontSize: 12, fontWeight: 700, color: rl?.label ?? TEXT_DIM }}>
-                        {slot.ini}
+                        {card.ini}
                       </span>
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke={TEXT_DIM} strokeWidth="1.8" strokeLinecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
                     )}
                   </div>
                   <span style={{
-                    fontSize: 10, fontWeight: 400, color: slot.name ? TEXT_GRAY : TEXT_DIM,
+                    fontSize: 10, fontWeight: 400, color: card ? TEXT_GRAY : TEXT_DIM,
                     textAlign: "center", lineHeight: 1.3,
+                    overflow: "hidden", display: "-webkit-box",
+                    WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
                   }}>
-                    {slot.name ?? "Vacío"}
+                    {card ? card.name : "Vacío"}
                   </span>
                 </div>
               );
@@ -3901,8 +4433,9 @@ function ProfileScreen({ onSignOut, onLinkAccount }: { onSignOut: () => void; on
               ) : (
                 <div key={i} style={{
                   flex: 1, aspectRatio: "3/4",
-                  border: `1.5px solid ${borderColor}`,
+                  border: `1.5px solid ${empty ? "rgba(255,255,255,0.13)" : borderColor}`,
                   borderRadius: 8,
+                  opacity: empty ? 0.55 : 1,
                 }}>
                   {inner}
                 </div>
@@ -3911,6 +4444,26 @@ function ProfileScreen({ onSignOut, onLinkAccount }: { onSignOut: () => void; on
           </div>
         </section>
       </div>
+
+      {/* ── Slot picker modal (11 ideal) ── */}
+      {pickerSlot && (
+        <SlotPickerModal
+          slot={pickerSlot}
+          onAssign={handleAssign}
+          onRemove={handleRemove}
+          onClose={() => setPickerSlot(null)}
+        />
+      )}
+
+      {/* ── Featured card picker modal ── */}
+      {featuredPickerIdx !== null && (
+        <FeaturedPickerModal
+          currentCard={featured[featuredPickerIdx] ?? null}
+          onAssign={handleFeaturedAssign}
+          onRemove={handleFeaturedRemove}
+          onClose={() => setFeaturedPickerIdx(null)}
+        />
+      )}
     </div>
   );
 }

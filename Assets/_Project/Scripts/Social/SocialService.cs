@@ -685,7 +685,7 @@ namespace JuegoTCG.Social
         {
             return new List<Cards.CardCatalogItem>
             {
-                new Cards.CardCatalogItem { cardId = "card_01", playerName = "Vozhina", initials = "VO", teamName = "Al-Hilal", position = "DEL", rarity = Cards.Rarity.Comun, albumId = "album_piloto_01" },
+                new Cards.CardCatalogItem { cardId = "card_01", playerName = "Vozhina", initials = "VO", teamName = "Al-Hilal", position = "POR", rarity = Cards.Rarity.Comun, albumId = "album_piloto_01" },
                 new Cards.CardCatalogItem { cardId = "card_02", playerName = "Balogun", initials = "BA", teamName = "Monaco", position = "DEL", rarity = Cards.Rarity.Comun, albumId = "album_piloto_01" },
                 new Cards.CardCatalogItem { cardId = "card_03", playerName = "Diomandé", initials = "DI", teamName = "Sporting CP", position = "DEF", rarity = Cards.Rarity.Comun, albumId = "album_piloto_01" },
                 new Cards.CardCatalogItem { cardId = "card_04", playerName = "James Rodríguez", initials = "JR", teamName = "Rayo Vallecano", position = "MED", rarity = Cards.Rarity.Comun, albumId = "album_piloto_01" },

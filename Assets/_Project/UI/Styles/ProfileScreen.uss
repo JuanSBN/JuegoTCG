@@ -391,6 +391,15 @@
     border-color: rgba(255, 255, 255, 0.14);
 }
 
+.pitch-boundary-line,
+.pitch-halfway-line,
+.pitch-center-circle,
+.pitch-center-dot,
+.pitch-penalty-top,
+.pitch-penalty-bottom {
+    picking-mode: ignore;
+}
+
 /* ─────────────────────────────────────────────────────────── */
 /* PLAYER SLOTS ON PITCH                                       */
 /* ─────────────────────────────────────────────────────────── */
@@ -401,8 +410,8 @@
     margin-left: -66px;
     margin-top: -90px;
     background-color: var(--card-bg);
-    border-radius: 18px;
-    border-width: 1.5px;
+    border-radius: 8px;
+    border-width: 2px;
     border-color: var(--border-subtle);
     align-items: center;
     justify-content: center;
@@ -410,14 +419,30 @@
     transition-property: scale;
     transition-duration: 0.15s;
     transition-timing-function: ease-out;
+    picking-mode: position;
+    overflow: hidden;
+}
+
+.pitch-player-slot.slot-occupied {
+    opacity: 1;
+    border-width: 0;
+    background-color: transparent;
+}
+
+.slot-pos-badge,
+.slot-pos-badge-text,
+.slot-empty-plus,
+.slot-occupied-container,
+.slot-art-photo,
+.slot-art-frame,
+.slot-avatar-fallback,
+.slot-avatar-initials,
+.slot-player-name {
+    picking-mode: ignore;
 }
 
 .pitch-player-slot:active {
     scale: 0.94;
-}
-
-.slot-occupied {
-    opacity: 1;
 }
 
 .slot-mythic {
@@ -438,17 +463,22 @@
 
 .slot-pos-badge {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 6px;
+    left: 6px;
     background-color: rgba(6, 14, 10, 0.92);
     border-width: 1px;
     border-color: var(--border-subtle);
-    border-radius: 12px;
-    padding: 4px 10px;
+    border-radius: 8px;
+    padding: 1px 6px;
 }
 
+.slot-mythic .slot-pos-badge { border-color: var(--rarity-mythic); }
+.slot-rare .slot-pos-badge { border-color: var(--rarity-rare); }
+.slot-uncommon .slot-pos-badge { border-color: var(--rarity-uncommon); }
+.slot-common .slot-pos-badge { border-color: var(--rarity-common); }
+
 .slot-pos-badge-text {
-    font-size: 20px;
+    font-size: 16px;
     -unity-font-style: bold;
     color: var(--text-dim);
     -unity-text-align: middle-center;
@@ -473,6 +503,175 @@
 .slot-rare .slot-token-circle { border-color: var(--rarity-rare); }
 .slot-uncommon .slot-token-circle { border-color: var(--rarity-uncommon); }
 .slot-common .slot-token-circle { border-color: var(--rarity-common); }
+
+/* Pitch Player Slot Dynamic Elements */
+.slot-empty-plus {
+    font-size: 40px;
+    -unity-font-style: bold;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    margin-top: 8px;
+}
+
+.slot-occupied-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #0c1825;
+}
+
+.slot-art-photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.slot-art-photo-default {
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: #0c1825;
+}
+
+.slot-art-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.slot-avatar-fallback {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    margin-left: -28px;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background-color: rgba(22, 34, 52, 0.90);
+    border-width: 2.5px;
+    border-color: rgba(255, 255, 255, 0.35);
+    align-items: center;
+    justify-content: center;
+}
+
+.slot-mythic .slot-avatar-fallback { border-color: var(--rarity-mythic); }
+.slot-rare .slot-avatar-fallback { border-color: var(--rarity-rare); }
+.slot-uncommon .slot-avatar-fallback { border-color: var(--rarity-uncommon); }
+.slot-common .slot-avatar-fallback { border-color: var(--rarity-common); }
+
+.slot-avatar-initials {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+}
+
+.slot-mythic .slot-avatar-initials { color: #FFFFFF; }
+.slot-rare .slot-avatar-initials { color: #FFFFFF; }
+.slot-uncommon .slot-avatar-initials { color: #FFFFFF; }
+.slot-common .slot-avatar-initials { color: #FFFFFF; }
+
+.slot-player-name {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    right: 8px;
+    height: 24px;
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: rgba(6, 17, 11, 0.88);
+    border-radius: 12px;
+    padding: 0 6px;
+}
+
+/* Nombre sobre el cajetín con sombra idéntico a Cartas Destacadas */
+.slot-player-name-framed {
+    position: absolute;
+    bottom: 28px;
+    left: 4px;
+    right: 4px;
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+    picking-mode: ignore;
+}
+
+/* Cajetín inferior con textura del marco oficial */
+.slot-frame-footer-box {
+    position: absolute;
+    bottom: 4px;
+    left: 18%;
+    right: 18%;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 2px;
+    padding-right: 2px;
+    picking-mode: ignore;
+}
+
+.slot-frame-team-name {
+    font-size: 6.5px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-center;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    picking-mode: ignore;
+}
+
+.slot-frame-sub-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    picking-mode: ignore;
+}
+
+.slot-frame-pos-text {
+    font-size: 5.5px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-left;
+    picking-mode: ignore;
+}
+
+.slot-frame-rarity-text {
+    font-size: 5.5px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-right;
+    picking-mode: ignore;
+}
 
 /* ─────────────────────────────────────────────────────────── */
 /* SECCIÓN: CARTAS DESTACADAS                                  */
@@ -616,6 +815,741 @@
 
 .modal-hidden {
     display: none;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* MODAL: SELECTOR DE CARTA PARA EL 11 IDEAL (FIGMA)           */
+/* ─────────────────────────────────────────────────────────── */
+.pitch-modal-card {
+    width: 100%;
+    max-width: 980px;
+    height: 82%;
+    background-color: #0A1810;
+    border-radius: 36px;
+    border-width: 2px;
+    border-color: var(--gold-border);
+    padding: 36px 30px 28px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pitch-modal-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.pitch-modal-title-row {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.pitch-modal-badge {
+    background-color: var(--gold);
+    border-radius: 12px;
+    padding: 6px 16px;
+    margin-right: 18px;
+}
+
+.pitch-modal-badge-text {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: #06110B;
+    -unity-text-align: middle-center;
+}
+
+.pitch-modal-title {
+    font-size: 36px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    letter-spacing: 2px;
+}
+
+.pitch-modal-close-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.pitch-modal-close-btn:active {
+    scale: 0.90;
+}
+
+.pitch-modal-close-icon {
+    font-size: 30px;
+    color: var(--text-gray);
+    -unity-text-align: middle-center;
+}
+
+.pitch-modal-scroll {
+    flex-grow: 1;
+    width: 100%;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.pitch-modal-scroll #unity-content-container,
+.pitch-modal-scroll .unity-scroll-view__content-container {
+    padding-right: 18px;
+    width: 100%;
+}
+
+.pitch-modal-scroll .unity-scroller--vertical,
+.pitch-modal-scroll #unity-vertical-scroller,
+.pitch-modal-scroll .unity-scroller {
+    width: 6px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    position: absolute;
+    right: 2px;
+    top: 4px;
+    bottom: 4px;
+}
+
+.pitch-modal-scroll .unity-scroller--horizontal,
+.pitch-modal-scroll #unity-horizontal-scroller {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.pitch-modal-scroll .unity-scroller__low-button,
+.pitch-modal-scroll .unity-scroller__high-button,
+.pitch-modal-scroll #unity-low-button,
+.pitch-modal-scroll #unity-high-button,
+.pitch-modal-scroll .unity-repeat-button {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.pitch-modal-scroll .unity-slider {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: transparent;
+    width: 6px;
+}
+
+.pitch-modal-scroll #unity-tracker,
+.pitch-modal-scroll .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    margin: 0;
+}
+
+.pitch-modal-scroll #unity-dragger,
+.pitch-modal-scroll .unity-scroller--vertical .unity-base-slider__dragger,
+.pitch-modal-scroll .unity-base-slider__dragger {
+    background-color: var(--gold);
+    border-width: 0;
+    border-radius: 3px;
+    width: 6px;
+    min-height: 80px;
+    margin: 0;
+    opacity: 0.75;
+    transition-property: opacity, background-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
+}
+
+.pitch-modal-scroll #unity-dragger:hover,
+.pitch-modal-scroll #unity-dragger:active {
+    background-color: #FFD257;
+    opacity: 1;
+}
+
+.pitch-modal-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+/* Tarjetas individuales dentro del selector modal (Figma Pantallas 2.2 - Proporción Carta TCG) */
+.pitch-selector-card {
+    width: 48%;
+    height: 630px;
+    background-color: #08150E;
+    border-radius: 28px;
+    border-width: 2px;
+    border-color: var(--border-subtle);
+    margin-bottom: 26px;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    align-items: center;
+    justify-content: space-between;
+    transition-property: scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
+}
+
+.pitch-selector-card:active {
+    scale: 0.96;
+}
+
+.pitch-selector-card.card-selected {
+    border-color: #FFD257;
+    border-width: 3px;
+}
+
+.pitch-selector-card.card-mythic { border-color: var(--rarity-mythic); }
+.pitch-selector-card.card-rare { border-color: var(--rarity-rare); }
+.pitch-selector-card.card-uncommon { border-color: var(--rarity-uncommon); }
+.pitch-selector-card.card-common { border-color: var(--rarity-common); }
+
+.pitch-card-photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 26px;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.pitch-card-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 26px;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.pitch-card-fallback-container {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 16px 32px;
+}
+
+.pitch-card-avatar-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 70px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 2.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.card-mythic .pitch-card-avatar-circle { border-color: var(--rarity-mythic); }
+.card-rare .pitch-card-avatar-circle { border-color: var(--rarity-rare); }
+.card-uncommon .pitch-card-avatar-circle { border-color: var(--rarity-uncommon); }
+.card-common .pitch-card-avatar-circle { border-color: var(--rarity-common); }
+
+.pitch-card-avatar-initials {
+    font-size: 50px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+}
+
+.card-mythic .pitch-card-avatar-initials { color: var(--rarity-mythic); }
+.card-rare .pitch-card-avatar-initials { color: var(--rarity-rare); }
+.card-uncommon .pitch-card-avatar-initials { color: var(--rarity-uncommon); }
+.card-common .pitch-card-avatar-initials { color: var(--rarity-common); }
+
+.pitch-card-name-label {
+    font-size: 30px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.pitch-card-rarity-pill {
+    padding: 8px 24px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-width: 1.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.card-mythic .pitch-card-rarity-pill { border-color: var(--rarity-mythic); }
+.card-rare .pitch-card-rarity-pill { border-color: var(--rarity-rare); }
+.card-uncommon .pitch-card-rarity-pill { border-color: var(--rarity-uncommon); }
+.card-common .pitch-card-rarity-pill { border-color: var(--rarity-common); }
+
+.pitch-card-rarity-text {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+    -unity-text-align: middle-center;
+}
+
+.card-mythic .pitch-card-rarity-text { color: var(--rarity-mythic); }
+.card-rare .pitch-card-rarity-text { color: var(--rarity-rare); }
+.card-uncommon .pitch-card-rarity-text { color: var(--rarity-uncommon); }
+.card-common .pitch-card-rarity-text { color: var(--rarity-common); }
+
+/* Overlay cuando la carta tiene arte completo */
+.pitch-card-art-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(6, 17, 11, 0.92);
+    padding: 14px 10px 16px;
+    align-items: center;
+    border-bottom-left-radius: 26px;
+    border-bottom-right-radius: 26px;
+}
+
+.pitch-card-art-name {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.pitch-card-art-pill {
+    padding: 4px 16px;
+    border-radius: 14px;
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    margin-top: 6px;
+}
+
+.card-mythic .pitch-card-art-pill { border-color: var(--rarity-mythic); }
+.card-rare .pitch-card-art-pill { border-color: var(--rarity-rare); }
+.card-uncommon .pitch-card-art-pill { border-color: var(--rarity-uncommon); }
+.card-common .pitch-card-art-pill { border-color: var(--rarity-common); }
+
+.pitch-card-art-rarity-text {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: var(--text-gray);
+}
+
+.card-mythic .pitch-card-art-rarity-text { color: var(--rarity-mythic); }
+.card-rare .pitch-card-art-rarity-text { color: var(--rarity-rare); }
+.card-uncommon .pitch-card-art-rarity-text { color: var(--rarity-uncommon); }
+.card-common .pitch-card-art-rarity-text { color: var(--rarity-common); }
+
+/* Badge de carta ya seleccionada */
+.pitch-card-in-squad-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(6, 17, 11, 0.90);
+    border-width: 1px;
+    border-color: var(--gold);
+    border-radius: 10px;
+    padding: 3px 8px;
+}
+
+.pitch-card-in-squad-text {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: var(--gold);
+}
+
+/* Empty State */
+.pitch-modal-empty {
+    align-items: center;
+    justify-content: center;
+    padding: 100px 30px;
+    width: 100%;
+}
+
+.pitch-empty-title {
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin-bottom: 14px;
+    -unity-text-align: middle-center;
+}
+
+.pitch-empty-desc {
+    font-size: 24px;
+    color: var(--text-gray);
+    -unity-text-align: middle-center;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* Botón Quitar del 11 Ideal */
+.btn-remove-from-pitch {
+    width: 100%;
+    height: 84px;
+    border-radius: 20px;
+    background-color: rgba(239, 68, 68, 0.12);
+    border-width: 2px;
+    border-color: rgba(239, 68, 68, 0.45);
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.btn-remove-from-pitch:active {
+    scale: 0.97;
+    background-color: rgba(239, 68, 68, 0.30);
+}
+
+.btn-remove-from-pitch-text {
+    font-size: 26px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: #EF4444;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* CARTAS DESTACADAS (FEATURED CARDS SECTION)                 */
+/* ─────────────────────────────────────────────────────────── */
+.featured-section {
+    width: 100%;
+    margin-top: 36px;
+    margin-bottom: 24px;
+}
+
+.featured-cards-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.featured-card {
+    flex: 1;
+    height: 440px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: var(--card-bg);
+    border-radius: 22px;
+    border-width: 2px;
+    border-color: var(--border-subtle);
+    overflow: hidden;
+    position: relative;
+    picking-mode: position;
+    transition-property: scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out;
+}
+
+.featured-card:first-child {
+    margin-left: 0;
+}
+
+.featured-card:last-child {
+    margin-right: 0;
+}
+
+.featured-card:active {
+    scale: 0.95;
+}
+
+.featured-card-empty {
+    border-color: rgba(255, 255, 255, 0.14);
+    border-style: solid;
+    opacity: 0.45;
+    background-color: rgba(6, 17, 11, 0.40);
+}
+
+.featured-card-mythic {
+    border-color: var(--rarity-mythic);
+    opacity: 1;
+}
+
+.featured-card-rare {
+    border-color: var(--rarity-rare);
+    opacity: 1;
+}
+
+.featured-card-uncommon {
+    border-color: var(--rarity-uncommon);
+    opacity: 1;
+}
+
+.featured-card-common {
+    border-color: var(--rarity-common);
+    opacity: 1;
+}
+
+/* Cuando la carta tiene foto y marco propio, eliminamos el borde del contenedor para evitar marcos dobles */
+.featured-card.featured-card-has-photo,
+.featured-card.featured-card-occupied {
+    border-width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.featured-art-photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: scale-and-crop;
+    picking-mode: ignore;
+}
+
+.featured-art-photo-default {
+    background-image: url("project://database/Assets/_Project/Art/UI/bg_tactical_pitch.png");
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: #0c1825;
+}
+
+.featured-art-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+    picking-mode: ignore;
+}
+
+.featured-empty-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    picking-mode: ignore;
+}
+
+.featured-empty-plus {
+    font-size: 52px;
+    -unity-font-style: bold;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    margin-bottom: 2px;
+    picking-mode: ignore;
+}
+
+.featured-empty-label {
+    font-size: 20px;
+    color: var(--text-dim);
+    -unity-text-align: middle-center;
+    picking-mode: ignore;
+}
+
+.featured-avatar-circle {
+    position: absolute;
+    top: 95px;
+    left: 50%;
+    margin-left: -52px;
+    width: 104px;
+    height: 104px;
+    border-radius: 52px;
+    border-width: 2.5px;
+    border-color: var(--border-subtle);
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.04);
+    picking-mode: ignore;
+}
+
+.featured-card-mythic .featured-avatar-circle { border-color: var(--rarity-mythic); }
+.featured-card-rare .featured-avatar-circle { border-color: var(--rarity-rare); }
+.featured-card-uncommon .featured-avatar-circle { border-color: var(--rarity-uncommon); }
+.featured-card-common .featured-avatar-circle { border-color: var(--rarity-common); }
+
+.featured-avatar-text {
+    font-size: 32px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+    picking-mode: ignore;
+}
+
+.featured-card-name {
+    position: absolute;
+    bottom: 16px;
+    left: 14px;
+    right: 14px;
+    height: 48px;
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 6px;
+    padding-right: 6px;
+    picking-mode: ignore;
+}
+
+/* Estilo de nombre cuando tiene foto: flota sobre el cajetín con sombra idéntica a Mis Cartas */
+.featured-player-name-framed {
+    position: absolute;
+    bottom: 74px;
+    left: 8px;
+    right: 8px;
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.95);
+    picking-mode: ignore;
+}
+
+/* Cajetín inferior idéntico al marco de la carta en Mis Cartas */
+.featured-frame-footer-box {
+    position: absolute;
+    bottom: 10px;
+    left: 18%;
+    right: 18%;
+    height: 60px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 4px;
+    padding-bottom: 2px;
+    padding-left: 6px;
+    padding-right: 6px;
+    picking-mode: ignore;
+}
+
+.featured-frame-team-name {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-center;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    picking-mode: ignore;
+}
+
+.featured-frame-sub-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    picking-mode: ignore;
+}
+
+.featured-frame-pos-text {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-left;
+    picking-mode: ignore;
+}
+
+.featured-frame-rarity-text {
+    font-size: 11px;
+    -unity-font-style: bold;
+    color: #0c1822;
+    -unity-text-align: middle-right;
+    picking-mode: ignore;
+}
+
+/* ─────────────────────────────────────────────────────────── */
+/* FEATURED MODAL: FILTERS & BADGES                           */
+/* ─────────────────────────────────────────────────────────── */
+.featured-filters-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.featured-filter-pill {
+    flex: 1;
+    height: 56px;
+    border-radius: 28px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 1.5px;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-gray);
+    font-size: 20px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 0;
+    padding-bottom: 0;
+    transition-property: background-color, border-color, color, scale;
+    transition-duration: 0.15s;
+}
+
+.featured-filter-pill:first-child {
+    margin-left: 0;
+}
+
+.featured-filter-pill:last-child {
+    margin-right: 0;
+}
+
+.featured-filter-pill:active {
+    scale: 0.95;
+}
+
+.featured-filter-pill.filter-pill-active {
+    background-color: rgba(232, 168, 32, 0.14);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+/* Checkmark badge para la carta actualmente asignada al slot */
+.featured-check-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background-color: #F5B423;
+    align-items: center;
+    justify-content: center;
+    picking-mode: ignore;
+}
+
+.featured-check-icon {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: #06110B;
+    -unity-text-align: middle-center;
+    margin-top: -2px;
+    picking-mode: ignore;
 }
 
 /* ─────────────────────────────────────────────────────────── */

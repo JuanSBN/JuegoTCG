@@ -11,6 +11,11 @@ namespace JuegoTCG.Cards
         public string teamName;
         public string position; // Delantero, Mediocampista, Defensor, Portero
 
+        /// <summary>
+        /// Línea táctica normalizada (POR, DEF, MED, DEL) calculada automáticamente.
+        /// </summary>
+        public TacticalPosition TacticalLine => TacticalPositionHelper.Normalize(position);
+
         [Header("Rareza y Colección")]
         public Rarity rarity;
         public string albumId;

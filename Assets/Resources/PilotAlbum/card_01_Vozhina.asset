@@ -14,7 +14,7 @@ MonoBehaviour:
   cardId: card_01
   playerName: Vozhina
   teamName: FC Piloto
-  position: Defensor
+  position: Portero
   rarity: 0
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}

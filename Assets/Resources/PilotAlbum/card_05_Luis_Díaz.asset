@@ -14,7 +14,7 @@ MonoBehaviour:
   cardId: card_05
   playerName: Luis Díaz
   teamName: FC Piloto
-  position: Extremo
+  position: Extremo Izquierdo
   rarity: 1
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}

@@ -66,77 +66,259 @@
                         <!-- 11 Player Slots (4-3-3 Formation) -->
                         
                         <!-- FWD (3) -->
-                        <ui:VisualElement name="Slot_F1" class="pitch-player-slot slot-occupied slot-rare" style="left: 22%; top: 12%;">
+                        <ui:VisualElement name="Slot_F1" class="pitch-player-slot" style="left: 22%; top: 14%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="DEL" class="slot-pos-badge-text" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="slot-token-circle" />
-                        </ui:VisualElement>
-
-                        <ui:VisualElement name="Slot_F2" class="pitch-player-slot" style="left: 50%; top: 12%;">
-                            <ui:VisualElement class="slot-pos-badge">
-                                <ui:Label text="DEL" class="slot-pos-badge-text" />
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="Slot_F3" class="pitch-player-slot" style="left: 78%; top: 12%;">
+                        <ui:VisualElement name="Slot_F2" class="pitch-player-slot" style="left: 50%; top: 14%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="DEL" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <ui:VisualElement name="Slot_F3" class="pitch-player-slot" style="left: 78%; top: 14%;">
+                            <ui:VisualElement class="slot-pos-badge">
+                                <ui:Label text="DEL" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
                         <!-- MID (3) -->
-                        <ui:VisualElement name="Slot_M1" class="pitch-player-slot slot-occupied slot-mythic" style="left: 18%; top: 36%;">
+                        <ui:VisualElement name="Slot_M1" class="pitch-player-slot" style="left: 22%; top: 38%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="MED" class="slot-pos-badge-text" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="slot-token-circle" />
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="Slot_M2" class="pitch-player-slot" style="left: 50%; top: 36%;">
+                        <ui:VisualElement name="Slot_M2" class="pitch-player-slot" style="left: 50%; top: 38%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="MED" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="Slot_M3" class="pitch-player-slot slot-occupied slot-common" style="left: 82%; top: 36%;">
+                        <ui:VisualElement name="Slot_M3" class="pitch-player-slot" style="left: 78%; top: 38%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="MED" class="slot-pos-badge-text" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="slot-token-circle" />
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
 
                         <!-- DEF (4) -->
-                        <ui:VisualElement name="Slot_D1" class="pitch-player-slot slot-occupied slot-uncommon" style="left: 12%; top: 62%;">
+                        <ui:VisualElement name="Slot_D1" class="pitch-player-slot" style="left: 14%; top: 62%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="DEF" class="slot-pos-badge-text" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="slot-token-circle" />
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="Slot_D2" class="pitch-player-slot" style="left: 37%; top: 62%;">
+                        <ui:VisualElement name="Slot_D2" class="pitch-player-slot" style="left: 38%; top: 62%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="DEF" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="Slot_D3" class="pitch-player-slot" style="left: 63%; top: 62%;">
+                        <ui:VisualElement name="Slot_D3" class="pitch-player-slot" style="left: 62%; top: 62%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="DEF" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
-                        <ui:VisualElement name="Slot_D4" class="pitch-player-slot slot-occupied slot-rare" style="left: 88%; top: 62%;">
+                        <ui:VisualElement name="Slot_D4" class="pitch-player-slot" style="left: 86%; top: 62%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="DEF" class="slot-pos-badge-text" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="slot-token-circle" />
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
 
                         <!-- GK (1) -->
                         <ui:VisualElement name="Slot_G1" class="pitch-player-slot" style="left: 50%; top: 86%;">
                             <ui:VisualElement class="slot-pos-badge">
                                 <ui:Label text="POR" class="slot-pos-badge-text" />
+                            </ui:VisualElement>
+                            <ui:Label text="+" class="slot-empty-plus" />
+                            <ui:VisualElement class="slot-occupied-container" style="display: none;">
+                                <ui:VisualElement class="slot-art-photo" />
+                                <ui:VisualElement class="slot-art-frame" />
+                                <ui:Label text="" class="slot-player-name-framed" style="display: none;" />
+                                <ui:VisualElement class="slot-frame-footer-box" style="display: none;">
+                                    <ui:Label text="" class="slot-frame-team-name" />
+                                    <ui:VisualElement class="slot-frame-sub-row">
+                                        <ui:Label text="" class="slot-frame-pos-text" />
+                                        <ui:Label text="" class="slot-frame-rarity-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:VisualElement class="slot-avatar-fallback">
+                                    <ui:Label text="" class="slot-avatar-initials" />
+                                </ui:VisualElement>
+                                <ui:Label text="" class="slot-player-name" style="display: none;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
 
@@ -149,26 +331,70 @@
 
                     <ui:VisualElement class="featured-cards-row">
                         
-                        <!-- Featured 1: Luis Díaz (Mítica) -->
-                        <ui:VisualElement name="Featured_Card_1" class="featured-card featured-card-mythic">
-                            <ui:VisualElement class="featured-avatar-circle">
-                                <ui:Label text="LD" class="featured-avatar-text" />
+                        <!-- Featured 1 -->
+                        <ui:VisualElement name="Featured_Card_1" class="featured-card featured-card-empty">
+                            <ui:VisualElement class="featured-art-photo" style="display: none;" />
+                            <ui:VisualElement class="featured-art-frame" style="display: none;" />
+                            <ui:Label text="" class="featured-player-name-framed" style="display: none;" />
+                            <ui:VisualElement class="featured-frame-footer-box" style="display: none;">
+                                <ui:Label text="" class="featured-frame-team-name" />
+                                <ui:VisualElement class="featured-frame-sub-row">
+                                    <ui:Label text="" class="featured-frame-pos-text" />
+                                    <ui:Label text="" class="featured-frame-rarity-text" />
+                                </ui:VisualElement>
                             </ui:VisualElement>
-                            <ui:Label text="Luis Díaz" class="featured-card-name" />
+                            <ui:VisualElement class="featured-avatar-circle" style="display: none;">
+                                <ui:Label text="" class="featured-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="featured-empty-container">
+                                <ui:Label text="+" class="featured-empty-plus" />
+                                <ui:Label text="Vacío" class="featured-empty-label" />
+                            </ui:VisualElement>
+                            <ui:Label text="Vacío" class="featured-card-name" style="display: none;" />
                         </ui:VisualElement>
 
-                        <!-- Featured 2: Bellingham (Rara) -->
-                        <ui:VisualElement name="Featured_Card_2" class="featured-card featured-card-rare">
-                            <ui:VisualElement class="featured-avatar-circle">
-                                <ui:Label text="JB" class="featured-avatar-text" />
+                        <!-- Featured 2 -->
+                        <ui:VisualElement name="Featured_Card_2" class="featured-card featured-card-empty">
+                            <ui:VisualElement class="featured-art-photo" style="display: none;" />
+                            <ui:VisualElement class="featured-art-frame" style="display: none;" />
+                            <ui:Label text="" class="featured-player-name-framed" style="display: none;" />
+                            <ui:VisualElement class="featured-frame-footer-box" style="display: none;">
+                                <ui:Label text="" class="featured-frame-team-name" />
+                                <ui:VisualElement class="featured-frame-sub-row">
+                                    <ui:Label text="" class="featured-frame-pos-text" />
+                                    <ui:Label text="" class="featured-frame-rarity-text" />
+                                </ui:VisualElement>
                             </ui:VisualElement>
-                            <ui:Label text="Bellingham" class="featured-card-name" />
+                            <ui:VisualElement class="featured-avatar-circle" style="display: none;">
+                                <ui:Label text="" class="featured-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="featured-empty-container">
+                                <ui:Label text="+" class="featured-empty-plus" />
+                                <ui:Label text="Vacío" class="featured-empty-label" />
+                            </ui:VisualElement>
+                            <ui:Label text="Vacío" class="featured-card-name" style="display: none;" />
                         </ui:VisualElement>
 
-                        <!-- Featured 3: Vacío -->
+                        <!-- Featured 3 -->
                         <ui:VisualElement name="Featured_Card_3" class="featured-card featured-card-empty">
-                            <ui:VisualElement class="featured-avatar-circle" />
-                            <ui:Label text="Vacío" class="featured-card-name" />
+                            <ui:VisualElement class="featured-art-photo" style="display: none;" />
+                            <ui:VisualElement class="featured-art-frame" style="display: none;" />
+                            <ui:Label text="" class="featured-player-name-framed" style="display: none;" />
+                            <ui:VisualElement class="featured-frame-footer-box" style="display: none;">
+                                <ui:Label text="" class="featured-frame-team-name" />
+                                <ui:VisualElement class="featured-frame-sub-row">
+                                    <ui:Label text="" class="featured-frame-pos-text" />
+                                    <ui:Label text="" class="featured-frame-rarity-text" />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement class="featured-avatar-circle" style="display: none;">
+                                <ui:Label text="" class="featured-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="featured-empty-container">
+                                <ui:Label text="+" class="featured-empty-plus" />
+                                <ui:Label text="Vacío" class="featured-empty-label" />
+                            </ui:VisualElement>
+                            <ui:Label text="Vacío" class="featured-card-name" style="display: none;" />
                         </ui:VisualElement>
 
                     </ui:VisualElement>
@@ -176,6 +402,85 @@
 
             </ui:VisualElement>
         </ui:ScrollView>
+
+        <!-- ── Sub-pantalla Modal: Selector de Jugador para 11 Ideal (Figma) ── -->
+        <ui:VisualElement name="PitchCardSelectorModal" class="modal-backdrop modal-hidden">
+            <ui:VisualElement class="pitch-modal-card">
+                
+                <!-- Header: Badge + Título + Cerrar ✕ -->
+                <ui:VisualElement class="pitch-modal-header">
+                    <ui:VisualElement class="pitch-modal-title-row">
+                        <ui:VisualElement class="pitch-modal-badge">
+                            <ui:Label name="PitchModalBadgeText" text="DEL" class="pitch-modal-badge-text" />
+                        </ui:VisualElement>
+                        <ui:Label name="PitchModalTitle" text="ELEGIR DELANTERO" class="pitch-modal-title" />
+                    </ui:VisualElement>
+                    <ui:Button name="Btn_ClosePitchModal" class="pitch-modal-close-btn">
+                        <ui:Label text="✕" class="pitch-modal-close-icon" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Scrollable Cards Grid (2 Columnas) -->
+                <ui:ScrollView name="PitchModalScrollView" class="pitch-modal-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
+                    <ui:VisualElement name="PitchModalCardsGrid" class="pitch-modal-grid">
+                        <!-- Llenado dinámicamente con cartas poseídas que coincidan con la posición -->
+                    </ui:VisualElement>
+                    
+                    <ui:VisualElement name="PitchModalEmptyState" class="pitch-modal-empty" style="display: none;">
+                        <ui:Label text="No tienes cartas de esta posición en tu inventario." class="pitch-empty-title" />
+                        <ui:Label text="Consigue nuevos jugadores abriendo sobres en la Tienda." class="pitch-empty-desc" />
+                    </ui:VisualElement>
+                </ui:ScrollView>
+
+                <!-- Botón de acción: Quitar del 11 Ideal -->
+                <ui:Button name="Btn_RemoveFromPitch" class="btn-remove-from-pitch">
+                    <ui:Label text="QUITAR DEL 11 IDEAL" class="btn-remove-from-pitch-text" />
+                </ui:Button>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- ── Sub-pantalla Modal: Selector de Cartas Destacadas (Figma) ── -->
+        <ui:VisualElement name="FeaturedCardSelectorModal" class="modal-backdrop modal-hidden">
+            <ui:VisualElement class="pitch-modal-card">
+                
+                <!-- Header: Título + Cerrar ✕ -->
+                <ui:VisualElement class="pitch-modal-header">
+                    <ui:VisualElement class="pitch-modal-title-row">
+                        <ui:Label text="ELEGIR CARTA DESTACADA" class="pitch-modal-title" />
+                    </ui:VisualElement>
+                    <ui:Button name="Btn_CloseFeaturedModal" class="pitch-modal-close-btn">
+                        <ui:Label text="✕" class="pitch-modal-close-icon" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Filtros: Álbum | Recientes | Rareza | Cantidad -->
+                <ui:VisualElement class="featured-filters-row">
+                    <ui:Button name="Filter_Album" text="Álbum" class="featured-filter-pill filter-pill-active" />
+                    <ui:Button name="Filter_Recientes" text="Recientes" class="featured-filter-pill" />
+                    <ui:Button name="Filter_Rareza" text="Rareza" class="featured-filter-pill" />
+                    <ui:Button name="Filter_Cantidad" text="Cantidad" class="featured-filter-pill" />
+                </ui:VisualElement>
+
+                <!-- Scrollable Cards Grid (2 Columnas) -->
+                <ui:ScrollView name="FeaturedModalScrollView" class="pitch-modal-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
+                    <ui:VisualElement name="FeaturedModalCardsGrid" class="pitch-modal-grid">
+                        <!-- Llenado dinámicamente con cartas poseídas -->
+                    </ui:VisualElement>
+                    
+                    <ui:VisualElement name="FeaturedModalEmptyState" class="pitch-modal-empty" style="display: none;">
+                        <ui:Label text="No tienes cartas en tu inventario." class="pitch-empty-title" />
+                        <ui:Label text="Consigue nuevos jugadores abriendo sobres en la Tienda." class="pitch-empty-desc" />
+                    </ui:VisualElement>
+                </ui:ScrollView>
+
+                <!-- Botón de acción: Quitar de Destacadas -->
+                <ui:Button name="Btn_RemoveFromFeatured" class="btn-remove-from-pitch">
+                    <ui:Label text="QUITAR DE DESTACADAS" class="btn-remove-from-pitch-text" />
+                </ui:Button>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
 
         <!-- Feedback / Customization Modal -->
         <ui:VisualElement name="ProfileFeedbackModal" class="modal-backdrop modal-hidden">

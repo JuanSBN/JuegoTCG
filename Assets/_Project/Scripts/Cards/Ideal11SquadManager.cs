@@ -38,21 +38,21 @@ namespace JuegoTCG.Cards
             LoadSquad();
         }
 
-        private void InitializeFormation()
+        public void InitializeFormation()
         {
-            if (formationSlots.Count > 0) return;
+            if (formationSlots != null && formationSlots.Count == 11) return;
 
             formationSlots = new List<PitchSlotData>
             {
                 // Delantera (3)
-                new PitchSlotData { slotIndex = 0, positionCode = "DEL_EI", positionName = "Extremo Izq.", assignedCardId = "LD" }, // Luis Díaz
-                new PitchSlotData { slotIndex = 1, positionCode = "DEL_DC", positionName = "Delantero Centro", assignedCardId = "EH" }, // Haaland
-                new PitchSlotData { slotIndex = 2, positionCode = "DEL_ED", positionName = "Extremo Der.", assignedCardId = "VJ" }, // Vinicius
+                new PitchSlotData { slotIndex = 0, positionCode = "DEL_EI", positionName = "Extremo Izq.", assignedCardId = "" },
+                new PitchSlotData { slotIndex = 1, positionCode = "DEL_DC", positionName = "Delantero Centro", assignedCardId = "" },
+                new PitchSlotData { slotIndex = 2, positionCode = "DEL_ED", positionName = "Extremo Der.", assignedCardId = "" },
 
                 // Mediocampo (3)
-                new PitchSlotData { slotIndex = 3, positionCode = "MED_I", positionName = "Interior Izq.", assignedCardId = "PE" }, // Pedri
-                new PitchSlotData { slotIndex = 4, positionCode = "MED_C", positionName = "Pivote", assignedCardId = "RO" }, // Rodri
-                new PitchSlotData { slotIndex = 5, positionCode = "MED_D", positionName = "Interior Der.", assignedCardId = "JB" }, // Bellingham
+                new PitchSlotData { slotIndex = 3, positionCode = "MED_I", positionName = "Interior Izq.", assignedCardId = "" },
+                new PitchSlotData { slotIndex = 4, positionCode = "MED_C", positionName = "Pivote", assignedCardId = "" },
+                new PitchSlotData { slotIndex = 5, positionCode = "MED_D", positionName = "Interior Der.", assignedCardId = "" },
 
                 // Defensa (4)
                 new PitchSlotData { slotIndex = 6, positionCode = "DEF_LI", positionName = "Lateral Izq.", assignedCardId = "" },
@@ -71,10 +71,36 @@ namespace JuegoTCG.Cards
             {
                 if (PlayerPrefs.HasKey(PREF_SLOT_PREFIX + i))
                 {
-                    formationSlots[i].assignedCardId = PlayerPrefs.GetString(PREF_SLOT_PREFIX + i);
+                    string savedId = PlayerPrefs.GetString(PREF_SLOT_PREFIX + i, "");
+                    // Solo conservar la carta si el jugador realmente la posee
+                    if (!string.IsNullOrEmpty(savedId) && PlayerCollectionManager.Instance != null && !PlayerCollectionManager.Instance.IsCardOwned(savedId))
+                    {
+                        savedId = "";
+                    }
+                    formationSlots[i].assignedCardId = savedId;
+                }
+                else
+                {
+                    formationSlots[i].assignedCardId = "";
                 }
             }
             Debug.Log($"<color=green>[Ideal11] Alineación cargada: {GetFilledSlotsCount()}/11 jugadores posicionados.</color>");
+        }
+
+        public void ValidateOwnedCards()
+        {
+            if (PlayerCollectionManager.Instance == null) return;
+            bool changed = false;
+            for (int i = 0; i < formationSlots.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(formationSlots[i].assignedCardId) &&
+                    !PlayerCollectionManager.Instance.IsCardOwned(formationSlots[i].assignedCardId))
+                {
+                    formationSlots[i].assignedCardId = "";
+                    changed = true;
+                }
+            }
+            if (changed) SaveSquad();
         }
 
         public void SaveSquad()
@@ -88,10 +114,39 @@ namespace JuegoTCG.Cards
             Debug.Log("<color=cyan>[Ideal11] Alineación guardada con éxito.</color>");
         }
 
+        public static void EnsureExists()
+        {
+            if (Instance == null)
+            {
+                var existing = FindFirstObjectByType<Ideal11SquadManager>();
+                if (existing != null)
+                {
+                    Instance = existing;
+                }
+                else
+                {
+                    GameObject go = new GameObject("Ideal11SquadManager");
+                    Instance = go.AddComponent<Ideal11SquadManager>();
+                }
+            }
+        }
+
         public void AssignCardToSlot(int slotIndex, string cardId)
         {
             if (slotIndex >= 0 && slotIndex < formationSlots.Count)
             {
+                // Regla anti-duplicados: Si la carta ya está asignada en otro slot, desasignarla de allí
+                if (!string.IsNullOrEmpty(cardId))
+                {
+                    for (int i = 0; i < formationSlots.Count; i++)
+                    {
+                        if (i != slotIndex && formationSlots[i].assignedCardId == cardId)
+                        {
+                            formationSlots[i].assignedCardId = "";
+                        }
+                    }
+                }
+
                 formationSlots[slotIndex].assignedCardId = cardId;
                 SaveSquad();
             }
@@ -104,6 +159,30 @@ namespace JuegoTCG.Cards
                 formationSlots[slotIndex].assignedCardId = "";
                 SaveSquad();
             }
+        }
+
+        public PitchSlotData GetSlot(int slotIndex)
+        {
+            if (formationSlots == null || formationSlots.Count < 11)
+            {
+                InitializeFormation();
+                LoadSquad();
+            }
+            if (formationSlots != null && slotIndex >= 0 && slotIndex < formationSlots.Count)
+            {
+                return formationSlots[slotIndex];
+            }
+            return null;
+        }
+
+        public bool IsCardInSquad(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId)) return false;
+            foreach (var s in formationSlots)
+            {
+                if (s.assignedCardId == cardId) return true;
+            }
+            return false;
         }
 
         public int GetFilledSlotsCount()

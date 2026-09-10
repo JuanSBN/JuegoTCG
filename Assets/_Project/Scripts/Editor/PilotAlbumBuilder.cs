@@ -34,11 +34,11 @@ namespace JuegoTCG.EditorTools
             // 2. 10 Cartas de Prueba según la selección del usuario
             var pilotCardsData = new (string id, string name, string team, string pos, Rarity rarity)[]
             {
-                ("card_01", "Vozhina", "FC Piloto", "Defensor", Rarity.Comun),
+                ("card_01", "Vozhina", "FC Piloto", "Portero", Rarity.Comun),
                 ("card_02", "Balogun", "FC Piloto", "Delantero", Rarity.Comun),
                 ("card_03", "Diomandé", "FC Piloto", "Defensor", Rarity.Comun),
                 ("card_04", "James Rodríguez", "FC Piloto", "Mediocampista", Rarity.Comun),
-                ("card_05", "Luis Díaz", "FC Piloto", "Extremo", Rarity.Especial),
+                ("card_05", "Luis Díaz", "FC Piloto", "Extremo Izquierdo", Rarity.Especial),
                 ("card_06", "Erling Haaland", "FC Piloto", "Delantero", Rarity.Especial),
                 ("card_07", "Cristiano Ronaldo", "FC Piloto", "Delantero", Rarity.Epica),
                 ("card_08", "Lionel Messi", "FC Piloto", "Mediocampista", Rarity.Legendaria),

@@ -12,6 +12,7 @@ namespace JuegoTCG.Cards
         public string initials;
         public string teamName;
         public string position; // DEL, MED, DEF, POR
+        public TacticalPosition TacticalLine => TacticalPositionHelper.Normalize(position);
         public Rarity rarity;
         public string albumId;
     }
@@ -87,7 +88,7 @@ namespace JuegoTCG.Cards
         {
             pilotAlbumCatalog = new List<CardCatalogItem>
             {
-                new CardCatalogItem { cardId = "card_01", playerName = "Vozhina", initials = "VO", teamName = "FC Piloto", position = "DEF", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
+                new CardCatalogItem { cardId = "card_01", playerName = "Vozhina", initials = "VO", teamName = "FC Piloto", position = "POR", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
                 new CardCatalogItem { cardId = "card_02", playerName = "Balogun", initials = "FB", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
                 new CardCatalogItem { cardId = "card_03", playerName = "Diomandé", initials = "OD", teamName = "FC Piloto", position = "DEF", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
                 new CardCatalogItem { cardId = "card_04", playerName = "James Rodríguez", initials = "JR", teamName = "FC Piloto", position = "MED", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
@@ -445,6 +446,13 @@ namespace JuegoTCG.Cards
         public List<CardCatalogItem> GetCatalog()
         {
             return new List<CardCatalogItem>(allCardsCatalog.Values);
+        }
+
+        public CardCatalogItem GetCard(string cardId)
+        {
+            if (string.IsNullOrEmpty(cardId)) return null;
+            if (allCardsCatalog.TryGetValue(cardId, out var item)) return item;
+            return pilotAlbumCatalog.Find(c => c.cardId == cardId);
         }
 
         public List<AlbumData> GetAllAlbums()
