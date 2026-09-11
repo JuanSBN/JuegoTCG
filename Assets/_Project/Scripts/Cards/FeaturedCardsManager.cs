@@ -17,6 +17,14 @@ namespace JuegoTCG.Cards
 
         private const string PREF_FEATURED_PREFIX = "Profile_Featured_Slot_";
 
+        private string GetPrefKey(int slotIndex)
+        {
+            string uid = Networking.FirebaseAuthManager.Instance != null && !string.IsNullOrEmpty(Networking.FirebaseAuthManager.Instance.UserId)
+                ? Networking.FirebaseAuthManager.Instance.UserId
+                : PlayerPrefs.GetString("Firebase_UserId", "local");
+            return $"Profile_Featured_{uid}_Slot_{slotIndex}";
+        }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -47,17 +55,65 @@ namespace JuegoTCG.Cards
                 featuredCardIds = new string[SlotCount] { "", "", "" };
             }
 
+            bool collectionReady = PlayerCollectionManager.Instance != null && PlayerCollectionManager.Instance.GetUniqueOwnedCount() > 0;
+
             for (int i = 0; i < SlotCount; i++)
             {
-                string savedId = PlayerPrefs.GetString(PREF_FEATURED_PREFIX + i, "");
-                // Solo conservar la carta si el jugador realmente la posee
-                if (!string.IsNullOrEmpty(savedId) && PlayerCollectionManager.Instance != null && !PlayerCollectionManager.Instance.IsCardOwned(savedId))
+                string key = GetPrefKey(i);
+                string savedId = "";
+
+                if (PlayerPrefs.HasKey(key))
+                {
+                    savedId = PlayerPrefs.GetString(key, "");
+                }
+                else if (PlayerPrefs.HasKey(PREF_FEATURED_PREFIX + i))
+                {
+                    savedId = PlayerPrefs.GetString(PREF_FEATURED_PREFIX + i, "");
+                }
+
+                // Solo conservar la carta si la colección ya cargó y el jugador realmente la posee
+                if (!string.IsNullOrEmpty(savedId) && collectionReady && !PlayerCollectionManager.Instance.IsCardOwned(savedId))
                 {
                     savedId = "";
                 }
                 featuredCardIds[i] = savedId;
             }
             Debug.Log($"<color=green>[FeaturedCards] Cartas destacadas cargadas: [{string.Join(", ", featuredCardIds)}]</color>");
+        }
+
+        public List<string> GetFeaturedCardIds()
+        {
+            var list = new List<string>();
+            if (featuredCardIds != null)
+            {
+                for (int i = 0; i < featuredCardIds.Length; i++)
+                {
+                    list.Add(featuredCardIds[i] ?? "");
+                }
+            }
+            return list;
+        }
+
+        public void LoadFromCloudFeatured(List<string> cloudSlots)
+        {
+            if (featuredCardIds == null || featuredCardIds.Length != SlotCount)
+            {
+                featuredCardIds = new string[SlotCount] { "", "", "" };
+            }
+
+            if (cloudSlots != null && cloudSlots.Count > 0)
+            {
+                for (int i = 0; i < SlotCount && i < cloudSlots.Count; i++)
+                {
+                    string cardId = cloudSlots[i] ?? "";
+                    featuredCardIds[i] = cardId;
+                    PlayerPrefs.SetString(GetPrefKey(i), cardId);
+                    PlayerPrefs.SetString(PREF_FEATURED_PREFIX + i, cardId);
+                }
+                PlayerPrefs.Save();
+                OnFeaturedUpdated?.Invoke();
+                Debug.Log($"<color=green>[FeaturedCards] Cartas destacadas restauradas desde Firestore: [{string.Join(", ", featuredCardIds)}]</color>");
+            }
         }
 
         public void ValidateOwnedCards()
@@ -70,6 +126,7 @@ namespace JuegoTCG.Cards
                     !PlayerCollectionManager.Instance.IsCardOwned(featuredCardIds[i]))
                 {
                     featuredCardIds[i] = "";
+                    PlayerPrefs.SetString(GetPrefKey(i), "");
                     PlayerPrefs.SetString(PREF_FEATURED_PREFIX + i, "");
                     changed = true;
                 }
@@ -118,16 +175,23 @@ namespace JuegoTCG.Cards
                 if (i != slotIndex && featuredCardIds[i] == cardId)
                 {
                     featuredCardIds[i] = "";
+                    PlayerPrefs.SetString(GetPrefKey(i), "");
                     PlayerPrefs.SetString(PREF_FEATURED_PREFIX + i, "");
                 }
             }
 
             featuredCardIds[slotIndex] = cardId ?? "";
+            PlayerPrefs.SetString(GetPrefKey(slotIndex), featuredCardIds[slotIndex]);
             PlayerPrefs.SetString(PREF_FEATURED_PREFIX + slotIndex, featuredCardIds[slotIndex]);
             PlayerPrefs.Save();
 
             Debug.Log($"<color=gold>[FeaturedCards] Carta '{cardId}' asignada a slot destacado #{slotIndex}.</color>");
             OnFeaturedUpdated?.Invoke();
+
+            if (Networking.FirebaseAuthManager.Instance != null && Networking.FirebaseAuthManager.Instance.IsAuthenticated)
+            {
+                _ = Networking.FirebaseAuthManager.Instance.SyncUserProfileToFirestoreAsync();
+            }
         }
 
         public void RemoveCardFromSlot(int slotIndex)
@@ -136,11 +200,17 @@ namespace JuegoTCG.Cards
 
             string oldId = featuredCardIds[slotIndex];
             featuredCardIds[slotIndex] = "";
+            PlayerPrefs.SetString(GetPrefKey(slotIndex), "");
             PlayerPrefs.SetString(PREF_FEATURED_PREFIX + slotIndex, "");
             PlayerPrefs.Save();
 
             Debug.Log($"<color=orange>[FeaturedCards] Carta '{oldId}' removida del slot #{slotIndex}.</color>");
             OnFeaturedUpdated?.Invoke();
+
+            if (Networking.FirebaseAuthManager.Instance != null && Networking.FirebaseAuthManager.Instance.IsAuthenticated)
+            {
+                _ = Networking.FirebaseAuthManager.Instance.SyncUserProfileToFirestoreAsync();
+            }
         }
 
         public int GetFilledSlotsCount()

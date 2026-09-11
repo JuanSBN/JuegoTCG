@@ -10,11 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
-  m_Name: card_03_Diomandé
+  m_Name: "card_03_Diomand\xC3\xA9"
+  m_EditorClassIdentifier: 
   cardId: card_03
-  playerName: Diomandé
+  playerName: "Diomand\xC3\xA9"
   teamName: FC Piloto
   position: Defensor
+  nationality: Costa de Marfil
+  countryCode: CI
   rarity: 0
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}
+  shooting: 35
+  passing: 64
+  defending: 79
+  dribbling: 66
+  diving: 50
+  reflexes: 50
+  handling: 50
+  positioning: 50
+  manualOverall: 0

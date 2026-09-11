@@ -27,6 +27,17 @@ namespace JuegoTCG.Cards
         [SerializeField] private TMP_Text positionText;
         [SerializeField] private TMP_Text rarityText;
 
+        [Header("Flag & Stats")]
+        [SerializeField] private Image flagImage;
+        [SerializeField] private TMP_Text stat1TitleText;
+        [SerializeField] private TMP_Text stat1ValueText;
+        [SerializeField] private TMP_Text stat2TitleText;
+        [SerializeField] private TMP_Text stat2ValueText;
+        [SerializeField] private TMP_Text stat3TitleText;
+        [SerializeField] private TMP_Text stat3ValueText;
+        [SerializeField] private TMP_Text stat4TitleText;
+        [SerializeField] private TMP_Text stat4ValueText;
+
         [Header("Holographic Effects")]
         [SerializeField] private Material holographicMaterial;
         private Material holoInstance;
@@ -158,7 +169,32 @@ namespace JuegoTCG.Cards
             if (positionText != null) positionText.text = data.position;
             if (rarityText != null) rarityText.text = GetRarityName(data.rarity);
 
-            // 4. Holographic Foil Material only for Card Frame (never for player photo!)
+            // 4. Flag & Stats
+            if (flagImage != null)
+            {
+                Sprite flag = CountryFlagService.GetFlag(data.countryCode);
+                if (flag != null)
+                {
+                    flagImage.sprite = flag;
+                    flagImage.gameObject.SetActive(true);
+                }
+                else
+                {
+                    flagImage.gameObject.SetActive(false);
+                }
+            }
+
+            var statsSummary = data.GetDisplayStats();
+            if (stat1TitleText != null) stat1TitleText.text = statsSummary.stat1Name;
+            if (stat1ValueText != null) stat1ValueText.text = statsSummary.stat1Value.ToString();
+            if (stat2TitleText != null) stat2TitleText.text = statsSummary.stat2Name;
+            if (stat2ValueText != null) stat2ValueText.text = statsSummary.stat2Value.ToString();
+            if (stat3TitleText != null) stat3TitleText.text = statsSummary.stat3Name;
+            if (stat3ValueText != null) stat3ValueText.text = statsSummary.stat3Value.ToString();
+            if (stat4TitleText != null) stat4TitleText.text = statsSummary.stat4Name;
+            if (stat4ValueText != null) stat4ValueText.text = statsSummary.stat4Value.ToString();
+
+            // 5. Holographic Foil Material only for Card Frame (never for player photo!)
             bool isHolo = (data.rarity == Rarity.Epica || data.rarity == Rarity.Legendaria || data.rarity == Rarity.Mitica || data.rarity == Rarity.FullArt);
             EnsureHolographicMaterial();
 

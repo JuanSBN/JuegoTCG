@@ -32,6 +32,17 @@ namespace JuegoTCG.UI
         private Label inspectFramePosText;
         private Label inspectFrameRarityText;
 
+        // Flag & Stats Banner in Inspect Modal
+        private VisualElement inspectFlagImage;
+        private Label inspectStat1Title;
+        private Label inspectStat1Value;
+        private Label inspectStat2Title;
+        private Label inspectStat2Value;
+        private Label inspectStat3Title;
+        private Label inspectStat3Value;
+        private Label inspectStat4Title;
+        private Label inspectStat4Value;
+
         // Badges
         private Label inspectCopiesBadge;
 
@@ -108,6 +119,17 @@ namespace JuegoTCG.UI
             inspectFrameTeamName = root.Q<Label>("InspectFrameTeamName");
             inspectFramePosText = root.Q<Label>("InspectFramePosText");
             inspectFrameRarityText = root.Q<Label>("InspectFrameRarityText");
+
+            // Flag & Stats Banner
+            inspectFlagImage = root.Q<VisualElement>("InspectFlagImage");
+            inspectStat1Title = root.Q<Label>("InspectStat1Title");
+            inspectStat1Value = root.Q<Label>("InspectStat1Value");
+            inspectStat2Title = root.Q<Label>("InspectStat2Title");
+            inspectStat2Value = root.Q<Label>("InspectStat2Value");
+            inspectStat3Title = root.Q<Label>("InspectStat3Title");
+            inspectStat3Value = root.Q<Label>("InspectStat3Value");
+            inspectStat4Title = root.Q<Label>("InspectStat4Title");
+            inspectStat4Value = root.Q<Label>("InspectStat4Value");
 
             inspectCopiesBadge = root.Q<Label>("InspectCopiesBadge");
 
@@ -588,32 +610,42 @@ namespace JuegoTCG.UI
                     }
                     artContainer.Add(frameEl);
 
-                    // 3. Nombre del Jugador
+                    // 3. Nombre del Jugador (Ubicado justo arriba de la fila inferior)
                     Label nameLbl = new Label(item.playerName);
                     nameLbl.AddToClassList("card-player-name-framed");
                     artContainer.Add(nameLbl);
 
-                    // 4. Caja de Información Inferior
+                    // 4. Fila Inferior: Bandera afuera a la izquierda + Estadísticas dentro de la pestaña del marco
+                    VisualElement cardBottomRow = new VisualElement();
+                    cardBottomRow.AddToClassList("card-bottom-row");
+
+                    // Bandera afuera a la izquierda
+                    VisualElement flagEl = new VisualElement();
+                    flagEl.AddToClassList("card-flag-image");
+                    string countryCode = !string.IsNullOrEmpty(item.countryCode) ? item.countryCode : (asset != null ? asset.countryCode : "ES");
+                    Sprite flagSprite = CountryFlagService.GetFlag(countryCode);
+                    if (flagSprite != null)
+                    {
+                        flagEl.style.backgroundImage = new StyleBackground(flagSprite);
+                    }
+                    cardBottomRow.Add(flagEl);
+
+                    // Pestaña del marco: Las 4 estadísticas van aquí dentro (sustituyendo equipo/posición/rareza)
                     VisualElement footerBox = new VisualElement();
                     footerBox.AddToClassList("card-frame-footer-box");
 
-                    Label teamLbl = new Label(!string.IsNullOrEmpty(item.teamName) ? item.teamName : (asset != null ? asset.teamName : "FC Barca"));
-                    teamLbl.AddToClassList("card-frame-team-name");
-                    footerBox.Add(teamLbl);
+                    VisualElement statsGroup = new VisualElement();
+                    statsGroup.AddToClassList("card-stats-group");
 
-                    VisualElement footerSubRow = new VisualElement();
-                    footerSubRow.AddToClassList("card-frame-sub-row");
+                    var statsSummary = item.GetDisplayStats();
+                    AddGridStatCol(statsGroup, statsSummary.stat1Name, statsSummary.stat1Value);
+                    AddGridStatCol(statsGroup, statsSummary.stat2Name, statsSummary.stat2Value);
+                    AddGridStatCol(statsGroup, statsSummary.stat3Name, statsSummary.stat3Value);
+                    AddGridStatCol(statsGroup, statsSummary.stat4Name, statsSummary.stat4Value);
 
-                    Label posLbl = new Label(!string.IsNullOrEmpty(item.position) ? item.position : (asset != null ? asset.position : "DEL"));
-                    posLbl.AddToClassList("card-frame-pos-text");
-                    footerSubRow.Add(posLbl);
-
-                    Label rarityLbl = new Label(item.rarity.ToString().ToUpper());
-                    rarityLbl.AddToClassList("card-frame-rarity-text");
-                    footerSubRow.Add(rarityLbl);
-
-                    footerBox.Add(footerSubRow);
-                    artContainer.Add(footerBox);
+                    footerBox.Add(statsGroup);
+                    cardBottomRow.Add(footerBox);
+                    artContainer.Add(cardBottomRow);
 
                     // 5. Badge de copias
                     Label countBadge = new Label($"×{count}");
@@ -749,6 +781,32 @@ namespace JuegoTCG.UI
             if (inspectFramePosText != null) inspectFramePosText.text = string.IsNullOrEmpty(item.position) ? "MED" : item.position.ToUpper();
             if (inspectFrameRarityText != null) inspectFrameRarityText.text = item.rarity.ToString().ToUpper();
 
+            // Bandera & Stats en Modal Inspect
+            string cCode = !string.IsNullOrEmpty(item.countryCode) ? item.countryCode : (asset != null ? asset.countryCode : "ES");
+            Sprite inspFlag = CountryFlagService.GetFlag(cCode);
+            if (inspectFlagImage != null)
+            {
+                if (inspFlag != null)
+                {
+                    inspectFlagImage.style.backgroundImage = new StyleBackground(inspFlag);
+                    inspectFlagImage.style.display = DisplayStyle.Flex;
+                }
+                else
+                {
+                    inspectFlagImage.style.display = DisplayStyle.None;
+                }
+            }
+
+            var inspStats = item.GetDisplayStats();
+            if (inspectStat1Title != null) inspectStat1Title.text = inspStats.stat1Name;
+            if (inspectStat1Value != null) inspectStat1Value.text = inspStats.stat1Value.ToString();
+            if (inspectStat2Title != null) inspectStat2Title.text = inspStats.stat2Name;
+            if (inspectStat2Value != null) inspectStat2Value.text = inspStats.stat2Value.ToString();
+            if (inspectStat3Title != null) inspectStat3Title.text = inspStats.stat3Name;
+            if (inspectStat3Value != null) inspectStat3Value.text = inspStats.stat3Value.ToString();
+            if (inspectStat4Title != null) inspectStat4Title.text = inspStats.stat4Name;
+            if (inspectStat4Value != null) inspectStat4Value.text = inspStats.stat4Value.ToString();
+
             if (inspectArt != null)
             {
                 // Tiene imagen personalizada (DataPack o defaultArt)
@@ -824,6 +882,22 @@ namespace JuegoTCG.UI
             {
                 cardInspectModal.AddToClassList("modal-hidden");
             }
+        }
+
+        private void AddGridStatCol(VisualElement parent, string title, int val)
+        {
+            var col = new VisualElement();
+            col.AddToClassList("card-stat-col");
+
+            var tLbl = new Label(title);
+            tLbl.AddToClassList("card-stat-title");
+            col.Add(tLbl);
+
+            var vLbl = new Label(val.ToString());
+            vLbl.AddToClassList("card-stat-value");
+            col.Add(vLbl);
+
+            parent.Add(col);
         }
 
         private void WireBottomNav()

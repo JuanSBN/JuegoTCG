@@ -79,6 +79,13 @@ namespace JuegoTCG.Social
         }
     }
 
+    [Serializable]
+    public class FriendCardItem
+    {
+        public Cards.CardCatalogItem card;
+        public int count = 1;
+    }
+
     /// <summary>
     /// Servicio cliente singleton para el Sistema Social de la Fase 8.
     /// Administra el código de amigo único, solicitudes de amistad y lista de amigos.
@@ -615,6 +622,167 @@ namespace JuegoTCG.Social
             }
 
             return BuildComparisonData(friendName, catalog, friendCardsCount, collectionMgr);
+        }
+
+        private readonly Dictionary<string, List<FriendCardItem>> _cachedFriendCards = new Dictionary<string, List<FriendCardItem>>();
+
+        /// <summary>
+        /// Invalida la caché de inventario de amigos para forzar una consulta fresca a Firestore.
+        /// </summary>
+        public void InvalidateFriendCardsCache(string friendUid = null)
+        {
+            if (string.IsNullOrEmpty(friendUid))
+            {
+                _cachedFriendCards.Clear();
+                Debug.Log("<color=yellow>[SocialService] Toda la caché de cartas de amigos ha sido invalidada.</color>");
+            }
+            else if (_cachedFriendCards.ContainsKey(friendUid))
+            {
+                _cachedFriendCards.Remove(friendUid);
+                Debug.Log($"<color=yellow>[SocialService] Caché de cartas del amigo {friendUid} invalidada.</color>");
+            }
+        }
+
+        /// <summary>
+        /// Obtiene asíncronamente la lista de cartas que posee un amigo desde Firestore para el flujo de intercambio (Elige qué recibir).
+        /// Si está autenticado, consulta el documento en tiempo real; de lo contrario recurre al catálogo determinista.
+        /// </summary>
+        public async Task<List<FriendCardItem>> GetFriendCardsAsync(
+            string friendUid, 
+            string friendName, 
+            int friendLevel = 10, 
+            int friendProgressPct = 50, 
+            bool forceRefresh = false)
+        {
+            Cards.PlayerCollectionManager.EnsureExists();
+            var collectionMgr = Cards.PlayerCollectionManager.Instance;
+            var catalog = collectionMgr != null ? collectionMgr.GetCatalog() : null;
+
+            if (catalog == null || catalog.Count == 0)
+            {
+                catalog = GetDefaultCatalogFallback();
+            }
+
+            // Si ya está en caché y no se fuerza refresco, devolverlo de inmediato
+            if (!forceRefresh && !string.IsNullOrEmpty(friendUid) && _cachedFriendCards.TryGetValue(friendUid, out var cachedList))
+            {
+                return cachedList;
+            }
+
+            // Consultar inventario real en Firestore si el amigo tiene UID válido y hay sesión
+            if (!string.IsNullOrEmpty(friendUid) && FirebaseAuthManager.Instance != null && FirebaseAuthManager.Instance.IsAuthenticated)
+            {
+                try
+                {
+                    string token = await FirebaseAuthManager.Instance.EnsureValidTokenAsync();
+                    var friendDoc = await FirebaseRestClient.GetUserDocAsync(token, friendUid);
+                    if (friendDoc != null)
+                    {
+                        var result = new List<FriendCardItem>();
+                        if (friendDoc.ownedCards != null)
+                        {
+                            foreach (var kvp in friendDoc.ownedCards)
+                            {
+                                if (kvp.Value > 0)
+                                {
+                                    var catItem = collectionMgr != null ? collectionMgr.GetCard(kvp.Key) : null;
+                                    if (catItem == null && catalog != null)
+                                    {
+                                        catItem = catalog.Find(c => c.cardId == kvp.Key);
+                                    }
+
+                                    if (catItem != null)
+                                    {
+                                        result.Add(new FriendCardItem
+                                        {
+                                            card = catItem,
+                                            count = kvp.Value
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
+                        _cachedFriendCards[friendUid] = result;
+                        Debug.Log($"<color=green>[SocialService] Inventario real cargado de Firestore para {friendName ?? friendUid}: {result.Count} cartas registradas.</color>");
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[SocialService] Fallo al consultar cartas reales en Firestore para {friendUid}: {ex.Message}");
+                }
+            }
+
+            // Fallback determinista (para bots, tests locales o modo sin internet)
+            var fallbackCards = GetFriendCards(friendUid, friendName, friendLevel, friendProgressPct);
+            var fallbackResult = new List<FriendCardItem>();
+            foreach (var c in fallbackCards)
+            {
+                fallbackResult.Add(new FriendCardItem { card = c, count = 1 });
+            }
+
+            if (!string.IsNullOrEmpty(friendUid))
+            {
+                _cachedFriendCards[friendUid] = fallbackResult;
+            }
+
+            return fallbackResult;
+        }
+
+        /// <summary>
+        /// Obtiene la lista de cartas que posee un amigo para el flujo de intercambio (Elige qué recibir).
+        /// Si hay inventario real en caché, lo retorna.
+        /// </summary>
+        public List<Cards.CardCatalogItem> GetFriendCards(string friendUid, string friendName, int friendLevel = 10, int friendProgressPct = 50)
+        {
+            if (!string.IsNullOrEmpty(friendUid) && _cachedFriendCards.TryGetValue(friendUid, out var cachedList))
+            {
+                var list = new List<Cards.CardCatalogItem>();
+                foreach (var item in cachedList)
+                {
+                    if (item != null && item.card != null)
+                    {
+                        list.Add(item.card);
+                    }
+                }
+                return list;
+            }
+
+            Cards.PlayerCollectionManager.EnsureExists();
+            var collectionMgr = Cards.PlayerCollectionManager.Instance;
+            var catalog = collectionMgr != null ? collectionMgr.GetCatalog() : null;
+
+            if (catalog == null || catalog.Count == 0)
+            {
+                catalog = GetDefaultCatalogFallback();
+            }
+
+            int hash = Mathf.Abs((friendName ?? "Amigo").GetHashCode());
+            var rand = new System.Random(hash);
+
+            int totalCatalog = catalog.Count;
+            // Número de cartas únicas que ofrece el amigo (entre 6 y totalCatalog, sin duplicados)
+            int friendTargetUnique = totalCatalog <= 12 
+                ? Mathf.Clamp(Mathf.RoundToInt((Mathf.Max(friendProgressPct, 60) / 100f) * totalCatalog), 6, totalCatalog)
+                : Mathf.Clamp(Mathf.RoundToInt((friendProgressPct / 100f) * totalCatalog), 1, totalCatalog);
+
+            var shuffled = new List<Cards.CardCatalogItem>(catalog);
+            for (int i = shuffled.Count - 1; i > 0; i--)
+            {
+                int k = rand.Next(i + 1);
+                var temp = shuffled[i];
+                shuffled[i] = shuffled[k];
+                shuffled[k] = temp;
+            }
+
+            var result = new List<Cards.CardCatalogItem>();
+            for (int i = 0; i < friendTargetUnique && i < shuffled.Count; i++)
+            {
+                result.Add(shuffled[i]);
+            }
+
+            return result;
         }
 
         private AlbumComparisonData BuildComparisonData(

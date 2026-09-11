@@ -11,10 +11,22 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
   m_Name: card_06_Erling_Haaland
+  m_EditorClassIdentifier: 
   cardId: card_06
   playerName: Erling Haaland
   teamName: FC Piloto
   position: Delantero
+  nationality: Noruega
+  countryCode: NO
   rarity: 1
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}
+  shooting: 93
+  passing: 70
+  defending: 45
+  dribbling: 82
+  diving: 50
+  reflexes: 50
+  handling: 50
+  positioning: 50
+  manualOverall: 88

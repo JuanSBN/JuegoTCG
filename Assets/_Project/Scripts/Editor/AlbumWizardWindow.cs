@@ -26,6 +26,90 @@ namespace JuegoTCG.EditorTools
             public string position = "DEL";
             public Rarity rarity = Rarity.Comun;
             public Sprite customArt = null;
+
+            // Nacionalidad
+            public string nationality = "España";
+            public string countryCode = "ES";
+
+            // Estadísticas Campo (1-99)
+            public int shooting = 50;
+            public int passing = 50;
+            public int defending = 50;
+            public int dribbling = 50;
+
+            // Estadísticas Portero (1-99)
+            public int diving = 50;
+            public int reflexes = 50;
+            public int handling = 50;
+            public int positioning = 50;
+
+            // Media Global manual (0 = auto)
+            public int manualOverall = 0;
+
+            public bool isExpanded = true;
+
+            public TacticalPosition TacticalLine => TacticalPositionHelper.Normalize(position);
+
+            public int CalculateOverall()
+            {
+                if (manualOverall > 0) return manualOverall;
+                switch (TacticalLine)
+                {
+                    case TacticalPosition.POR:
+                        return Mathf.Clamp(Mathf.RoundToInt(reflexes * 0.30f + diving * 0.25f + handling * 0.25f + positioning * 0.20f), 1, 99);
+                    case TacticalPosition.DEF:
+                        return Mathf.Clamp(Mathf.RoundToInt(defending * 0.50f + passing * 0.25f + dribbling * 0.20f + shooting * 0.05f), 1, 99);
+                    case TacticalPosition.MED:
+                        return Mathf.Clamp(Mathf.RoundToInt(passing * 0.35f + dribbling * 0.30f + shooting * 0.20f + defending * 0.15f), 1, 99);
+                    case TacticalPosition.DEL:
+                    default:
+                        return Mathf.Clamp(Mathf.RoundToInt(shooting * 0.45f + dribbling * 0.30f + passing * 0.20f + defending * 0.05f), 1, 99);
+                }
+            }
+
+            public void ApplyPresetStats()
+            {
+                int baseVal;
+                switch (rarity)
+                {
+                    case Rarity.Comun: baseVal = 64; break;
+                    case Rarity.Especial: baseVal = 75; break;
+                    case Rarity.Epica: baseVal = 83; break;
+                    case Rarity.Legendaria: baseVal = 89; break;
+                    case Rarity.Mitica: baseVal = 94; break;
+                    case Rarity.FullArt: baseVal = 97; break;
+                    default: baseVal = 64; break;
+                }
+
+                if (TacticalLine == TacticalPosition.POR)
+                {
+                    reflexes = Mathf.Clamp(baseVal + 1, 1, 99);
+                    diving = Mathf.Clamp(baseVal, 1, 99);
+                    handling = Mathf.Clamp(baseVal - 2, 1, 99);
+                    positioning = Mathf.Clamp(baseVal - 1, 1, 99);
+                }
+                else if (TacticalLine == TacticalPosition.DEF)
+                {
+                    defending = Mathf.Clamp(baseVal + 3, 1, 99);
+                    passing = Mathf.Clamp(baseVal - 12, 1, 99);
+                    dribbling = Mathf.Clamp(baseVal - 14, 1, 99);
+                    shooting = Mathf.Clamp(baseVal - 35, 1, 99);
+                }
+                else if (TacticalLine == TacticalPosition.MED)
+                {
+                    passing = Mathf.Clamp(baseVal + 2, 1, 99);
+                    dribbling = Mathf.Clamp(baseVal, 1, 99);
+                    shooting = Mathf.Clamp(baseVal - 6, 1, 99);
+                    defending = Mathf.Clamp(baseVal - 16, 1, 99);
+                }
+                else // DEL
+                {
+                    shooting = Mathf.Clamp(baseVal + 3, 1, 99);
+                    dribbling = Mathf.Clamp(baseVal + 1, 1, 99);
+                    passing = Mathf.Clamp(baseVal - 8, 1, 99);
+                    defending = Mathf.Clamp(baseVal - 40, 1, 99);
+                }
+            }
         }
 
         // Datos Generales del Álbum
@@ -65,7 +149,7 @@ namespace JuegoTCG.EditorTools
         public static void ShowWindow()
         {
             var window = GetWindow<AlbumWizardWindow>("Creador de Álbumes");
-            window.minSize = new Vector2(650, 700);
+            window.minSize = new Vector2(820, 720);
             window.Show();
         }
 
@@ -74,9 +158,16 @@ namespace JuegoTCG.EditorTools
             if (cardEntries.Count == 0)
             {
                 // Ejemplo inicial para orientar al creador
-                cardEntries.Add(new CardWizardEntry { cardId = "champ_01", playerName = "Jugador Estrella 1", teamName = "Equipo A", position = "DEL", rarity = Rarity.Legendaria });
-                cardEntries.Add(new CardWizardEntry { cardId = "champ_02", playerName = "Mediocampista Top", teamName = "Equipo A", position = "MED", rarity = Rarity.Epica });
-                cardEntries.Add(new CardWizardEntry { cardId = "champ_03", playerName = "Defensa Central", teamName = "Equipo B", position = "DEF", rarity = Rarity.Comun });
+                var c1 = new CardWizardEntry { cardId = "champ_01", playerName = "Jugador Estrella 1", teamName = "Equipo A", position = "DEL", rarity = Rarity.Legendaria, nationality = "Brasil", countryCode = "BR" };
+                c1.ApplyPresetStats();
+                var c2 = new CardWizardEntry { cardId = "champ_02", playerName = "Mediocampista Top", teamName = "Equipo A", position = "MED", rarity = Rarity.Epica, nationality = "España", countryCode = "ES" };
+                c2.ApplyPresetStats();
+                var c3 = new CardWizardEntry { cardId = "champ_03", playerName = "Portero Titular", teamName = "Equipo B", position = "POR", rarity = Rarity.Comun, nationality = "Argentina", countryCode = "AR" };
+                c3.ApplyPresetStats();
+
+                cardEntries.Add(c1);
+                cardEntries.Add(c2);
+                cardEntries.Add(c3);
             }
         }
 
@@ -211,13 +302,24 @@ namespace JuegoTCG.EditorTools
             if (GUILayout.Button("➕ Agregar Nueva Carta", GUILayout.Height(26)))
             {
                 string nextId = $"{GetPrefixFromAlbumId()}_{cardEntries.Count + 1:D2}";
-                cardEntries.Add(new CardWizardEntry { cardId = nextId, playerName = "Nuevo Jugador", position = "DEL", rarity = Rarity.Comun });
+                var newC = new CardWizardEntry { cardId = nextId, playerName = "Nuevo Jugador", position = "DEL", rarity = Rarity.Comun, nationality = "España", countryCode = "ES" };
+                newC.ApplyPresetStats();
+                cardEntries.Add(newC);
             }
-            if (GUILayout.Button("🔄 Re-numerar IDs", GUILayout.Height(26), GUILayout.Width(130)))
+            if (GUILayout.Button("⚡ Auto-Stats Todas por Rareza", GUILayout.Height(26), GUILayout.Width(190)))
+            {
+                foreach (var c in cardEntries) c.ApplyPresetStats();
+            }
+            if (GUILayout.Button("🔄 Re-numerar IDs", GUILayout.Height(26), GUILayout.Width(115)))
             {
                 RenumberCardIds();
             }
-            if (GUILayout.Button("🗑️ Limpiar Todo", GUILayout.Height(26), GUILayout.Width(100)))
+            if (GUILayout.Button("📂 Expandir / Colapsar", GUILayout.Height(26), GUILayout.Width(140)))
+            {
+                bool anyExpanded = cardEntries.Exists(c => c.isExpanded);
+                foreach (var c in cardEntries) c.isExpanded = !anyExpanded;
+            }
+            if (GUILayout.Button("🗑️ Limpiar", GUILayout.Height(26), GUILayout.Width(75)))
             {
                 if (EditorUtility.DisplayDialog("Limpiar Cartas", "¿Seguro que deseas vaciar la lista?", "Sí, vaciar", "Cancelar"))
                 {
@@ -227,51 +329,126 @@ namespace JuegoTCG.EditorTools
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(6);
 
-            // Cabecera de tabla
-            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-            GUILayout.Label("#", GUILayout.Width(25));
-            GUILayout.Label("ID Carta", GUILayout.Width(90));
-            GUILayout.Label("Nombre Jugador", GUILayout.Width(140));
-            GUILayout.Label("Posición", GUILayout.Width(60));
-            GUILayout.Label("Equipo", GUILayout.Width(100));
-            GUILayout.Label("Rareza", GUILayout.Width(95));
-            GUILayout.Label("Sprite (Opcional)", GUILayout.Width(90));
-            GUILayout.Label("", GUILayout.Width(25));
-            EditorGUILayout.EndHorizontal();
-
             for (int i = 0; i < cardEntries.Count; i++)
             {
                 var entry = cardEntries[i];
-                EditorGUILayout.BeginHorizontal("box");
+                EditorGUILayout.BeginVertical("box");
 
-                GUILayout.Label((i + 1).ToString(), GUILayout.Width(25));
-                entry.cardId = EditorGUILayout.TextField(entry.cardId, GUILayout.Width(90));
-                entry.playerName = EditorGUILayout.TextField(entry.playerName, GUILayout.Width(140));
-                entry.position = EditorGUILayout.TextField(entry.position, GUILayout.Width(60));
-                entry.teamName = EditorGUILayout.TextField(entry.teamName, GUILayout.Width(100));
-                entry.rarity = (Rarity)EditorGUILayout.EnumPopup(entry.rarity, GUILayout.Width(95));
-                entry.customArt = (Sprite)EditorGUILayout.ObjectField(entry.customArt, typeof(Sprite), false, GUILayout.Width(90));
+                // Fila 1: Datos Principales de la Carta
+                EditorGUILayout.BeginHorizontal();
+                entry.isExpanded = EditorGUILayout.Foldout(entry.isExpanded, $"#{i + 1}", true, EditorStyles.foldout);
 
-                if (GUILayout.Button("X", GUILayout.Width(25)))
+                GUILayout.Label("ID:", GUILayout.Width(20));
+                entry.cardId = EditorGUILayout.TextField(entry.cardId, GUILayout.Width(75));
+
+                GUILayout.Label("Nombre:", GUILayout.Width(50));
+                entry.playerName = EditorGUILayout.TextField(entry.playerName, GUILayout.Width(125));
+
+                GUILayout.Label("Pos:", GUILayout.Width(30));
+                string oldPos = entry.position;
+                entry.position = EditorGUILayout.TextField(entry.position, GUILayout.Width(45));
+                if (oldPos != entry.position)
                 {
-                    cardEntries.RemoveAt(i);
-                    break;
+                    entry.ApplyPresetStats();
                 }
 
+                GUILayout.Label("País:", GUILayout.Width(32));
+                entry.nationality = EditorGUILayout.TextField(entry.nationality, GUILayout.Width(80));
+
+                GUILayout.Label("Cód:", GUILayout.Width(30));
+                entry.countryCode = EditorGUILayout.TextField(entry.countryCode, GUILayout.Width(32)).ToUpperInvariant();
+
+                GUILayout.Label("Equipo:", GUILayout.Width(48));
+                entry.teamName = EditorGUILayout.TextField(entry.teamName, GUILayout.Width(90));
+
+                Rarity oldRarity = entry.rarity;
+                entry.rarity = (Rarity)EditorGUILayout.EnumPopup(entry.rarity, GUILayout.Width(90));
+                if (oldRarity != entry.rarity)
+                {
+                    entry.ApplyPresetStats();
+                }
+
+                // Badge de OVR
+                int ovr = entry.CalculateOverall();
+                GUIStyle ovrStyle = new GUIStyle(EditorStyles.boldLabel)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    normal = { textColor = ovr >= 90 ? new Color(1f, 0.85f, 0.2f) : (ovr >= 80 ? new Color(0.3f, 0.8f, 1f) : Color.white) }
+                };
+                GUILayout.Label($"OVR:{ovr}", ovrStyle, GUILayout.Width(50));
+
+                entry.customArt = (Sprite)EditorGUILayout.ObjectField(entry.customArt, typeof(Sprite), false, GUILayout.Width(70));
+
+                if (GUILayout.Button("✕", GUILayout.Width(22)))
+                {
+                    cardEntries.RemoveAt(i);
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.EndVertical();
+                    break;
+                }
                 EditorGUILayout.EndHorizontal();
+
+                // Fila 2 (Plegable): 4 Estadísticas de Juego (Campo vs Portero)
+                if (entry.isExpanded)
+                {
+                    EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+                    GUILayout.Space(15);
+
+                    if (entry.TacticalLine == TacticalPosition.POR)
+                    {
+                        GUILayout.Label("🧤 PORTERO:", EditorStyles.miniBoldLabel, GUILayout.Width(75));
+                        GUILayout.Label("EST:", GUILayout.Width(28));
+                        entry.diving = EditorGUILayout.IntField(entry.diving, GUILayout.Width(36));
+                        GUILayout.Label("REF:", GUILayout.Width(28));
+                        entry.reflexes = EditorGUILayout.IntField(entry.reflexes, GUILayout.Width(36));
+                        GUILayout.Label("PAR:", GUILayout.Width(28));
+                        entry.handling = EditorGUILayout.IntField(entry.handling, GUILayout.Width(36));
+                        GUILayout.Label("COL:", GUILayout.Width(28));
+                        entry.positioning = EditorGUILayout.IntField(entry.positioning, GUILayout.Width(36));
+                    }
+                    else
+                    {
+                        GUILayout.Label("⚽ CAMPO:", EditorStyles.miniBoldLabel, GUILayout.Width(75));
+                        GUILayout.Label("TIR:", GUILayout.Width(28));
+                        entry.shooting = EditorGUILayout.IntField(entry.shooting, GUILayout.Width(36));
+                        GUILayout.Label("PAS:", GUILayout.Width(28));
+                        entry.passing = EditorGUILayout.IntField(entry.passing, GUILayout.Width(36));
+                        GUILayout.Label("DEF:", GUILayout.Width(28));
+                        entry.defending = EditorGUILayout.IntField(entry.defending, GUILayout.Width(36));
+                        GUILayout.Label("REG:", GUILayout.Width(28));
+                        entry.dribbling = EditorGUILayout.IntField(entry.dribbling, GUILayout.Width(36));
+                    }
+
+                    GUILayout.Space(10);
+                    GUILayout.Label("OVR Manual (0=Auto):", GUILayout.Width(130));
+                    entry.manualOverall = EditorGUILayout.IntField(entry.manualOverall, GUILayout.Width(36));
+
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button("⚡ Preset Stats", EditorStyles.miniButton, GUILayout.Width(90)))
+                    {
+                        entry.ApplyPresetStats();
+                    }
+
+                    EditorGUILayout.EndHorizontal();
+                }
+
+                EditorGUILayout.EndVertical();
             }
         }
 
         private void DrawCsvImportTab()
         {
             EditorGUILayout.HelpBox(
-                "Pega aquí una lista copiada de Excel o Google Sheets con las columnas:\n" +
-                "[ID] [Nombre Jugador] [Posición] [Equipo] [Rareza]\n\n" +
-                "Valores aceptados de Rareza: Comun, Especial, Epica, Legendaria, Mitica, FullArt\n" +
-                "Ejemplo:\n" +
-                "champ_01\tVinícius Jr.\tDEL\tReal Madrid\tLegendaria\n" +
-                "champ_02\tJude Bellingham\tMED\tReal Madrid\tLegendaria",
-                MessageType.None
+                "Pega aquí una lista copiada de Excel o Google Sheets con las siguientes columnas:\n\n" +
+                "[ID] \\t [Nombre Jugador] \\t [Posición] \\t [Equipo] \\t [Rareza] \\t [País] \\t [CódPaís] \\t [Stat1] \\t [Stat2] \\t [Stat3] \\t [Stat4] \\t [OVR]\n\n" +
+                "• Si solo pegas las 5 columnas tradicionales ([ID] [Nombre] [Pos] [Equipo] [Rareza]), el sistema asignará país por defecto y auto-calculará las estadísticas según posición y rareza.\n" +
+                "• Para Porteros: Stat1=EST, Stat2=REF, Stat3=PAR, Stat4=COL.\n" +
+                "• Para Jugadores de Campo: Stat1=TIR, Stat2=PAS, Stat3=DEF, Stat4=REG.\n\n" +
+                "Ejemplo con atributos modernos:\n" +
+                "champ_01\\tLamine Yamal\\tDEL\\tFC Barcelona\\tMitica\\tEspaña\\tES\\t84\\t86\\t38\\t92\\t86\n" +
+                "champ_02\\tLionel Messi\\tMED\\tInter Miami\\tLegendaria\\tArgentina\\tAR\\t88\\t92\\t35\\t93\\t90\n" +
+                "champ_03\\tThibaut Courtois\\tPOR\\tReal Madrid\\tLegendaria\\tBélgica\\tBE\\t85\\t90\\t88\\t86\\t89",
+                MessageType.Info
             );
 
             csvImportText = EditorGUILayout.TextArea(csvImportText, GUILayout.Height(130));
@@ -414,6 +591,25 @@ namespace JuegoTCG.EditorTools
                     card.albumId = album.albumId;
                     card.defaultArt = entry.customArt;
 
+                    // Nacionalidad y Bandera
+                    card.nationality = !string.IsNullOrWhiteSpace(entry.nationality) ? entry.nationality.Trim() : "España";
+                    card.countryCode = !string.IsNullOrWhiteSpace(entry.countryCode) ? entry.countryCode.Trim().ToUpperInvariant() : "ES";
+
+                    // Estadísticas de Campo
+                    card.shooting = Mathf.Clamp(entry.shooting, 1, 99);
+                    card.passing = Mathf.Clamp(entry.passing, 1, 99);
+                    card.defending = Mathf.Clamp(entry.defending, 1, 99);
+                    card.dribbling = Mathf.Clamp(entry.dribbling, 1, 99);
+
+                    // Estadísticas de Portero
+                    card.diving = Mathf.Clamp(entry.diving, 1, 99);
+                    card.reflexes = Mathf.Clamp(entry.reflexes, 1, 99);
+                    card.handling = Mathf.Clamp(entry.handling, 1, 99);
+                    card.positioning = Mathf.Clamp(entry.positioning, 1, 99);
+
+                    // Media Global (0 = cálculo ponderado FIFA)
+                    card.manualOverall = Mathf.Clamp(entry.manualOverall, 0, 99);
+
                     string safeName = SanitizeFileName(entry.playerName);
                     string cardPathSO = $"{scriptableObjectsDir}/{card.cardId}_{safeName}.asset";
                     string cardPathRes = $"{resourcesDir}/{card.cardId}_{safeName}.asset";
@@ -471,7 +667,7 @@ namespace JuegoTCG.EditorTools
 
             EditorUtility.DisplayDialog(
                 "¡Álbum Creado Exitosamente!",
-                $"El álbum '{albumName}' con {cardEntries.Count} cartas y su sobre correspondiente " +
+                $"El álbum '{albumName}' con {cardEntries.Count} cartas con nacionalidad y estadísticas, junto a su sobre para la tienda, " +
                 $"fueron generados e integrados correctamente en:\n\n{resourcesDir}\n\n¡Listo para jugar y compilar!",
                 "¡Excelente!"
             );
@@ -499,6 +695,11 @@ namespace JuegoTCG.EditorTools
                 sb.AppendLine($"      \"cardId\": \"{c.cardId}\",");
                 sb.AppendLine($"      \"realName\": \"{c.playerName}\",");
                 sb.AppendLine($"      \"realTeam\": \"{c.teamName}\",");
+                sb.AppendLine($"      \"position\": \"{c.position}\",");
+                sb.AppendLine($"      \"rarity\": \"{c.rarity}\",");
+                sb.AppendLine($"      \"nationality\": \"{c.nationality}\",");
+                sb.AppendLine($"      \"countryCode\": \"{c.countryCode}\",");
+                sb.AppendLine($"      \"overall\": {c.CalculateOverall()},");
                 sb.AppendLine($"      \"photoFileName\": \"{c.cardId}.png\"");
                 sb.Append("    }");
                 if (i < cardEntries.Count - 1) sb.Append(",");
@@ -518,10 +719,14 @@ namespace JuegoTCG.EditorTools
             if (string.IsNullOrEmpty(savePath)) return;
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("CardId,PlayerName,Position,TeamName,Rarity");
+            sb.AppendLine("CardId,PlayerName,Position,TeamName,Rarity,Nationality,CountryCode,Stat1,Stat2,Stat3,Stat4,Overall");
             foreach (var c in cardEntries)
             {
-                sb.AppendLine($"{c.cardId},{c.playerName},{c.position},{c.teamName},{c.rarity}");
+                int s1 = c.TacticalLine == TacticalPosition.POR ? c.diving : c.shooting;
+                int s2 = c.TacticalLine == TacticalPosition.POR ? c.reflexes : c.passing;
+                int s3 = c.TacticalLine == TacticalPosition.POR ? c.handling : c.defending;
+                int s4 = c.TacticalLine == TacticalPosition.POR ? c.positioning : c.dribbling;
+                sb.AppendLine($"{c.cardId},{c.playerName},{c.position},{c.teamName},{c.rarity},{c.nationality},{c.countryCode},{s1},{s2},{s3},{s4},{c.CalculateOverall()}");
             }
 
             File.WriteAllText(savePath, sb.ToString(), Encoding.UTF8);
@@ -558,20 +763,54 @@ namespace JuegoTCG.EditorTools
                         Enum.TryParse(tokens[4].Trim(), true, out rar);
                     }
 
-                    cardEntries.Add(new CardWizardEntry
+                    string nat = tokens.Length > 5 && !string.IsNullOrWhiteSpace(tokens[5]) ? tokens[5].Trim() : "España";
+                    string code = tokens.Length > 6 && !string.IsNullOrWhiteSpace(tokens[6]) ? tokens[6].Trim().ToUpperInvariant() : "ES";
+
+                    var newEntry = new CardWizardEntry
                     {
                         cardId = id,
                         playerName = name,
                         position = pos,
                         teamName = team,
-                        rarity = rar
-                    });
+                        rarity = rar,
+                        nationality = nat,
+                        countryCode = code
+                    };
+
+                    newEntry.ApplyPresetStats();
+
+                    if (tokens.Length > 7 && int.TryParse(tokens[7].Trim(), out int s1))
+                    {
+                        if (newEntry.TacticalLine == TacticalPosition.POR) newEntry.diving = s1;
+                        else newEntry.shooting = s1;
+                    }
+                    if (tokens.Length > 8 && int.TryParse(tokens[8].Trim(), out int s2))
+                    {
+                        if (newEntry.TacticalLine == TacticalPosition.POR) newEntry.reflexes = s2;
+                        else newEntry.passing = s2;
+                    }
+                    if (tokens.Length > 9 && int.TryParse(tokens[9].Trim(), out int s3))
+                    {
+                        if (newEntry.TacticalLine == TacticalPosition.POR) newEntry.handling = s3;
+                        else newEntry.defending = s3;
+                    }
+                    if (tokens.Length > 10 && int.TryParse(tokens[10].Trim(), out int s4))
+                    {
+                        if (newEntry.TacticalLine == TacticalPosition.POR) newEntry.positioning = s4;
+                        else newEntry.dribbling = s4;
+                    }
+                    if (tokens.Length > 11 && int.TryParse(tokens[11].Trim(), out int ovr))
+                    {
+                        newEntry.manualOverall = ovr;
+                    }
+
+                    cardEntries.Add(newEntry);
                     imported++;
                 }
             }
 
             selectedTab = 0; // Regresar a la tabla visual
-            EditorUtility.DisplayDialog("Importación Completada", $"Se importaron exitosamente {imported} cartas a la tabla.", "Aceptar");
+            EditorUtility.DisplayDialog("Importación Completada", $"Se importaron exitosamente {imported} cartas con sus nacionalidades y estadísticas.", "Aceptar");
         }
 
         private void RenumberCardIds()

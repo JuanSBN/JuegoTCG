@@ -16,6 +16,17 @@ MonoBehaviour:
   playerName: Lamine Yamal
   teamName: FC Barca
   position: Extremo Derecho
+  nationality: "Espa\xF1a"
+  countryCode: ES
   rarity: 4
   albumId: album_piloto_liga
   defaultArt: {fileID: 21300000, guid: 70fc04af2266de144afd416e097966de, type: 3}
+  shooting: 83
+  passing: 84
+  defending: 38
+  dribbling: 89
+  diving: 50
+  reflexes: 50
+  handling: 50
+  positioning: 50
+  manualOverall: 85

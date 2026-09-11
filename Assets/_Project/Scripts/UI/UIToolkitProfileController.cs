@@ -855,10 +855,16 @@ namespace JuegoTCG.UI
                 VisualElement photoEl = cardEl.Q<VisualElement>(className: "featured-art-photo");
                 VisualElement frameEl = cardEl.Q<VisualElement>(className: "featured-art-frame");
                 Label framedNameLabel = cardEl.Q<Label>(className: "featured-player-name-framed");
-                VisualElement footerBox = cardEl.Q<VisualElement>(className: "featured-frame-footer-box");
-                Label teamLabel = cardEl.Q<Label>(className: "featured-frame-team-name");
-                Label posLabel = cardEl.Q<Label>(className: "featured-frame-pos-text");
-                Label rarityLabel = cardEl.Q<Label>(className: "featured-frame-rarity-text");
+                VisualElement bottomRow = cardEl.Q<VisualElement>(className: "featured-bottom-row");
+                VisualElement flagEl = cardEl.Q<VisualElement>(className: "featured-flag-image");
+                Label s1Title = cardEl.Q<Label>($"Featured_Stat1Title_{i + 1}");
+                Label s1Val = cardEl.Q<Label>($"Featured_Stat1Val_{i + 1}");
+                Label s2Title = cardEl.Q<Label>($"Featured_Stat2Title_{i + 1}");
+                Label s2Val = cardEl.Q<Label>($"Featured_Stat2Val_{i + 1}");
+                Label s3Title = cardEl.Q<Label>($"Featured_Stat3Title_{i + 1}");
+                Label s3Val = cardEl.Q<Label>($"Featured_Stat3Val_{i + 1}");
+                Label s4Title = cardEl.Q<Label>($"Featured_Stat4Title_{i + 1}");
+                Label s4Val = cardEl.Q<Label>($"Featured_Stat4Val_{i + 1}");
                 VisualElement avatarCircle = cardEl.Q<VisualElement>(className: "featured-avatar-circle");
                 Label avatarText = cardEl.Q<Label>(className: "featured-avatar-text");
                 VisualElement emptyContainer = cardEl.Q<VisualElement>(className: "featured-empty-container");
@@ -879,7 +885,7 @@ namespace JuegoTCG.UI
                     if (photoEl != null) photoEl.style.display = DisplayStyle.None;
                     if (frameEl != null) frameEl.style.display = DisplayStyle.None;
                     if (framedNameLabel != null) framedNameLabel.style.display = DisplayStyle.None;
-                    if (footerBox != null) footerBox.style.display = DisplayStyle.None;
+                    if (bottomRow != null) bottomRow.style.display = DisplayStyle.None;
                     if (avatarCircle != null) avatarCircle.style.display = DisplayStyle.None;
                     if (emptyContainer != null) emptyContainer.style.display = DisplayStyle.Flex;
                     if (nameLabel != null) nameLabel.style.display = DisplayStyle.None;
@@ -893,7 +899,7 @@ namespace JuegoTCG.UI
                     if (photoEl != null) photoEl.style.display = DisplayStyle.None;
                     if (frameEl != null) frameEl.style.display = DisplayStyle.None;
                     if (framedNameLabel != null) framedNameLabel.style.display = DisplayStyle.None;
-                    if (footerBox != null) footerBox.style.display = DisplayStyle.None;
+                    if (bottomRow != null) bottomRow.style.display = DisplayStyle.None;
                     if (avatarCircle != null) avatarCircle.style.display = DisplayStyle.None;
                     if (emptyContainer != null) emptyContainer.style.display = DisplayStyle.Flex;
                     if (nameLabel != null) nameLabel.style.display = DisplayStyle.None;
@@ -919,41 +925,7 @@ namespace JuegoTCG.UI
                         photoEl.style.backgroundImage = new StyleBackground(cardArt);
                         photoEl.style.display = DisplayStyle.Flex;
                     }
-
-                    if (frameEl != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                    {
-                        if (isHolo)
-                        {
-                            RenderTexture holoRT = GetHoloFrameRT(rIndex);
-                            frameEl.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
-                        }
-                        else
-                        {
-                            frameEl.style.backgroundImage = new StyleBackground(rarityFrames[rIndex]);
-                        }
-                        frameEl.style.display = DisplayStyle.Flex;
-                    }
-                    else if (frameEl != null)
-                    {
-                        frameEl.style.display = DisplayStyle.None;
-                    }
-
-                    if (framedNameLabel != null)
-                    {
-                        framedNameLabel.text = cardItem.playerName;
-                        framedNameLabel.style.display = DisplayStyle.Flex;
-                    }
-
-                    if (footerBox != null)
-                    {
-                        if (teamLabel != null) teamLabel.text = !string.IsNullOrEmpty(cardItem.teamName) ? cardItem.teamName : (asset != null ? asset.teamName : "FC Barca");
-                        if (posLabel != null) posLabel.text = cardItem.position.ToString().ToUpper();
-                        if (rarityLabel != null) rarityLabel.text = cardItem.rarity.ToString().ToUpper();
-                        footerBox.style.display = DisplayStyle.Flex;
-                    }
-
                     if (avatarCircle != null) avatarCircle.style.display = DisplayStyle.None;
-                    if (nameLabel != null) nameLabel.style.display = DisplayStyle.None;
                 }
                 else
                 {
@@ -963,46 +935,69 @@ namespace JuegoTCG.UI
                         photoEl.AddToClassList("featured-art-photo-default");
                         photoEl.style.display = DisplayStyle.Flex;
                     }
-
-                    if (frameEl != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
-                    {
-                        if (isHolo)
-                        {
-                            RenderTexture holoRT = GetHoloFrameRT(rIndex);
-                            frameEl.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
-                        }
-                        else
-                        {
-                            frameEl.style.backgroundImage = new StyleBackground(rarityFrames[rIndex]);
-                        }
-                        frameEl.style.display = DisplayStyle.Flex;
-                    }
-                    else if (frameEl != null)
-                    {
-                        frameEl.style.display = DisplayStyle.None;
-                    }
-
-                    if (framedNameLabel != null)
-                    {
-                        framedNameLabel.text = cardItem.playerName;
-                        framedNameLabel.style.display = DisplayStyle.Flex;
-                    }
-
-                    if (footerBox != null)
-                    {
-                        if (teamLabel != null) teamLabel.text = !string.IsNullOrEmpty(cardItem.teamName) ? cardItem.teamName : (asset != null ? asset.teamName : "FC Barca");
-                        if (posLabel != null) posLabel.text = cardItem.position.ToString().ToUpper();
-                        if (rarityLabel != null) rarityLabel.text = cardItem.rarity.ToString().ToUpper();
-                        footerBox.style.display = DisplayStyle.Flex;
-                    }
-
                     if (avatarCircle != null)
                     {
                         avatarCircle.style.display = DisplayStyle.Flex;
                         if (avatarText != null) avatarText.text = cardItem.initials;
                     }
-                    if (nameLabel != null) nameLabel.style.display = DisplayStyle.None;
                 }
+
+                if (frameEl != null && rarityFrames != null && rIndex >= 0 && rIndex < rarityFrames.Length && rarityFrames[rIndex] != null)
+                {
+                    if (isHolo)
+                    {
+                        RenderTexture holoRT = GetHoloFrameRT(rIndex);
+                        frameEl.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(holoRT));
+                    }
+                    else
+                    {
+                        frameEl.style.backgroundImage = new StyleBackground(rarityFrames[rIndex]);
+                    }
+                    frameEl.style.display = DisplayStyle.Flex;
+                }
+                else if (frameEl != null)
+                {
+                    frameEl.style.display = DisplayStyle.None;
+                }
+
+                if (framedNameLabel != null)
+                {
+                    framedNameLabel.text = cardItem.playerName;
+                    framedNameLabel.style.display = DisplayStyle.Flex;
+                }
+
+                // Fila Inferior: Bandera afuera a la izquierda + Estadísticas dentro del marco
+                if (bottomRow != null)
+                {
+                    string countryCode = !string.IsNullOrEmpty(cardItem.countryCode) ? cardItem.countryCode : (asset != null ? asset.countryCode : "ES");
+                    Sprite flagSprite = CountryFlagService.GetFlag(countryCode);
+                    if (flagEl != null)
+                    {
+                        if (flagSprite != null)
+                        {
+                            flagEl.style.backgroundImage = new StyleBackground(flagSprite);
+                            flagEl.style.display = DisplayStyle.Flex;
+                        }
+                        else
+                        {
+                            flagEl.style.display = DisplayStyle.None;
+                        }
+                    }
+
+                    var stats = cardItem.GetDisplayStats();
+                    if (s1Title != null) s1Title.text = stats.stat1Name;
+                    if (s1Val != null) s1Val.text = stats.stat1Value.ToString();
+                    if (s2Title != null) s2Title.text = stats.stat2Name;
+                    if (s2Val != null) s2Val.text = stats.stat2Value.ToString();
+                    if (s3Title != null) s3Title.text = stats.stat3Name;
+                    if (s3Val != null) s3Val.text = stats.stat3Value.ToString();
+                    if (s4Title != null) s4Title.text = stats.stat4Name;
+                    if (s4Val != null) s4Val.text = stats.stat4Value.ToString();
+
+                    bottomRow.style.display = DisplayStyle.Flex;
+                }
+
+                if (nameLabel != null) nameLabel.style.display = DisplayStyle.None;
             }
         }
 

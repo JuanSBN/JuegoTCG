@@ -52,6 +52,8 @@ namespace JuegoTCG.Networking
         public int coins = 0;
         public Dictionary<string, int> ownedCards = new Dictionary<string, int>();
         public List<FriendData> friends = new List<FriendData>();
+        public List<string> ideal11 = new List<string>();
+        public List<string> featuredCards = new List<string>();
     }
 
     public class FriendStatsUpdate
@@ -241,7 +243,9 @@ namespace JuegoTCG.Networking
             int albumProgress, 
             int coins = 0,
             List<FriendData> friends = null,
-            Dictionary<string, int> ownedCards = null)
+            Dictionary<string, int> ownedCards = null,
+            List<string> ideal11 = null,
+            List<string> featuredCards = null)
         {
             if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(uid)) return false;
 
@@ -298,6 +302,46 @@ namespace JuegoTCG.Networking
                 }
                 sb.Append("}}}");
             }
+            else if (ownedCards != null)
+            {
+                sb.Append(",\"ownedCards\":{\"mapValue\":{}}");
+            }
+
+            if (ideal11 != null)
+            {
+                if (ideal11.Count > 0)
+                {
+                    sb.Append(",\"ideal11\":{\"arrayValue\":{\"values\":[");
+                    for (int i = 0; i < ideal11.Count; i++)
+                    {
+                        if (i > 0) sb.Append(",");
+                        sb.Append($"{{\"stringValue\":\"{Escape(ideal11[i] ?? "")}\"}}");
+                    }
+                    sb.Append("]}}");
+                }
+                else
+                {
+                    sb.Append(",\"ideal11\":{\"arrayValue\":{}}");
+                }
+            }
+
+            if (featuredCards != null)
+            {
+                if (featuredCards.Count > 0)
+                {
+                    sb.Append(",\"featuredCards\":{\"arrayValue\":{\"values\":[");
+                    for (int i = 0; i < featuredCards.Count; i++)
+                    {
+                        if (i > 0) sb.Append(",");
+                        sb.Append($"{{\"stringValue\":\"{Escape(featuredCards[i] ?? "")}\"}}");
+                    }
+                    sb.Append("]}}");
+                }
+                else
+                {
+                    sb.Append(",\"featuredCards\":{\"arrayValue\":{}}");
+                }
+            }
 
             sb.Append("}}");
 
@@ -331,7 +375,9 @@ namespace JuegoTCG.Networking
                 albumProgress = ExtractFieldInt(res, "albumProgress"),
                 coins = ExtractFieldInt(res, "coins"),
                 ownedCards = ParseOwnedCardsMap(res),
-                friends = ParseFriendsArray(res)
+                friends = ParseFriendsArray(res),
+                ideal11 = ParseStringArray(res, "ideal11"),
+                featuredCards = ParseStringArray(res, "featuredCards")
             };
         }
 
@@ -605,6 +651,22 @@ namespace JuegoTCG.Networking
                 Debug.LogWarning($"[FirebaseRest] Error en GetIncomingTradeOffersAsync (myUid={myUid}): {res}");
                 return list;
             }
+
+            return ParseTradeOffers(res, isIncoming: true);
+        }
+
+        public static async Task<List<TradeOfferItem>> GetIncomingTradeOffersAllStatusAsync(string idToken, string myUid)
+        {
+            var list = new List<TradeOfferItem>();
+            if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(myUid)) return list;
+
+            string url = $"{FirestoreBaseUrl}:runQuery";
+            string queryJson = "{\"structuredQuery\":{\"from\":[{\"collectionId\":\"tradeOffers\"}],\"where\":{" +
+                "\"fieldFilter\":{\"field\":{\"fieldPath\":\"toUid\"},\"op\":\"EQUAL\",\"value\":{\"stringValue\":\"" + Escape(myUid) + "\"}}" +
+                "}}}";
+
+            string res = await PostJsonAsync(url, queryJson, idToken);
+            if (string.IsNullOrEmpty(res) || res.Contains("\"error\"")) return list;
 
             return ParseTradeOffers(res, isIncoming: true);
         }
@@ -1086,7 +1148,9 @@ namespace JuegoTCG.Networking
                 albumProgress = ExtractFieldInt(json, "albumProgress"),
                 coins = ExtractFieldInt(json, "coins"),
                 ownedCards = ParseOwnedCardsMap(json),
-                friends = ParseFriendsArray(json)
+                friends = ParseFriendsArray(json),
+                ideal11 = ParseStringArray(json, "ideal11"),
+                featuredCards = ParseStringArray(json, "featuredCards")
             };
         }
 
@@ -1200,6 +1264,24 @@ namespace JuegoTCG.Networking
             if (match.Success && int.TryParse(match.Groups[1].Value, out int val)) return val;
             return 0;
         }
+
+        private static List<string> ParseStringArray(string json, string fieldName)
+        {
+            var list = new List<string>();
+            if (string.IsNullOrEmpty(json) || !json.Contains($"\"{fieldName}\"")) return list;
+
+            var arrayMatch = Regex.Match(json, $"\"{fieldName}\"\\s*:\\s*\\{{\\s*\"arrayValue\"\\s*:\\s*\\{{\\s*\"values\"\\s*:\\s*\\[([\\s\\S]*?)\\]\\s*\\}}");
+            if (!arrayMatch.Success) return list;
+
+            string valuesBlock = arrayMatch.Groups[1].Value;
+            var matches = Regex.Matches(valuesBlock, "\\{\"stringValue\"\\s*:\\s*\"([^\"]*)\"\\}");
+            foreach (Match m in matches)
+            {
+                list.Add(m.Groups[1].Value);
+            }
+            return list;
+        }
+
         private static List<TradeOfferItem> ParseTradeOffers(string json, bool isIncoming)
         {
             var list = new List<TradeOfferItem>();

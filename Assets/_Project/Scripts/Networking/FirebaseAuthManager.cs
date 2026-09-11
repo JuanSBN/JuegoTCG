@@ -327,8 +327,16 @@ namespace JuegoTCG.Networking
                 ? Cards.PlayerCollectionManager.Instance.GetOwnedCardsMap()
                 : null;
 
+            var ideal11List = Cards.Ideal11SquadManager.Instance != null
+                ? Cards.Ideal11SquadManager.Instance.GetSquadCardIds()
+                : null;
+
+            var featuredList = Cards.FeaturedCardsManager.Instance != null
+                ? Cards.FeaturedCardsManager.Instance.GetFeaturedCardIds()
+                : null;
+
             await FirebaseRestClient.UpsertUserDocAsync(
-                idToken, userId, displayName, FriendCode, photoUrl, playerLevel, power, albumProgress, coins, friendsList, ownedCards);
+                idToken, userId, displayName, FriendCode, photoUrl, playerLevel, power, albumProgress, coins, friendsList, ownedCards, ideal11List, featuredList);
         }
 
         /// <summary>
@@ -564,6 +572,8 @@ namespace JuegoTCG.Networking
             {
                 Cards.PlayerCollectionManager.EnsureExists();
                 Social.SocialService.EnsureExists();
+                Cards.Ideal11SquadManager.EnsureExists();
+                Cards.FeaturedCardsManager.EnsureExists();
 
                 Debug.Log($"<color=cyan>[Auth] Consultando perfil en Firestore para UID={uid}...</color>");
                 var cloudDoc = await FirebaseRestClient.GetUserDocAsync(idToken, uid);
@@ -613,6 +623,18 @@ namespace JuegoTCG.Networking
                         collectionPower = Cards.PlayerCollectionManager.Instance.CollectionPower;
                     }
 
+                    // Restaurar alineación 11 Ideal desde Firestore
+                    if (Cards.Ideal11SquadManager.Instance != null && cloudDoc.ideal11 != null && cloudDoc.ideal11.Count > 0)
+                    {
+                        Cards.Ideal11SquadManager.Instance.LoadFromCloudSquad(cloudDoc.ideal11);
+                    }
+
+                    // Restaurar cartas destacadas desde Firestore
+                    if (Cards.FeaturedCardsManager.Instance != null && cloudDoc.featuredCards != null && cloudDoc.featuredCards.Count > 0)
+                    {
+                        Cards.FeaturedCardsManager.Instance.LoadFromCloudFeatured(cloudDoc.featuredCards);
+                    }
+
                     // Restaurar amigos en SocialService
                     if (Social.SocialService.Instance != null)
                     {
@@ -622,6 +644,13 @@ namespace JuegoTCG.Networking
                         }
                         // Disparar sincronización con Firestore en segundo plano para traer nuevas solicitudes o amigos aceptados bidireccionalmente
                         _ = Social.SocialService.Instance.RefreshCloudRequestsAndFriendsAsync();
+                    }
+
+                    // Sincronizar y reconciliar intercambios en segundo plano para asegurar que cartas de trades se acrediten
+                    Social.TradeService.EnsureExists();
+                    if (Social.TradeService.Instance != null)
+                    {
+                        _ = Social.TradeService.Instance.RefreshCloudTradesAsync();
                     }
 
                     SaveSession();

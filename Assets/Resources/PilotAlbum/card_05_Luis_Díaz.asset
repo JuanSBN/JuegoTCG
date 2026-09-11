@@ -10,11 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
-  m_Name: card_05_Luis_Díaz
+  m_Name: "card_05_Luis_D\xC3\xADaz"
+  m_EditorClassIdentifier: 
   cardId: card_05
-  playerName: Luis Díaz
+  playerName: "Luis D\xC3\xADaz"
   teamName: FC Piloto
   position: Extremo Izquierdo
+  nationality: Colombia
+  countryCode: CO
   rarity: 1
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}
+  shooting: 82
+  passing: 78
+  defending: 40
+  dribbling: 87
+  diving: 50
+  reflexes: 50
+  handling: 50
+  positioning: 50
+  manualOverall: 0

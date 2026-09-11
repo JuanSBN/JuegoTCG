@@ -336,11 +336,28 @@
                             <ui:VisualElement class="featured-art-photo" style="display: none;" />
                             <ui:VisualElement class="featured-art-frame" style="display: none;" />
                             <ui:Label text="" class="featured-player-name-framed" style="display: none;" />
-                            <ui:VisualElement class="featured-frame-footer-box" style="display: none;">
-                                <ui:Label text="" class="featured-frame-team-name" />
-                                <ui:VisualElement class="featured-frame-sub-row">
-                                    <ui:Label text="" class="featured-frame-pos-text" />
-                                    <ui:Label text="" class="featured-frame-rarity-text" />
+                            <!-- Fila Inferior: Bandera fuera a la izquierda + Estadísticas dentro del marco -->
+                            <ui:VisualElement name="Featured_BottomRow_1" class="featured-bottom-row" style="display: none;">
+                                <ui:VisualElement name="Featured_Flag_1" class="featured-flag-image" />
+                                <ui:VisualElement class="featured-frame-footer-box">
+                                    <ui:VisualElement class="featured-stats-group">
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat1Title_1" text="TIR" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat1Val_1" text="82" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat2Title_1" text="PAS" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat2Val_1" text="86" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat3Title_1" text="DEF" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat3Val_1" text="45" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat4Title_1" text="REG" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat4Val_1" text="91" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
                                 </ui:VisualElement>
                             </ui:VisualElement>
                             <ui:VisualElement class="featured-avatar-circle" style="display: none;">
@@ -358,11 +375,28 @@
                             <ui:VisualElement class="featured-art-photo" style="display: none;" />
                             <ui:VisualElement class="featured-art-frame" style="display: none;" />
                             <ui:Label text="" class="featured-player-name-framed" style="display: none;" />
-                            <ui:VisualElement class="featured-frame-footer-box" style="display: none;">
-                                <ui:Label text="" class="featured-frame-team-name" />
-                                <ui:VisualElement class="featured-frame-sub-row">
-                                    <ui:Label text="" class="featured-frame-pos-text" />
-                                    <ui:Label text="" class="featured-frame-rarity-text" />
+                            <!-- Fila Inferior: Bandera fuera a la izquierda + Estadísticas dentro del marco -->
+                            <ui:VisualElement name="Featured_BottomRow_2" class="featured-bottom-row" style="display: none;">
+                                <ui:VisualElement name="Featured_Flag_2" class="featured-flag-image" />
+                                <ui:VisualElement class="featured-frame-footer-box">
+                                    <ui:VisualElement class="featured-stats-group">
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat1Title_2" text="TIR" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat1Val_2" text="82" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat2Title_2" text="PAS" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat2Val_2" text="86" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat3Title_2" text="DEF" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat3Val_2" text="45" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat4Title_2" text="REG" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat4Val_2" text="91" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
                                 </ui:VisualElement>
                             </ui:VisualElement>
                             <ui:VisualElement class="featured-avatar-circle" style="display: none;">
@@ -380,11 +414,28 @@
                             <ui:VisualElement class="featured-art-photo" style="display: none;" />
                             <ui:VisualElement class="featured-art-frame" style="display: none;" />
                             <ui:Label text="" class="featured-player-name-framed" style="display: none;" />
-                            <ui:VisualElement class="featured-frame-footer-box" style="display: none;">
-                                <ui:Label text="" class="featured-frame-team-name" />
-                                <ui:VisualElement class="featured-frame-sub-row">
-                                    <ui:Label text="" class="featured-frame-pos-text" />
-                                    <ui:Label text="" class="featured-frame-rarity-text" />
+                            <!-- Fila Inferior: Bandera fuera a la izquierda + Estadísticas dentro del marco -->
+                            <ui:VisualElement name="Featured_BottomRow_3" class="featured-bottom-row" style="display: none;">
+                                <ui:VisualElement name="Featured_Flag_3" class="featured-flag-image" />
+                                <ui:VisualElement class="featured-frame-footer-box">
+                                    <ui:VisualElement class="featured-stats-group">
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat1Title_3" text="TIR" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat1Val_3" text="82" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat2Title_3" text="PAS" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat2Val_3" text="86" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat3Title_3" text="DEF" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat3Val_3" text="45" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                        <ui:VisualElement class="featured-stat-col">
+                                            <ui:Label name="Featured_Stat4Title_3" text="REG" class="featured-stat-title" />
+                                            <ui:Label name="Featured_Stat4Val_3" text="91" class="featured-stat-value" />
+                                        </ui:VisualElement>
+                                    </ui:VisualElement>
                                 </ui:VisualElement>
                             </ui:VisualElement>
                             <ui:VisualElement class="featured-avatar-circle" style="display: none;">

@@ -23,6 +23,7 @@ namespace JuegoTCG.EditorTools
             "ae059fc1520988141a79cb933243639f"  // Full Art
         };
 
+        [MenuItem("JuegoTCG/Reconstruir CardPrefab con Banderas y Stats", priority = 52)]
         public static void BuildCardPrefab()
         {
             if (!Directory.Exists(PrefabFolderPath))
@@ -133,12 +134,12 @@ namespace JuegoTCG.EditorTools
             Image frameImg = frameGO.AddComponent<Image>();
             if (frames[0] != null) frameImg.sprite = frames[0];
 
-            // 5. Player Name Text (Positioned at bottom, above club info box, with Momo Trust Display, subtle outline, and soft drop shadow)
+            // 5. Player Name Text (Positioned cleanly right above the bottom tab)
             GameObject nameGO = new GameObject("PlayerNameText");
             nameGO.transform.SetParent(frontGO.transform, false);
             RectTransform nameRect = nameGO.AddComponent<RectTransform>();
             nameRect.anchorMin = new Vector2(0.04f, 0.16f);
-            nameRect.anchorMax = new Vector2(0.96f, 0.28f);
+            nameRect.anchorMax = new Vector2(0.96f, 0.26f);
             nameRect.sizeDelta = Vector2.zero;
             TextMeshProUGUI nameTMP = nameGO.AddComponent<TextMeshProUGUI>();
             if (momoTMPFont != null) nameTMP.font = momoTMPFont;
@@ -168,58 +169,45 @@ namespace JuegoTCG.EditorTools
             nameShadow.effectColor = new Color(0f, 0f, 0f, 0.80f);
             nameShadow.effectDistance = new Vector2(2f, -3f);
 
-            // 6. Footer Information (Fits inside the frame's bottom box)
+            // 6. Flag Image (Positioned outside the tab, centered in its left space)
+            GameObject flagGO = new GameObject("FlagImage");
+            flagGO.transform.SetParent(frontGO.transform, false);
+            RectTransform flagRect = flagGO.AddComponent<RectTransform>();
+            flagRect.anchorMin = new Vector2(0.054f, 0.025f);
+            flagRect.anchorMax = new Vector2(0.174f, 0.135f);
+            flagRect.sizeDelta = Vector2.zero;
+            Image flagImg = flagGO.AddComponent<Image>();
+            flagImg.preserveAspect = true;
+
+            // 7. Footer Box / Tab (Fits inside the frame's bottom tab - now houses the 4 stats!)
             GameObject footerGO = new GameObject("FooterContainer");
             footerGO.transform.SetParent(frontGO.transform, false);
             RectTransform footerRect = footerGO.AddComponent<RectTransform>();
-            footerRect.anchorMin = new Vector2(0.20f, 0.02f);
-            footerRect.anchorMax = new Vector2(0.80f, 0.15f);
+            footerRect.anchorMin = new Vector2(0.20f, 0.015f);
+            footerRect.anchorMax = new Vector2(0.80f, 0.145f);
             footerRect.sizeDelta = Vector2.zero;
 
-            // Team Name Text
-            GameObject teamGO = new GameObject("TeamNameText");
-            teamGO.transform.SetParent(footerGO.transform, false);
-            RectTransform teamRect = teamGO.AddComponent<RectTransform>();
-            teamRect.anchorMin = new Vector2(0f, 0.50f);
-            teamRect.anchorMax = new Vector2(1f, 0.95f);
-            teamRect.sizeDelta = Vector2.zero;
-            TextMeshProUGUI teamTMP = teamGO.AddComponent<TextMeshProUGUI>();
-            if (dmSansTMPFont != null) teamTMP.font = dmSansTMPFont;
-            teamTMP.text = "FC Barca";
-            teamTMP.fontSize = 15;
-            teamTMP.fontStyle = FontStyles.Bold;
-            teamTMP.alignment = TextAlignmentOptions.Center;
-            teamTMP.color = new Color(0.1f, 0.1f, 0.1f);
+            // Horizontal Stats Container inside the frame tab
+            GameObject statsGroupGO = new GameObject("StatsGroup");
+            statsGroupGO.transform.SetParent(footerGO.transform, false);
+            RectTransform statsGroupRect = statsGroupGO.AddComponent<RectTransform>();
+            statsGroupRect.anchorMin = new Vector2(0.02f, 0.05f);
+            statsGroupRect.anchorMax = new Vector2(0.98f, 0.95f);
+            statsGroupRect.sizeDelta = Vector2.zero;
 
-            // Position Text
-            GameObject posGO = new GameObject("PositionText");
-            posGO.transform.SetParent(footerGO.transform, false);
-            RectTransform posRect = posGO.AddComponent<RectTransform>();
-            posRect.anchorMin = new Vector2(0.02f, 0.08f);
-            posRect.anchorMax = new Vector2(0.55f, 0.48f);
-            posRect.sizeDelta = Vector2.zero;
-            TextMeshProUGUI posTMP = posGO.AddComponent<TextMeshProUGUI>();
-            if (dmSansTMPFont != null) posTMP.font = dmSansTMPFont;
-            posTMP.text = "Extremo Derecho";
-            posTMP.fontSize = 11;
-            posTMP.fontStyle = FontStyles.Bold;
-            posTMP.alignment = TextAlignmentOptions.Center;
-            posTMP.color = new Color(0.15f, 0.15f, 0.35f);
+            HorizontalLayoutGroup hlg = statsGroupGO.AddComponent<HorizontalLayoutGroup>();
+            hlg.childControlWidth = true;
+            hlg.childControlHeight = true;
+            hlg.childForceExpandWidth = true;
+            hlg.childForceExpandHeight = true;
+            hlg.spacing = 2f;
 
-            // Rarity Text
-            GameObject rarityGO = new GameObject("RarityText");
-            rarityGO.transform.SetParent(footerGO.transform, false);
-            RectTransform rarityRect = rarityGO.AddComponent<RectTransform>();
-            rarityRect.anchorMin = new Vector2(0.58f, 0.08f);
-            rarityRect.anchorMax = new Vector2(0.98f, 0.48f);
-            rarityRect.sizeDelta = Vector2.zero;
-            TextMeshProUGUI rarityTMP = rarityGO.AddComponent<TextMeshProUGUI>();
-            if (dmSansTMPFont != null) rarityTMP.font = dmSansTMPFont;
-            rarityTMP.text = "MITICA";
-            rarityTMP.fontSize = 11;
-            rarityTMP.fontStyle = FontStyles.Bold;
-            rarityTMP.alignment = TextAlignmentOptions.Center;
-            rarityTMP.color = new Color(0.45f, 0.1f, 0.0f);
+            // 4 Stats Columns inside the tab (Title top, Value bottom)
+            TextMeshProUGUI s1Title, s1Val, s2Title, s2Val, s3Title, s3Val, s4Title, s4Val;
+            CreateStatColumn(statsGroupGO.transform, dmSansTMPFont, "TIR", "83", out s1Title, out s1Val);
+            CreateStatColumn(statsGroupGO.transform, dmSansTMPFont, "PAS", "84", out s2Title, out s2Val);
+            CreateStatColumn(statsGroupGO.transform, dmSansTMPFont, "DEF", "38", out s3Title, out s3Val);
+            CreateStatColumn(statsGroupGO.transform, dmSansTMPFont, "REG", "89", out s4Title, out s4Val);
 
             // ----------------------------------------------------
             // BACK CONTAINER (Reverso con estrella dorada para 3D flip)
@@ -281,10 +269,21 @@ namespace JuegoTCG.EditorTools
             so.FindProperty("placeholderAvatar").objectReferenceValue = placeholderGO;
             so.FindProperty("playerInitialsText").objectReferenceValue = initialsTMP;
             so.FindProperty("nameText").objectReferenceValue = nameTMP;
-            so.FindProperty("teamText").objectReferenceValue = teamTMP;
-            so.FindProperty("positionText").objectReferenceValue = posTMP;
-            so.FindProperty("rarityText").objectReferenceValue = rarityTMP;
+            so.FindProperty("teamText").objectReferenceValue = null;
+            so.FindProperty("positionText").objectReferenceValue = null;
+            so.FindProperty("rarityText").objectReferenceValue = null;
             so.FindProperty("holographicMaterial").objectReferenceValue = holoMat;
+
+            // Flag & Stats serialization
+            so.FindProperty("flagImage").objectReferenceValue = flagImg;
+            so.FindProperty("stat1TitleText").objectReferenceValue = s1Title;
+            so.FindProperty("stat1ValueText").objectReferenceValue = s1Val;
+            so.FindProperty("stat2TitleText").objectReferenceValue = s2Title;
+            so.FindProperty("stat2ValueText").objectReferenceValue = s2Val;
+            so.FindProperty("stat3TitleText").objectReferenceValue = s3Title;
+            so.FindProperty("stat3ValueText").objectReferenceValue = s3Val;
+            so.FindProperty("stat4TitleText").objectReferenceValue = s4Title;
+            so.FindProperty("stat4ValueText").objectReferenceValue = s4Val;
 
             SerializedProperty framesProp = so.FindProperty("rarityFrames");
             framesProp.arraySize = 6;
@@ -298,6 +297,13 @@ namespace JuegoTCG.EditorTools
             string prefabPath = $"{PrefabFolderPath}/CardPrefab.prefab";
             PrefabUtility.SaveAsPrefabAsset(rootGO, prefabPath);
             Object.DestroyImmediate(rootGO);
+
+            // Also copy to Resources/CardPrefab.prefab
+            if (File.Exists(prefabPath))
+            {
+                if (!Directory.Exists("Assets/Resources")) Directory.CreateDirectory("Assets/Resources");
+                AssetDatabase.CopyAsset(prefabPath, "Assets/Resources/CardPrefab.prefab");
+            }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -380,6 +386,42 @@ namespace JuegoTCG.EditorTools
                 }
             }
             return TMP_Settings.defaultFontAsset;
+        }
+
+        private static void CreateStatColumn(Transform parent, TMP_FontAsset font, string defaultTitle, string defaultVal, out TextMeshProUGUI titleTMP, out TextMeshProUGUI valTMP)
+        {
+            GameObject colGO = new GameObject($"Stat_{defaultTitle}");
+            colGO.transform.SetParent(parent, false);
+            RectTransform colRect = colGO.AddComponent<RectTransform>();
+
+            VerticalLayoutGroup vlg = colGO.AddComponent<VerticalLayoutGroup>();
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = true;
+            vlg.spacing = -2f;
+
+            // Stat Title (e.g. TIR, PAS, DEF, REG)
+            GameObject titleGO = new GameObject("TitleText");
+            titleGO.transform.SetParent(colGO.transform, false);
+            titleTMP = titleGO.AddComponent<TextMeshProUGUI>();
+            if (font != null) titleTMP.font = font;
+            titleTMP.text = defaultTitle;
+            titleTMP.fontSize = 11;
+            titleTMP.fontStyle = FontStyles.Bold;
+            titleTMP.alignment = TextAlignmentOptions.Center;
+            titleTMP.color = new Color(0.45f, 0.45f, 0.50f);
+
+            // Stat Value (e.g. 82, 86, 45, 91)
+            GameObject valGO = new GameObject("ValueText");
+            valGO.transform.SetParent(colGO.transform, false);
+            valTMP = valGO.AddComponent<TextMeshProUGUI>();
+            if (font != null) valTMP.font = font;
+            valTMP.text = defaultVal;
+            valTMP.fontSize = 16;
+            valTMP.fontStyle = FontStyles.Bold;
+            valTMP.alignment = TextAlignmentOptions.Center;
+            valTMP.color = new Color(0.08f, 0.12f, 0.18f);
         }
     }
 }

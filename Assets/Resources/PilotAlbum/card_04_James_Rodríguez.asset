@@ -10,11 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
-  m_Name: card_04_James_Rodríguez
+  m_Name: "card_04_James_Rodr\xC3\xADguez"
+  m_EditorClassIdentifier: 
   cardId: card_04
-  playerName: James Rodríguez
+  playerName: "James Rodr\xC3\xADguez"
   teamName: FC Piloto
   position: Mediocampista
+  nationality: Colombia
+  countryCode: CO
   rarity: 0
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}
+  shooting: 82
+  passing: 86
+  defending: 44
+  dribbling: 83
+  diving: 50
+  reflexes: 50
+  handling: 50
+  positioning: 50
+  manualOverall: 0

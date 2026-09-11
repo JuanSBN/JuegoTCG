@@ -28,7 +28,7 @@
         </ui:VisualElement>
 
         <!-- Scrollable Offers Container -->
-        <ui:ScrollView name="TradeScrollView" class="trade-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" show-vertical-scroller="false">
+        <ui:ScrollView name="TradeScrollView" class="trade-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
             
             <!-- Cards List -->
             <ui:VisualElement name="TradeCardsList" class="trade-cards-list">
@@ -49,9 +49,13 @@
                             <ui:Label text="TÚ DAS" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-mythic">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="MÍ" class="trade-token-text" />
                                 </ui:VisualElement>
                                 <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="RA" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -63,6 +67,8 @@
                             <ui:Label text="TÚ RECIBES" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-mythic">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="MÍ" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -95,6 +101,8 @@
                             <ui:Label text="TÚ DAS" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="RA" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -106,9 +114,13 @@
                             <ui:Label text="TÚ RECIBES" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="RA" class="trade-token-text" />
                                 </ui:VisualElement>
                                 <ui:VisualElement class="trade-token trade-token-common">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="CO" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -140,9 +152,13 @@
                             <ui:Label text="TÚ DAS" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-uncommon">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="PO" class="trade-token-text" />
                                 </ui:VisualElement>
                                 <ui:VisualElement class="trade-token trade-token-common">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="CO" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -154,6 +170,8 @@
                             <ui:Label text="TÚ RECIBES" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-uncommon">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="PO" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -185,6 +203,8 @@
                             <ui:Label text="TÚ DAS" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-mythic">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="MÍ" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -196,9 +216,13 @@
                             <ui:Label text="TÚ RECIBES" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="RA" class="trade-token-text" />
                                 </ui:VisualElement>
                                 <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="RA" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -227,6 +251,8 @@
                             <ui:Label text="TÚ DAS" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="RA" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -238,6 +264,8 @@
                             <ui:Label text="TÚ RECIBES" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-common">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="CO" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -266,6 +294,8 @@
                             <ui:Label text="TÚ DAS" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-mythic">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="MÍ" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -277,6 +307,8 @@
                             <ui:Label text="TÚ RECIBES" class="trade-side-title" />
                             <ui:VisualElement class="trade-tokens-row">
                                 <ui:VisualElement class="trade-token trade-token-rare">
+                                    <ui:VisualElement class="trade-token-photo" />
+                                    <ui:VisualElement class="trade-token-frame" />
                                     <ui:Label text="RA" class="trade-token-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
@@ -305,31 +337,230 @@
             <ui:Label text="+ NUEVO INTERCAMBIO" class="trade-fab-text" />
         </ui:Button>
 
-        <!-- Modal: Proponer Nuevo Intercambio -->
-        <ui:VisualElement name="NewTradeModal" class="modal-backdrop" style="display: none;">
-            <ui:VisualElement class="modal-card">
-                <ui:Label text="PROPONER INTERCAMBIO" class="modal-header-title" />
-                
-                <ui:Label text="AMIGO DESTINATARIO" class="modal-field-label" />
-                <ui:DropdownField name="Dropdown_Friend" class="modal-dropdown" />
-
-                <ui:Label text="CARTA QUE ENTREGAS" class="modal-field-label" />
-                <ui:DropdownField name="Dropdown_OfferCard" class="modal-dropdown" />
-
-                <ui:Label text="CARTA QUE PIDES A CAMBIO" class="modal-field-label" />
-                <ui:DropdownField name="Dropdown_RequestCard" class="modal-dropdown" />
-
-                <ui:Label name="ModalFeedbackLabel" text="" class="modal-feedback" style="display: none;" />
-
-                <ui:VisualElement class="modal-actions-row">
-                    <ui:Button name="Btn_SendTradeOffer" class="btn-confirm-trade">
-                        <ui:Label text="ENVIAR OFERTA" class="btn-confirm-trade-text" />
+        <!-- ================================================================= -->
+        <!-- NUEVO FLUJO DE INTERCAMBIO (FIGMA PANTALLAS 2.5)                   -->
+        <!-- ================================================================= -->
+        <ui:VisualElement name="NewTradeFlowView" class="trade-flow-view" style="display: none;">
+            
+            <!-- PASO 0: ELEGIR AMIGO -->
+            <ui:VisualElement name="Step_ChooseFriend" class="trade-flow-step" style="display: none;">
+                <ui:VisualElement class="trade-step-header">
+                    <ui:Button name="Btn_Back_ChooseFriend" class="back-btn">
+                        <ui:VisualElement class="back-btn-icon" />
                     </ui:Button>
-                    <ui:Button name="Btn_CloseNewTradeModal" class="btn-cancel-trade">
-                        <ui:Label text="CANCELAR" class="btn-cancel-trade-text" />
+                    <ui:Label text="ELEGIR AMIGO" class="trade-step-title" />
+                </ui:VisualElement>
+                
+                <ui:Label text="Toca un amigo para continuar" class="trade-step-subtitle-static" />
+                
+                <ui:ScrollView name="ChooseFriendScrollView" class="trade-step-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                    <ui:VisualElement name="ChooseFriendEmpty" class="trade-friend-cards-empty" style="display: none;">
+                        <ui:Label name="ChooseFriendEmptyText" text="Aún no tienes amigos agregados. Agrega amigos desde la sección Comunidad para intercambiar cartas con ellos." class="trade-empty-desc" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="ChooseFriendList" class="choose-friend-list" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+
+            <!-- PASO 1: ELIGE QUÉ DAR -->
+            <ui:VisualElement name="Step_GiveCards" class="trade-flow-step" style="display: none;">
+                <ui:VisualElement class="trade-step-header-with-steps">
+                    <ui:Button name="Btn_Back_GiveCards" class="back-btn">
+                        <ui:VisualElement class="back-btn-icon" />
+                    </ui:Button>
+                    <ui:VisualElement class="trade-step-header-titles">
+                        <ui:Label text="ELIGE QUÉ DAR" class="trade-step-title" />
+                        <ui:Label name="GiveCardsSubtitle" text="Con Amigo" class="trade-step-subtitle" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="trade-step-indicator-box">
+                        <ui:VisualElement class="trade-step-pills-row">
+                            <ui:VisualElement class="trade-step-bar trade-step-bar-active" />
+                            <ui:VisualElement class="trade-step-bar" />
+                        </ui:VisualElement>
+                        <ui:Label text="PASO 1 DE 2" class="trade-step-indicator-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Counter badge / prompt -->
+                <ui:VisualElement class="trade-counter-row">
+                    <ui:Label name="GiveCardsCounter" text="Elige al menos 1 carta" class="trade-counter-text" />
+                </ui:VisualElement>
+
+                <!-- Filter pills row -->
+                <ui:VisualElement class="trade-filters-row">
+                    <ui:Button name="Filter_Give_Album" class="pick-filter-chip pick-filter-chip-active">
+                        <ui:Label text="Álbum" class="pick-filter-chip-text" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Give_Rarity" class="pick-filter-chip">
+                        <ui:Label text="Rareza" class="pick-filter-chip-text" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Give_Count" class="pick-filter-chip">
+                        <ui:Label text="Cantidad" class="pick-filter-chip-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="trade-divider" />
+
+                <!-- Grid of owned cards -->
+                <ui:ScrollView name="GiveCardsScrollView" class="trade-step-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                    <ui:VisualElement name="GiveCardsGrid" class="trade-pick-grid" />
+                </ui:ScrollView>
+
+                <!-- CTA Button -->
+                <ui:VisualElement class="trade-bottom-cta-container">
+                    <ui:Button name="Btn_GiveContinue" class="btn-trade-cta btn-trade-cta-disabled">
+                        <ui:Label text="CONTINUAR" class="btn-trade-cta-text" />
                     </ui:Button>
                 </ui:VisualElement>
             </ui:VisualElement>
+
+            <!-- PASO 2: ELIGE QUÉ RECIBIR -->
+            <ui:VisualElement name="Step_ReceiveCards" class="trade-flow-step" style="display: none;">
+                <ui:VisualElement class="trade-step-header-with-steps">
+                    <ui:Button name="Btn_Back_ReceiveCards" class="back-btn">
+                        <ui:VisualElement class="back-btn-icon" />
+                    </ui:Button>
+                    <ui:VisualElement class="trade-step-header-titles">
+                        <ui:Label text="ELIGE QUÉ RECIBIR" class="trade-step-title" />
+                        <ui:Label name="ReceiveCardsSubtitle" text="Cartas de Amigo" class="trade-step-subtitle" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="trade-step-indicator-box">
+                        <ui:VisualElement class="trade-step-pills-row">
+                            <ui:VisualElement class="trade-step-bar trade-step-bar-active" />
+                            <ui:VisualElement class="trade-step-bar trade-step-bar-active" />
+                        </ui:VisualElement>
+                        <ui:Label text="PASO 2 DE 2" class="trade-step-indicator-text" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Counter badge / prompt -->
+                <ui:VisualElement class="trade-counter-row">
+                    <ui:Label name="ReceiveCardsCounter" text="Elige al menos 1 carta" class="trade-counter-text" />
+                </ui:VisualElement>
+
+                <!-- Filter pills row -->
+                <ui:VisualElement class="trade-filters-row">
+                    <ui:Button name="Filter_Receive_Album" class="pick-filter-chip pick-filter-chip-active">
+                        <ui:Label text="Álbum" class="pick-filter-chip-text" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Receive_Rarity" class="pick-filter-chip">
+                        <ui:Label text="Rareza" class="pick-filter-chip-text" />
+                    </ui:Button>
+                    <ui:Button name="Filter_Receive_Count" class="pick-filter-chip">
+                        <ui:Label text="Cantidad" class="pick-filter-chip-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <!-- Strip: what you're giving + edit button -->
+                <ui:VisualElement class="trade-giving-strip">
+                    <ui:Label text="DAS" class="trade-giving-strip-tag" />
+                    <ui:Label name="GivingStripCardName" text="-" class="trade-giving-strip-name" />
+                    <ui:Button name="Btn_EditGivenCard" class="trade-giving-strip-edit">
+                        <ui:Label text="Editar" class="trade-giving-strip-edit-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="trade-divider" />
+
+                <!-- Grid of friend cards -->
+                <ui:ScrollView name="ReceiveCardsScrollView" class="trade-step-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                    <ui:VisualElement name="ReceiveCardsEmpty" class="trade-friend-cards-empty" style="display: none;">
+                        <ui:Label name="ReceiveCardsEmptyText" text="Este amigo aún no tiene cartas para intercambiar." class="trade-empty-desc" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="ReceiveCardsGrid" class="trade-pick-grid" />
+                </ui:ScrollView>
+
+                <!-- CTA Button -->
+                <ui:VisualElement class="trade-bottom-cta-container">
+                    <ui:Button name="Btn_ReceiveReview" class="btn-trade-cta btn-trade-cta-disabled">
+                        <ui:Label text="REVISAR OFERTA  ›" class="btn-trade-cta-text" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- PASO 3: CONFIRMAR OFERTA -->
+            <ui:VisualElement name="Step_ConfirmOffer" class="trade-flow-step" style="display: none;">
+                <ui:VisualElement class="trade-step-header">
+                    <ui:Button name="Btn_Back_ConfirmOffer" class="back-btn">
+                        <ui:VisualElement class="back-btn-icon" />
+                    </ui:Button>
+                    <ui:Label text="CONFIRMAR OFERTA" class="trade-step-title" />
+                </ui:VisualElement>
+
+                <ui:ScrollView name="ConfirmOfferScrollView" class="trade-step-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                    <!-- Offer preview card -->
+                    <ui:VisualElement class="confirm-offer-card">
+                        
+                        <!-- Friend Header Strip -->
+                        <ui:VisualElement class="confirm-friend-header">
+                            <ui:VisualElement class="confirm-avatar-circle">
+                                <ui:Label name="ConfirmFriendInitials" text="GS" class="confirm-avatar-text" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="confirm-friend-info">
+                                <ui:Label name="ConfirmFriendName" text="GoldenShot_7" class="confirm-friend-name" />
+                                <ui:Label name="ConfirmFriendLevel" text="Nivel 24" class="confirm-friend-level" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="confirm-status-badge">
+                                <ui:Label text="Pendiente" class="confirm-status-text" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+
+                        <!-- Cards Exchange Body -->
+                        <ui:VisualElement class="confirm-exchange-body">
+                            
+                            <!-- Tú das -->
+                            <ui:VisualElement class="confirm-trade-side">
+                                <ui:Label text="TÚ DAS" class="confirm-side-title" />
+                                <ui:VisualElement name="ConfirmGiveCardBox" class="confirm-card-preview-box">
+                                    <ui:VisualElement name="ConfirmGiveCardPhoto" class="confirm-card-photo" />
+                                    <ui:VisualElement name="ConfirmGiveCardFrame" class="confirm-card-frame" />
+                                    <ui:VisualElement name="ConfirmGiveCardAvatar" class="confirm-card-avatar">
+                                        <ui:Label name="ConfirmGiveCardInitials" text="PE" class="confirm-card-avatar-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:Label name="ConfirmGiveCardName" text="Pedri" class="confirm-card-name" />
+                            </ui:VisualElement>
+
+                            <!-- Swap icon -->
+                            <ui:VisualElement class="confirm-swap-row">
+                                <ui:VisualElement class="confirm-swap-line" />
+                                <ui:VisualElement class="confirm-swap-circle">
+                                    <ui:Label text="⇅" class="confirm-swap-arrows" />
+                                </ui:VisualElement>
+                                <ui:VisualElement class="confirm-swap-line" />
+                            </ui:VisualElement>
+
+                            <!-- Tú recibes -->
+                            <ui:VisualElement class="confirm-trade-side">
+                                <ui:Label text="TÚ RECIBES" class="confirm-side-title" />
+                                <ui:VisualElement name="ConfirmReceiveCardBox" class="confirm-card-preview-box">
+                                    <ui:VisualElement name="ConfirmReceiveCardPhoto" class="confirm-card-photo" />
+                                    <ui:VisualElement name="ConfirmReceiveCardFrame" class="confirm-card-frame" />
+                                    <ui:VisualElement name="ConfirmReceiveCardAvatar" class="confirm-card-avatar">
+                                        <ui:Label name="ConfirmReceiveCardInitials" text="EH" class="confirm-card-avatar-text" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
+                                <ui:Label name="ConfirmReceiveCardName" text="Haaland" class="confirm-card-name" />
+                            </ui:VisualElement>
+
+                        </ui:VisualElement>
+
+                    </ui:VisualElement>
+
+                    <!-- Notice text -->
+                    <ui:Label text="Tu amigo recibirá una notificación y podrá aceptar o rechazar la oferta." class="confirm-disclaimer-text" />
+
+                    <!-- Action buttons -->
+                    <ui:VisualElement class="confirm-actions-col">
+                        <ui:Button name="Btn_SubmitOffer" class="btn-confirm-submit">
+                            <ui:Label text="ENVIAR OFERTA" class="btn-confirm-submit-text" />
+                        </ui:Button>
+                        <ui:Button name="Btn_CancelConfirm" class="btn-confirm-cancel">
+                            <ui:Label text="CANCELAR" class="btn-confirm-cancel-text" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:ScrollView>
+            </ui:VisualElement>
+
         </ui:VisualElement>
 
         <!-- Modal: Feedback / Alerta de Intercambio -->

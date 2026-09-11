@@ -16,6 +16,17 @@ MonoBehaviour:
   playerName: "Kylian Mbapp\xE9"
   teamName: Real Madrid
   position: Delantero
+  nationality: Francia
+  countryCode: FR
   rarity: 3
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}
+  shooting: 91
+  passing: 81
+  defending: 36
+  dribbling: 92
+  diving: 50
+  reflexes: 50
+  handling: 50
+  positioning: 50
+  manualOverall: 91

@@ -24,6 +24,14 @@ namespace JuegoTCG.Cards
 
         private const string PREF_SLOT_PREFIX = "Ideal11_Slot_";
 
+        private string GetPrefKey(int slotIndex)
+        {
+            string uid = Networking.FirebaseAuthManager.Instance != null && !string.IsNullOrEmpty(Networking.FirebaseAuthManager.Instance.UserId)
+                ? Networking.FirebaseAuthManager.Instance.UserId
+                : PlayerPrefs.GetString("Firebase_UserId", "local");
+            return $"Ideal11_{uid}_Slot_{slotIndex}";
+        }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -67,22 +75,29 @@ namespace JuegoTCG.Cards
 
         public void LoadSquad()
         {
+            bool collectionReady = PlayerCollectionManager.Instance != null && PlayerCollectionManager.Instance.GetUniqueOwnedCount() > 0;
+
             for (int i = 0; i < formationSlots.Count; i++)
             {
-                if (PlayerPrefs.HasKey(PREF_SLOT_PREFIX + i))
+                string key = GetPrefKey(i);
+                string savedId = "";
+
+                if (PlayerPrefs.HasKey(key))
                 {
-                    string savedId = PlayerPrefs.GetString(PREF_SLOT_PREFIX + i, "");
-                    // Solo conservar la carta si el jugador realmente la posee
-                    if (!string.IsNullOrEmpty(savedId) && PlayerCollectionManager.Instance != null && !PlayerCollectionManager.Instance.IsCardOwned(savedId))
-                    {
-                        savedId = "";
-                    }
-                    formationSlots[i].assignedCardId = savedId;
+                    savedId = PlayerPrefs.GetString(key, "");
                 }
-                else
+                else if (PlayerPrefs.HasKey(PREF_SLOT_PREFIX + i))
                 {
-                    formationSlots[i].assignedCardId = "";
+                    savedId = PlayerPrefs.GetString(PREF_SLOT_PREFIX + i, "");
                 }
+
+                // Solo limpiar la carta si la colección ya cargó y el jugador no la posee
+                if (!string.IsNullOrEmpty(savedId) && collectionReady && !PlayerCollectionManager.Instance.IsCardOwned(savedId))
+                {
+                    savedId = "";
+                }
+
+                formationSlots[i].assignedCardId = savedId;
             }
             Debug.Log($"<color=green>[Ideal11] Alineación cargada: {GetFilledSlotsCount()}/11 jugadores posicionados.</color>");
         }
@@ -107,11 +122,51 @@ namespace JuegoTCG.Cards
         {
             for (int i = 0; i < formationSlots.Count; i++)
             {
-                PlayerPrefs.SetString(PREF_SLOT_PREFIX + i, formationSlots[i].assignedCardId);
+                string cardId = formationSlots[i].assignedCardId ?? "";
+                PlayerPrefs.SetString(GetPrefKey(i), cardId);
+                PlayerPrefs.SetString(PREF_SLOT_PREFIX + i, cardId);
             }
             PlayerPrefs.Save();
             OnSquadUpdated?.Invoke();
             Debug.Log("<color=cyan>[Ideal11] Alineación guardada con éxito.</color>");
+
+            if (Networking.FirebaseAuthManager.Instance != null && Networking.FirebaseAuthManager.Instance.IsAuthenticated)
+            {
+                _ = Networking.FirebaseAuthManager.Instance.SyncUserProfileToFirestoreAsync();
+            }
+        }
+
+        public List<string> GetSquadCardIds()
+        {
+            var list = new List<string>();
+            if (formationSlots == null) return list;
+            for (int i = 0; i < formationSlots.Count; i++)
+            {
+                list.Add(formationSlots[i].assignedCardId ?? "");
+            }
+            return list;
+        }
+
+        public void LoadFromCloudSquad(List<string> cloudSlots)
+        {
+            if (formationSlots == null || formationSlots.Count != 11)
+            {
+                InitializeFormation();
+            }
+
+            if (cloudSlots != null && cloudSlots.Count > 0)
+            {
+                for (int i = 0; i < formationSlots.Count && i < cloudSlots.Count; i++)
+                {
+                    string cardId = cloudSlots[i] ?? "";
+                    formationSlots[i].assignedCardId = cardId;
+                    PlayerPrefs.SetString(GetPrefKey(i), cardId);
+                    PlayerPrefs.SetString(PREF_SLOT_PREFIX + i, cardId);
+                }
+                PlayerPrefs.Save();
+                OnSquadUpdated?.Invoke();
+                Debug.Log($"<color=green>[Ideal11] Alineación 11 Ideal restaurada desde Firestore: {GetFilledSlotsCount()}/11 cartas.</color>");
+            }
         }
 
         public static void EnsureExists()

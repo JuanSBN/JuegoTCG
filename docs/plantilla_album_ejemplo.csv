@@ -1,0 +1,11 @@
+CardId,PlayerName,Position,TeamName,Rarity,Nationality,CountryCode,Stat1,Stat2,Stat3,Stat4,Overall
+champ_01,Lamine Yamal,DEL,FC Barcelona,Mitica,España,ES,84,86,38,92,86
+champ_02,Kylian Mbappé,DEL,Real Madrid,Legendaria,Francia,FR,90,80,36,92,89
+champ_03,Lionel Messi,MED,Inter Miami,Legendaria,Argentina,AR,88,92,35,93,90
+champ_04,Cristiano Ronaldo,DEL,Al Nassr,Epica,Portugal,PT,91,78,38,85,87
+champ_05,Erling Haaland,DEL,Manchester City,Especial,Noruega,NO,93,70,45,82,88
+champ_06,Luis Díaz,DEL,Liverpool,Especial,Colombia,CO,82,78,40,87,80
+champ_07,James Rodríguez,MED,Rayo Vallecano,Comun,Colombia,CO,82,86,44,83,78
+champ_08,Diomandé,DEF,Sporting CP,Comun,Costa de Marfil,CI,35,64,79,66,70
+champ_09,Balogun,DEL,AS Monaco,Comun,Estados Unidos,US,78,66,32,76,72
+champ_10,Vozhina,POR,FC Piloto,Comun,Rusia,RU,70,74,68,71,71

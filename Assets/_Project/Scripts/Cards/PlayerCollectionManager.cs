@@ -15,6 +15,76 @@ namespace JuegoTCG.Cards
         public TacticalPosition TacticalLine => TacticalPositionHelper.Normalize(position);
         public Rarity rarity;
         public string albumId;
+
+        // Nacionalidad
+        public string nationality = "España";
+        public string countryCode = "ES";
+
+        // Estadísticas Jugador de Campo
+        public int shooting = 50;   // Tiro (TIR)
+        public int passing = 50;    // Pase (PAS)
+        public int defending = 50;  // Defensa (DEF)
+        public int dribbling = 50;  // Regate (REG)
+
+        // Estadísticas Portero
+        public int diving = 50;       // Estirada (EST)
+        public int reflexes = 50;     // Reflejos (REF)
+        public int handling = 50;     // Parada (PAR)
+        public int positioning = 50;  // Colocación (COL)
+
+        public int manualOverall = 0;
+
+        /// <summary>
+        /// Obtiene la Media Global: manualOverall si se definió explícitamente (>0) o cálculo ponderado estilo FIFA.
+        /// </summary>
+        public int OverallRating => manualOverall > 0 ? manualOverall : CalculateOverallRating();
+
+        /// <summary>
+        /// Calcula la media global ponderada según la posición específica (estilo FIFA / EA Sports FC).
+        /// </summary>
+        public int CalculateOverallRating()
+        {
+            var line = TacticalLine;
+            switch (line)
+            {
+                case TacticalPosition.POR:
+                    return Mathf.Clamp(Mathf.RoundToInt(reflexes * 0.30f + diving * 0.25f + handling * 0.25f + positioning * 0.20f), 1, 99);
+
+                case TacticalPosition.DEF:
+                    return Mathf.Clamp(Mathf.RoundToInt(defending * 0.50f + passing * 0.25f + dribbling * 0.20f + shooting * 0.05f), 1, 99);
+
+                case TacticalPosition.MED:
+                    return Mathf.Clamp(Mathf.RoundToInt(passing * 0.35f + dribbling * 0.30f + shooting * 0.20f + defending * 0.15f), 1, 99);
+
+                case TacticalPosition.DEL:
+                default:
+                    return Mathf.Clamp(Mathf.RoundToInt(shooting * 0.45f + dribbling * 0.30f + passing * 0.20f + defending * 0.05f), 1, 99);
+            }
+        }
+
+        public CardStatsSummary GetDisplayStats()
+        {
+            if (TacticalLine == TacticalPosition.POR)
+            {
+                return new CardStatsSummary
+                {
+                    stat1Name = "EST", stat1Value = diving,
+                    stat2Name = "REF", stat2Value = reflexes,
+                    stat3Name = "PAR", stat3Value = handling,
+                    stat4Name = "COL", stat4Value = positioning
+                };
+            }
+            else
+            {
+                return new CardStatsSummary
+                {
+                    stat1Name = "TIR", stat1Value = shooting,
+                    stat2Name = "PAS", stat2Value = passing,
+                    stat3Name = "DEF", stat3Value = defending,
+                    stat4Name = "REG", stat4Value = dribbling
+                };
+            }
+        }
     }
 
     public class PlayerCollectionManager : MonoBehaviour
@@ -50,6 +120,14 @@ namespace JuegoTCG.Cards
                 ? Networking.FirebaseAuthManager.Instance.UserId
                 : PlayerPrefs.GetString("Firebase_UserId", "local");
             return $"Collection_{uid}_TotalUnique";
+        }
+
+        private string GetOwnedIdsListKey()
+        {
+            string uid = Networking.FirebaseAuthManager.Instance != null && !string.IsNullOrEmpty(Networking.FirebaseAuthManager.Instance.UserId)
+                ? Networking.FirebaseAuthManager.Instance.UserId
+                : PlayerPrefs.GetString("Firebase_UserId", "local");
+            return $"Collection_{uid}_OwnedIdsList";
         }
 
         public static void EnsureExists()
@@ -88,16 +166,46 @@ namespace JuegoTCG.Cards
         {
             pilotAlbumCatalog = new List<CardCatalogItem>
             {
-                new CardCatalogItem { cardId = "card_01", playerName = "Vozhina", initials = "VO", teamName = "FC Piloto", position = "POR", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_02", playerName = "Balogun", initials = "FB", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_03", playerName = "Diomandé", initials = "OD", teamName = "FC Piloto", position = "DEF", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_04", playerName = "James Rodríguez", initials = "JR", teamName = "FC Piloto", position = "MED", rarity = Rarity.Comun, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_05", playerName = "Luis Díaz", initials = "LD", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Especial, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_06", playerName = "Erling Haaland", initials = "EH", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Especial, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_07", playerName = "Cristiano Ronaldo", initials = "CR", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Epica, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_08", playerName = "Lionel Messi", initials = "LM", teamName = "FC Piloto", position = "MED", rarity = Rarity.Legendaria, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_09", playerName = "Kylian Mbappé", initials = "KM", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Legendaria, albumId = "album_piloto_liga" },
-                new CardCatalogItem { cardId = "card_10", playerName = "Lamine Yamal", initials = "LY", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Mitica, albumId = "album_piloto_liga" }
+                new CardCatalogItem { 
+                    cardId = "card_01", playerName = "Vozhina", initials = "VO", teamName = "FC Piloto", position = "POR", rarity = Rarity.Comun, albumId = "album_piloto_liga",
+                    nationality = "Rusia", countryCode = "RU", diving = 70, reflexes = 74, handling = 68, positioning = 71
+                },
+                new CardCatalogItem { 
+                    cardId = "card_02", playerName = "Balogun", initials = "FB", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Comun, albumId = "album_piloto_liga",
+                    nationality = "Estados Unidos", countryCode = "US", shooting = 78, dribbling = 76, passing = 66, defending = 32
+                },
+                new CardCatalogItem { 
+                    cardId = "card_03", playerName = "Diomandé", initials = "OD", teamName = "FC Piloto", position = "DEF", rarity = Rarity.Comun, albumId = "album_piloto_liga",
+                    nationality = "Costa de Marfil", countryCode = "CI", defending = 79, passing = 64, dribbling = 66, shooting = 35
+                },
+                new CardCatalogItem { 
+                    cardId = "card_04", playerName = "James Rodríguez", initials = "JR", teamName = "FC Piloto", position = "MED", rarity = Rarity.Comun, albumId = "album_piloto_liga",
+                    nationality = "Colombia", countryCode = "CO", passing = 86, dribbling = 83, shooting = 82, defending = 44
+                },
+                new CardCatalogItem { 
+                    cardId = "card_05", playerName = "Luis Díaz", initials = "LD", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Especial, albumId = "album_piloto_liga",
+                    nationality = "Colombia", countryCode = "CO", dribbling = 87, shooting = 82, passing = 78, defending = 40
+                },
+                new CardCatalogItem { 
+                    cardId = "card_06", playerName = "Erling Haaland", initials = "EH", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Especial, albumId = "album_piloto_liga",
+                    nationality = "Noruega", countryCode = "NO", shooting = 93, dribbling = 82, passing = 70, defending = 45, manualOverall = 88
+                },
+                new CardCatalogItem { 
+                    cardId = "card_07", playerName = "Cristiano Ronaldo", initials = "CR", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Epica, albumId = "album_piloto_liga",
+                    nationality = "Portugal", countryCode = "PT", shooting = 90, dribbling = 83, passing = 76, defending = 35, manualOverall = 86
+                },
+                new CardCatalogItem { 
+                    cardId = "card_08", playerName = "Lionel Messi", initials = "LM", teamName = "FC Piloto", position = "MED", rarity = Rarity.Legendaria, albumId = "album_piloto_liga",
+                    nationality = "Argentina", countryCode = "AR", dribbling = 94, passing = 91, shooting = 88, defending = 34, manualOverall = 91
+                },
+                new CardCatalogItem { 
+                    cardId = "card_09", playerName = "Kylian Mbappé", initials = "KM", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Legendaria, albumId = "album_piloto_liga",
+                    nationality = "Francia", countryCode = "FR", shooting = 91, dribbling = 92, passing = 81, defending = 36, manualOverall = 91
+                },
+                new CardCatalogItem { 
+                    cardId = "card_10", playerName = "Lamine Yamal", initials = "LY", teamName = "FC Piloto", position = "DEL", rarity = Rarity.Mitica, albumId = "album_piloto_liga",
+                    nationality = "España", countryCode = "ES", dribbling = 89, passing = 84, shooting = 83, defending = 38, manualOverall = 85
+                }
             };
 
             foreach (var card in pilotAlbumCatalog)
@@ -170,7 +278,18 @@ namespace JuegoTCG.Cards
                         teamName = card.teamName,
                         position = card.position,
                         rarity = card.rarity,
-                        albumId = album.albumId
+                        albumId = album.albumId,
+                        nationality = card.nationality,
+                        countryCode = card.countryCode,
+                        shooting = card.shooting,
+                        passing = card.passing,
+                        defending = card.defending,
+                        dribbling = card.dribbling,
+                        diving = card.diving,
+                        reflexes = card.reflexes,
+                        handling = card.handling,
+                        positioning = card.positioning,
+                        manualOverall = card.manualOverall
                     };
                 }
             }
@@ -179,8 +298,29 @@ namespace JuegoTCG.Cards
         public void LoadCollection()
         {
             ownedCards.Clear();
+
+            // 1. Cargar desde la lista persistente de IDs de cartas obtenidas
+            string idListStr = PlayerPrefs.GetString(GetOwnedIdsListKey(), "");
+            if (!string.IsNullOrEmpty(idListStr))
+            {
+                string[] ids = idListStr.Split(',');
+                foreach (var id in ids)
+                {
+                    if (string.IsNullOrEmpty(id)) continue;
+                    int count = PlayerPrefs.GetInt(GetPrefKey(id), 0);
+                    if (count > 0)
+                    {
+                        ownedCards[id] = count;
+                    }
+                }
+            }
+
+            // 2. Por compatibilidad y redundancia, verificar también todas las cartas del catálogo
             foreach (var card in allCardsCatalog.Values)
             {
+                if (card == null || string.IsNullOrEmpty(card.cardId)) continue;
+                if (ownedCards.ContainsKey(card.cardId)) continue;
+
                 string key = GetPrefKey(card.cardId);
                 int count = PlayerPrefs.GetInt(key, 0);
 
@@ -201,6 +341,7 @@ namespace JuegoTCG.Cards
         {
             ownedCards.Clear();
             CollectionPower = 0;
+            PlayerPrefs.DeleteKey(GetOwnedIdsListKey());
             PlayerPrefs.SetInt("Player_CollectionPower", 0);
             PlayerPrefs.Save();
 
@@ -238,6 +379,8 @@ namespace JuegoTCG.Cards
                     }
                 }
             }
+            var idList = new List<string>(ownedCards.Keys);
+            PlayerPrefs.SetString(GetOwnedIdsListKey(), string.Join(",", idList));
             PlayerPrefs.SetInt(GetTotalUniquePrefKey(), ownedCards.Count);
             PlayerPrefs.Save();
 
@@ -282,6 +425,9 @@ namespace JuegoTCG.Cards
 
         public void SaveCollection()
         {
+            var idList = new List<string>(ownedCards.Keys);
+            PlayerPrefs.SetString(GetOwnedIdsListKey(), string.Join(",", idList));
+
             foreach (var kvp in ownedCards)
             {
                 PlayerPrefs.SetInt(GetPrefKey(kvp.Key), kvp.Value);
@@ -419,6 +565,11 @@ namespace JuegoTCG.Cards
         public int GetOwnedCount(string cardId)
         {
             return ownedCards.ContainsKey(cardId) ? ownedCards[cardId] : 0;
+        }
+
+        public int GetCardCount(string cardId)
+        {
+            return GetOwnedCount(cardId);
         }
 
         public int GetUniqueOwnedCount()

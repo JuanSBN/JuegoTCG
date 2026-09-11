@@ -536,7 +536,7 @@
 
 .inspect-player-name-framed {
     position: absolute;
-    bottom: 172px;
+    bottom: 156px;
     left: 20px;
     right: 20px;
     font-size: 52px;
@@ -544,48 +544,66 @@
     color: #FFFFFF;
     -unity-text-align: middle-center;
     white-space: normal;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.95);
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.95);
 }
 
-.inspect-frame-footer-box {
+/* Bottom Attributes Row: Flag outside left + Stats inside Frame Box */
+.inspect-bottom-row {
     position: absolute;
-    bottom: 24px;
-    left: 18%;
+    bottom: 22px;
+    left: 5.4%;
     right: 18%;
-    height: 130px;
+    height: 124px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Flag positioned outside the tab on the left, centered in its space */
+.inspect-flag-image {
+    width: 96px;
+    height: 64px;
+    border-radius: 4px;
+    -unity-background-scale-mode: stretch-to-fill;
+    margin-right: 18px;
+}
+
+/* The frame footer tab where the stats now live */
+.inspect-frame-footer-box {
+    flex-grow: 1;
+    height: 100%;
     align-items: center;
     justify-content: center;
-    padding-top: 10px;
-    padding-bottom: 8px;
-    padding-left: 14px;
-    padding-right: 14px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.inspect-frame-team-name {
-    font-size: 30px;
+.inspect-stats-group {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.inspect-stat-col {
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+}
+
+.inspect-stat-title {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: #2b2d42;
+    -unity-text-align: middle-center;
+    margin-bottom: -2px;
+}
+
+.inspect-stat-value {
+    font-size: 32px;
     -unity-font-style: bold;
     color: #0c1822;
     -unity-text-align: middle-center;
-    margin-bottom: 4px;
-}
-
-.inspect-frame-sub-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.inspect-frame-pos-text {
-    font-size: 24px;
-    -unity-font-style: bold;
-    color: #1e293b;
-}
-
-.inspect-frame-rarity-text {
-    font-size: 24px;
-    -unity-font-style: bold;
-    color: #b45309;
 }
 
 .inspect-art-photo-default {
@@ -747,10 +765,10 @@
 
 .card-player-name-framed {
     position: absolute;
-    bottom: 106px;
-    left: 12px;
-    right: 12px;
-    font-size: 34px;
+    bottom: 96px;
+    left: 8px;
+    right: 8px;
+    font-size: 32px;
     -unity-font-style: bold;
     color: #FFFFFF;
     -unity-text-align: middle-center;
@@ -758,47 +776,62 @@
     text-shadow: 0 3px 6px rgba(0, 0, 0, 0.95);
 }
 
-.card-frame-footer-box {
+/* Bottom Attributes Row: Flag outside left + Stats inside Frame Box */
+.card-bottom-row {
     position: absolute;
-    bottom: 14px;
-    left: 20%;
+    bottom: 12px;
+    left: 5.4%;
     right: 20%;
-    height: 82px;
+    height: 76px;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    padding-top: 6px;
-    padding-bottom: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
+    justify-content: flex-start;
 }
 
-.card-frame-team-name {
-    font-size: 20px;
+/* Flag outside tab on the left, centered in its space */
+.card-flag-image {
+    width: 54px;
+    height: 36px;
+    border-radius: 2px;
+    -unity-background-scale-mode: stretch-to-fill;
+    margin-right: 10px;
+}
+
+/* The frame footer tab where the stats now live */
+.card-frame-footer-box {
+    flex-grow: 1;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.card-stats-group {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.card-stat-col {
+    align-items: center;
+    justify-content: center;
+}
+
+.card-stat-title {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: #2b2d42;
+    -unity-text-align: middle-center;
+    margin-bottom: -3px;
+}
+
+.card-stat-value {
+    font-size: 19px;
     -unity-font-style: bold;
     color: #0c1822;
     -unity-text-align: middle-center;
-    margin-bottom: 2px;
-}
-
-.card-frame-sub-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.card-frame-pos-text {
-    font-size: 15px;
-    -unity-font-style: bold;
-    color: #0c1822;
-    -unity-text-align: middle-left;
-}
-
-.card-frame-rarity-text {
-    font-size: 15px;
-    -unity-font-style: bold;
-    color: #0c1822;
-    -unity-text-align: middle-right;
 }
 
 .card-copies-badge-framed {

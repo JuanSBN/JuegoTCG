@@ -1425,55 +1425,68 @@
     picking-mode: ignore;
 }
 
-/* Cajetín inferior idéntico al marco de la carta en Mis Cartas */
-.featured-frame-footer-box {
+/* Fila Inferior: Bandera afuera a la izquierda + Estadísticas dentro del marco */
+.featured-bottom-row {
     position: absolute;
     bottom: 10px;
-    left: 18%;
-    right: 18%;
+    left: 5.4%;
+    right: 20%;
     height: 60px;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    padding-top: 4px;
-    padding-bottom: 2px;
-    padding-left: 6px;
-    padding-right: 6px;
+    justify-content: flex-start;
     picking-mode: ignore;
 }
 
-.featured-frame-team-name {
-    font-size: 14px;
+/* Bandera afuera a la izquierda, centrada en su espacio */
+.featured-flag-image {
+    width: 40px;
+    height: 27px;
+    border-radius: 2px;
+    -unity-background-scale-mode: stretch-to-fill;
+    margin-right: 8px;
+    picking-mode: ignore;
+}
+
+/* Cajetín inferior del marco donde van las 4 estadísticas */
+.featured-frame-footer-box {
+    flex-grow: 1;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    padding-left: 2px;
+    padding-right: 2px;
+    picking-mode: ignore;
+}
+
+.featured-stats-group {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    picking-mode: ignore;
+}
+
+.featured-stat-col {
+    align-items: center;
+    justify-content: center;
+    picking-mode: ignore;
+}
+
+.featured-stat-title {
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: #2b2d42;
+    -unity-text-align: middle-center;
+    margin-bottom: -2px;
+    picking-mode: ignore;
+}
+
+.featured-stat-value {
+    font-size: 15px;
     -unity-font-style: bold;
     color: #0c1822;
     -unity-text-align: middle-center;
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    picking-mode: ignore;
-}
-
-.featured-frame-sub-row {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    picking-mode: ignore;
-}
-
-.featured-frame-pos-text {
-    font-size: 11px;
-    -unity-font-style: bold;
-    color: #0c1822;
-    -unity-text-align: middle-left;
-    picking-mode: ignore;
-}
-
-.featured-frame-rarity-text {
-    font-size: 11px;
-    -unity-font-style: bold;
-    color: #0c1822;
-    -unity-text-align: middle-right;
     picking-mode: ignore;
 }
 

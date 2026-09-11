@@ -112,7 +112,9 @@ namespace JuegoTCG.Social
 
             try
             {
-                // 1. Ofertas recibidas (donde toUid == myUid y status == "pendiente")
+                PlayerCollectionManager.EnsureExists();
+
+                // 1. Ofertas recibidas pendientes (donde toUid == myUid y status == "pendiente")
                 var incoming = await FirebaseRestClient.GetIncomingTradeOffersAsync(token, myUid);
                 if (incoming != null)
                 {
@@ -120,39 +122,111 @@ namespace JuegoTCG.Social
                     receivedOffers.AddRange(incoming);
                 }
 
-                // 2. Ofertas enviadas (donde fromUid == myUid)
+                // 2. Todas las ofertas enviadas (donde fromUid == myUid)
                 var outgoing = await FirebaseRestClient.GetSentTradeOffersAsync(token, myUid);
+
+                // 3. Todas las ofertas recibidas (para reconciliación de cartas perdidas por reinstalación/actualización)
+                var incomingAll = await FirebaseRestClient.GetIncomingTradeOffersAllStatusAsync(token, myUid);
+
+                // Mapear delta neto de cartas intercambiadas para recuperar cartas en caso de APK reinstalada
+                var tradeNetDelta = new Dictionary<string, int>();
+
                 if (outgoing != null)
                 {
                     sentOffers.Clear();
                     foreach (var offer in outgoing)
                     {
-                        // Si una oferta que yo envié ya fue aceptada por mi amigo:
-                        if (offer.status == "aceptado" && !processedTrades.Contains(offer.tradeId))
+                        string pKey = $"Trade_Processed_{offer.tradeId}";
+                        bool alreadyProcessed = processedTrades.Contains(offer.tradeId) || PlayerPrefs.GetInt(pKey, 0) == 1;
+
+                        // Si una oferta que yo envié fue aceptada por mi amigo y falta procesar la recepción:
+                        if (offer.status == "aceptado" && !alreadyProcessed)
                         {
                             processedTrades.Add(offer.tradeId);
-                            // Transferencia en mi celular:
-                            // Yo ofrecí offeredCardId -> la entrego
-                            // Mi amigo me dio requestedCardId -> la recibo
-                            PlayerCollectionManager.EnsureExists();
+                            PlayerPrefs.SetInt(pKey, 1);
+                            PlayerPrefs.Save();
+
                             if (PlayerCollectionManager.Instance != null)
                             {
-                                PlayerCollectionManager.Instance.RemoveCard(offer.offeredCardId, 1);
+                                if (PlayerCollectionManager.Instance.IsCardOwned(offer.offeredCardId))
+                                {
+                                    PlayerCollectionManager.Instance.RemoveCard(offer.offeredCardId, 1);
+                                }
                                 PlayerCollectionManager.Instance.AddCard(offer.requestedCardId, 1);
-                                _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
+
+                                if (FirebaseAuthManager.Instance != null)
+                                {
+                                    await FirebaseAuthManager.Instance.SyncUserProfileToFirestoreAsync();
+                                }
                             }
 
                             // Marcar como completada en Firestore
-                            _ = FirebaseRestClient.UpdateTradeOfferStatusAsync(token, offer.tradeId, "completado");
+                            await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, offer.tradeId, "completado");
                             offer.status = "completado";
+                            SocialService.Instance?.InvalidateFriendCardsCache();
                             OnTradeCompleted?.Invoke(offer);
-                            Debug.Log($"<color=green>[TradeService] ¡Oferta {offer.tradeId} completada! Recibiste {offer.requestedCardName}</color>");
+                            Debug.Log($"<color=green>[TradeService] ¡Oferta {offer.tradeId} completada! Recibiste {offer.requestedCardName} ({offer.requestedCardId})</color>");
+                        }
+
+                        // Contabilizar para reconciliación
+                        if (offer.status == "aceptado" || offer.status == "completado")
+                        {
+                            // En oferta enviada: Yo entregué offeredCardId y recibí requestedCardId
+                            if (!string.IsNullOrEmpty(offer.requestedCardId))
+                            {
+                                tradeNetDelta[offer.requestedCardId] = tradeNetDelta.TryGetValue(offer.requestedCardId, out int cur) ? cur + 1 : 1;
+                            }
+                            if (!string.IsNullOrEmpty(offer.offeredCardId))
+                            {
+                                tradeNetDelta[offer.offeredCardId] = tradeNetDelta.TryGetValue(offer.offeredCardId, out int cur) ? cur - 1 : -1;
+                            }
                         }
 
                         if (offer.status == "pendiente")
                         {
                             sentOffers.Add(offer);
                         }
+                    }
+                }
+
+                if (incomingAll != null)
+                {
+                    foreach (var offer in incomingAll)
+                    {
+                        if (offer.status == "aceptado" || offer.status == "completado")
+                        {
+                            // En oferta recibida: Yo entregué requestedCardId y recibí offeredCardId
+                            if (!string.IsNullOrEmpty(offer.offeredCardId))
+                            {
+                                tradeNetDelta[offer.offeredCardId] = tradeNetDelta.TryGetValue(offer.offeredCardId, out int cur) ? cur + 1 : 1;
+                            }
+                            if (!string.IsNullOrEmpty(offer.requestedCardId))
+                            {
+                                tradeNetDelta[offer.requestedCardId] = tradeNetDelta.TryGetValue(offer.requestedCardId, out int cur) ? cur - 1 : -1;
+                            }
+                        }
+                    }
+                }
+
+                // 4. Reconciliación automática anti-pérdida: Si el jugador recibió cartas en un trade pero tras reinstalar/actualizar el APK no están en su inventario
+                if (PlayerCollectionManager.Instance != null && tradeNetDelta.Count > 0)
+                {
+                    bool recoveredAny = false;
+                    foreach (var kvp in tradeNetDelta)
+                    {
+                        string cardId = kvp.Key;
+                        int netGain = kvp.Value;
+                        if (netGain > 0 && PlayerCollectionManager.Instance.GetOwnedCount(cardId) == 0)
+                        {
+                            Debug.Log($"<color=gold>[TradeService] ¡Recuperación automática de intercambio! Se acreditó {cardId} ({netGain} unidad/es) faltante tras actualizar APK.</color>");
+                            PlayerCollectionManager.Instance.AddCard(cardId, netGain);
+                            recoveredAny = true;
+                        }
+                    }
+
+                    if (recoveredAny && FirebaseAuthManager.Instance != null)
+                    {
+                        await FirebaseAuthManager.Instance.SyncUserProfileToFirestoreAsync();
                     }
                 }
 
@@ -264,16 +338,40 @@ namespace JuegoTCG.Social
                 {
                     return new TradeOperationResult(false, "Intercambio cancelado: Ya no tienes la carta que te fue solicitada.");
                 }
+            }
 
+            string token = FirebaseAuthManager.Instance != null ? await FirebaseAuthManager.Instance.EnsureValidTokenAsync() : "";
+
+            // Anti-fraude: Validar en Firestore si el proponente todavía tiene la carta ofrecida
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(offer.fromUid))
+            {
+                var fromUser = await FirebaseRestClient.GetUserDocAsync(token, offer.fromUid);
+                if (fromUser != null && fromUser.ownedCards != null)
+                {
+                    if (!fromUser.ownedCards.ContainsKey(offer.offeredCardId) || fromUser.ownedCards[offer.offeredCardId] <= 0)
+                    {
+                        await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "expirado");
+                        offer.status = "expirado";
+                        receivedOffers.Remove(offer);
+                        OnOffersUpdated?.Invoke();
+                        return new TradeOperationResult(false, "El proponente ya no dispone de la carta ofrecida en su inventario.");
+                    }
+                }
+            }
+
+            if (PlayerCollectionManager.Instance != null)
+            {
                 // Transferencia atómica de cartas:
                 // 1. Entregar la carta que pidieron
                 // 2. Recibir la carta ofrecida por el amigo
                 PlayerCollectionManager.Instance.RemoveCard(offer.requestedCardId, 1);
                 PlayerCollectionManager.Instance.AddCard(offer.offeredCardId, 1);
-                _ = FirebaseAuthManager.Instance?.SyncUserProfileToFirestoreAsync();
+                if (FirebaseAuthManager.Instance != null)
+                {
+                    await FirebaseAuthManager.Instance.SyncUserProfileToFirestoreAsync();
+                }
             }
 
-            string token = FirebaseAuthManager.Instance != null ? await FirebaseAuthManager.Instance.EnsureValidTokenAsync() : "";
             if (!string.IsNullOrEmpty(token))
             {
                 await FirebaseRestClient.UpdateTradeOfferStatusAsync(token, tradeId, "aceptado");
@@ -282,9 +380,12 @@ namespace JuegoTCG.Social
             offer.status = "aceptado";
             receivedOffers.Remove(offer);
             processedTrades.Add(tradeId);
+            PlayerPrefs.SetInt($"Trade_Processed_{tradeId}", 1);
+            PlayerPrefs.Save();
 
             Networking.FirebaseAnalyticsManager.Instance?.LogTradeAccepted(tradeId, offer.offeredCardId);
 
+            SocialService.Instance?.InvalidateFriendCardsCache();
             OnOffersUpdated?.Invoke();
             OnTradeCompleted?.Invoke(offer);
 

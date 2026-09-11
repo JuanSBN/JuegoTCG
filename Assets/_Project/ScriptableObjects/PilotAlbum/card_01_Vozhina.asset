@@ -11,10 +11,22 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
   m_Name: card_01_Vozhina
+  m_EditorClassIdentifier: 
   cardId: card_01
   playerName: Vozhina
   teamName: FC Piloto
   position: Portero
+  nationality: Rusia
+  countryCode: RU
   rarity: 0
   albumId: album_piloto_liga
   defaultArt: {fileID: 0}
+  shooting: 30
+  passing: 65
+  defending: 40
+  dribbling: 35
+  diving: 70
+  reflexes: 74
+  handling: 68
+  positioning: 71
+  manualOverall: 0

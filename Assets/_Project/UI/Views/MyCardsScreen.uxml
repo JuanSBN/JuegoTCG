@@ -194,12 +194,31 @@
                         <!-- Player Name inside card -->
                         <ui:Label name="InspectPlayerNameFramed" text="Player Name" class="inspect-player-name-framed" />
 
-                        <!-- Footer Box inside card (Club, Position, Rarity) -->
-                        <ui:VisualElement name="InspectFrameFooterBox" class="inspect-frame-footer-box">
-                            <ui:Label name="InspectFrameTeamName" text="FC BARCELONA" class="inspect-frame-team-name" />
-                            <ui:VisualElement class="inspect-frame-sub-row">
-                                <ui:Label name="InspectFramePosText" text="DEL" class="inspect-frame-pos-text" />
-                                <ui:Label name="InspectFrameRarityText" text="MÍTICA" class="inspect-frame-rarity-text" />
+                        <!-- Bottom Attributes Row: Flag outside left + Stats inside Frame Tab -->
+                        <ui:VisualElement class="inspect-bottom-row">
+                            <!-- Flag outside the tab on the left -->
+                            <ui:VisualElement name="InspectFlagImage" class="inspect-flag-image" />
+
+                            <!-- Frame Tab / Box: Stats inside where team/pos used to be -->
+                            <ui:VisualElement name="InspectFrameFooterBox" class="inspect-frame-footer-box">
+                                <ui:VisualElement name="InspectStatsGroup" class="inspect-stats-group">
+                                    <ui:VisualElement class="inspect-stat-col">
+                                        <ui:Label name="InspectStat1Title" text="TIR" class="inspect-stat-title" />
+                                        <ui:Label name="InspectStat1Value" text="82" class="inspect-stat-value" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement class="inspect-stat-col">
+                                        <ui:Label name="InspectStat2Title" text="PAS" class="inspect-stat-title" />
+                                        <ui:Label name="InspectStat2Value" text="86" class="inspect-stat-value" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement class="inspect-stat-col">
+                                        <ui:Label name="InspectStat3Title" text="DEF" class="inspect-stat-title" />
+                                        <ui:Label name="InspectStat3Value" text="45" class="inspect-stat-value" />
+                                    </ui:VisualElement>
+                                    <ui:VisualElement class="inspect-stat-col">
+                                        <ui:Label name="InspectStat4Title" text="REG" class="inspect-stat-title" />
+                                        <ui:Label name="InspectStat4Value" text="91" class="inspect-stat-value" />
+                                    </ui:VisualElement>
+                                </ui:VisualElement>
                             </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
