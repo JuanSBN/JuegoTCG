@@ -213,26 +213,26 @@ namespace JuegoTCG.EditorTools
             GameObject flagGO = new GameObject("FlagImage");
             flagGO.transform.SetParent(frontGO.transform, false);
             RectTransform flagRect = flagGO.AddComponent<RectTransform>();
-            flagRect.anchorMin = new Vector2(0.024f, 0.025f);
-            flagRect.anchorMax = new Vector2(0.165f, 0.135f);
+            flagRect.anchorMin = new Vector2(0.055f, 0.023f);
+            flagRect.anchorMax = new Vector2(0.185f, 0.145f);
             flagRect.sizeDelta = Vector2.zero;
             Image flagImg = flagGO.AddComponent<Image>();
             flagImg.preserveAspect = true;
 
-            // 7. Footer Box / Tab (Fits 100% inside the frame's white/colored tab for the 4 stats)
+            // 7. Footer Box / Tab (Fits 100% inside the frame's white/colored tab: 20.8% to 79.1%)
             GameObject footerGO = new GameObject("FooterContainer");
             footerGO.transform.SetParent(frontGO.transform, false);
             RectTransform footerRect = footerGO.AddComponent<RectTransform>();
-            footerRect.anchorMin = new Vector2(0.185f, 0.015f);
-            footerRect.anchorMax = new Vector2(0.745f, 0.142f);
+            footerRect.anchorMin = new Vector2(0.208f, 0.023f);
+            footerRect.anchorMax = new Vector2(0.791f, 0.145f);
             footerRect.sizeDelta = Vector2.zero;
 
             // Horizontal Stats Container inside the frame tab
             GameObject statsGroupGO = new GameObject("StatsGroup");
             statsGroupGO.transform.SetParent(footerGO.transform, false);
             RectTransform statsGroupRect = statsGroupGO.AddComponent<RectTransform>();
-            statsGroupRect.anchorMin = new Vector2(0.03f, 0.05f);
-            statsGroupRect.anchorMax = new Vector2(0.97f, 0.95f);
+            statsGroupRect.anchorMin = Vector2.zero;
+            statsGroupRect.anchorMax = Vector2.one;
             statsGroupRect.sizeDelta = Vector2.zero;
 
             HorizontalLayoutGroup hlg = statsGroupGO.AddComponent<HorizontalLayoutGroup>();

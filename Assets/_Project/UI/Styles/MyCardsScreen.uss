@@ -667,32 +667,33 @@
 .inspect-bottom-row {
     position: absolute;
     bottom: 22px;
-    left: 5.4%;
-    right: 5.5%;
+    left: 0;
+    right: 0;
     height: 124px;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
 }
 
 /* Flag positioned outside the tab on the left, centered in its space */
 .inspect-flag-image {
+    position: absolute;
+    left: 6.8%;
     width: 86px;
     height: 58px;
     border-radius: 4px;
     -unity-background-scale-mode: stretch-to-fill;
-    margin-right: 0;
 }
 
-/* The frame footer tab where the stats now live (fits 100% inside official frame's green/colored tab) */
+/* The frame footer tab where the stats now live (fits 100% inside official frame's tab: 20.8% to 79.1%) */
 .inspect-frame-footer-box {
-    flex-grow: 1;
+    position: absolute;
+    left: 20.8%;
+    right: 20.9%;
     height: 100%;
-    margin-left: 76px;
     align-items: center;
     justify-content: center;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 .inspect-stats-group {
@@ -700,25 +701,25 @@
     height: 100%;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .inspect-stat-col {
-    flex-grow: 1;
+    width: 25%;
     align-items: center;
     justify-content: center;
 }
 
 .inspect-stat-title {
-    font-size: 24px;
+    font-size: 20px;
     -unity-font-style: bold;
     color: #102027;
     -unity-text-align: middle-center;
-    margin-bottom: -3px;
+    margin-bottom: -2px;
 }
 
 .inspect-stat-value {
-    font-size: 34px;
+    font-size: 30px;
     -unity-font-style: bold;
     color: #051016;
     -unity-text-align: middle-center;
@@ -934,32 +935,33 @@
 .card-bottom-row {
     position: absolute;
     bottom: 12px;
-    left: 5.4%;
-    right: 5.5%;
+    left: 0;
+    right: 0;
     height: 76px;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
 }
 
 /* Flag outside tab on the left, centered in its space */
 .card-flag-image {
-    width: 46px;
-    height: 30px;
+    position: absolute;
+    left: 6.8%;
+    width: 44px;
+    height: 28px;
     border-radius: 2px;
     -unity-background-scale-mode: stretch-to-fill;
-    margin-right: 0;
 }
 
-/* The frame footer tab where the stats now live (fits 100% inside official frame tab) */
+/* The frame footer tab where the stats now live (fits 100% inside official frame tab: 20.8% to 79.1%) */
 .card-frame-footer-box {
-    flex-grow: 1;
+    position: absolute;
+    left: 20.8%;
+    right: 20.9%;
     height: 100%;
-    margin-left: 38px;
     align-items: center;
     justify-content: center;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 .card-stats-group {
@@ -967,25 +969,25 @@
     height: 100%;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .card-stat-col {
-    flex-grow: 1;
+    width: 25%;
     align-items: center;
     justify-content: center;
 }
 
 .card-stat-title {
-    font-size: 13px;
+    font-size: 11px;
     -unity-font-style: bold;
     color: #102027;
     -unity-text-align: middle-center;
-    margin-bottom: -3px;
+    margin-bottom: -2px;
 }
 
 .card-stat-value {
-    font-size: 19px;
+    font-size: 16px;
     -unity-font-style: bold;
     color: #051016;
     -unity-text-align: middle-center;
