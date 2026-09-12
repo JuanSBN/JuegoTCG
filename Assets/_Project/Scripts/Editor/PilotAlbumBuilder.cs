@@ -36,7 +36,7 @@ namespace JuegoTCG.EditorTools
             {
                 ("card_01", "Vozhina", "FC Piloto", "Portero", Rarity.Comun, "Rusia", "RU", 70, 74, 68, 71, 0),
                 ("card_02", "Balogun", "FC Piloto", "Delantero", Rarity.Comun, "Estados Unidos", "US", 78, 66, 32, 76, 0),
-                ("card_03", "Diomandé", "FC Piloto", "Defensor", Rarity.Comun, "Costa de Marfil", "CI", 35, 64, 79, 66, 0),
+                ("card_03", "Diomandé", "FC Piloto", "Defensor", Rarity.Comun, "Costa de Marfil", "CI", 76, 74, 62, 60, 0),
                 ("card_04", "James Rodríguez", "FC Piloto", "Mediocampista", Rarity.Comun, "Colombia", "CO", 82, 86, 44, 83, 0),
                 ("card_05", "Luis Díaz", "FC Piloto", "Extremo Izquierdo", Rarity.Especial, "Colombia", "CO", 82, 78, 40, 87, 0),
                 ("card_06", "Erling Haaland", "FC Piloto", "Delantero", Rarity.Especial, "Noruega", "NO", 93, 70, 45, 82, 88),
@@ -65,6 +65,13 @@ namespace JuegoTCG.EditorTools
                     card.reflexes = data.s2;
                     card.handling = data.s3;
                     card.positioning = data.s4;
+                }
+                else if (card.TacticalLine == TacticalPosition.DEF)
+                {
+                    card.defending = data.s1;
+                    card.physical = data.s2;
+                    card.passing = data.s3;
+                    card.dribbling = data.s4;
                 }
                 else
                 {

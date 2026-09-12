@@ -25,6 +25,7 @@ MonoBehaviour:
   passing: 76
   defending: 35
   dribbling: 83
+  physical: 50
   diving: 50
   reflexes: 50
   handling: 50

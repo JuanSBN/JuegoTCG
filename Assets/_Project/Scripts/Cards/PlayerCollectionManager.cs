@@ -36,6 +36,7 @@ namespace JuegoTCG.Cards
         public int passing = 50;    // Pase (PAS)
         public int defending = 50;  // Defensa (DEF)
         public int dribbling = 50;  // Regate (REG)
+        public int physical = 50;   // Físico (FÍS)
 
         // Estadísticas Portero
         public int diving = 50;       // Estirada (EST)
@@ -62,7 +63,16 @@ namespace JuegoTCG.Cards
                     return Mathf.Clamp(Mathf.RoundToInt(reflexes * 0.30f + diving * 0.25f + handling * 0.25f + positioning * 0.20f), 1, 99);
 
                 case TacticalPosition.DEF:
-                    return Mathf.Clamp(Mathf.RoundToInt(defending * 0.50f + passing * 0.25f + dribbling * 0.20f + shooting * 0.05f), 1, 99);
+                    if (TacticalPositionHelper.IsFullback(position))
+                    {
+                        // Lateral / Carrilero (LB, RB, LI, LD): Defensa 35%, Físico 25%, Pase 20%, Regate 20%
+                        return Mathf.Clamp(Mathf.RoundToInt(defending * 0.35f + physical * 0.25f + passing * 0.20f + dribbling * 0.20f), 1, 99);
+                    }
+                    else
+                    {
+                        // Defensa Central (CB, DFC, Central): Defensa 45%, Físico 30%, Pase 15%, Regate 10%
+                        return Mathf.Clamp(Mathf.RoundToInt(defending * 0.45f + physical * 0.30f + passing * 0.15f + dribbling * 0.10f), 1, 99);
+                    }
 
                 case TacticalPosition.MED:
                     return Mathf.Clamp(Mathf.RoundToInt(passing * 0.35f + dribbling * 0.30f + shooting * 0.20f + defending * 0.15f), 1, 99);
@@ -83,6 +93,16 @@ namespace JuegoTCG.Cards
                     stat2Name = "REF", stat2Value = reflexes,
                     stat3Name = "PAR", stat3Value = handling,
                     stat4Name = "COL", stat4Value = positioning
+                };
+            }
+            else if (TacticalLine == TacticalPosition.DEF)
+            {
+                return new CardStatsSummary
+                {
+                    stat1Name = "DEF", stat1Value = defending,
+                    stat2Name = "FÍS", stat2Value = physical,
+                    stat3Name = "PAS", stat3Value = passing,
+                    stat4Name = "REG", stat4Value = dribbling
                 };
             }
             else
@@ -296,6 +316,7 @@ namespace JuegoTCG.Cards
                         passing = card.passing,
                         defending = card.defending,
                         dribbling = card.dribbling,
+                        physical = card.physical,
                         diving = card.diving,
                         reflexes = card.reflexes,
                         handling = card.handling,

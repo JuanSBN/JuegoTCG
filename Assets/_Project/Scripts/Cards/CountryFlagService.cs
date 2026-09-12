@@ -41,6 +41,15 @@ namespace JuegoTCG.Cards
                 loaded = Resources.Load<Sprite>($"Flags/{code}");
             }
 
+            // 3. Fallback: si el código era un nombre completo de país (ej: "Colombia"), intentar resolver su código ISO
+            if (loaded == null && code.Length > 2)
+            {
+                if (CountryCodeHelper.TryGetCode(code, out string resolvedCode) && !string.Equals(resolvedCode, code, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return GetFlag(resolvedCode);
+                }
+            }
+
             if (loaded != null)
             {
                 flagCache[code] = loaded;

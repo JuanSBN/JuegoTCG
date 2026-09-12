@@ -36,6 +36,7 @@ namespace JuegoTCG.EditorTools
             public int passing = 50;
             public int defending = 50;
             public int dribbling = 50;
+            public int physical = 50;
 
             // Estadísticas Portero (1-99)
             public int diving = 50;
@@ -48,6 +49,9 @@ namespace JuegoTCG.EditorTools
 
             public bool isExpanded = true;
 
+            // Referencia al asset original si estamos en modo edición
+            [NonSerialized] public CardData existingCardAsset = null;
+
             public TacticalPosition TacticalLine => TacticalPositionHelper.Normalize(position);
 
             public int CalculateOverall()
@@ -58,7 +62,16 @@ namespace JuegoTCG.EditorTools
                     case TacticalPosition.POR:
                         return Mathf.Clamp(Mathf.RoundToInt(reflexes * 0.30f + diving * 0.25f + handling * 0.25f + positioning * 0.20f), 1, 99);
                     case TacticalPosition.DEF:
-                        return Mathf.Clamp(Mathf.RoundToInt(defending * 0.50f + passing * 0.25f + dribbling * 0.20f + shooting * 0.05f), 1, 99);
+                        if (TacticalPositionHelper.IsFullback(position))
+                        {
+                            // Lateral / Carrilero (LB, RB, LI, LD): DEF 35%, FÍS 25%, PAS 20%, REG 20%
+                            return Mathf.Clamp(Mathf.RoundToInt(defending * 0.35f + physical * 0.25f + passing * 0.20f + dribbling * 0.20f), 1, 99);
+                        }
+                        else
+                        {
+                            // Defensa Central (CB, DFC, Central): DEF 45%, FÍS 30%, PAS 15%, REG 10%
+                            return Mathf.Clamp(Mathf.RoundToInt(defending * 0.45f + physical * 0.30f + passing * 0.15f + dribbling * 0.10f), 1, 99);
+                        }
                     case TacticalPosition.MED:
                         return Mathf.Clamp(Mathf.RoundToInt(passing * 0.35f + dribbling * 0.30f + shooting * 0.20f + defending * 0.15f), 1, 99);
                     case TacticalPosition.DEL:
@@ -90,10 +103,24 @@ namespace JuegoTCG.EditorTools
                 }
                 else if (TacticalLine == TacticalPosition.DEF)
                 {
-                    defending = Mathf.Clamp(baseVal + 3, 1, 99);
-                    passing = Mathf.Clamp(baseVal - 12, 1, 99);
-                    dribbling = Mathf.Clamp(baseVal - 14, 1, 99);
-                    shooting = Mathf.Clamp(baseVal - 35, 1, 99);
+                    if (TacticalPositionHelper.IsFullback(position))
+                    {
+                        // Lateral: equilibrado en banda
+                        defending = Mathf.Clamp(baseVal + 1, 1, 99);
+                        physical = Mathf.Clamp(baseVal - 2, 1, 99);
+                        passing = Mathf.Clamp(baseVal - 4, 1, 99);
+                        dribbling = Mathf.Clamp(baseVal - 3, 1, 99);
+                        shooting = Mathf.Clamp(baseVal - 30, 1, 99);
+                    }
+                    else
+                    {
+                        // Central: roca atrás
+                        defending = Mathf.Clamp(baseVal + 4, 1, 99);
+                        physical = Mathf.Clamp(baseVal + 2, 1, 99);
+                        passing = Mathf.Clamp(baseVal - 12, 1, 99);
+                        dribbling = Mathf.Clamp(baseVal - 15, 1, 99);
+                        shooting = Mathf.Clamp(baseVal - 35, 1, 99);
+                    }
                 }
                 else if (TacticalLine == TacticalPosition.MED)
                 {
@@ -112,12 +139,29 @@ namespace JuegoTCG.EditorTools
             }
         }
 
+        public enum WizardMode
+        {
+            CreateNew,
+            EditExisting
+        }
+
+        private WizardMode selectedMode = WizardMode.CreateNew;
+
         // Datos Generales del Álbum
         private string albumName = "Copa de Campeones 2026";
         private string albumId = "album_campeones_2026";
         private AlbumType albumType = AlbumType.Torneo;
         private int rewardCoins = 500;
         private bool autoGenerateId = true;
+        private bool albumActive = true;
+
+        // Estado del Modo Edición
+        private AlbumData selectedAlbumToEdit = null;
+        private AlbumData loadedAlbumData = null;
+        private PackData loadedPackData = null;
+        private List<AlbumData> availableAlbums = new List<AlbumData>();
+        private string[] availableAlbumNames = new string[0];
+        private int selectedAlbumIndex = 0;
 
         // Configuración del Sobre de Tienda
         private bool createPack = true;
@@ -148,14 +192,27 @@ namespace JuegoTCG.EditorTools
         [MenuItem("JuegoTCG/🛠️ Creador de Álbumes (Album Wizard)", priority = 10)]
         public static void ShowWindow()
         {
-            var window = GetWindow<AlbumWizardWindow>("Creador de Álbumes");
-            window.minSize = new Vector2(820, 720);
+            var window = GetWindow<AlbumWizardWindow>("Álbumes");
+            window.selectedMode = WizardMode.CreateNew;
+            window.minSize = new Vector2(850, 720);
+            window.Show();
+        }
+
+        [MenuItem("JuegoTCG/✏️ Editor de Álbumes (Album Editor)", priority = 11)]
+        public static void ShowEditWindow()
+        {
+            var window = GetWindow<AlbumWizardWindow>("Editor de Álbumes");
+            window.selectedMode = WizardMode.EditExisting;
+            window.RefreshAvailableAlbums();
+            window.minSize = new Vector2(850, 720);
             window.Show();
         }
 
         private void OnEnable()
         {
-            if (cardEntries.Count == 0)
+            RefreshAvailableAlbums();
+
+            if (selectedMode == WizardMode.CreateNew && cardEntries.Count == 0)
             {
                 // Ejemplo inicial para orientar al creador
                 var c1 = new CardWizardEntry { cardId = "champ_01", playerName = "Jugador Estrella 1", teamName = "Equipo A", position = "DEL", rarity = Rarity.Legendaria, nationality = "Brasil", countryCode = "BR" };
@@ -171,12 +228,155 @@ namespace JuegoTCG.EditorTools
             }
         }
 
+        public void RefreshAvailableAlbums()
+        {
+            availableAlbums.Clear();
+            string[] guids = AssetDatabase.FindAssets("t:AlbumData");
+            HashSet<string> seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            List<string> names = new List<string>();
+
+            foreach (var guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                AlbumData album = AssetDatabase.LoadAssetAtPath<AlbumData>(path);
+                if (album != null && !string.IsNullOrEmpty(album.albumId) && !seenIds.Contains(album.albumId))
+                {
+                    seenIds.Add(album.albumId);
+                    availableAlbums.Add(album);
+                    names.Add($"{album.albumName} ({album.albumId})");
+                }
+            }
+
+            availableAlbumNames = names.ToArray();
+            if (selectedAlbumIndex >= availableAlbumNames.Length)
+            {
+                selectedAlbumIndex = 0;
+            }
+            if (selectedAlbumToEdit == null && availableAlbums.Count > 0)
+            {
+                selectedAlbumToEdit = availableAlbums[0];
+            }
+        }
+
+        public void LoadAlbumForEditing(AlbumData album)
+        {
+            if (album == null) return;
+            loadedAlbumData = album;
+            selectedAlbumToEdit = album;
+            albumName = album.albumName;
+            albumId = album.albumId;
+            albumType = album.albumType;
+            rewardCoins = album.rewardCoins;
+            albumActive = album.active;
+
+            // Buscar PackData asociado
+            loadedPackData = null;
+            string[] packGuids = AssetDatabase.FindAssets("t:PackData");
+            foreach (var guid in packGuids)
+            {
+                string pPath = AssetDatabase.GUIDToAssetPath(guid);
+                PackData p = AssetDatabase.LoadAssetAtPath<PackData>(pPath);
+                if (p != null && p.albumId == album.albumId)
+                {
+                    loadedPackData = p;
+                    break;
+                }
+            }
+
+            if (loadedPackData != null)
+            {
+                createPack = true;
+                packId = loadedPackData.packId;
+                packName = loadedPackData.packName;
+                packCostCoins = loadedPackData.costAmount;
+                cardsPerPack = loadedPackData.cardsPerPack;
+                weightComun = loadedPackData.comunWeight;
+                weightEspecial = loadedPackData.especialWeight;
+                weightEpica = loadedPackData.epicaWeight;
+                weightLegendaria = loadedPackData.legendariaWeight;
+                weightMitica = loadedPackData.miticaWeight;
+                weightFullArt = loadedPackData.fullArtWeight;
+            }
+            else
+            {
+                createPack = false;
+                packId = "pack_" + SanitizeId(albumName);
+                packName = "Sobre " + albumName;
+            }
+
+            // Cargar Cartas
+            cardEntries.Clear();
+            List<CardData> cardsToLoad = new List<CardData>();
+
+            if (album.cards != null && album.cards.Count > 0)
+            {
+                foreach (var c in album.cards)
+                {
+                    if (c != null && !cardsToLoad.Contains(c))
+                    {
+                        cardsToLoad.Add(c);
+                    }
+                }
+            }
+
+            // Si la lista de cartas estaba vacía en el asset, buscar en la carpeta donde reside el AlbumData
+            if (cardsToLoad.Count == 0)
+            {
+                string albumFolder = Path.GetDirectoryName(AssetDatabase.GetAssetPath(album)).Replace('\\', '/');
+                string[] cardGuids = AssetDatabase.FindAssets("t:CardData", new[] { albumFolder });
+                foreach (var guid in cardGuids)
+                {
+                    string cPath = AssetDatabase.GUIDToAssetPath(guid);
+                    CardData c = AssetDatabase.LoadAssetAtPath<CardData>(cPath);
+                    if (c != null && (c.albumId == album.albumId || string.IsNullOrEmpty(c.albumId)))
+                    {
+                        if (!cardsToLoad.Contains(c)) cardsToLoad.Add(c);
+                    }
+                }
+            }
+
+            // Ordenar por ID para fácil lectura
+            cardsToLoad.Sort((a, b) => string.Compare(a.cardId, b.cardId, StringComparison.OrdinalIgnoreCase));
+
+            foreach (var c in cardsToLoad)
+            {
+                var entry = new CardWizardEntry
+                {
+                    cardId = c.cardId,
+                    playerName = c.playerName,
+                    teamName = c.teamName,
+                    position = c.position,
+                    rarity = c.rarity,
+                    customArt = c.defaultArt,
+                    nationality = !string.IsNullOrEmpty(c.nationality) ? c.nationality : "España",
+                    countryCode = !string.IsNullOrEmpty(c.countryCode) ? c.countryCode : "ES",
+                    shooting = c.shooting,
+                    passing = c.passing,
+                    defending = c.defending,
+                    dribbling = c.dribbling,
+                    physical = c.physical,
+                    diving = c.diving,
+                    reflexes = c.reflexes,
+                    handling = c.handling,
+                    positioning = c.positioning,
+                    manualOverall = c.manualOverall,
+                    existingCardAsset = c
+                };
+                cardEntries.Add(entry);
+            }
+        }
+
         private void OnGUI()
         {
             EditorGUILayout.Space(6);
             DrawHeader();
 
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+
+            if (selectedMode == WizardMode.EditExisting)
+            {
+                DrawAlbumSelectorSection();
+            }
 
             DrawAlbumSection();
             DrawPackSection();
@@ -188,42 +388,160 @@ namespace JuegoTCG.EditorTools
 
         private void DrawHeader()
         {
+            // Barra superior para alternar modos
+            EditorGUILayout.BeginHorizontal();
+            GUIStyle modeBtnStyle = new GUIStyle(EditorStyles.toolbarButton)
+            {
+                fontSize = 12,
+                fontStyle = FontStyle.Bold,
+                fixedHeight = 28
+            };
+
+            GUI.backgroundColor = selectedMode == WizardMode.CreateNew ? new Color(0.3f, 0.8f, 1f) : Color.white;
+            if (GUILayout.Button("➕ CREAR NUEVO ÁLBUM", modeBtnStyle))
+            {
+                selectedMode = WizardMode.CreateNew;
+            }
+
+            GUI.backgroundColor = selectedMode == WizardMode.EditExisting ? new Color(1f, 0.75f, 0.2f) : Color.white;
+            if (GUILayout.Button("✏️ EDITAR ÁLBUM EXISTENTE", modeBtnStyle))
+            {
+                selectedMode = WizardMode.EditExisting;
+                RefreshAvailableAlbums();
+            }
+            GUI.backgroundColor = Color.white;
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(8);
+
             GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
             {
                 fontSize = 18,
                 alignment = TextAnchor.MiddleCenter
             };
-            titleStyle.normal.textColor = new Color(0.2f, 0.75f, 1f);
 
-            EditorGUILayout.LabelField("⚽ CREADOR DE ÁLBUMES - JUEGOTCG", titleStyle);
-            EditorGUILayout.HelpBox(
-                "Diseña y genera álbumes completos con sus cartas y sobres en 1 clic. " +
-                "Los assets se crean listos para Android y se integran al sistema de colecciones.",
-                MessageType.Info
-            );
+            if (selectedMode == WizardMode.CreateNew)
+            {
+                titleStyle.normal.textColor = new Color(0.2f, 0.75f, 1f);
+                EditorGUILayout.LabelField("⚽ CREADOR DE ÁLBUMES - JUEGOTCG", titleStyle);
+                EditorGUILayout.HelpBox(
+                    "Diseña y genera álbumes completos con sus cartas y sobres en 1 clic. " +
+                    "Los assets se crean listos para Android y se integran al sistema de colecciones.",
+                    MessageType.Info
+                );
+            }
+            else
+            {
+                titleStyle.normal.textColor = new Color(1f, 0.75f, 0.2f);
+                EditorGUILayout.LabelField("✏️ EDITOR DE ÁLBUMES EXISTENTES - JUEGOTCG", titleStyle);
+                EditorGUILayout.HelpBox(
+                    "Carga cualquier álbum del proyecto para modificar sus datos, sobre de tienda, cartas asociadas y estadísticas en vivo sin romper referencias ni identificadores.",
+                    MessageType.Info
+                );
+            }
+
+            EditorGUILayout.Space(6);
+        }
+
+        private void DrawAlbumSelectorSection()
+        {
+            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.LabelField("📂 SELECCIONAR ÁLBUM A EDITAR", EditorStyles.boldLabel);
+
+            if (availableAlbumNames == null || availableAlbumNames.Length == 0)
+            {
+                RefreshAvailableAlbums();
+            }
+
+            EditorGUILayout.BeginHorizontal();
+            if (availableAlbumNames != null && availableAlbumNames.Length > 0)
+            {
+                int newIndex = EditorGUILayout.Popup("Álbum en Proyecto:", selectedAlbumIndex, availableAlbumNames);
+                if (newIndex != selectedAlbumIndex || (selectedAlbumToEdit == null && availableAlbums.Count > 0))
+                {
+                    selectedAlbumIndex = newIndex;
+                    if (selectedAlbumIndex >= 0 && selectedAlbumIndex < availableAlbums.Count)
+                    {
+                        selectedAlbumToEdit = availableAlbums[selectedAlbumIndex];
+                    }
+                }
+            }
+            else
+            {
+                EditorGUILayout.LabelField("No se encontraron álbumes en el proyecto.");
+            }
+
+            if (GUILayout.Button("🔄 Refrescar", GUILayout.Width(85)))
+            {
+                RefreshAvailableAlbums();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            selectedAlbumToEdit = (AlbumData)EditorGUILayout.ObjectField("O arrastra Asset:", selectedAlbumToEdit, typeof(AlbumData), false);
+
+            EditorGUILayout.BeginHorizontal();
+            GUI.enabled = selectedAlbumToEdit != null;
+            GUI.backgroundColor = new Color(0.2f, 0.85f, 0.4f);
+            if (GUILayout.Button("📂 Cargar Álbum para Editar", GUILayout.Height(30)))
+            {
+                LoadAlbumForEditing(selectedAlbumToEdit);
+            }
+            GUI.backgroundColor = Color.white;
+            GUI.enabled = true;
+            EditorGUILayout.EndHorizontal();
+
+            if (loadedAlbumData != null)
+            {
+                EditorGUILayout.Space(2);
+                EditorGUILayout.HelpBox($"✅ Editando actualmente: '{loadedAlbumData.albumName}' (ID: {loadedAlbumData.albumId}) | {cardEntries.Count} cartas cargadas.", MessageType.Info);
+            }
+            else
+            {
+                EditorGUILayout.Space(2);
+                EditorGUILayout.HelpBox("Selecciona un álbum arriba y presiona 'Cargar Álbum para Editar' para ver y modificar sus cartas y estadísticas.", MessageType.Warning);
+            }
+
+            EditorGUILayout.EndVertical();
             EditorGUILayout.Space(8);
         }
 
         private void DrawAlbumSection()
         {
-            foldoutAlbumInfo = EditorGUILayout.BeginFoldoutHeaderGroup(foldoutAlbumInfo, "1. INFORMACIÓN DEL ÁLBUM");
+            string sectionTitle = selectedMode == WizardMode.EditExisting ? "1. DATOS DEL ÁLBUM" : "1. INFORMACIÓN DEL ÁLBUM";
+            foldoutAlbumInfo = EditorGUILayout.BeginFoldoutHeaderGroup(foldoutAlbumInfo, sectionTitle);
             if (foldoutAlbumInfo)
             {
                 EditorGUILayout.BeginVertical("box");
 
-                EditorGUI.BeginChangeCheck();
-                albumName = EditorGUILayout.TextField("Nombre del Álbum", albumName);
-                if (EditorGUI.EndChangeCheck() && autoGenerateId)
+                if (selectedMode == WizardMode.CreateNew)
                 {
-                    albumId = "album_" + SanitizeId(albumName);
-                    packName = "Sobre " + albumName;
-                    packId = "pack_" + SanitizeId(albumName);
-                }
+                    EditorGUI.BeginChangeCheck();
+                    albumName = EditorGUILayout.TextField("Nombre del Álbum", albumName);
+                    if (EditorGUI.EndChangeCheck() && autoGenerateId)
+                    {
+                        albumId = "album_" + SanitizeId(albumName);
+                        packName = "Sobre " + albumName;
+                        packId = "pack_" + SanitizeId(albumName);
+                    }
 
-                EditorGUILayout.BeginHorizontal();
-                albumId = EditorGUILayout.TextField("ID Interno Único", albumId);
-                autoGenerateId = EditorGUILayout.ToggleLeft("Auto-generar", autoGenerateId, GUILayout.Width(100));
-                EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.BeginHorizontal();
+                    albumId = EditorGUILayout.TextField("ID Interno Único", albumId);
+                    autoGenerateId = EditorGUILayout.ToggleLeft("Auto-generar", autoGenerateId, GUILayout.Width(100));
+                    EditorGUILayout.EndHorizontal();
+                }
+                else
+                {
+                    albumName = EditorGUILayout.TextField("Nombre del Álbum", albumName);
+
+                    EditorGUILayout.BeginHorizontal();
+                    GUI.enabled = false;
+                    EditorGUILayout.TextField("ID Interno Único (Fijo)", albumId);
+                    GUI.enabled = true;
+                    EditorGUILayout.EndHorizontal();
+                    EditorGUILayout.HelpBox("El ID del álbum permanece fijo para no alterar el progreso de colección guardado.", MessageType.None);
+
+                    albumActive = EditorGUILayout.Toggle("Álbum Activo en Juego", albumActive);
+                }
 
                 albumType = (AlbumType)EditorGUILayout.EnumPopup("Tipo de Álbum", albumType);
                 rewardCoins = EditorGUILayout.IntField("Monedas de Premio (100%)", rewardCoins);
@@ -342,40 +660,75 @@ namespace JuegoTCG.EditorTools
                 entry.cardId = EditorGUILayout.TextField(entry.cardId, GUILayout.Width(75));
 
                 GUILayout.Label("Nombre:", GUILayout.Width(50));
-                entry.playerName = EditorGUILayout.TextField(entry.playerName, GUILayout.Width(125));
+                entry.playerName = EditorGUILayout.TextField(entry.playerName, GUILayout.Width(140));
 
                 GUILayout.Label("Pos:", GUILayout.Width(30));
                 string oldPos = entry.position;
-                entry.position = EditorGUILayout.TextField(entry.position, GUILayout.Width(45));
+                entry.position = EditorGUILayout.TextField(entry.position, GUILayout.Width(85));
                 if (oldPos != entry.position)
                 {
+                    string resolved = TacticalPositionHelper.ResolvePositionName(entry.position);
+                    if (resolved != entry.position)
+                    {
+                        entry.position = resolved;
+                    }
                     entry.ApplyPresetStats();
                 }
 
                 GUILayout.Label("País:", GUILayout.Width(32));
-                entry.nationality = EditorGUILayout.TextField(entry.nationality, GUILayout.Width(80));
+                string oldNat = entry.nationality;
+                entry.nationality = EditorGUILayout.TextField(entry.nationality, GUILayout.Width(85));
+                if (oldNat != entry.nationality)
+                {
+                    if (CountryCodeHelper.TryGetCode(entry.nationality, out string autoCode))
+                    {
+                        entry.countryCode = autoCode;
+                    }
+                }
 
                 GUILayout.Label("Cód:", GUILayout.Width(30));
+                string oldCode = entry.countryCode;
                 entry.countryCode = EditorGUILayout.TextField(entry.countryCode, GUILayout.Width(32)).ToUpperInvariant();
+                if (oldCode != entry.countryCode)
+                {
+                    // Si el usuario cambia el código manualmente y el nombre de país estaba vacío o en default ("España"), sugerir el nombre oficial
+                    if (string.IsNullOrWhiteSpace(entry.nationality) || entry.nationality == "España")
+                    {
+                        string canonicalName = CountryCodeHelper.GetCountryName(entry.countryCode);
+                        if (!string.IsNullOrEmpty(canonicalName) && canonicalName != entry.countryCode)
+                        {
+                            entry.nationality = canonicalName;
+                        }
+                    }
+                }
 
-                GUILayout.Label("Equipo:", GUILayout.Width(48));
-                entry.teamName = EditorGUILayout.TextField(entry.teamName, GUILayout.Width(90));
+                // Mini preview de la bandera si está disponible
+                Sprite flagPreview = CountryFlagService.GetFlag(entry.countryCode);
+                if (flagPreview != null && flagPreview.texture != null)
+                {
+                    GUIContent flagGui = new GUIContent(flagPreview.texture, $"Bandera: {entry.countryCode} ({entry.nationality})");
+                    GUILayout.Label(flagGui, GUILayout.Width(22), GUILayout.Height(16));
+                }
+                else
+                {
+                    GUILayout.Space(26);
+                }
 
                 Rarity oldRarity = entry.rarity;
-                entry.rarity = (Rarity)EditorGUILayout.EnumPopup(entry.rarity, GUILayout.Width(90));
+                entry.rarity = (Rarity)EditorGUILayout.EnumPopup(entry.rarity, GUILayout.Width(95));
                 if (oldRarity != entry.rarity)
                 {
                     entry.ApplyPresetStats();
                 }
 
-                // Badge de OVR
+                // Badge de GRL
                 int ovr = entry.CalculateOverall();
                 GUIStyle ovrStyle = new GUIStyle(EditorStyles.boldLabel)
                 {
                     alignment = TextAnchor.MiddleCenter,
                     normal = { textColor = ovr >= 90 ? new Color(1f, 0.85f, 0.2f) : (ovr >= 80 ? new Color(0.3f, 0.8f, 1f) : Color.white) }
                 };
-                GUILayout.Label($"OVR:{ovr}", ovrStyle, GUILayout.Width(50));
+                GUILayout.Label($"GRL:{ovr}", ovrStyle, GUILayout.Width(55));
 
                 entry.customArt = (Sprite)EditorGUILayout.ObjectField(entry.customArt, typeof(Sprite), false, GUILayout.Width(70));
 
@@ -396,7 +749,7 @@ namespace JuegoTCG.EditorTools
 
                     if (entry.TacticalLine == TacticalPosition.POR)
                     {
-                        GUILayout.Label("🧤 PORTERO:", EditorStyles.miniBoldLabel, GUILayout.Width(75));
+                        GUILayout.Label("🧤 PORTERO:", EditorStyles.miniBoldLabel, GUILayout.Width(82));
                         GUILayout.Label("EST:", GUILayout.Width(28));
                         entry.diving = EditorGUILayout.IntField(entry.diving, GUILayout.Width(36));
                         GUILayout.Label("REF:", GUILayout.Width(28));
@@ -406,9 +759,34 @@ namespace JuegoTCG.EditorTools
                         GUILayout.Label("COL:", GUILayout.Width(28));
                         entry.positioning = EditorGUILayout.IntField(entry.positioning, GUILayout.Width(36));
                     }
+                    else if (entry.TacticalLine == TacticalPosition.DEF)
+                    {
+                        string defTag = TacticalPositionHelper.IsFullback(entry.position) ? "🛡️ LATERAL:" : "🛡️ CENTRAL:";
+                        GUILayout.Label(defTag, EditorStyles.miniBoldLabel, GUILayout.Width(82));
+                        GUILayout.Label("DEF:", GUILayout.Width(28));
+                        entry.defending = EditorGUILayout.IntField(entry.defending, GUILayout.Width(36));
+                        GUILayout.Label("FÍS:", GUILayout.Width(28));
+                        entry.physical = EditorGUILayout.IntField(entry.physical, GUILayout.Width(36));
+                        GUILayout.Label("PAS:", GUILayout.Width(28));
+                        entry.passing = EditorGUILayout.IntField(entry.passing, GUILayout.Width(36));
+                        GUILayout.Label("REG:", GUILayout.Width(28));
+                        entry.dribbling = EditorGUILayout.IntField(entry.dribbling, GUILayout.Width(36));
+                    }
+                    else if (entry.TacticalLine == TacticalPosition.MED)
+                    {
+                        GUILayout.Label("⚙️ MEDIO:", EditorStyles.miniBoldLabel, GUILayout.Width(82));
+                        GUILayout.Label("TIR:", GUILayout.Width(28));
+                        entry.shooting = EditorGUILayout.IntField(entry.shooting, GUILayout.Width(36));
+                        GUILayout.Label("PAS:", GUILayout.Width(28));
+                        entry.passing = EditorGUILayout.IntField(entry.passing, GUILayout.Width(36));
+                        GUILayout.Label("DEF:", GUILayout.Width(28));
+                        entry.defending = EditorGUILayout.IntField(entry.defending, GUILayout.Width(36));
+                        GUILayout.Label("REG:", GUILayout.Width(28));
+                        entry.dribbling = EditorGUILayout.IntField(entry.dribbling, GUILayout.Width(36));
+                    }
                     else
                     {
-                        GUILayout.Label("⚽ CAMPO:", EditorStyles.miniBoldLabel, GUILayout.Width(75));
+                        GUILayout.Label("⚽ DELANTERO:", EditorStyles.miniBoldLabel, GUILayout.Width(82));
                         GUILayout.Label("TIR:", GUILayout.Width(28));
                         entry.shooting = EditorGUILayout.IntField(entry.shooting, GUILayout.Width(36));
                         GUILayout.Label("PAS:", GUILayout.Width(28));
@@ -420,8 +798,11 @@ namespace JuegoTCG.EditorTools
                     }
 
                     GUILayout.Space(10);
-                    GUILayout.Label("OVR Manual (0=Auto):", GUILayout.Width(130));
+                    GUILayout.Label("GRL Manual (0=Auto):", GUILayout.Width(130));
                     entry.manualOverall = EditorGUILayout.IntField(entry.manualOverall, GUILayout.Width(36));
+                    int effGrl = entry.CalculateOverall();
+                    string grlTag = entry.manualOverall > 0 ? $"[Fijo: {effGrl}]" : $"[Auto: {effGrl}]";
+                    GUILayout.Label(grlTag, EditorStyles.miniBoldLabel, GUILayout.Width(75));
 
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("⚡ Preset Stats", EditorStyles.miniButton, GUILayout.Width(90)))
@@ -440,14 +821,22 @@ namespace JuegoTCG.EditorTools
         {
             EditorGUILayout.HelpBox(
                 "Pega aquí una lista copiada de Excel o Google Sheets con las siguientes columnas:\n\n" +
-                "[ID] \\t [Nombre Jugador] \\t [Posición] \\t [Equipo] \\t [Rareza] \\t [País] \\t [CódPaís] \\t [Stat1] \\t [Stat2] \\t [Stat3] \\t [Stat4] \\t [OVR]\n\n" +
+                "[ID] \\t [Nombre Jugador] \\t [Posición] \\t [Equipo] \\t [Rareza] \\t [País] \\t [CódPaís] \\t [Stat1] \\t [Stat2] \\t [Stat3] \\t [Stat4] \\t [GRL]\n\n" +
                 "• Si solo pegas las 5 columnas tradicionales ([ID] [Nombre] [Pos] [Equipo] [Rareza]), el sistema asignará país por defecto y auto-calculará las estadísticas según posición y rareza.\n" +
-                "• Para Porteros: Stat1=EST, Stat2=REF, Stat3=PAR, Stat4=COL.\n" +
-                "• Para Jugadores de Campo: Stat1=TIR, Stat2=PAS, Stat3=DEF, Stat4=REG.\n\n" +
+                "• Posiciones reconocidas automáticamente:\n" +
+                "    - Delanteros (DEL): EXD (Extremo Derecho), EXI (Extremo Izquierdo), ED, EI, DC, ST, CF, DEL.\n" +
+                "    - Mediocampistas (MED): MCO (Medio Centro Ofensivo), MI (Medio Izquierdo), MD (Medio Derecho), MC (Mediocampista), MCD, CAM, CDM, MED.\n" +
+                "    - Defensores (DEF): DFC, CB (Centrales); LI, LD, LB, RB, LWB, RWB (Laterales/Carrileros).\n" +
+                "    - Porteros (POR): POR, PO, GK, ARQ.\n" +
+                "• Mapeo de Estadísticas:\n" +
+                "    - Porteros: Stat1=EST, Stat2=REF, Stat3=PAR, Stat4=COL.\n" +
+                "    - Defensores (Centrales y Laterales): Stat1=DEF, Stat2=FÍS, Stat3=PAS, Stat4=REG.\n" +
+                "    - Delanteros y Mediocampistas: Stat1=TIR, Stat2=PAS, Stat3=DEF, Stat4=REG.\n\n" +
                 "Ejemplo con atributos modernos:\n" +
-                "champ_01\\tLamine Yamal\\tDEL\\tFC Barcelona\\tMitica\\tEspaña\\tES\\t84\\t86\\t38\\t92\\t86\n" +
-                "champ_02\\tLionel Messi\\tMED\\tInter Miami\\tLegendaria\\tArgentina\\tAR\\t88\\t92\\t35\\t93\\t90\n" +
-                "champ_03\\tThibaut Courtois\\tPOR\\tReal Madrid\\tLegendaria\\tBélgica\\tBE\\t85\\t90\\t88\\t86\\t89",
+                "champ_01\\tLamine Yamal\\tEXD\\tFC Barcelona\\tMitica\\tEspaña\\tES\\t84\\t86\\t38\\t92\\t86\n" +
+                "champ_02\\tLuis Díaz\\tEXI\\tLiverpool\\tEspecial\\tColombia\\tCO\\t82\\t78\\t40\\t87\\t81\n" +
+                "champ_03\\tLionel Messi\\tMCO\\tInter Miami\\tLegendaria\\tArgentina\\tAR\\t88\\t92\\t35\\t93\\t90\n" +
+                "champ_04\\tThibaut Courtois\\tPOR\\tReal Madrid\\tLegendaria\\tBélgica\\tBE\\t85\\t90\\t88\\t86\\t89",
                 MessageType.Info
             );
 
@@ -474,13 +863,18 @@ namespace JuegoTCG.EditorTools
         {
             EditorGUILayout.Space(12);
 
+            if (selectedMode == WizardMode.EditExisting && loadedAlbumData == null)
+            {
+                return;
+            }
+
             // Validaciones
             List<string> errors = ValidateAlbumData();
             if (errors.Count > 0)
             {
                 EditorGUILayout.BeginVertical("box");
                 GUIStyle errStyle = new GUIStyle(EditorStyles.boldLabel) { normal = { textColor = new Color(1f, 0.4f, 0.4f) } };
-                EditorGUILayout.LabelField("⚠️ Errores encontrados antes de generar:", errStyle);
+                EditorGUILayout.LabelField("⚠️ Errores encontrados antes de continuar:", errStyle);
                 foreach (var err in errors)
                 {
                     EditorGUILayout.LabelField("• " + err, EditorStyles.wordWrappedMiniLabel);
@@ -496,16 +890,40 @@ namespace JuegoTCG.EditorTools
                 fontStyle = FontStyle.Bold
             };
 
-            GUI.backgroundColor = new Color(0.2f, 0.85f, 0.4f);
-            if (GUILayout.Button("🚀 CREAR ÁLBUM COMPLETO CON UN CLIC", btnStyle, GUILayout.Height(45)))
+            if (selectedMode == WizardMode.CreateNew)
             {
-                ExecuteCreateAlbum();
+                GUI.backgroundColor = new Color(0.2f, 0.85f, 0.4f);
+                if (GUILayout.Button("🚀 CREAR ÁLBUM COMPLETO CON UN CLIC", btnStyle, GUILayout.Height(45)))
+                {
+                    ExecuteCreateAlbum();
+                }
+                GUI.backgroundColor = Color.white;
             }
-            GUI.backgroundColor = Color.white;
+            else
+            {
+                GUI.backgroundColor = new Color(0.2f, 0.85f, 0.4f);
+                if (GUILayout.Button("💾 GUARDAR CAMBIOS EN EL ÁLBUM", btnStyle, GUILayout.Height(45)))
+                {
+                    SaveChangesToExistingAlbum();
+                }
+                GUI.backgroundColor = Color.white;
+            }
             GUI.enabled = true;
 
             EditorGUILayout.Space(4);
             EditorGUILayout.BeginHorizontal();
+
+            if (selectedMode == WizardMode.EditExisting)
+            {
+                if (GUILayout.Button("🔄 Descartar Cambios y Recargar", GUILayout.Height(28)))
+                {
+                    if (EditorUtility.DisplayDialog("Confirmar Recarga", "¿Deseas descartar los cambios no guardados y recargar el álbum original?", "Sí, Recargar", "Cancelar"))
+                    {
+                        LoadAlbumForEditing(loadedAlbumData);
+                    }
+                }
+            }
+
             if (GUILayout.Button("📦 Exportar Plantilla para Data Pack (JSON)", GUILayout.Height(28)))
             {
                 ExportDataPackTemplate();
@@ -516,6 +934,191 @@ namespace JuegoTCG.EditorTools
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(10);
+        }
+
+        private void SaveChangesToExistingAlbum()
+        {
+            if (loadedAlbumData == null)
+            {
+                EditorUtility.DisplayDialog("Error", "No hay ningún álbum cargado para editar.", "Aceptar");
+                return;
+            }
+
+            List<string> errors = ValidateAlbumData();
+            if (errors.Count > 0)
+            {
+                EditorUtility.DisplayDialog("Errores de Validación", string.Join("\n• ", errors), "Corregir");
+                return;
+            }
+
+            string albumPathSO = AssetDatabase.GetAssetPath(loadedAlbumData);
+            if (string.IsNullOrEmpty(albumPathSO))
+            {
+                EditorUtility.DisplayDialog("Error", "No se pudo determinar la ruta del archivo del álbum.", "Aceptar");
+                return;
+            }
+
+            string albumDirSO = Path.GetDirectoryName(albumPathSO).Replace('\\', '/');
+            string folderName = Path.GetFileName(albumDirSO);
+            string resDir = $"Assets/Resources/{folderName}";
+
+            AssetDatabase.StartAssetEditing();
+            try
+            {
+                // 1. Actualizar AlbumData
+                loadedAlbumData.albumName = albumName.Trim();
+                loadedAlbumData.albumType = albumType;
+                loadedAlbumData.rewardCoins = rewardCoins;
+                loadedAlbumData.active = albumActive;
+
+                List<CardData> updatedCardsList = new List<CardData>();
+
+                // 2. Actualizar o Crear Cartas individuales
+                foreach (var entry in cardEntries)
+                {
+                    CardData card = entry.existingCardAsset;
+
+                    if (card == null)
+                    {
+                        // Nueva carta agregada durante la edición
+                        card = ScriptableObject.CreateInstance<CardData>();
+                        string safeName = SanitizeFileName(entry.playerName);
+                        string newCardPathSO = $"{albumDirSO}/{entry.cardId.Trim()}_{safeName}.asset";
+                        AssetDatabase.CreateAsset(card, newCardPathSO);
+
+                        if (Directory.Exists(resDir))
+                        {
+                            string newCardPathRes = $"{resDir}/{entry.cardId.Trim()}_{safeName}.asset";
+                            AssetDatabase.CopyAsset(newCardPathSO, newCardPathRes);
+                        }
+
+                        entry.existingCardAsset = card;
+                    }
+
+                    card.cardId = entry.cardId.Trim();
+                    card.playerName = entry.playerName.Trim();
+                    card.teamName = !string.IsNullOrWhiteSpace(entry.teamName) ? entry.teamName.Trim() : (!string.IsNullOrWhiteSpace(card.teamName) ? card.teamName : loadedAlbumData.albumName.Trim());
+                    card.position = TacticalPositionHelper.ResolvePositionName(entry.position.Trim());
+                    card.rarity = entry.rarity;
+                    card.albumId = loadedAlbumData.albumId;
+                    card.defaultArt = entry.customArt;
+
+                    card.nationality = !string.IsNullOrWhiteSpace(entry.nationality) ? entry.nationality.Trim() : "España";
+                    card.countryCode = !string.IsNullOrWhiteSpace(entry.countryCode) ? entry.countryCode.Trim().ToUpperInvariant() : "ES";
+
+                    card.shooting = Mathf.Clamp(entry.shooting, 1, 99);
+                    card.passing = Mathf.Clamp(entry.passing, 1, 99);
+                    card.defending = Mathf.Clamp(entry.defending, 1, 99);
+                    card.dribbling = Mathf.Clamp(entry.dribbling, 1, 99);
+                    card.physical = Mathf.Clamp(entry.physical, 1, 99);
+
+                    card.diving = Mathf.Clamp(entry.diving, 1, 99);
+                    card.reflexes = Mathf.Clamp(entry.reflexes, 1, 99);
+                    card.handling = Mathf.Clamp(entry.handling, 1, 99);
+                    card.positioning = Mathf.Clamp(entry.positioning, 1, 99);
+
+                    card.manualOverall = Mathf.Clamp(entry.manualOverall, 0, 99);
+
+                    EditorUtility.SetDirty(card);
+
+                    // Sincronizar copia en Resources si existe
+                    string cardSOPath = AssetDatabase.GetAssetPath(card);
+                    if (!string.IsNullOrEmpty(cardSOPath) && !cardSOPath.StartsWith("Assets/Resources") && Directory.Exists(resDir))
+                    {
+                        string cardFileName = Path.GetFileName(cardSOPath);
+                        string resCardPath = $"{resDir}/{cardFileName}";
+                        CardData resCard = AssetDatabase.LoadAssetAtPath<CardData>(resCardPath);
+                        if (resCard != null)
+                        {
+                            EditorUtility.CopySerialized(card, resCard);
+                            EditorUtility.SetDirty(resCard);
+                        }
+                    }
+
+                    updatedCardsList.Add(card);
+                }
+
+                loadedAlbumData.cards.Clear();
+                loadedAlbumData.cards.AddRange(updatedCardsList);
+                EditorUtility.SetDirty(loadedAlbumData);
+
+                // Sincronizar copia de AlbumData en Resources si existe
+                if (Directory.Exists(resDir))
+                {
+                    string albumFileName = Path.GetFileName(albumPathSO);
+                    string resAlbumPath = $"{resDir}/{albumFileName}";
+                    AlbumData resAlbum = AssetDatabase.LoadAssetAtPath<AlbumData>(resAlbumPath);
+                    if (resAlbum != null)
+                    {
+                        EditorUtility.CopySerialized(loadedAlbumData, resAlbum);
+                        EditorUtility.SetDirty(resAlbum);
+                    }
+                }
+
+                // 3. Actualizar o Crear PackData
+                if (createPack)
+                {
+                    PackData pack = loadedPackData;
+                    if (pack == null)
+                    {
+                        pack = ScriptableObject.CreateInstance<PackData>();
+                        string cleanId = SanitizeId(albumId);
+                        string newPackPathSO = $"{albumDirSO}/Pack_{cleanId}.asset";
+                        AssetDatabase.CreateAsset(pack, newPackPathSO);
+                        if (Directory.Exists(resDir))
+                        {
+                            string newPackPathRes = $"{resDir}/Pack_{cleanId}.asset";
+                            AssetDatabase.CopyAsset(newPackPathSO, newPackPathRes);
+                        }
+                        loadedPackData = pack;
+                    }
+
+                    pack.packId = packId.Trim();
+                    pack.packName = packName.Trim();
+                    pack.albumId = loadedAlbumData.albumId;
+                    pack.cardsPerPack = cardsPerPack;
+                    pack.costType = CostType.Moneda;
+                    pack.costAmount = packCostCoins;
+
+                    pack.comunWeight = weightComun;
+                    pack.especialWeight = weightEspecial;
+                    pack.epicaWeight = weightEpica;
+                    pack.legendariaWeight = weightLegendaria;
+                    pack.miticaWeight = weightMitica;
+                    pack.fullArtWeight = weightFullArt;
+
+                    EditorUtility.SetDirty(pack);
+
+                    // Sincronizar copia en Resources si existe
+                    string packSOPath = AssetDatabase.GetAssetPath(pack);
+                    if (!string.IsNullOrEmpty(packSOPath) && !packSOPath.StartsWith("Assets/Resources") && Directory.Exists(resDir))
+                    {
+                        string packFileName = Path.GetFileName(packSOPath);
+                        string resPackPath = $"{resDir}/{packFileName}";
+                        PackData resPack = AssetDatabase.LoadAssetAtPath<PackData>(resPackPath);
+                        if (resPack != null)
+                        {
+                            EditorUtility.CopySerialized(pack, resPack);
+                            EditorUtility.SetDirty(resPack);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            if (Application.isPlaying && PlayerCollectionManager.Instance != null)
+            {
+                PlayerCollectionManager.Instance.LoadAllAlbums();
+                PlayerCollectionManager.Instance.LoadCollection();
+            }
+
+            EditorUtility.DisplayDialog("Álbum Actualizado", $"¡El álbum '{loadedAlbumData.albumName}' y sus {cardEntries.Count} cartas han sido guardados con éxito!", "Aceptar");
         }
 
         private List<string> ValidateAlbumData()
@@ -585,8 +1188,8 @@ namespace JuegoTCG.EditorTools
                     CardData card = ScriptableObject.CreateInstance<CardData>();
                     card.cardId = entry.cardId.Trim();
                     card.playerName = entry.playerName.Trim();
-                    card.teamName = entry.teamName.Trim();
-                    card.position = entry.position.Trim();
+                    card.teamName = !string.IsNullOrWhiteSpace(entry.teamName) ? entry.teamName.Trim() : album.albumName.Trim();
+                    card.position = TacticalPositionHelper.ResolvePositionName(entry.position.Trim());
                     card.rarity = entry.rarity;
                     card.albumId = album.albumId;
                     card.defaultArt = entry.customArt;
@@ -600,6 +1203,7 @@ namespace JuegoTCG.EditorTools
                     card.passing = Mathf.Clamp(entry.passing, 1, 99);
                     card.defending = Mathf.Clamp(entry.defending, 1, 99);
                     card.dribbling = Mathf.Clamp(entry.dribbling, 1, 99);
+                    card.physical = Mathf.Clamp(entry.physical, 1, 99);
 
                     // Estadísticas de Portero
                     card.diving = Mathf.Clamp(entry.diving, 1, 99);
@@ -722,10 +1326,19 @@ namespace JuegoTCG.EditorTools
             sb.AppendLine("CardId,PlayerName,Position,TeamName,Rarity,Nationality,CountryCode,Stat1,Stat2,Stat3,Stat4,Overall");
             foreach (var c in cardEntries)
             {
-                int s1 = c.TacticalLine == TacticalPosition.POR ? c.diving : c.shooting;
-                int s2 = c.TacticalLine == TacticalPosition.POR ? c.reflexes : c.passing;
-                int s3 = c.TacticalLine == TacticalPosition.POR ? c.handling : c.defending;
-                int s4 = c.TacticalLine == TacticalPosition.POR ? c.positioning : c.dribbling;
+                int s1, s2, s3, s4;
+                if (c.TacticalLine == TacticalPosition.POR)
+                {
+                    s1 = c.diving; s2 = c.reflexes; s3 = c.handling; s4 = c.positioning;
+                }
+                else if (c.TacticalLine == TacticalPosition.DEF)
+                {
+                    s1 = c.defending; s2 = c.physical; s3 = c.passing; s4 = c.dribbling;
+                }
+                else
+                {
+                    s1 = c.shooting; s2 = c.passing; s3 = c.defending; s4 = c.dribbling;
+                }
                 sb.AppendLine($"{c.cardId},{c.playerName},{c.position},{c.teamName},{c.rarity},{c.nationality},{c.countryCode},{s1},{s2},{s3},{s4},{c.CalculateOverall()}");
             }
 
@@ -764,13 +1377,22 @@ namespace JuegoTCG.EditorTools
                     }
 
                     string nat = tokens.Length > 5 && !string.IsNullOrWhiteSpace(tokens[5]) ? tokens[5].Trim() : "España";
-                    string code = tokens.Length > 6 && !string.IsNullOrWhiteSpace(tokens[6]) ? tokens[6].Trim().ToUpperInvariant() : "ES";
+                    string code = tokens.Length > 6 && !string.IsNullOrWhiteSpace(tokens[6]) ? tokens[6].Trim().ToUpperInvariant() : string.Empty;
+
+                    // Si no se proporcionó código en el texto o es ES pero el país no es España, auto-resolver con CountryCodeHelper
+                    if (string.IsNullOrEmpty(code) || (code == "ES" && !string.Equals(nat, "España", StringComparison.OrdinalIgnoreCase) && !string.Equals(nat, "Spain", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        code = CountryCodeHelper.GetCountryCode(nat, !string.IsNullOrEmpty(code) ? code : "ES");
+                    }
+
+                    // Resolver código abreviado (EXD -> "Extremo Derecho", EXI -> "Extremo Izquierdo", etc.)
+                    string resolvedPos = TacticalPositionHelper.ResolvePositionName(pos);
 
                     var newEntry = new CardWizardEntry
                     {
                         cardId = id,
                         playerName = name,
-                        position = pos,
+                        position = resolvedPos,
                         teamName = team,
                         rarity = rar,
                         nationality = nat,
@@ -782,16 +1404,19 @@ namespace JuegoTCG.EditorTools
                     if (tokens.Length > 7 && int.TryParse(tokens[7].Trim(), out int s1))
                     {
                         if (newEntry.TacticalLine == TacticalPosition.POR) newEntry.diving = s1;
+                        else if (newEntry.TacticalLine == TacticalPosition.DEF) newEntry.defending = s1;
                         else newEntry.shooting = s1;
                     }
                     if (tokens.Length > 8 && int.TryParse(tokens[8].Trim(), out int s2))
                     {
                         if (newEntry.TacticalLine == TacticalPosition.POR) newEntry.reflexes = s2;
+                        else if (newEntry.TacticalLine == TacticalPosition.DEF) newEntry.physical = s2;
                         else newEntry.passing = s2;
                     }
                     if (tokens.Length > 9 && int.TryParse(tokens[9].Trim(), out int s3))
                     {
                         if (newEntry.TacticalLine == TacticalPosition.POR) newEntry.handling = s3;
+                        else if (newEntry.TacticalLine == TacticalPosition.DEF) newEntry.passing = s3;
                         else newEntry.defending = s3;
                     }
                     if (tokens.Length > 10 && int.TryParse(tokens[10].Trim(), out int s4))

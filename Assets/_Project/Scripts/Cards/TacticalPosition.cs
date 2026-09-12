@@ -36,14 +36,15 @@ namespace JuegoTCG.Cards
 
             // 2. Defensa (Central, Lateral, Zaguero, Carrilero, etc.)
             if (p.Contains("DEF") || p.Contains("LATERAL") || p.Contains("CENTRAL") || p.Contains("ZAGUERO") || 
-                p.Contains("CARRILERO") || p == "DF" || p == "CB" || p == "LB" || p == "RB" || p == "LTD" || p == "LTI")
+                p.Contains("CARRILERO") || p == "DF" || p == "CB" || p == "DFC" || p == "LB" || p == "RB" || p == "LD" || p == "LI" || p == "LTD" || p == "LTI" || p == "CAD" || p == "CAI" || p == "LWB" || p == "RWB")
             {
                 return TacticalPosition.DEF;
             }
 
             // 3. Mediocentro (Mediocampista, Volante, Pivote, Interior, Mediapunta, etc.)
             if (p.Contains("MED") || p.Contains("VOLANTE") || p.Contains("PIVOTE") || p.Contains("INTERIOR") || 
-                p.Contains("ORGANIZADOR") || p == "MC" || p == "MCD" || p == "MCO" || p == "MF" || p == "CM" || p == "CAM" || p == "CDM")
+                p.Contains("ORGANIZADOR") || p == "MC" || p == "MCD" || p == "MCO" || p == "MI" || p == "MD" || 
+                p == "MF" || p == "CM" || p == "CAM" || p == "CDM" || p == "LM" || p == "RM")
             {
                 return TacticalPosition.MED;
             }
@@ -51,13 +52,122 @@ namespace JuegoTCG.Cards
             // 4. Delantero (Extremo Izquierdo, Extremo Derecho, Delantero Centro, Punta, etc.)
             if (p.Contains("DEL") || p.Contains("EXTREMO") || p.Contains("PUNTA") || p.Contains("ATACANTE") || 
                 p.Contains("FORWARD") || p.Contains("STRIKER") || p.Contains("WINGER") ||
-                p == "EI" || p == "ED" || p == "DC" || p == "SD" || p == "LW" || p == "RW" || p == "ST" || p == "CF")
+                p == "EXD" || p == "EXI" || p == "EI" || p == "ED" || p == "DC" || p == "SD" || p == "LW" || p == "RW" || p == "ST" || p == "CF")
             {
                 return TacticalPosition.DEL;
             }
 
             // Por defecto, si no coincide con las anteriores, se asigna como Delantero
             return TacticalPosition.DEL;
+        }
+
+        /// <summary>
+        /// Convierte códigos abreviados populares de fútbol (EXD, EXI, MCO, MI, MD, MC, DFC, LI, LD, etc.)
+        /// a su nombre descriptivo oficial en español ("Extremo Derecho", "Extremo Izquierdo", etc.).
+        /// Si ya es un texto completo o no tiene alias, devuelve el texto limpio.
+        /// </summary>
+        public static string ResolvePositionName(string rawPosition)
+        {
+            if (string.IsNullOrWhiteSpace(rawPosition)) return "Delantero";
+
+            string p = rawPosition.Trim();
+            string upper = p.ToUpperInvariant();
+
+            switch (upper)
+            {
+                // Delanteros (Línea DEL)
+                case "EXD":
+                case "ED":
+                case "RW":
+                    return "Extremo Derecho";
+                case "EXI":
+                case "EI":
+                case "LW":
+                    return "Extremo Izquierdo";
+                case "DC":
+                case "ST":
+                case "CF":
+                    return "Delantero Centro";
+                case "SD":
+                case "SS":
+                    return "Segunda Punta";
+                case "DEL":
+                    return "Delantero";
+
+                // Mediocampistas (Línea MED)
+                case "MCO":
+                case "CAM":
+                    return "Medio Centro Ofensivo";
+                case "MI":
+                case "LM":
+                    return "Medio Izquierdo";
+                case "MD":
+                case "RM":
+                    return "Medio Derecho";
+                case "MC":
+                case "CM":
+                    return "Mediocampista";
+                case "MCD":
+                case "CDM":
+                    return "Medio Centro Defensivo";
+                case "MED":
+                    return "Mediocentro";
+
+                // Defensas (Línea DEF)
+                case "DFC":
+                case "CB":
+                    return "Defensa Central";
+                case "LI":
+                case "LB":
+                case "LTI":
+                    return "Lateral Izquierdo";
+                case "LD":
+                case "RB":
+                case "LTD":
+                    return "Lateral Derecho";
+                case "CAI":
+                case "LWB":
+                    return "Carrilero Izquierdo";
+                case "CAD":
+                case "RWB":
+                    return "Carrilero Derecho";
+                case "DEF":
+                case "DF":
+                    return "Defensor";
+
+                // Porteros (Línea POR)
+                case "POR":
+                case "PO":
+                case "GK":
+                case "ARQ":
+                    return "Portero";
+
+                default:
+                    return p;
+            }
+        }
+
+        /// <summary>
+        /// Determina si una posición defensiva corresponde a un Lateral o Carrilero (LB, RB, LI, LD, etc.).
+        /// </summary>
+        public static bool IsFullback(string rawPosition)
+        {
+            if (string.IsNullOrWhiteSpace(rawPosition)) return false;
+            string p = rawPosition.Trim().ToUpperInvariant();
+            return p.Contains("LATERAL") || p.Contains("CARRILERO") ||
+                   p == "LB" || p == "RB" || p == "LI" || p == "LD" ||
+                   p == "LWB" || p == "RWB" || p == "LTI" || p == "LTD";
+        }
+
+        /// <summary>
+        /// Determina si una posición defensiva corresponde a un Defensa Central (CB, DFC, Central, Zaguero, etc.).
+        /// Si la posición pertenece a la línea DEF y no es lateral, se considera central.
+        /// </summary>
+        public static bool IsCentralDefender(string rawPosition)
+        {
+            if (string.IsNullOrWhiteSpace(rawPosition)) return false;
+            if (IsFullback(rawPosition)) return false;
+            return Normalize(rawPosition) == TacticalPosition.DEF;
         }
 
         /// <summary>
