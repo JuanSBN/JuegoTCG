@@ -23,13 +23,15 @@ namespace JuegoTCG.UI
         private static string sessionPackName = "Sobre Estrella Piloto";
         private static int sessionPackCount = 1;
         private static bool sessionForceHolo = false;
+        private static string sessionAlbumId = null;
         private static bool sessionConfigured = false;
 
-        public static void ConfigureSession(string packName, int count = 1, bool forceHolo = false)
+        public static void ConfigureSession(string packName, int count = 1, bool forceHolo = false, string albumId = null)
         {
             sessionPackName = packName;
             sessionPackCount = count;
             sessionForceHolo = forceHolo;
+            sessionAlbumId = albumId;
             sessionConfigured = true;
         }
         [Header("Prefab de Carta Oficial y Canvas")]
@@ -192,6 +194,39 @@ namespace JuegoTCG.UI
 
         private void LoadCatalogIfEmpty()
         {
+            string targetAlbumId = sessionAlbumId;
+            if (string.IsNullOrEmpty(targetAlbumId) && !string.IsNullOrEmpty(sessionPackName) && sessionPackName.ToLower().Contains("campeones"))
+            {
+                targetAlbumId = "album_campeones_2026";
+            }
+
+            // Si hay un álbum objetivo específico, cargamos específicamente ese catálogo
+            if (!string.IsNullOrEmpty(targetAlbumId))
+            {
+                cardCatalog.Clear();
+
+                // 1. Intentar cargar desde Resources/Albums/{albumId}
+                CardData[] resCards = Resources.LoadAll<CardData>($"Albums/{targetAlbumId}");
+                if (resCards != null && resCards.Length > 0)
+                {
+                    cardCatalog.AddRange(resCards);
+                }
+
+#if UNITY_EDITOR
+                if (cardCatalog.Count == 0)
+                {
+                    string folderPath = $"Assets/_Project/ScriptableObjects/{targetAlbumId}";
+                    string[] guids = UnityEditor.AssetDatabase.FindAssets("t:CardData", new[] { folderPath });
+                    foreach (string guid in guids)
+                    {
+                        string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                        CardData card = UnityEditor.AssetDatabase.LoadAssetAtPath<CardData>(path);
+                        if (card != null && !cardCatalog.Contains(card)) cardCatalog.Add(card);
+                    }
+                }
+#endif
+            }
+
             // Fallback en runtime (mobile/build): cargar desde Resources si el catalogo esta vacio
             if (cardCatalog == null || cardCatalog.Count == 0)
             {

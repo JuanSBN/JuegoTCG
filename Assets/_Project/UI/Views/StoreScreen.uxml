@@ -21,14 +21,14 @@
             <ui:Label text="COMPRAR SOBRES" class="section-heading" />
             <ui:VisualElement class="sobres-row">
                 
-                <!-- Sobre Bronce -->
+                <!-- Sobre A: Liga de Campeones -->
                 <ui:VisualElement class="envelope-column">
                     <ui:Button name="Pack_A" class="envelope-card">
-                        <ui:Label text="SOBRE BRONCE" class="envelope-label" />
+                        <ui:Label text="LIGA CAMPEONES" class="envelope-label" />
                     </ui:Button>
                     <ui:Button name="Btn_BuyPack_A" class="envelope-buy-button">
                         <ui:VisualElement class="coin-icon-mini" />
-                        <ui:Label text="100" class="envelope-price-text" />
+                        <ui:Label text="150" class="envelope-price-text" />
                     </ui:Button>
                 </ui:VisualElement>
 

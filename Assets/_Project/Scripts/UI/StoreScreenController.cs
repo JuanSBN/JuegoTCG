@@ -74,9 +74,9 @@ namespace JuegoTCG.UI
 
         private void BindButtonEvents()
         {
-            if (packAButton != null) packAButton.onClick.AddListener(() => BuyPack("Sobre A", 100));
-            if (packBButton != null) packBButton.onClick.AddListener(() => BuyPack("Sobre B", 300));
-            if (packCButton != null) packCButton.onClick.AddListener(() => BuyPack("Sobre C", 600));
+            if (packAButton != null) packAButton.onClick.AddListener(() => BuyPack("Sobre Liga de Campeones", 150));
+            if (packBButton != null) packBButton.onClick.AddListener(() => BuyPack("Sobre Oro", 300));
+            if (packCButton != null) packCButton.onClick.AddListener(() => BuyPack("Sobre Diamante", 600));
 
             if (watchAdButton != null) watchAdButton.onClick.AddListener(OnClickWatchAd);
 

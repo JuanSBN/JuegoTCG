@@ -60,9 +60,9 @@ namespace JuegoTCG.UI
             UpdateCoinsDisplay();
 
             // Wire Pack Buttons
-            WirePack("Pack_A", "Btn_BuyPack_A", "Sobre A", 100);
-            WirePack("Pack_B", "Btn_BuyPack_B", "Sobre B", 300);
-            WirePack("Pack_C", "Btn_BuyPack_C", "Sobre C", 600);
+            WirePack("Pack_A", "Btn_BuyPack_A", "Sobre Liga de Campeones", 150, "album_campeones_2026");
+            WirePack("Pack_B", "Btn_BuyPack_B", "Sobre Oro", 300);
+            WirePack("Pack_C", "Btn_BuyPack_C", "Sobre Diamante", 600);
 
             // Wire Ad Banner
             Button adBanner = root.Q<Button>("AdBannerButton");
@@ -82,18 +82,18 @@ namespace JuegoTCG.UI
             navCtrl.Initialize(root, LiquidGlassNavBarController.TabType.Tienda);
         }
 
-        private void WirePack(string packBtnName, string buyBtnName, string packName, int price)
+        private void WirePack(string packBtnName, string buyBtnName, string packName, int price, string albumId = null)
         {
             Button packBtn = root.Q<Button>(packBtnName);
             Button buyBtn = root.Q<Button>(buyBtnName);
 
-            System.Action buyAction = () => BuyPack(packName, price);
+            System.Action buyAction = () => BuyPack(packName, price, albumId);
 
             if (packBtn != null) packBtn.clicked += buyAction;
             if (buyBtn != null) buyBtn.clicked += buyAction;
         }
 
-        private void BuyPack(string packName, int price)
+        private void BuyPack(string packName, int price, string albumId = null)
         {
             if (currentCoins >= price)
             {
@@ -104,10 +104,10 @@ namespace JuegoTCG.UI
                     FirebaseAuthManager.Instance.AddCoins(-price);
                 }
 
-                Debug.Log($"<color=green>[Tienda] ¡Comprado {packName} por {price} monedas! Abriendo experiencia cinemática...</color>");
+                Debug.Log($"<color=green>[Tienda] ¡Comprado {packName} ({albumId ?? "default"}) por {price} monedas! Abriendo experiencia cinemática...</color>");
 
                 bool isGuaranteedHolo = packName.Contains("C") || price >= 600;
-                UIToolkitPackOpeningController.ConfigureSession(packName, count: 1, forceHolo: isGuaranteedHolo);
+                UIToolkitPackOpeningController.ConfigureSession(packName, count: 1, forceHolo: isGuaranteedHolo, albumId: albumId);
                 SceneManager.LoadScene("PackOpeningSceneUIToolkit");
             }
             else
