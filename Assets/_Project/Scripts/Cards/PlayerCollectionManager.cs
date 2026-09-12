@@ -631,6 +631,42 @@ namespace JuegoTCG.Cards
             return new List<CardCatalogItem>(allCardsCatalog.Values);
         }
 
+        /// <summary>
+        /// Obtiene las cartas del catálogo asociadas a un álbum específico.
+        /// Si albumId es nulo o vacío, retorna el catálogo global.
+        /// </summary>
+        public List<CardCatalogItem> GetCatalogForAlbum(string albumId)
+        {
+            if (string.IsNullOrEmpty(albumId))
+            {
+                return GetCatalog();
+            }
+
+            bool isPilotAlias = (albumId == "album_piloto_liga" || albumId == "pilot_album");
+            var result = new List<CardCatalogItem>();
+
+            foreach (var item in allCardsCatalog.Values)
+            {
+                if (item == null) continue;
+                if (string.Equals(item.albumId, albumId, StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Add(item);
+                }
+                else if (isPilotAlias && string.IsNullOrEmpty(item.albumId))
+                {
+                    result.Add(item);
+                }
+            }
+
+            // Fallback para álbum piloto si aún no se poblaron en allCardsCatalog
+            if (result.Count == 0 && isPilotAlias && pilotAlbumCatalog != null)
+            {
+                result.AddRange(pilotAlbumCatalog);
+            }
+
+            return result;
+        }
+
         public CardCatalogItem GetCard(string cardId)
         {
             if (string.IsNullOrEmpty(cardId)) return null;
@@ -640,14 +676,33 @@ namespace JuegoTCG.Cards
 
         public List<AlbumData> GetAllAlbums()
         {
+            if (loadedAlbums.Count == 0)
+            {
+                LoadAllAlbums();
+            }
+
+            // Garantizar que el álbum piloto esté siempre presente
+            if (!loadedAlbums.ContainsKey("album_piloto_liga") && !loadedAlbums.ContainsKey("pilot_album"))
+            {
+                var pilotAlbum = ScriptableObject.CreateInstance<AlbumData>();
+                pilotAlbum.albumId = "album_piloto_liga";
+                pilotAlbum.albumName = "Álbum Estrella Piloto";
+                pilotAlbum.albumType = AlbumType.Liga;
+                pilotAlbum.active = true;
+                pilotAlbum.rewardCoins = 500;
+                loadedAlbums[pilotAlbum.albumId] = pilotAlbum;
+            }
+
             return new List<AlbumData>(loadedAlbums.Values);
         }
 
         public AlbumData GetAlbum(string albumId)
         {
             if (string.IsNullOrEmpty(albumId)) return null;
-            loadedAlbums.TryGetValue(albumId, out var album);
-            return album;
+            if (loadedAlbums.TryGetValue(albumId, out var album)) return album;
+            if ((albumId == "album_piloto_liga" || albumId == "pilot_album") && loadedAlbums.TryGetValue("album_piloto_liga", out var p1)) return p1;
+            if ((albumId == "album_piloto_liga" || albumId == "pilot_album") && loadedAlbums.TryGetValue("pilot_album", out var p2)) return p2;
+            return null;
         }
 
         /// <summary>
@@ -661,7 +716,9 @@ namespace JuegoTCG.Cards
 
             if (string.IsNullOrEmpty(albumId)) return;
 
-            // Si el álbum está registrado en loadedAlbums y tiene cartas
+            bool isPilotAlias = (albumId == "album_piloto_liga" || albumId == "pilot_album");
+
+            // 1. Si el álbum está registrado en loadedAlbums y tiene cartas
             if (loadedAlbums.TryGetValue(albumId, out var album) && album.cards != null && album.cards.Count > 0)
             {
                 totalCards = album.cards.Count;
@@ -672,13 +729,25 @@ namespace JuegoTCG.Cards
             }
             else
             {
-                // Buscar en allCardsCatalog por albumId
+                // 2. Buscar en allCardsCatalog
                 foreach (var c in allCardsCatalog.Values)
                 {
-                    if (c.albumId == albumId)
+                    if (c == null) continue;
+                    if (string.Equals(c.albumId, albumId, StringComparison.OrdinalIgnoreCase) ||
+                        (isPilotAlias && string.IsNullOrEmpty(c.albumId)))
                     {
                         totalCards++;
                         if (IsCardOwned(c.cardId)) ownedUnique++;
+                    }
+                }
+
+                // 3. Fallback al catálogo piloto si no había en allCardsCatalog
+                if (totalCards == 0 && isPilotAlias && pilotAlbumCatalog != null)
+                {
+                    totalCards = pilotAlbumCatalog.Count;
+                    foreach (var c in pilotAlbumCatalog)
+                    {
+                        if (c != null && IsCardOwned(c.cardId)) ownedUnique++;
                     }
                 }
             }

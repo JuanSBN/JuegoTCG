@@ -6,7 +6,14 @@
 
         <!-- Header -->
         <ui:VisualElement class="cards-header">
-            <ui:Label text="MIS CARTAS" class="cards-title" />
+            <ui:VisualElement class="cards-title-row">
+                <ui:Label text="MIS CARTAS" class="cards-title" />
+                <ui:Button name="AlbumSelectorBtn" class="album-selector-btn">
+                    <ui:Label name="AlbumSelectorIcon" text="📖" class="album-selector-icon" />
+                    <ui:Label name="AlbumSelectorName" text="Álbum Estrella Piloto" class="album-selector-name" />
+                    <ui:Label text="▼" class="album-selector-arrow" />
+                </ui:Button>
+            </ui:VisualElement>
 
             <!-- Horizontal Filter Bar -->
             <ui:VisualElement class="filter-bar">
@@ -236,6 +243,23 @@
 
             <!-- Dismiss Hint -->
             <ui:Label text="Toca en cualquier parte para cerrar" class="inspect-dismiss-hint" />
+        </ui:VisualElement>
+
+        <!-- Album Dropdown Modal (Overlay) -->
+        <ui:VisualElement name="AlbumDropdownModal" class="album-dropdown-modal" style="display: none;">
+            <ui:VisualElement name="AlbumDropdownBackdrop" class="album-dropdown-backdrop" />
+            <ui:VisualElement class="album-dropdown-sheet">
+                <ui:VisualElement class="album-dropdown-header">
+                    <ui:VisualElement class="album-dropdown-title-box">
+                        <ui:Label text="MIS ÁLBUMES" class="album-dropdown-title" />
+                        <ui:Label text="Selecciona un álbum para ver su colección" class="album-dropdown-subtitle" />
+                    </ui:VisualElement>
+                    <ui:Button name="AlbumDropdownCloseBtn" text="✕" class="album-dropdown-close-btn" />
+                </ui:VisualElement>
+                <ui:ScrollView name="AlbumDropdownScroll" class="album-dropdown-scroll" vertical-scroller-visibility="Auto">
+                    <ui:VisualElement name="AlbumDropdownList" class="album-dropdown-list" />
+                </ui:ScrollView>
+            </ui:VisualElement>
         </ui:VisualElement>
 
     </ui:VisualElement>

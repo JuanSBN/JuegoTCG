@@ -52,12 +52,62 @@
     margin-bottom: 20px;
 }
 
+.cards-title-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
 .cards-title {
-    font-size: 60px;
+    font-size: 52px;
     -unity-font-style: bold;
     color: var(--text-white);
-    letter-spacing: 5px;
-    margin-bottom: 28px;
+    letter-spacing: 4px;
+    margin: 0;
+    padding: 0;
+}
+
+.album-selector-btn {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(13, 26, 19, 0.90);
+    border-color: rgba(232, 168, 32, 0.5);
+    border-width: 2px;
+    border-radius: 36px;
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 68px;
+    max-width: 520px;
+    margin: 0;
+}
+
+.album-selector-btn:hover {
+    border-color: var(--gold);
+    background-color: rgba(232, 168, 32, 0.18);
+}
+
+.album-selector-icon {
+    font-size: 26px;
+    margin-right: 10px;
+    margin-top: -2px;
+}
+
+.album-selector-name {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    max-width: 340px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 12px;
+}
+
+.album-selector-arrow {
+    font-size: 18px;
+    color: var(--gold);
 }
 
 /* ==========================================================================
@@ -988,4 +1038,148 @@
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
     margin: 0;
     padding: 0;
+}
+
+/* ==========================================================================
+   ALBUM DROPDOWN MODAL & SHEET
+   ========================================================================== */
+.album-dropdown-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+}
+
+.album-dropdown-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.78);
+}
+
+.album-dropdown-sheet {
+    position: relative;
+    width: 88%;
+    max-width: 920px;
+    max-height: 1400px;
+    background-color: #0b1710;
+    border-color: rgba(232, 168, 32, 0.5);
+    border-width: 2px;
+    border-radius: 36px;
+    padding: 36px 32px;
+    overflow: hidden;
+}
+
+.album-dropdown-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 24px;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+    margin-bottom: 24px;
+}
+
+.album-dropdown-title-box {
+    flex-direction: column;
+}
+
+.album-dropdown-title {
+    font-size: 36px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin: 0;
+}
+
+.album-dropdown-subtitle {
+    font-size: 22px;
+    color: var(--text-gray);
+    margin-top: 6px;
+}
+
+.album-dropdown-close-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    border-width: 2px;
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    -unity-text-align: middle-center;
+}
+
+.album-dropdown-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.album-dropdown-scroll {
+    max-height: 980px;
+}
+
+.album-dropdown-list {
+    flex-direction: column;
+}
+
+.album-dropdown-item {
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+    border-width: 2px;
+    border-radius: 24px;
+    padding: 24px 28px;
+    margin-bottom: 18px;
+}
+
+.album-dropdown-item:hover {
+    background-color: rgba(232, 168, 32, 0.14);
+    border-color: rgba(232, 168, 32, 0.6);
+}
+
+.album-dropdown-item-active {
+    background-color: rgba(232, 168, 32, 0.20);
+    border-color: var(--gold);
+}
+
+.album-item-icon {
+    font-size: 42px;
+    margin-right: 24px;
+}
+
+.album-item-info {
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.album-item-name {
+    font-size: 30px;
+    -unity-font-style: bold;
+    color: var(--text-white);
+    margin: 0;
+}
+
+.album-item-sub {
+    font-size: 22px;
+    color: var(--text-gray);
+    margin-top: 6px;
+}
+
+.album-item-check {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: var(--gold);
+    margin-left: 16px;
 }

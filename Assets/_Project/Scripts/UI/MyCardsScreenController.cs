@@ -124,9 +124,11 @@ namespace JuegoTCG.UI
             int owned = 0, total = 10;
             float percent = 0f;
 
+            string selectedAlbumId = PlayerPrefs.GetString("LastSelectedAlbumId", "album_piloto_liga");
+
             if (PlayerCollectionManager.Instance != null)
             {
-                PlayerCollectionManager.Instance.GetAlbumProgress(out owned, out total, out percent);
+                PlayerCollectionManager.Instance.GetAlbumProgress(selectedAlbumId, out owned, out total, out percent);
             }
 
             if (totalCardsCountText != null)
@@ -142,7 +144,8 @@ namespace JuegoTCG.UI
         {
             if (PlayerCollectionManager.Instance == null) return;
 
-            var catalog = PlayerCollectionManager.Instance.GetCatalog();
+            string selectedAlbumId = PlayerPrefs.GetString("LastSelectedAlbumId", "album_piloto_liga");
+            var catalog = PlayerCollectionManager.Instance.GetCatalogForAlbum(selectedAlbumId);
             int ownedCount = 0;
 
             foreach (var item in catalog)

@@ -14,6 +14,16 @@ namespace JuegoTCG.UI
         private Label cardsCountLabel;
         private TextField searchField;
 
+        // Album Selector elements
+        private Button albumSelectorBtn;
+        private Label albumSelectorIcon;
+        private Label albumSelectorName;
+        private VisualElement albumDropdownModal;
+        private VisualElement albumDropdownBackdrop;
+        private Button albumDropdownCloseBtn;
+        private VisualElement albumDropdownList;
+        private string selectedAlbumId = "album_piloto_liga";
+
         // Modal elements (Hero Card Showcase)
         private VisualElement inspectCardStage;
         private VisualElement inspectHeroCard;
@@ -108,6 +118,15 @@ namespace JuegoTCG.UI
             cardInspectModal = root.Q<VisualElement>("CardInspectModal");
             cardsCountLabel = root.Q<Label>("CardsCountLabel");
             searchField = root.Q<TextField>("SearchField");
+
+            // Album Selector queries
+            albumSelectorBtn = root.Q<Button>("AlbumSelectorBtn");
+            albumSelectorIcon = root.Q<Label>("AlbumSelectorIcon");
+            albumSelectorName = root.Q<Label>("AlbumSelectorName");
+            albumDropdownModal = root.Q<VisualElement>("AlbumDropdownModal");
+            albumDropdownBackdrop = root.Q<VisualElement>("AlbumDropdownBackdrop");
+            albumDropdownCloseBtn = root.Q<Button>("AlbumDropdownCloseBtn");
+            albumDropdownList = root.Q<VisualElement>("AlbumDropdownList");
 
             inspectCardStage = root.Q<VisualElement>("InspectCardStage");
             inspectHeroCard = root.Q<VisualElement>("InspectHeroCard");
@@ -204,6 +223,7 @@ namespace JuegoTCG.UI
 
             WireFilterPills();
             WireSearch();
+            WireAlbumSelector();
             WireBottomNav();
 
             if (PlayerCollectionManager.Instance != null)
@@ -552,7 +572,7 @@ namespace JuegoTCG.UI
             if (cardsGrid == null || PlayerCollectionManager.Instance == null) return;
 
             cardsGrid.Clear();
-            var catalog = PlayerCollectionManager.Instance.GetCatalog();
+            var catalog = PlayerCollectionManager.Instance.GetCatalogForAlbum(selectedAlbumId);
             int visibleCount = 0;
 
             for (int i = 0; i < catalog.Count; i++)
@@ -716,8 +736,8 @@ namespace JuegoTCG.UI
                 visibleCount++;
             }
 
-            // Update Progress Header
-            PlayerCollectionManager.Instance.GetAlbumProgress(out int ownedUnique, out int totalCards, out float percentage);
+            // Update Progress Header for selected album
+            PlayerCollectionManager.Instance.GetAlbumProgress(selectedAlbumId, out int ownedUnique, out int totalCards, out float percentage);
             if (cardsCountLabel != null)
             {
                 cardsCountLabel.text = $"{ownedUnique} de {totalCards} cartas ({Mathf.RoundToInt(percentage * 100)}%)";
@@ -958,5 +978,140 @@ namespace JuegoTCG.UI
             }
             navBarController.Initialize(root, LiquidGlassNavBarController.TabType.Cartas);
         }
+
+        #region Album Selector & Dropdown Management
+
+        private void WireAlbumSelector()
+        {
+            selectedAlbumId = PlayerPrefs.GetString("LastSelectedAlbumId", "album_piloto_liga");
+
+            var allAlbums = PlayerCollectionManager.Instance != null ? PlayerCollectionManager.Instance.GetAllAlbums() : null;
+            if (allAlbums != null && allAlbums.Count > 0)
+            {
+                var currentAlbum = allAlbums.Find(a => string.Equals(a.albumId, selectedAlbumId, System.StringComparison.OrdinalIgnoreCase));
+                if (currentAlbum == null)
+                {
+                    currentAlbum = allAlbums[0];
+                    selectedAlbumId = currentAlbum.albumId;
+                }
+                UpdateAlbumSelectorHeader(currentAlbum);
+            }
+
+            if (albumSelectorBtn != null)
+            {
+                albumSelectorBtn.clicked += OpenAlbumDropdown;
+            }
+
+            if (albumDropdownCloseBtn != null)
+            {
+                albumDropdownCloseBtn.clicked += CloseAlbumDropdown;
+            }
+
+            if (albumDropdownBackdrop != null)
+            {
+                albumDropdownBackdrop.RegisterCallback<ClickEvent>(evt => CloseAlbumDropdown());
+            }
+        }
+
+        private void UpdateAlbumSelectorHeader(AlbumData album)
+        {
+            if (album == null) return;
+            if (albumSelectorName != null)
+            {
+                albumSelectorName.text = album.albumName;
+            }
+            if (albumSelectorIcon != null)
+            {
+                albumSelectorIcon.text = GetAlbumIcon(album.albumType);
+            }
+        }
+
+        private string GetAlbumIcon(AlbumType type)
+        {
+            switch (type)
+            {
+                case AlbumType.Torneo: return "🏆";
+                case AlbumType.Seleccion: return "🌍";
+                case AlbumType.Evento: return "⭐";
+                case AlbumType.Liga:
+                default: return "⚽";
+            }
+        }
+
+        private void OpenAlbumDropdown()
+        {
+            if (albumDropdownModal == null || albumDropdownList == null || PlayerCollectionManager.Instance == null) return;
+
+            albumDropdownList.Clear();
+            var allAlbums = PlayerCollectionManager.Instance.GetAllAlbums();
+
+            foreach (var album in allAlbums)
+            {
+                if (album == null || string.IsNullOrEmpty(album.albumId)) continue;
+
+                Button itemBtn = new Button();
+                itemBtn.AddToClassList("album-dropdown-item");
+                bool isCurrent = string.Equals(album.albumId, selectedAlbumId, System.StringComparison.OrdinalIgnoreCase);
+                if (isCurrent)
+                {
+                    itemBtn.AddToClassList("album-dropdown-item-active");
+                }
+
+                Label icon = new Label(GetAlbumIcon(album.albumType));
+                icon.AddToClassList("album-item-icon");
+
+                VisualElement info = new VisualElement();
+                info.AddToClassList("album-item-info");
+
+                Label name = new Label(album.albumName);
+                name.AddToClassList("album-item-name");
+
+                PlayerCollectionManager.Instance.GetAlbumProgress(album.albumId, out int owned, out int total, out float pct);
+                Label sub = new Label($"{album.albumType} • {owned}/{total} cartas ({Mathf.RoundToInt(pct * 100)}%)");
+                sub.AddToClassList("album-item-sub");
+
+                info.Add(name);
+                info.Add(sub);
+
+                Label check = new Label(isCurrent ? "✓" : "");
+                check.AddToClassList("album-item-check");
+
+                itemBtn.Add(icon);
+                itemBtn.Add(info);
+                itemBtn.Add(check);
+
+                string targetId = album.albumId;
+                AlbumData targetAlbum = album;
+                itemBtn.clicked += () =>
+                {
+                    SelectAlbum(targetId, targetAlbum);
+                };
+
+                albumDropdownList.Add(itemBtn);
+            }
+
+            albumDropdownModal.style.display = DisplayStyle.Flex;
+        }
+
+        private void CloseAlbumDropdown()
+        {
+            if (albumDropdownModal != null)
+            {
+                albumDropdownModal.style.display = DisplayStyle.None;
+            }
+        }
+
+        private void SelectAlbum(string albumId, AlbumData album)
+        {
+            selectedAlbumId = albumId;
+            PlayerPrefs.SetString("LastSelectedAlbumId", selectedAlbumId);
+            PlayerPrefs.Save();
+
+            UpdateAlbumSelectorHeader(album);
+            CloseAlbumDropdown();
+            PopulateAlbumGrid();
+        }
+
+        #endregion
     }
 }
