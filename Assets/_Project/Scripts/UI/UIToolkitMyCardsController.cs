@@ -20,6 +20,11 @@ namespace JuegoTCG.UI
         private Label inspectTiltHint;
         private Button inspectCloseBtn;
 
+        // OVR Header Tab
+        private VisualElement inspectOvrBox;
+        private Label inspectOvrVal;
+        private Label inspectOvrTitle;
+
         // Framed card elements
         private VisualElement inspectArtContainer;
         private VisualElement inspectArtPhoto;
@@ -114,6 +119,9 @@ namespace JuegoTCG.UI
             inspectPlaceholderAvatar = root.Q<VisualElement>("InspectPlaceholderAvatar");
             inspectAvatarInitials = root.Q<Label>("InspectAvatarInitials");
             inspectArtFrame = root.Q<VisualElement>("InspectArtFrame");
+            inspectOvrBox = root.Q<VisualElement>("InspectOvrBox");
+            inspectOvrVal = root.Q<Label>("InspectOvrVal");
+            inspectOvrTitle = root.Q<Label>("InspectOvrTitle");
             inspectPlayerNameFramed = root.Q<Label>("InspectPlayerNameFramed");
             inspectFrameFooterBox = root.Q<VisualElement>("InspectFrameFooterBox");
             inspectFrameTeamName = root.Q<Label>("InspectFrameTeamName");
@@ -202,8 +210,18 @@ namespace JuegoTCG.UI
             {
                 PlayerCollectionManager.Instance.OnCollectionUpdated += PopulateAlbumGrid;
             }
+            DataPackManager.OnDataPackReloaded += PopulateAlbumGrid;
 
             PopulateAlbumGrid();
+        }
+
+        private void OnDisable()
+        {
+            if (PlayerCollectionManager.Instance != null)
+            {
+                PlayerCollectionManager.Instance.OnCollectionUpdated -= PopulateAlbumGrid;
+            }
+            DataPackManager.OnDataPackReloaded -= PopulateAlbumGrid;
         }
 
         private void EnsureRarityFrames()
@@ -374,9 +392,10 @@ namespace JuegoTCG.UI
 
                 if (inspectHeroCard != null)
                 {
-                    // 3D Pitch (rot X invertido) & Roll (rot Y) con leve Yaw (rot Z) estilo Pokémon Pocket
-                    inspectHeroCard.transform.rotation = Quaternion.Euler(-currentTiltY * 18f, currentTiltX * 18f, currentTiltX * 3.5f);
-                    inspectHeroCard.transform.position = new Vector3(currentTiltX * 24f, -currentTiltY * 24f, 0f);
+                    // 3D Pitch (rot X invertido) & Roll (rot Y) suave con leve Yaw (rot Z) estilo Pokémon Pocket
+                    // Un ángulo sutil de 4.5° evita que el recorte ortográfico 2D corte los bordes laterales
+                    inspectHeroCard.transform.rotation = Quaternion.Euler(-currentTiltY * 4.5f, currentTiltX * 4.5f, currentTiltX * 2.5f);
+                    inspectHeroCard.transform.position = new Vector3(currentTiltX * 20f, -currentTiltY * 20f, 0f);
                     inspectHeroCard.transform.scale = new Vector3(currentInspectScale, currentInspectScale, 1f);
                 }
 
@@ -578,7 +597,7 @@ namespace JuegoTCG.UI
                         photoEl.AddToClassList("inspect-art-photo-default");
                         VisualElement placeholderAvatar = new VisualElement();
                         placeholderAvatar.AddToClassList("card-placeholder-avatar");
-                        Label initialsLbl = new Label(item.initials);
+                        Label initialsLbl = new Label(item.DisplayInitials);
                         initialsLbl.AddToClassList("card-avatar-initials");
                         initialsLbl.AddToClassList(GetInitialsClass(item.rarity));
                         placeholderAvatar.Add(initialsLbl);
@@ -610,8 +629,19 @@ namespace JuegoTCG.UI
                     }
                     artContainer.Add(frameEl);
 
-                    // 3. Nombre del Jugador (Ubicado justo arriba de la fila inferior)
-                    Label nameLbl = new Label(item.playerName);
+                    // 3. Media Global (OVR) en la pestaña superior derecha del marco
+                    VisualElement ovrBox = new VisualElement();
+                    ovrBox.AddToClassList("card-ovr-box");
+                    Label ovrValLbl = new Label(item.OverallRating.ToString());
+                    ovrValLbl.AddToClassList("card-ovr-val");
+                    Label ovrTitleLbl = new Label("GRL");
+                    ovrTitleLbl.AddToClassList("card-ovr-title");
+                    ovrBox.Add(ovrValLbl);
+                    ovrBox.Add(ovrTitleLbl);
+                    artContainer.Add(ovrBox);
+
+                    // 4. Nombre del Jugador (Ubicado justo arriba de la fila inferior)
+                    Label nameLbl = new Label(item.DisplayPlayerName);
                     nameLbl.AddToClassList("card-player-name-framed");
                     artContainer.Add(nameLbl);
 
@@ -622,7 +652,7 @@ namespace JuegoTCG.UI
                     // Bandera afuera a la izquierda
                     VisualElement flagEl = new VisualElement();
                     flagEl.AddToClassList("card-flag-image");
-                    string countryCode = !string.IsNullOrEmpty(item.countryCode) ? item.countryCode : (asset != null ? asset.countryCode : "ES");
+                    string countryCode = !string.IsNullOrEmpty(item.DisplayCountryCode) ? item.DisplayCountryCode : (asset != null ? asset.DisplayCountryCode : "ES");
                     Sprite flagSprite = CountryFlagService.GetFlag(countryCode);
                     if (flagSprite != null)
                     {
@@ -698,12 +728,12 @@ namespace JuegoTCG.UI
         {
             switch (rarity)
             {
-                case Rarity.Mitica:
-                case Rarity.FullArt: return "card-mythic";
-                case Rarity.Legendaria:
-                case Rarity.Epica: return "card-rare";
-                case Rarity.Especial: return "card-uncommon";
-                default: return "card-common";
+                case Rarity.Mitica: return "card-mitica";
+                case Rarity.FullArt: return "card-fullart";
+                case Rarity.Legendaria: return "card-legendaria";
+                case Rarity.Epica: return "card-epica";
+                case Rarity.Especial: return "card-especial";
+                default: return "card-comun";
             }
         }
 
@@ -711,12 +741,12 @@ namespace JuegoTCG.UI
         {
             switch (rarity)
             {
-                case Rarity.Mitica:
-                case Rarity.FullArt: return "initials-mythic";
-                case Rarity.Legendaria:
-                case Rarity.Epica: return "initials-rare";
-                case Rarity.Especial: return "initials-uncommon";
-                default: return "initials-common";
+                case Rarity.Mitica: return "initials-mitica";
+                case Rarity.FullArt: return "initials-fullart";
+                case Rarity.Legendaria: return "initials-legendaria";
+                case Rarity.Epica: return "initials-epica";
+                case Rarity.Especial: return "initials-especial";
+                default: return "initials-comun";
             }
         }
 
@@ -740,10 +770,16 @@ namespace JuegoTCG.UI
                 inspectHeroCard.transform.position = Vector3.zero;
                 inspectHeroCard.transform.scale = Vector3.one;
 
-                inspectHeroCard.RemoveFromClassList("card-mythic");
-                inspectHeroCard.RemoveFromClassList("card-rare");
-                inspectHeroCard.RemoveFromClassList("card-uncommon");
+                inspectHeroCard.RemoveFromClassList("card-comun");
                 inspectHeroCard.RemoveFromClassList("card-common");
+                inspectHeroCard.RemoveFromClassList("card-especial");
+                inspectHeroCard.RemoveFromClassList("card-uncommon");
+                inspectHeroCard.RemoveFromClassList("card-epica");
+                inspectHeroCard.RemoveFromClassList("card-rare");
+                inspectHeroCard.RemoveFromClassList("card-legendaria");
+                inspectHeroCard.RemoveFromClassList("card-mitica");
+                inspectHeroCard.RemoveFromClassList("card-mythic");
+                inspectHeroCard.RemoveFromClassList("card-fullart");
                 inspectHeroCard.AddToClassList(GetRarityClass(item.rarity));
             }
 
@@ -776,13 +812,15 @@ namespace JuegoTCG.UI
             }
 
             // Información del jugador y metadatos (siempre visible en el marco oficial)
-            if (inspectPlayerNameFramed != null) inspectPlayerNameFramed.text = item.playerName;
-            if (inspectFrameTeamName != null) inspectFrameTeamName.text = string.IsNullOrEmpty(item.teamName) ? "SIN EQUIPO" : item.teamName.ToUpper();
-            if (inspectFramePosText != null) inspectFramePosText.text = string.IsNullOrEmpty(item.position) ? "MED" : item.position.ToUpper();
+            if (inspectPlayerNameFramed != null) inspectPlayerNameFramed.text = item.DisplayPlayerName;
+            if (inspectOvrVal != null) inspectOvrVal.text = item.OverallRating.ToString();
+            if (inspectOvrTitle != null) inspectOvrTitle.text = "GRL";
+            if (inspectFrameTeamName != null) inspectFrameTeamName.text = string.IsNullOrEmpty(item.DisplayTeamName) ? "SIN EQUIPO" : item.DisplayTeamName.ToUpper();
+            if (inspectFramePosText != null) inspectFramePosText.text = string.IsNullOrEmpty(item.DisplayPosition) ? "MED" : item.DisplayPosition.ToUpper();
             if (inspectFrameRarityText != null) inspectFrameRarityText.text = item.rarity.ToString().ToUpper();
 
             // Bandera & Stats en Modal Inspect
-            string cCode = !string.IsNullOrEmpty(item.countryCode) ? item.countryCode : (asset != null ? asset.countryCode : "ES");
+            string cCode = !string.IsNullOrEmpty(item.DisplayCountryCode) ? item.DisplayCountryCode : (asset != null ? asset.DisplayCountryCode : "ES");
             Sprite inspFlag = CountryFlagService.GetFlag(cCode);
             if (inspectFlagImage != null)
             {
@@ -826,7 +864,7 @@ namespace JuegoTCG.UI
                 if (inspectArtPhoto != null)
                 {
                     inspectArtPhoto.AddToClassList("inspect-art-photo-default");
-                    inspectArtPhoto.style.backgroundImage = null;
+                    inspectArtPhoto.style.backgroundImage = StyleKeyword.Null;
                 }
                 if (inspectPlaceholderAvatar != null)
                 {
@@ -834,7 +872,18 @@ namespace JuegoTCG.UI
                 }
                 if (inspectAvatarInitials != null)
                 {
-                    inspectAvatarInitials.text = item.initials;
+                    inspectAvatarInitials.text = item.DisplayInitials;
+                    inspectAvatarInitials.RemoveFromClassList("initials-comun");
+                    inspectAvatarInitials.RemoveFromClassList("initials-common");
+                    inspectAvatarInitials.RemoveFromClassList("initials-especial");
+                    inspectAvatarInitials.RemoveFromClassList("initials-uncommon");
+                    inspectAvatarInitials.RemoveFromClassList("initials-epica");
+                    inspectAvatarInitials.RemoveFromClassList("initials-rare");
+                    inspectAvatarInitials.RemoveFromClassList("initials-legendaria");
+                    inspectAvatarInitials.RemoveFromClassList("initials-mitica");
+                    inspectAvatarInitials.RemoveFromClassList("initials-mythic");
+                    inspectAvatarInitials.RemoveFromClassList("initials-fullart");
+                    inspectAvatarInitials.AddToClassList(GetInitialsClass(item.rarity));
                 }
             }
 

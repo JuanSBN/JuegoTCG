@@ -244,24 +244,38 @@
 /* ==========================================================================
    BORDES DE RAREZA
    ========================================================================== */
-.card-mythic {
-    border-color: var(--rarity-mythic);
-    background-color: rgba(232, 168, 32, 0.08);
-}
-
-.card-rare {
-    border-color: var(--rarity-rare);
-    background-color: rgba(155, 92, 246, 0.06);
-}
-
-.card-uncommon {
-    border-color: var(--rarity-uncommon-border);
-    background-color: rgba(180, 200, 195, 0.06);
-}
-
+.card-comun,
 .card-common {
-    border-color: var(--rarity-common);
-    background-color: rgba(39, 201, 106, 0.06);
+    border-color: #CBD5E1;
+    background-color: rgba(203, 213, 225, 0.06);
+}
+
+.card-especial,
+.card-uncommon {
+    border-color: #00FF73;
+    background-color: rgba(0, 255, 115, 0.06);
+}
+
+.card-epica,
+.card-rare {
+    border-color: #BF00FF;
+    background-color: rgba(191, 0, 255, 0.06);
+}
+
+.card-legendaria {
+    border-color: #FFD700;
+    background-color: rgba(255, 215, 0, 0.08);
+}
+
+.card-mitica,
+.card-mythic {
+    border-color: #FF2535;
+    background-color: rgba(255, 37, 53, 0.08);
+}
+
+.card-fullart {
+    border-color: #00E5FF;
+    background-color: rgba(0, 229, 255, 0.08);
 }
 
 /* ==========================================================================
@@ -278,20 +292,32 @@
     margin-bottom: 16px;
 }
 
-.avatar-mythic {
-    border-color: var(--rarity-mythic);
-}
-
-.avatar-rare {
-    border-color: var(--rarity-rare);
-}
-
-.avatar-uncommon {
-    border-color: var(--rarity-uncommon-border);
-}
-
+.avatar-comun,
 .avatar-common {
-    border-color: var(--rarity-common);
+    border-color: #CBD5E1;
+}
+
+.avatar-especial,
+.avatar-uncommon {
+    border-color: #00FF73;
+}
+
+.avatar-epica,
+.avatar-rare {
+    border-color: #BF00FF;
+}
+
+.avatar-legendaria {
+    border-color: #FFD700;
+}
+
+.avatar-mitica,
+.avatar-mythic {
+    border-color: #FF2535;
+}
+
+.avatar-fullart {
+    border-color: #00E5FF;
 }
 
 .card-avatar-initials {
@@ -300,20 +326,32 @@
     letter-spacing: 2px;
 }
 
-.initials-mythic {
-    color: var(--rarity-mythic);
-}
-
-.initials-rare {
-    color: var(--rarity-rare);
-}
-
-.initials-uncommon {
-    color: var(--rarity-uncommon);
-}
-
+.initials-comun,
 .initials-common {
-    color: var(--rarity-common);
+    color: #CBD5E1;
+}
+
+.initials-especial,
+.initials-uncommon {
+    color: #00FF73;
+}
+
+.initials-epica,
+.initials-rare {
+    color: #BF00FF;
+}
+
+.initials-legendaria {
+    color: #FFD700;
+}
+
+.initials-mitica,
+.initials-mythic {
+    color: #FF2535;
+}
+
+.initials-fullart {
+    color: #00E5FF;
 }
 
 /* Player Name */
@@ -419,7 +457,6 @@
     padding-bottom: 70px;
     padding-left: 40px;
     padding-right: 40px;
-    z-index: 1000;
 }
 
 .modal-hidden {
@@ -496,7 +533,36 @@
     background-color: #071018;
     align-items: center;
     justify-content: center;
-    border-width: 0;
+    border-width: 4px;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.inspect-hero-card.card-comun,
+.inspect-hero-card.card-common {
+    border-color: #CBD5E1;
+}
+
+.inspect-hero-card.card-especial,
+.inspect-hero-card.card-uncommon {
+    border-color: #00FF73;
+}
+
+.inspect-hero-card.card-epica,
+.inspect-hero-card.card-rare {
+    border-color: #BF00FF;
+}
+
+.inspect-hero-card.card-legendaria {
+    border-color: #FFD700;
+}
+
+.inspect-hero-card.card-mitica,
+.inspect-hero-card.card-mythic {
+    border-color: #FF2535;
+}
+
+.inspect-hero-card.card-fullart {
+    border-color: #00E5FF;
 }
 
 /* Photo + Frame Art */
@@ -508,7 +574,7 @@
     bottom: 0;
     width: 100%;
     height: 100%;
-    border-radius: 46px;
+    border-radius: 42px;
     overflow: hidden;
 }
 
@@ -651,11 +717,11 @@
     -unity-text-align: middle-center;
 }
 
-/* Copies Badge */
+/* Copies Badge (Top Left to not collide with OVR top-right tab) */
 .inspect-copies-badge {
     position: absolute;
     top: 26px;
-    right: 26px;
+    left: 26px;
     border-radius: 18px;
     padding-left: 20px;
     padding-right: 20px;
@@ -667,6 +733,43 @@
     border-width: 2px;
     border-color: rgba(255, 255, 255, 0.35);
     color: #FFFFFF;
+}
+
+/* Top-Right Overall Rating (GRL) in Hero Card Inspect - Circular Badge */
+.inspect-ovr-box {
+    position: absolute;
+    top: 48px;
+    right: 34px;
+    width: 92px;
+    height: 92px;
+    border-radius: 46px;
+    background-color: rgba(10, 16, 26, 0.78);
+    border-width: 3.5px;
+    border-color: rgba(255, 255, 255, 0.45);
+    align-items: center;
+    justify-content: center;
+}
+
+.inspect-ovr-val {
+    font-size: 38px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.95);
+    margin: 0;
+    margin-bottom: -5px;
+    padding: 0;
+}
+
+.inspect-ovr-title {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: rgba(255, 255, 255, 0.88);
+    -unity-text-align: middle-center;
+    letter-spacing: 1.2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+    margin: 0;
+    padding: 0;
 }
 
 /* Dismiss Hint */
@@ -760,7 +863,6 @@
     height: 100%;
     -unity-background-scale-mode: stretch-to-fill;
     opacity: 0.65;
-    pointer-events: none;
 }
 
 .card-player-name-framed {
@@ -836,17 +938,54 @@
 
 .card-copies-badge-framed {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 14px;
+    left: 14px;
     border-radius: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    font-size: 22px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    font-size: 20px;
     -unity-font-style: bold;
     background-color: rgba(6, 12, 18, 0.82);
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.25);
     color: #FFFFFF;
+}
+
+/* Top-Right Overall Rating (GRL) in Card Grid - Circular Badge */
+.card-ovr-box {
+    position: absolute;
+    top: 27px;
+    right: 19px;
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+    background-color: rgba(10, 16, 26, 0.78);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.45);
+    align-items: center;
+    justify-content: center;
+}
+
+.card-ovr-val {
+    font-size: 21px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+    margin: 0;
+    margin-bottom: -3px;
+    padding: 0;
+}
+
+.card-ovr-title {
+    font-size: 8px;
+    -unity-font-style: bold;
+    color: rgba(255, 255, 255, 0.88);
+    -unity-text-align: middle-center;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+    margin: 0;
+    padding: 0;
 }

@@ -20,6 +20,17 @@ namespace JuegoTCG.Cards
         public string nationality = "España";
         public string countryCode = "ES";
 
+        #region Resolución de Data Packs (Cosmético)
+
+        public string DisplayPlayerName => DataPackManager.GetPlayerName(cardId, playerName);
+        public string DisplayInitials => DataPackManager.GetInitials(cardId, initials);
+        public string DisplayTeamName => DataPackManager.GetTeamName(cardId, teamName);
+        public string DisplayPosition => DataPackManager.GetPosition(cardId, position);
+        public string DisplayNationality => nationality;
+        public string DisplayCountryCode => countryCode;
+
+        #endregion
+
         // Estadísticas Jugador de Campo
         public int shooting = 50;   // Tiro (TIR)
         public int passing = 50;    // Pase (PAS)

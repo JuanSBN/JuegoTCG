@@ -38,6 +38,10 @@ namespace JuegoTCG.Cards
         [SerializeField] private TMP_Text stat4TitleText;
         [SerializeField] private TMP_Text stat4ValueText;
 
+        [Header("Overall Rating (OVR)")]
+        [SerializeField] private TMP_Text ovrValueText;
+        [SerializeField] private TMP_Text ovrTitleText;
+
         [Header("Holographic Effects")]
         [SerializeField] private Material holographicMaterial;
         private Material holoInstance;
@@ -50,6 +54,24 @@ namespace JuegoTCG.Cards
         private void Awake()
         {
             EnsureHolographicMaterial();
+        }
+
+        private void OnEnable()
+        {
+            DataPackManager.OnDataPackReloaded += HandleDataPackReloaded;
+        }
+
+        private void OnDisable()
+        {
+            DataPackManager.OnDataPackReloaded -= HandleDataPackReloaded;
+        }
+
+        private void HandleDataPackReloaded()
+        {
+            if (cardData != null)
+            {
+                SetCard(cardData);
+            }
         }
 
         private void Start()
@@ -123,11 +145,12 @@ namespace JuegoTCG.Cards
             }
 
             // 2. Player Artwork vs Placeholder
-            if (data.defaultArt != null)
+            Sprite art = data.DisplayArt;
+            if (art != null)
             {
                 if (playerArtImage != null)
                 {
-                    playerArtImage.sprite = data.defaultArt;
+                    playerArtImage.sprite = art;
                     playerArtImage.preserveAspect = false;
                     playerArtImage.gameObject.SetActive(true);
                 }
@@ -139,14 +162,14 @@ namespace JuegoTCG.Cards
                 if (placeholderAvatar != null) placeholderAvatar.SetActive(true);
                 if (playerInitialsText != null)
                 {
-                    playerInitialsText.text = GetInitials(data.playerName);
+                    playerInitialsText.text = GetInitials(data.DisplayPlayerName);
                 }
             }
 
             // 3. Texts
             if (nameText != null)
             {
-                nameText.text = data.playerName;
+                nameText.text = data.DisplayPlayerName;
                 nameText.fontStyle = FontStyles.Bold;
                 nameText.outlineColor = new Color32(0, 0, 0, 180);
                 nameText.outlineWidth = 0.08f;
@@ -165,14 +188,14 @@ namespace JuegoTCG.Cards
                     nameText.fontMaterial.SetFloat(ShaderUtilities.ID_UnderlayDilate, 0.0f);
                 }
             }
-            if (teamText != null) teamText.text = data.teamName;
-            if (positionText != null) positionText.text = data.position;
+            if (teamText != null) teamText.text = data.DisplayTeamName;
+            if (positionText != null) positionText.text = data.DisplayPosition;
             if (rarityText != null) rarityText.text = GetRarityName(data.rarity);
 
             // 4. Flag & Stats
             if (flagImage != null)
             {
-                Sprite flag = CountryFlagService.GetFlag(data.countryCode);
+                Sprite flag = CountryFlagService.GetFlag(data.DisplayCountryCode);
                 if (flag != null)
                 {
                     flagImage.sprite = flag;
@@ -193,6 +216,10 @@ namespace JuegoTCG.Cards
             if (stat3ValueText != null) stat3ValueText.text = statsSummary.stat3Value.ToString();
             if (stat4TitleText != null) stat4TitleText.text = statsSummary.stat4Name;
             if (stat4ValueText != null) stat4ValueText.text = statsSummary.stat4Value.ToString();
+
+            // Overall Rating (GRL)
+            if (ovrValueText != null) ovrValueText.text = data.OverallRating.ToString();
+            if (ovrTitleText != null) ovrTitleText.text = "GRL";
 
             // 5. Holographic Foil Material only for Card Frame (never for player photo!)
             bool isHolo = (data.rarity == Rarity.Epica || data.rarity == Rarity.Legendaria || data.rarity == Rarity.Mitica || data.rarity == Rarity.FullArt);

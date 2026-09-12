@@ -134,6 +134,46 @@ namespace JuegoTCG.EditorTools
             Image frameImg = frameGO.AddComponent<Image>();
             if (frames[0] != null) frameImg.sprite = frames[0];
 
+            // 4b. Top-Right OVR Tab Container (Fits inside Component 1 tab - Circular Badge)
+            GameObject ovrGO = new GameObject("OVRContainer");
+            ovrGO.transform.SetParent(frontGO.transform, false);
+            RectTransform ovrRect = ovrGO.AddComponent<RectTransform>();
+            ovrRect.anchorMin = new Vector2(0.80f, 0.81f);
+            ovrRect.anchorMax = new Vector2(0.96f, 0.94f);
+            ovrRect.sizeDelta = Vector2.zero;
+
+            Image ovrBg = ovrGO.AddComponent<Image>();
+            ovrBg.sprite = circleSprite;
+            ovrBg.color = new Color(0.04f, 0.06f, 0.10f, 0.75f);
+
+            VerticalLayoutGroup ovrVlg = ovrGO.AddComponent<VerticalLayoutGroup>();
+            ovrVlg.childControlWidth = true;
+            ovrVlg.childControlHeight = true;
+            ovrVlg.childForceExpandWidth = true;
+            ovrVlg.childForceExpandHeight = true;
+            ovrVlg.padding = new RectOffset(2, 2, 6, 4);
+            ovrVlg.spacing = -6f;
+
+            GameObject ovrValGO = new GameObject("OVRValueText");
+            ovrValGO.transform.SetParent(ovrGO.transform, false);
+            TextMeshProUGUI ovrValTMP = ovrValGO.AddComponent<TextMeshProUGUI>();
+            if (momoTMPFont != null) ovrValTMP.font = momoTMPFont;
+            ovrValTMP.text = "89";
+            ovrValTMP.fontSize = 28;
+            ovrValTMP.fontStyle = FontStyles.Bold;
+            ovrValTMP.alignment = TextAlignmentOptions.Center;
+            ovrValTMP.color = Color.white;
+
+            GameObject ovrTitleGO = new GameObject("OVRTitleText");
+            ovrTitleGO.transform.SetParent(ovrGO.transform, false);
+            TextMeshProUGUI ovrTitleTMP = ovrTitleGO.AddComponent<TextMeshProUGUI>();
+            if (dmSansTMPFont != null) ovrTitleTMP.font = dmSansTMPFont;
+            ovrTitleTMP.text = "GRL";
+            ovrTitleTMP.fontSize = 11;
+            ovrTitleTMP.fontStyle = FontStyles.Bold;
+            ovrTitleTMP.alignment = TextAlignmentOptions.Center;
+            ovrTitleTMP.color = new Color(0.9f, 0.9f, 0.9f, 0.9f);
+
             // 5. Player Name Text (Positioned cleanly right above the bottom tab)
             GameObject nameGO = new GameObject("PlayerNameText");
             nameGO.transform.SetParent(frontGO.transform, false);
@@ -284,6 +324,10 @@ namespace JuegoTCG.EditorTools
             so.FindProperty("stat3ValueText").objectReferenceValue = s3Val;
             so.FindProperty("stat4TitleText").objectReferenceValue = s4Title;
             so.FindProperty("stat4ValueText").objectReferenceValue = s4Val;
+
+            // OVR serialization
+            so.FindProperty("ovrValueText").objectReferenceValue = ovrValTMP;
+            so.FindProperty("ovrTitleText").objectReferenceValue = ovrTitleTMP;
 
             SerializedProperty framesProp = so.FindProperty("rarityFrames");
             framesProp.arraySize = 6;

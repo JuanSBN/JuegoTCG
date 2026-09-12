@@ -24,9 +24,12 @@ namespace JuegoTCG.UI
         private Button btnToggleNotifs;
         private Button btnTerms;
         private Button btnLinkAccount;
+        private Button btnDataPacks;
+        private Label lblActiveDataPackStatus;
         private Button btnLogout;
 
         // Modals
+        private DataPacksModalController dataPacksModal;
         private VisualElement logoutModal;
         private Button btnConfirmLogout;
         private Button btnCancelLogout;
@@ -149,9 +152,47 @@ namespace JuegoTCG.UI
                 btnCloseFeedback.clicked += () => feedbackModal.AddToClassList("modal-hidden");
             }
 
+            // Community Data Packs Flow
+            btnDataPacks = root.Q<Button>("Btn_DataPacks");
+            lblActiveDataPackStatus = root.Q<Label>("Lbl_ActiveDataPackStatus");
+            dataPacksModal = GetComponent<DataPacksModalController>() ?? gameObject.AddComponent<DataPacksModalController>();
+            dataPacksModal.Initialize(root);
+
+            if (btnDataPacks != null)
+            {
+                btnDataPacks.clicked += () => dataPacksModal.Show();
+            }
+
+            UpdateDataPackStatusLabel();
+            JuegoTCG.Cards.DataPackManager.OnDataPackReloaded -= UpdateDataPackStatusLabel;
+            JuegoTCG.Cards.DataPackManager.OnDataPackReloaded += UpdateDataPackStatusLabel;
+
             // Bottom Nav
             var navCtrl = GetComponent<LiquidGlassNavBarController>() ?? gameObject.AddComponent<LiquidGlassNavBarController>();
             navCtrl.Initialize(root, LiquidGlassNavBarController.TabType.Perfil);
+        }
+
+        private void OnDisable()
+        {
+            JuegoTCG.Cards.DataPackManager.OnDataPackReloaded -= UpdateDataPackStatusLabel;
+        }
+
+        private void UpdateDataPackStatusLabel()
+        {
+            if (lblActiveDataPackStatus != null)
+            {
+                JuegoTCG.Cards.DataPackManager.EnsureInitialized();
+                if (JuegoTCG.Cards.DataPackManager.IsDataPackActive && JuegoTCG.Cards.DataPackManager.ActiveManifest != null)
+                {
+                    lblActiveDataPackStatus.text = $"{JuegoTCG.Cards.DataPackManager.ActiveManifest.title} v{JuegoTCG.Cards.DataPackManager.ActiveManifest.version}";
+                    lblActiveDataPackStatus.style.color = new StyleColor(new Color(0.18f, 0.83f, 0.45f));
+                }
+                else
+                {
+                    lblActiveDataPackStatus.text = "Sin pack activo (Original)";
+                    lblActiveDataPackStatus.style.color = new StyleColor(new Color(1f, 1f, 1f, 0.45f));
+                }
+            }
         }
 
         private void UpdateToggleVisual(Button btn, bool isOn)

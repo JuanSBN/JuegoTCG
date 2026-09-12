@@ -41,6 +41,55 @@ namespace JuegoTCG.Cards
         [Header("Arte Visual")]
         public Sprite defaultArt;
 
+        #region Resolución de Data Packs (Cosmético)
+
+        /// <summary>
+        /// Nombre del jugador respetando Data Pack activo (o playerName por defecto).
+        /// </summary>
+        public string DisplayPlayerName => DataPackManager.GetPlayerName(cardId, playerName);
+
+        /// <summary>
+        /// Nombre del equipo respetando Data Pack activo (o teamName por defecto).
+        /// </summary>
+        public string DisplayTeamName => DataPackManager.GetTeamName(cardId, teamName);
+
+        /// <summary>
+        /// Posición textual respetando Data Pack activo (o position por defecto).
+        /// </summary>
+        public string DisplayPosition => DataPackManager.GetPosition(cardId, position);
+
+        /// <summary>
+        /// Nacionalidad inmutable (no modificable por Data Packs para mantener consistencia de filtros).
+        /// </summary>
+        public string DisplayNationality => nationality;
+
+        /// <summary>
+        /// Código ISO de país inmutable (no modificable por Data Packs para mantener consistencia de filtros).
+        /// </summary>
+        public string DisplayCountryCode => countryCode;
+
+        /// <summary>
+        /// Arte/Foto respetando Data Pack activo (o defaultArt por defecto).
+        /// </summary>
+        public Sprite DisplayArt => DataPackManager.GetCardArt(cardId, defaultArt);
+
+        /// <summary>
+        /// Iniciales del jugador (para avatars cuando no hay foto disponible).
+        /// </summary>
+        public string DisplayInitials
+        {
+            get
+            {
+                string name = DisplayPlayerName;
+                if (string.IsNullOrEmpty(name)) return "FC";
+                string[] parts = name.Trim().Split(' ');
+                if (parts.Length == 1) return parts[0].Length >= 2 ? parts[0].Substring(0, 2).ToUpper() : parts[0].ToUpper();
+                return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
+            }
+        }
+
+        #endregion
+
         [Header("Estadísticas de Jugador de Campo")]
         [Range(1, 99)] public int shooting = 50;   // Tiro (TIR)
         [Range(1, 99)] public int passing = 50;    // Pase (PAS)

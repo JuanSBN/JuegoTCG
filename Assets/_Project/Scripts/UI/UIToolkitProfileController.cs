@@ -161,12 +161,23 @@ namespace JuegoTCG.UI
                 PlayerCollectionManager.Instance.OnCollectionUpdated += RefreshFeaturedCardsDisplay;
             }
 
+            DataPackManager.OnDataPackReloaded -= HandleDataPackReloaded;
+            DataPackManager.OnDataPackReloaded += HandleDataPackReloaded;
+
+            RefreshPitchDisplay();
+            RefreshFeaturedCardsDisplay();
+        }
+
+        private void HandleDataPackReloaded()
+        {
             RefreshPitchDisplay();
             RefreshFeaturedCardsDisplay();
         }
 
         private void OnDisable()
         {
+            DataPackManager.OnDataPackReloaded -= HandleDataPackReloaded;
+
             if (FirebaseAuthManager.Instance != null)
             {
                 FirebaseAuthManager.Instance.OnAvatarChanged -= OnAvatarChanged;
@@ -596,20 +607,20 @@ namespace JuegoTCG.UI
                     if (slotFallback != null)
                     {
                         slotFallback.style.display = DisplayStyle.Flex;
-                        if (slotInitials != null) slotInitials.text = cardItem.initials;
+                        if (slotInitials != null) slotInitials.text = cardItem.DisplayInitials;
                     }
                 }
 
                 if (slotFramedName != null)
                 {
-                    slotFramedName.text = cardItem.playerName;
+                    slotFramedName.text = cardItem.DisplayPlayerName;
                     slotFramedName.style.display = DisplayStyle.Flex;
                 }
 
                 if (slotFooterBox != null)
                 {
-                    if (slotTeamLabel != null) slotTeamLabel.text = !string.IsNullOrEmpty(cardItem.teamName) ? cardItem.teamName : (asset != null ? asset.teamName : "FC Barca");
-                    if (slotPosLabel != null) slotPosLabel.text = cardItem.position.ToString().ToUpper();
+                    if (slotTeamLabel != null) slotTeamLabel.text = !string.IsNullOrEmpty(cardItem.DisplayTeamName) ? cardItem.DisplayTeamName : (asset != null ? asset.DisplayTeamName : "FC Barca");
+                    if (slotPosLabel != null) slotPosLabel.text = cardItem.DisplayPosition.ToString().ToUpper();
                     if (slotRarityLabel != null) slotRarityLabel.text = cardItem.rarity.ToString().ToUpper();
                     slotFooterBox.style.display = DisplayStyle.Flex;
                 }
@@ -757,7 +768,7 @@ namespace JuegoTCG.UI
                 VisualElement overlay = new VisualElement();
                 overlay.AddToClassList("pitch-card-art-overlay");
 
-                Label nameLbl = new Label(item.playerName);
+                Label nameLbl = new Label(item.DisplayPlayerName);
                 nameLbl.AddToClassList("pitch-card-art-name");
                 overlay.Add(nameLbl);
 
@@ -778,12 +789,12 @@ namespace JuegoTCG.UI
 
                 VisualElement circle = new VisualElement();
                 circle.AddToClassList("pitch-card-avatar-circle");
-                Label inits = new Label(item.initials);
+                Label inits = new Label(item.DisplayInitials);
                 inits.AddToClassList("pitch-card-avatar-initials");
                 circle.Add(inits);
                 fallbackContainer.Add(circle);
 
-                Label nameLbl = new Label(item.playerName);
+                Label nameLbl = new Label(item.DisplayPlayerName);
                 nameLbl.AddToClassList("pitch-card-name-label");
                 fallbackContainer.Add(nameLbl);
 
@@ -938,7 +949,7 @@ namespace JuegoTCG.UI
                     if (avatarCircle != null)
                     {
                         avatarCircle.style.display = DisplayStyle.Flex;
-                        if (avatarText != null) avatarText.text = cardItem.initials;
+                        if (avatarText != null) avatarText.text = cardItem.DisplayInitials;
                     }
                 }
 
@@ -962,14 +973,14 @@ namespace JuegoTCG.UI
 
                 if (framedNameLabel != null)
                 {
-                    framedNameLabel.text = cardItem.playerName;
+                    framedNameLabel.text = cardItem.DisplayPlayerName;
                     framedNameLabel.style.display = DisplayStyle.Flex;
                 }
 
                 // Fila Inferior: Bandera afuera a la izquierda + Estadísticas dentro del marco
                 if (bottomRow != null)
                 {
-                    string countryCode = !string.IsNullOrEmpty(cardItem.countryCode) ? cardItem.countryCode : (asset != null ? asset.countryCode : "ES");
+                    string countryCode = !string.IsNullOrEmpty(cardItem.DisplayCountryCode) ? cardItem.DisplayCountryCode : (asset != null ? asset.DisplayCountryCode : "ES");
                     Sprite flagSprite = CountryFlagService.GetFlag(countryCode);
                     if (flagEl != null)
                     {
@@ -1199,7 +1210,7 @@ namespace JuegoTCG.UI
                 VisualElement overlay = new VisualElement();
                 overlay.AddToClassList("pitch-card-art-overlay");
 
-                Label nameLbl = new Label(item.playerName);
+                Label nameLbl = new Label(item.DisplayPlayerName);
                 nameLbl.AddToClassList("pitch-card-art-name");
                 overlay.Add(nameLbl);
 
@@ -1220,12 +1231,12 @@ namespace JuegoTCG.UI
 
                 VisualElement circle = new VisualElement();
                 circle.AddToClassList("pitch-card-avatar-circle");
-                Label inits = new Label(item.initials);
+                Label inits = new Label(item.DisplayInitials);
                 inits.AddToClassList("pitch-card-avatar-initials");
                 circle.Add(inits);
                 fallbackContainer.Add(circle);
 
-                Label nameLbl = new Label(item.playerName);
+                Label nameLbl = new Label(item.DisplayPlayerName);
                 nameLbl.AddToClassList("pitch-card-name-label");
                 fallbackContainer.Add(nameLbl);
 

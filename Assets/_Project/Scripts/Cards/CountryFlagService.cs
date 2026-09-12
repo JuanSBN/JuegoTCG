@@ -11,9 +11,15 @@ namespace JuegoTCG.Cards
     {
         private static readonly Dictionary<string, Sprite> flagCache = new Dictionary<string, Sprite>();
 
+        static CountryFlagService()
+        {
+            DataPackManager.OnDataPackReloaded += ClearCache;
+        }
+
         /// <summary>
         /// Obtiene el sprite de la bandera correspondiente a un código ISO (ej: "AR", "ES", "CO").
         /// Utiliza caché en memoria para 0 consumo de CPU en listas y pantallas.
+        /// Prioriza banderas personalizadas provistas por Data Packs activos.
         /// </summary>
         public static Sprite GetFlag(string countryCode)
         {
@@ -26,8 +32,19 @@ namespace JuegoTCG.Cards
                 return cachedSprite;
             }
 
-            Sprite loaded = Resources.Load<Sprite>($"Flags/{code}");
-            flagCache[code] = loaded;
+            // 1. Intentar obtener bandera custom del Data Pack activo
+            Sprite loaded = DataPackManager.GetCustomFlag(code);
+
+            // 2. Si no hay bandera en el pack, cargar de Resources
+            if (loaded == null)
+            {
+                loaded = Resources.Load<Sprite>($"Flags/{code}");
+            }
+
+            if (loaded != null)
+            {
+                flagCache[code] = loaded;
+            }
 
             return loaded;
         }

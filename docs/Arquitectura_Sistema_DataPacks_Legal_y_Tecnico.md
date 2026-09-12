@@ -165,18 +165,23 @@ Para garantizar que **no cualquiera pueda saturar el juego con packs mal hechos*
 MiDataPack_2026.zip
 │
 ├── manifest.json        <-- Metadatos del pack, versión del esquema y autor
-├── database.json        <-- Diccionario estricto de reemplazo de textos por cardId
-└── photos/              <-- Fotos con nombres idénticos al cardId
-    ├── card_01.png
-    ├── card_02.png
-    ├── card_03.png
-    └── card_10.png
+├── database.json        <-- Reemplazo estético (nombre, iniciales, club y posición textual)
+├── photos/              <-- Fotos de jugadores con nombres idénticos al cardId ({cardId}.png)
+└── flags/ (Opcional)    <-- Texturas HD alternativas para banderas existentes ({countryCode}.png)
+    ├── BR.png
+    └── UY.png
 ```
+
+> [!IMPORTANT]
+> **Regla de Oro de Integridad Competitiva y Coherencia de Filtros (Fair Play & Album Integrity):**
+> Los Data Packs son **100% estéticos y de identidad visual**. Bajo ninguna circunstancia pueden alterar:
+> 1. **Estadísticas numéricas ni OVR:** (`TIR`, `PAS`, `DEF`, `REG`, `EST`, `REF`, `PAR`, `COL`), medias globales, rarezas o probabilidades de sobres.
+> 2. **Nacionalidades y códigos de país (`nationality`, `countryCode`):** Son atributos esenciales del motor de juego y filtrado. Si un Data Pack pudiera cambiar a Mbappé a otra nacionalidad, los filtros por nación del álbum ("Francia", "España", etc.) o futuras dinámicas de selecciones se descalibrarían por completo. Por ende, la nacionalidad de cada carta proviene **única y exclusivamente** de los datos oficiales inmutables del juego (`CardData` / Firebase).
 
 ### 6.2. Esquema de `manifest.json`
 ```json
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "packId": "comunidad_futbol_2026",
   "title": "Pack Oficial Comunidad - Temporada 2026",
   "author": "Comunidad TCG",
@@ -185,12 +190,13 @@ MiDataPack_2026.zip
   "releaseDate": "2026-09-08",
   "description": "Nombres reales, clubes mundiales y retratos HD de futbolistas.",
   "totalCards": 50,
-  "hasPhotos": true
+  "hasPhotos": true,
+  "hasCustomFlags": false
 }
 ```
 
 ### 6.3. Esquema de `database.json`
-Mapea los `cardId` registrados en el juego con sus metadatos reales de presentación:
+Mapea los `cardId` registrados en el juego con sus nombres reales de presentación visual:
 ```json
 {
   "cards": [
@@ -199,16 +205,14 @@ Mapea los `cardId` registrados en el juego con sus metadatos reales de presentac
       "playerName": "Lamine Yamal",
       "initials": "LY",
       "teamName": "FC Barcelona",
-      "position": "DEL",
-      "nation": "España"
+      "position": "DEL"
     },
     {
       "cardId": "card_08",
       "playerName": "Lionel Messi",
       "initials": "LM",
       "teamName": "Inter Miami",
-      "position": "DEL",
-      "nation": "Argentina"
+      "position": "DEL"
     }
   ]
 }
@@ -330,6 +334,8 @@ Este archivo se aloja en un repositorio independiente o servidor estático (como
   - `string GetTeamName(string cardId, string defaultTeam)`
   - `string GetPosition(string cardId, string defaultPos)`
   - `Sprite GetCardArt(string cardId, Sprite defaultArt)`
+  - `Sprite GetCustomFlag(string countryCode, Sprite defaultFlag = null)`
+  - *(Nota: Nacionalidades y códigos de país permanecen inmutables para proteger los filtros del álbum)*
 - Dispara el evento `Action OnDataPackReloaded` para que todas las vistas UI Toolkit se refresquen automáticamente.
 
 #### 4. `PlayerCollectionManager.cs` y Controladores UI Toolkit

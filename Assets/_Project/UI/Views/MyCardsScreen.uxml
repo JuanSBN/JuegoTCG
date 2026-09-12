@@ -191,6 +191,12 @@
                         <!-- Official Rarity Border Frame (RenderTexture / Holo or Static) -->
                         <ui:VisualElement name="InspectArtFrame" class="inspect-art-frame" />
 
+                        <!-- Top-Right Overall Rating (GRL) Display -->
+                        <ui:VisualElement name="InspectOvrBox" class="inspect-ovr-box">
+                            <ui:Label name="InspectOvrVal" text="89" class="inspect-ovr-val" />
+                            <ui:Label name="InspectOvrTitle" text="GRL" class="inspect-ovr-title" />
+                        </ui:VisualElement>
+
                         <!-- Player Name inside card -->
                         <ui:Label name="InspectPlayerNameFramed" text="Player Name" class="inspect-player-name-framed" />
 

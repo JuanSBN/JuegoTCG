@@ -48,3 +48,7 @@ functions/node_modules/
 # Unity auto-recovery
 [Aa]ssets/_Recovery/
 [Aa]ssets/_Recovery.meta
+
+# Community Data Packs (local test packs and zips should not be committed to code repo)
+DataPacks/
+*.zip

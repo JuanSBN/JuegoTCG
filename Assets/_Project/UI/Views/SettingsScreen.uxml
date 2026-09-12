@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
+    <ui:Template name="DataPacksModal" src="../Components/DataPacksModal.uxml" />
     <Style src="project://database/Assets/_Project/UI/Styles/SettingsScreen.uss" />
 
     <ui:VisualElement name="SettingsScreenRoot" class="screen-container">
@@ -64,6 +65,20 @@
                     <ui:VisualElement class="chevron-right-icon" />
                 </ui:Button>
 
+                <ui:VisualElement class="settings-divider" />
+
+                <!-- Row 5: Data Packs de la Comunidad -->
+                <ui:Button name="Btn_DataPacks" class="settings-row settings-row-interactive">
+                    <ui:VisualElement class="settings-row-left">
+                        <ui:VisualElement class="settings-icon settings-icon-datapacks" />
+                        <ui:VisualElement style="flex-direction: column;">
+                            <ui:Label text="Data Packs (Comunidad)" class="settings-label" />
+                            <ui:Label name="Lbl_ActiveDataPackStatus" text="Sin pack activo (Original)" class="settings-sublabel" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="chevron-right-icon" />
+                </ui:Button>
+
             </ui:VisualElement>
 
             <!-- Botón Cerrar Sesión -->
@@ -102,6 +117,9 @@
                 </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
+
+        <!-- Community Data Packs Modal -->
+        <ui:Instance template="DataPacksModal" name="DataPacksModalInstance" />
 
         <!-- Liquid Glass Bottom Nav -->
         <ui:Instance template="LiquidGlassNavBar" name="BottomNavBar" />

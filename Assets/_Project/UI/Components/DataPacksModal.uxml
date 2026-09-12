@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI/Styles/DataPacksModal.uss" />
+
+    <ui:VisualElement name="DataPacksModal" class="modal-backdrop modal-hidden">
+        <ui:VisualElement class="datapacks-modal-card">
+
+            <!-- 1. Cabecera -->
+            <ui:VisualElement class="dp-header-row">
+                <ui:VisualElement class="dp-header-title-col">
+                    <ui:Label text="DATA PACKS DE LA COMUNIDAD" class="dp-modal-title" />
+                    <ui:Label text="Sustituciones cosméticas de nombres, fotos reales y banderas creadas por la comunidad." class="dp-modal-subtitle" />
+                </ui:VisualElement>
+                <ui:Button name="Btn_CloseDataPacks" class="dp-close-btn">
+                    <ui:Label text="✕" class="dp-close-btn-text" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- 2. Estado de Data Pack Activo -->
+            <ui:VisualElement name="ActivePackBox" class="dp-active-pack-box">
+                <ui:VisualElement class="dp-active-info-col">
+                    <ui:VisualElement class="dp-active-badge-row">
+                        <ui:VisualElement name="Badge_PackStatus" class="dp-active-badge">
+                            <ui:Label name="Lbl_BadgeStatusText" text="ACTIVO" class="dp-active-badge-text" />
+                        </ui:VisualElement>
+                        <ui:Label name="Lbl_CurrentPackTitle" text="Sin pack activo (Cartas originales)" class="dp-active-title" />
+                    </ui:VisualElement>
+                    <ui:Label name="Lbl_CurrentPackSubtitle" text="Nombres y clubes predeterminados del juego." class="dp-active-subtext" />
+                </ui:VisualElement>
+                <ui:Button name="Btn_RestoreDefaultPack" class="dp-btn-restore">
+                    <ui:Label text="RESTAURAR ORIGINALES" class="dp-btn-restore-text" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <!-- 3. Aviso de Integridad Competitiva (Fair Play) -->
+            <ui:VisualElement class="dp-fairplay-box">
+                <ui:Label text="🛡️ Fair Play Garantizado: Los Data Packs solo modifican apariencia y fotos. Las estadísticas, medias OVR y probabilidades no pueden ser alteradas." class="dp-fairplay-text" />
+            </ui:VisualElement>
+
+            <!-- 4. Contenedor de Progreso (Visible durante descarga o extracción) -->
+            <ui:VisualElement name="DataPackProgressBox" class="dp-progress-box" style="display: none;">
+                <ui:Label name="Lbl_InstallProgressStatus" text="Descargando Data Pack... 0%" class="dp-progress-status-text" />
+                <ui:VisualElement class="dp-progress-track">
+                    <ui:VisualElement name="ProgressBarFill" class="dp-progress-fill" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- 5. Título de Sección -->
+            <ui:Label text="PACKS RECOMENDADOS DE LA COMUNIDAD" class="dp-section-header" />
+
+            <!-- 6. Lista de Packs Disponibles -->
+            <ui:ScrollView name="DataPacksListScroll" class="dp-packs-scroll" vertical-scroller-visibility="Auto" />
+
+            <!-- 7. Instalación Manual por URL -->
+            <ui:Label text="INSTALACIÓN DIRECTA DESDE URL (.ZIP)" class="dp-section-header" style="margin-top: 6px;" />
+            <ui:VisualElement class="dp-manual-box">
+                <ui:TextField name="Input_DataPackUrl" placeholder-text="https://ejemplo.com/datapack_personalizado.zip" class="dp-url-field" />
+                <ui:Button name="Btn_InstallFromUrl" class="dp-btn-url-install">
+                    <ui:Label text="INSTALAR URL" class="dp-btn-url-install-text" />
+                </ui:Button>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
