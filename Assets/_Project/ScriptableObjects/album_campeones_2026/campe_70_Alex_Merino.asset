@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d803d90ca5399c4aa1f25d4ed1263f7, type: 3}
+  m_Name: campe_70_Alex_Merino
+  m_EditorClassIdentifier: Assembly-CSharp::JuegoTCG.Cards.CardData
+  cardId: campe_70
+  playerName: Alex Merino
+  teamName: "FC Gen\xE9rico"
+  position: Portero
+  nationality: Italia
+  countryCode: IT
+  rarity: 0
+  albumId: album_campeones_2026
+  defaultArt: {fileID: 0}
+  shooting: 67
+  passing: 56
+  defending: 24
+  dribbling: 65
+  physical: 50
+  diving: 65
+  reflexes: 69
+  handling: 66
+  positioning: 67
+  manualOverall: 0
