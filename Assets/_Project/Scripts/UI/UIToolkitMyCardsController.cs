@@ -37,6 +37,7 @@ namespace JuegoTCG.UI
 
         // Framed card elements
         private VisualElement inspectArtContainer;
+        private VisualElement inspectArtBg;
         private VisualElement inspectArtPhoto;
         private VisualElement inspectPlaceholderAvatar;
         private Label inspectAvatarInitials;
@@ -134,6 +135,7 @@ namespace JuegoTCG.UI
             inspectCloseBtn = root.Q<Button>("InspectCloseBtn");
 
             inspectArtContainer = root.Q<VisualElement>("InspectArtContainer");
+            inspectArtBg = root.Q<VisualElement>("InspectArtBg");
             inspectArtPhoto = root.Q<VisualElement>("InspectArtPhoto");
             inspectPlaceholderAvatar = root.Q<VisualElement>("InspectPlaceholderAvatar");
             inspectAvatarInitials = root.Q<Label>("InspectAvatarInitials");
@@ -595,6 +597,7 @@ namespace JuegoTCG.UI
 
                 CardData asset = loadedCardAssets.Find(c => c.cardId == item.cardId);
                 Sprite cardArt = DataPackManager.GetCardArt(item.cardId, asset != null ? asset.defaultArt : null);
+                Sprite cardBg = DataPackManager.GetCardBackground(item.cardId);
 
                 if (isOwned)
                 {
@@ -604,6 +607,15 @@ namespace JuegoTCG.UI
 
                     VisualElement artContainer = new VisualElement();
                     artContainer.AddToClassList("card-art-container");
+
+                    // 0. Fondo personalizado del Data Pack (si existe)
+                    if (cardBg != null)
+                    {
+                        VisualElement bgEl = new VisualElement();
+                        bgEl.AddToClassList("card-art-bg");
+                        bgEl.style.backgroundImage = new StyleBackground(cardBg);
+                        artContainer.Add(bgEl);
+                    }
 
                     // 1. Foto del Jugador o Arte por defecto si no tiene imagen
                     VisualElement photoEl = new VisualElement();
@@ -813,6 +825,7 @@ namespace JuegoTCG.UI
             currentInspectIsHolo = (item.rarity == Rarity.Epica || item.rarity == Rarity.Legendaria || item.rarity == Rarity.Mitica || item.rarity == Rarity.FullArt);
 
             Sprite inspectArt = DataPackManager.GetCardArt(item.cardId, asset != null ? asset.defaultArt : null);
+            Sprite inspectBg = DataPackManager.GetCardBackground(item.cardId);
 
             EnsureRarityFrames();
             EnsureHoloMaterial();
@@ -864,6 +877,21 @@ namespace JuegoTCG.UI
             if (inspectStat3Value != null) inspectStat3Value.text = inspStats.stat3Value.ToString();
             if (inspectStat4Title != null) inspectStat4Title.text = inspStats.stat4Name;
             if (inspectStat4Value != null) inspectStat4Value.text = inspStats.stat4Value.ToString();
+
+            // Fondo Personalizado del Data Pack (si existe)
+            if (inspectArtBg != null)
+            {
+                if (inspectBg != null)
+                {
+                    inspectArtBg.style.backgroundImage = new StyleBackground(inspectBg);
+                    inspectArtBg.style.display = DisplayStyle.Flex;
+                }
+                else
+                {
+                    inspectArtBg.style.backgroundImage = StyleKeyword.Null;
+                    inspectArtBg.style.display = DisplayStyle.None;
+                }
+            }
 
             if (inspectArt != null)
             {

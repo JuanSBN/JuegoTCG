@@ -14,17 +14,35 @@
     --danger-red: #E55353;
 }
 
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.modal-hidden {
+    display: none;
+}
+
 .datapacks-modal-card {
-    width: 95%;
-    max-width: 960px;
-    max-height: 88%;
+    width: 96%;
+    max-width: 980px;
+    height: 86%;
+    max-height: 90%;
     background-color: var(--bg-modal);
     border-radius: 32px;
     border-width: 2px;
     border-color: var(--gold-border);
-    padding: 36px 36px 28px 36px;
+    padding: 32px 32px 24px 32px;
     flex-direction: column;
-    flex-shrink: 0;
 }
 
 /* Header */
@@ -177,8 +195,10 @@
 }
 
 .dp-packs-scroll {
-    flex: 1;
+    flex-grow: 1;
+    flex-shrink: 1;
     margin-bottom: 16px;
+    min-height: 220px;
 }
 
 /* Pack Item Card */
@@ -289,36 +309,57 @@
     border-radius: 20px;
     border-width: 1px;
     border-color: var(--border-subtle);
-    padding: 12px 16px;
-    margin-bottom: 12px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
     flex-shrink: 0;
 }
 
 .dp-url-field {
     flex: 1;
     font-size: 22px;
-    color: var(--text-white);
     background-color: transparent;
     border-width: 0;
-    padding: 8px 12px;
+    margin: 0;
+    padding: 0;
+}
+
+.dp-url-field > .unity-text-field__input {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-white);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 20px;
+    -unity-text-align: middle-left;
+}
+
+.dp-url-field > .unity-text-field__input:focus {
+    border-color: var(--gold);
+    background-color: rgba(255, 255, 255, 0.12);
 }
 
 .dp-btn-url-install {
-    height: 56px;
-    padding-left: 22px;
-    padding-right: 22px;
+    height: 52px;
+    padding-left: 24px;
+    padding-right: 24px;
     border-radius: 14px;
-    background-color: rgba(255, 255, 255, 0.12);
-    border-width: 1px;
-    border-color: var(--border-subtle);
+    background-color: var(--gold);
+    border-width: 0;
     align-items: center;
     justify-content: center;
+    margin-left: 12px;
+}
+
+.dp-btn-url-install:active {
+    scale: 0.96;
 }
 
 .dp-btn-url-install-text {
-    font-size: 22px;
+    font-size: 20px;
     -unity-font-style: bold;
-    color: var(--text-white);
+    color: #06110B;
+    letter-spacing: 1px;
 }
 
 /* Progress Container */

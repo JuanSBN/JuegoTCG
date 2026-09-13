@@ -924,10 +924,6 @@ namespace JuegoTCG.EditorTools
                 }
             }
 
-            if (GUILayout.Button("📦 Exportar Plantilla para Data Pack (JSON)", GUILayout.Height(28)))
-            {
-                ExportDataPackTemplate();
-            }
             if (GUILayout.Button("📑 Exportar Catálogo a CSV", GUILayout.Height(28)))
             {
                 ExportCatalogCsv();
@@ -1277,44 +1273,6 @@ namespace JuegoTCG.EditorTools
             );
 
             Debug.Log($"<color=green>[AlbumWizard] ¡Álbum '{albumName}' ({albumId}) generado con {cardEntries.Count} cartas en Resources/Albums/{cleanId}!</color>");
-        }
-
-        private void ExportDataPackTemplate()
-        {
-            string savePath = EditorUtility.SaveFilePanel("Guardar Plantilla Data Pack", "", $"DataPack_{SanitizeId(albumName)}_Template.json", "json");
-            if (string.IsNullOrEmpty(savePath)) return;
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("{");
-            sb.AppendLine($"  \"targetAlbumId\": \"{albumId}\",");
-            sb.AppendLine($"  \"packTitle\": \"Data Pack {albumName}\",");
-            sb.AppendLine("  \"author\": \"Comunidad\",");
-            sb.AppendLine("  \"version\": \"1.0\",");
-            sb.AppendLine("  \"players\": [");
-
-            for (int i = 0; i < cardEntries.Count; i++)
-            {
-                var c = cardEntries[i];
-                sb.AppendLine("    {");
-                sb.AppendLine($"      \"cardId\": \"{c.cardId}\",");
-                sb.AppendLine($"      \"realName\": \"{c.playerName}\",");
-                sb.AppendLine($"      \"realTeam\": \"{c.teamName}\",");
-                sb.AppendLine($"      \"position\": \"{c.position}\",");
-                sb.AppendLine($"      \"rarity\": \"{c.rarity}\",");
-                sb.AppendLine($"      \"nationality\": \"{c.nationality}\",");
-                sb.AppendLine($"      \"countryCode\": \"{c.countryCode}\",");
-                sb.AppendLine($"      \"overall\": {c.CalculateOverall()},");
-                sb.AppendLine($"      \"photoFileName\": \"{c.cardId}.png\"");
-                sb.Append("    }");
-                if (i < cardEntries.Count - 1) sb.Append(",");
-                sb.AppendLine();
-            }
-
-            sb.AppendLine("  ]");
-            sb.AppendLine("}");
-
-            File.WriteAllText(savePath, sb.ToString(), Encoding.UTF8);
-            EditorUtility.DisplayDialog("Plantilla Generada", $"Plantilla JSON exportada en:\n{savePath}\n\nLa comunidad puede usar esta estructura para crear Data Packs.", "Entendido");
         }
 
         private void ExportCatalogCsv()

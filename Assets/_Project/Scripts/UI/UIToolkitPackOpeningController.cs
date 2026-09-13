@@ -914,12 +914,24 @@ namespace JuegoTCG.UI
                     miniCard.AddToClassList($"mini-rarity-{rarityClass}");
                     miniCard.style.scale = new StyleScale(new Scale(Vector3.zero));
 
+                    Sprite resolvedArt = card != null ? DataPackManager.GetCardArt(card.cardId, card.defaultArt) : null;
+                    Sprite resolvedBg = card != null ? DataPackManager.GetCardBackground(card.cardId) : null;
+
+                    // 0. Fondo personalizado si existe
+                    if (resolvedBg != null)
+                    {
+                        VisualElement cardBg = new VisualElement();
+                        cardBg.AddToClassList("mini-card-bg");
+                        cardBg.style.backgroundImage = new StyleBackground(resolvedBg);
+                        miniCard.Add(cardBg);
+                    }
+
                     // 1. Arte / Foto del Jugador o Avatar con iniciales
-                    if (card != null && card.defaultArt != null)
+                    if (resolvedArt != null)
                     {
                         VisualElement cardArt = new VisualElement();
                         cardArt.AddToClassList("mini-card-art");
-                        cardArt.style.backgroundImage = new StyleBackground(card.defaultArt);
+                        cardArt.style.backgroundImage = new StyleBackground(resolvedArt);
                         miniCard.Add(cardArt);
                     }
                     else

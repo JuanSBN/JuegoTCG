@@ -338,6 +338,15 @@
     transition-duration: 0.2s;
 }
 
+.mini-card-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
 .mini-card-art {
     position: absolute;
     left: 0;

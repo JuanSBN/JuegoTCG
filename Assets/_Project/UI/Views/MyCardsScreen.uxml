@@ -187,6 +187,9 @@
                 <ui:VisualElement name="InspectHeroCard" class="inspect-hero-card">
                     <!-- Unified Art Container (Always displays official frame and metadata) -->
                     <ui:VisualElement name="InspectArtContainer" class="inspect-art-container">
+                        <!-- Custom Background (Data Pack background) -->
+                        <ui:VisualElement name="InspectArtBg" class="inspect-art-bg" />
+
                         <!-- Photo or Default Tactical Pitch Background -->
                         <ui:VisualElement name="InspectArtPhoto" class="inspect-art-photo" />
 

@@ -21,12 +21,14 @@ namespace JuegoTCG.Cards
         public int totalCards = 0;
         public bool hasPhotos = true;
         public bool hasCustomFlags = false;
+        public bool hasCustomBackgrounds = false;
     }
 
     /// <summary>
     /// Entrada de sustitución visual de un futbolista dentro de database.json.
-    /// Importante: Por integridad competitiva (Fair Play) y consistencia de filtros del álbum,
-    /// los Data Packs NO modifican estadísticas, OVR ni nacionalidades/códigos de país.
+    /// Importante: Por integridad competitiva (Fair Play), consistencia y protección legal de marcas,
+    /// los Data Packs NO modifican equipos/clubes, estadísticas, OVR ni nacionalidades.
+    /// Solo sustituyen nombre de jugador, iniciales, posición e imágenes (fotos/banderas).
     /// </summary>
     [Serializable]
     public class DataPackCardEntry
@@ -34,7 +36,6 @@ namespace JuegoTCG.Cards
         public string cardId = "";
         public string playerName = "";
         public string initials = "";
-        public string teamName = "";
         public string position = "";
     }
 

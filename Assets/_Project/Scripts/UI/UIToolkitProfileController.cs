@@ -503,6 +503,7 @@ namespace JuegoTCG.UI
 
                 Label slotPlus = slotEl.Q<Label>(className: "slot-empty-plus");
                 VisualElement slotOccupiedContainer = slotEl.Q<VisualElement>(className: "slot-occupied-container");
+                VisualElement slotBg = slotEl.Q<VisualElement>(className: "slot-art-bg");
                 VisualElement slotPhoto = slotEl.Q<VisualElement>(className: "slot-art-photo");
                 VisualElement slotFrame = slotEl.Q<VisualElement>(className: "slot-art-frame");
                 Label slotFramedName = slotEl.Q<Label>(className: "slot-player-name-framed");
@@ -526,6 +527,7 @@ namespace JuegoTCG.UI
                 {
                     if (slotPlus != null) slotPlus.style.display = DisplayStyle.Flex;
                     if (slotOccupiedContainer != null) slotOccupiedContainer.style.display = DisplayStyle.None;
+                    if (slotBg != null) slotBg.style.display = DisplayStyle.None;
                     if (slotFramedName != null) slotFramedName.style.display = DisplayStyle.None;
                     if (slotFooterBox != null) slotFooterBox.style.display = DisplayStyle.None;
                     if (slotName != null) slotName.style.display = DisplayStyle.None;
@@ -538,6 +540,7 @@ namespace JuegoTCG.UI
                 {
                     if (slotPlus != null) slotPlus.style.display = DisplayStyle.Flex;
                     if (slotOccupiedContainer != null) slotOccupiedContainer.style.display = DisplayStyle.None;
+                    if (slotBg != null) slotBg.style.display = DisplayStyle.None;
                     if (slotFramedName != null) slotFramedName.style.display = DisplayStyle.None;
                     if (slotFooterBox != null) slotFooterBox.style.display = DisplayStyle.None;
                     if (slotName != null) slotName.style.display = DisplayStyle.None;
@@ -552,6 +555,27 @@ namespace JuegoTCG.UI
 
                 CardData asset = loadedCardAssets.Find(c => c.cardId == cardId);
                 Sprite cardArt = DataPackManager.GetCardArt(cardId, asset != null ? asset.defaultArt : null);
+                Sprite cardBg = DataPackManager.GetCardBackground(cardId);
+
+                if (slotBg == null && slotOccupiedContainer != null)
+                {
+                    slotBg = new VisualElement();
+                    slotBg.AddToClassList("slot-art-bg");
+                    slotOccupiedContainer.Insert(0, slotBg);
+                }
+                if (slotBg != null)
+                {
+                    if (cardBg != null)
+                    {
+                        slotBg.style.backgroundImage = new StyleBackground(cardBg);
+                        slotBg.style.display = DisplayStyle.Flex;
+                    }
+                    else
+                    {
+                        slotBg.style.backgroundImage = StyleKeyword.Null;
+                        slotBg.style.display = DisplayStyle.None;
+                    }
+                }
 
                 EnsureRarityFrames();
                 EnsureHoloMaterial();
@@ -732,9 +756,19 @@ namespace JuegoTCG.UI
 
             CardData asset = loadedCardAssets.Find(c => c.cardId == item.cardId);
             Sprite cardArt = DataPackManager.GetCardArt(item.cardId, asset != null ? asset.defaultArt : null);
+            Sprite cardBg = DataPackManager.GetCardBackground(item.cardId);
 
             if (cardArt != null)
             {
+                // 0. Fondo personalizado si existe
+                if (cardBg != null)
+                {
+                    VisualElement bgEl = new VisualElement();
+                    bgEl.AddToClassList("pitch-card-bg");
+                    bgEl.style.backgroundImage = new StyleBackground(cardBg);
+                    cardBtn.Add(bgEl);
+                }
+
                 // 1. Foto del Jugador (Data Pack o defaultArt)
                 VisualElement photoEl = new VisualElement();
                 photoEl.AddToClassList("pitch-card-photo");
@@ -863,6 +897,7 @@ namespace JuegoTCG.UI
                 VisualElement cardEl = root.Q<VisualElement>($"Featured_Card_{i + 1}");
                 if (cardEl == null) continue;
 
+                VisualElement bgEl = cardEl.Q<VisualElement>(className: "featured-art-bg");
                 VisualElement photoEl = cardEl.Q<VisualElement>(className: "featured-art-photo");
                 VisualElement frameEl = cardEl.Q<VisualElement>(className: "featured-art-frame");
                 Label framedNameLabel = cardEl.Q<Label>(className: "featured-player-name-framed");
@@ -893,6 +928,7 @@ namespace JuegoTCG.UI
                 if (string.IsNullOrEmpty(cardId) || !PlayerCollectionManager.Instance.IsCardOwned(cardId))
                 {
                     cardEl.AddToClassList("featured-card-empty");
+                    if (bgEl != null) bgEl.style.display = DisplayStyle.None;
                     if (photoEl != null) photoEl.style.display = DisplayStyle.None;
                     if (frameEl != null) frameEl.style.display = DisplayStyle.None;
                     if (framedNameLabel != null) framedNameLabel.style.display = DisplayStyle.None;
@@ -907,6 +943,7 @@ namespace JuegoTCG.UI
                 if (cardItem == null)
                 {
                     cardEl.AddToClassList("featured-card-empty");
+                    if (bgEl != null) bgEl.style.display = DisplayStyle.None;
                     if (photoEl != null) photoEl.style.display = DisplayStyle.None;
                     if (frameEl != null) frameEl.style.display = DisplayStyle.None;
                     if (framedNameLabel != null) framedNameLabel.style.display = DisplayStyle.None;
@@ -923,6 +960,27 @@ namespace JuegoTCG.UI
 
                 CardData asset = loadedCardAssets.Find(c => c.cardId == cardId);
                 Sprite cardArt = DataPackManager.GetCardArt(cardId, asset != null ? asset.defaultArt : null);
+                Sprite cardBg = DataPackManager.GetCardBackground(cardId);
+
+                if (bgEl == null)
+                {
+                    bgEl = new VisualElement();
+                    bgEl.AddToClassList("featured-art-bg");
+                    cardEl.Insert(0, bgEl);
+                }
+                if (bgEl != null)
+                {
+                    if (cardBg != null)
+                    {
+                        bgEl.style.backgroundImage = new StyleBackground(cardBg);
+                        bgEl.style.display = DisplayStyle.Flex;
+                    }
+                    else
+                    {
+                        bgEl.style.backgroundImage = StyleKeyword.Null;
+                        bgEl.style.display = DisplayStyle.None;
+                    }
+                }
 
                 int rIndex = (int)cardItem.rarity;
                 bool isHolo = (cardItem.rarity == Rarity.Epica || cardItem.rarity == Rarity.Legendaria || cardItem.rarity == Rarity.Mitica || cardItem.rarity == Rarity.FullArt);
@@ -1174,9 +1232,19 @@ namespace JuegoTCG.UI
 
             CardData asset = loadedCardAssets.Find(c => c.cardId == item.cardId);
             Sprite cardArt = DataPackManager.GetCardArt(item.cardId, asset != null ? asset.defaultArt : null);
+            Sprite cardBg = DataPackManager.GetCardBackground(item.cardId);
 
             if (cardArt != null)
             {
+                // 0. Fondo personalizado si existe
+                if (cardBg != null)
+                {
+                    VisualElement bgEl = new VisualElement();
+                    bgEl.AddToClassList("pitch-card-bg");
+                    bgEl.style.backgroundImage = new StyleBackground(cardBg);
+                    cardBtn.Add(bgEl);
+                }
+
                 // 1. Foto
                 VisualElement photoEl = new VisualElement();
                 photoEl.AddToClassList("pitch-card-photo");

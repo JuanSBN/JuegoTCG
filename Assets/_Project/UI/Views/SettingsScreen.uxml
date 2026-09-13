@@ -3,6 +3,7 @@
     <ui:Template name="LiquidGlassNavBar" src="../Components/LiquidGlassNavBar.uxml" />
     <ui:Template name="DataPacksModal" src="../Components/DataPacksModal.uxml" />
     <Style src="project://database/Assets/_Project/UI/Styles/SettingsScreen.uss" />
+    <Style src="project://database/Assets/_Project/UI/Styles/DataPacksModal.uss" />
 
     <ui:VisualElement name="SettingsScreenRoot" class="screen-container">
 

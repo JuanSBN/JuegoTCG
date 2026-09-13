@@ -11,7 +11,8 @@ Esta guía explica detalladamente el proceso completo para crear, empaquetar, al
    - [A. El archivo `manifest.json`](#a-el-archivo-manifestjson)
    - [B. El archivo `database.json`](#b-el-archivo-databasejson)
    - [C. La carpeta de fotos `photos/`](#c-la-carpeta-de-fotos-photos)
-   - [D. La carpeta de banderas `flags/` (Opcional)](#d-la-carpeta-de-banderas-flags-opcional)
+   - [D. Fondos Personalizados (Champions League, Estadios, Efectos Galácticos)](#d-fondos-personalizados-champions-league-estadios-efectos-galácticos)
+   - [E. La carpeta de banderas `flags/` (Opcional)](#e-la-carpeta-de-banderas-flags-opcional)
 4. [Paso 2: Comprimir en archivo `.zip`](#paso-2-comprimir-en-archivo-zip)
 5. [Paso 3: Alojamiento Externo (Subir a Internet)](#paso-3-alojamiento-externo-subir-a-internet)
 6. [Paso 4: Publicar en la Lista de "Recomendados" (Consola de Firebase)](#paso-4-publicar-en-la-lista-de-recomendados-consola-de-firebase)
@@ -20,7 +21,7 @@ Esta guía explica detalladamente el proceso completo para crear, empaquetar, al
 
 ---
 
-## 1. Reglas de Oro (Fair Play y Filtros de Álbum)
+## 1. Reglas de Oro (Fair Play, Protección Legal y Filtros de Álbum)
 
 > [!IMPORTANT]
 > Los Data Packs en JuegoTCG son **estrictamente cosméticos y de presentación visual**.
@@ -28,12 +29,13 @@ Esta guía explica detalladamente el proceso completo para crear, empaquetar, al
 > - **QUÉ SÍ PUEDE MODIFICAR UN DATA PACK:**
 >   - Nombre del jugador (`playerName`).
 >   - Iniciales para el avatar por defecto (`initials`).
->   - Nombre del equipo o club (`teamName`).
->   - Posición textual (`position`, ej: `DEL`, `MED`, `DEF`, `POR`).
->   - Retratos o fotos en alta definición (`photos/{cardId}.png`).
+>   - Posición táctica (`position`, ej: `DEL`, `MED`, `DEF`, `POR`).
+>   - Retratos o fotos en alta definición (`photos/{cardId}.png`, preferiblemente PNG con fondo transparente).
+>   - Fondos personalizados temáticos (`background.png` global para todo el álbum, o `backgrounds/{cardId}.png` individual por carta).
 >   - Texturas HD opcionales para banderas (`flags/{countryCode}.png`).
 > 
 > - **QUÉ NUNCA PUEDE MODIFICAR UN DATA PACK (INMUTABLES POR MOTOR):**
+>   - **Equipos o Clubes:** Las cartas de JuegoTCG se centran puramente en el jugador y su nación. No incluyen ni muestran marcas de clubes para evitar litigios y proteger la legalidad del juego.
 >   - **Estadísticas y OVR:** Tiro, Pase, Defensa, Regate, Portería y Media Global no pueden ser alteradas.
 >   - **Nacionalidades y Códigos de País (`nationality`, `countryCode`):** No se alteran para evitar descalibrar los filtros por nación del álbum (ej: buscar jugadores de Francia, España, etc.).
 >   - **Rarezas y Probabilidades de Sobres:** Controladas exclusivamente por el backend oficial.
@@ -42,17 +44,22 @@ Esta guía explica detalladamente el proceso completo para crear, empaquetar, al
 
 ## 2. Estructura de Carpetas del Data Pack
 
-Crea una carpeta en tu computadora (por ejemplo, `MiPrimerDataPack`). La estructura interna debe ser exactamente la siguiente:
+Crea una carpeta en tu computadora (por ejemplo, `MiPrimerDataPack`). La estructura interna debe ser la siguiente:
 
 ```text
 MiPrimerDataPack/
-├── manifest.json         <-- Metadatos del paquete y versión
-├── database.json         <-- Sustituciones de texto (nombres y clubes)
-├── photos/               <-- Fotos de los futbolistas
+├── manifest.json            <-- Metadatos del paquete y versión
+├── database.json            <-- Sustituciones de texto (nombres e iniciales)
+├── background.png (Opcional) <-- Fondo temático global para TODAS las cartas
+├── photos/                  <-- Fotos de los futbolistas (PNG transparente recomendado)
 │   ├── card_01.png
 │   ├── card_02.png
 │   └── card_10.png
-└── flags/ (Opcional)     <-- Banderas personalizadas
+├── backgrounds/ (Opcional)  <-- Fondos temáticos específicos por carta
+│   ├── default.png          <-- Fondo global alternativo
+│   ├── card_01.png          <-- Fondo exclusivo para card_01
+│   └── card_10.png
+└── flags/ (Opcional)        <-- Banderas personalizadas HD
     ├── BR.png
     └── ES.png
 ```
@@ -76,6 +83,7 @@ Crea un archivo de texto llamado `manifest.json` en la raíz de tu carpeta con l
   "description": "Sustituye nombres ficticios por futbolistas reales con sus clubes oficiales y fotos HD.",
   "totalCards": 18,
   "hasPhotos": true,
+  "hasCustomBackgrounds": true,
   "hasCustomFlags": false
 }
 ```
@@ -92,12 +100,13 @@ Crea un archivo de texto llamado `manifest.json` en la raíz de tu carpeta con l
 | `description` | Texto | Breve resumen de lo que incluye el pack. |
 | `totalCards` | Número | Cantidad de cartas que incluye el pack. |
 | `hasPhotos` | Booleano | `true` si incluye imágenes en la carpeta `photos/`. |
+| `hasCustomBackgrounds` | Booleano | (Opcional) `true` si incluye `background.png` o carpeta `backgrounds/`. |
 | `hasCustomFlags` | Booleano | `true` si incluye banderas en la carpeta `flags/`. |
 
 ---
 
 ### B. El archivo `database.json`
-Crea un archivo de texto llamado `database.json` en la raíz de tu carpeta. Mapea cada `cardId` con su nombre y club real:
+Crea un archivo de texto llamado `database.json` en la raíz de tu carpeta. Mapea cada `cardId` con su nombre real (sin nombres de clubes ni marcas):
 
 ```json
 {
@@ -106,28 +115,24 @@ Crea un archivo de texto llamado `database.json` en la raíz de tu carpeta. Mape
       "cardId": "card_01",
       "playerName": "Lev Yashin",
       "initials": "LY",
-      "teamName": "Dinamo Moscú",
       "position": "POR"
     },
     {
       "cardId": "card_10",
       "playerName": "Lamine Yamal",
       "initials": "LY",
-      "teamName": "FC Barcelona",
       "position": "DEL"
     },
     {
       "cardId": "card_13",
       "playerName": "Kylian Mbappé",
       "initials": "KM",
-      "teamName": "Real Madrid",
       "position": "DEL"
     },
     {
       "cardId": "card_16",
       "playerName": "Lionel Messi",
       "initials": "LM",
-      "teamName": "Inter Miami",
       "position": "DEL"
     }
   ]
@@ -135,7 +140,7 @@ Crea un archivo de texto llamado `database.json` en la raíz de tu carpeta. Mape
 ```
 
 > [!TIP]
-> Solo necesitas incluir las cartas que deseas sustituir. Si una carta no está en el `database.json`, el juego mantendrá su nombre y club por defecto de forma automática sin errores.
+> Solo necesitas incluir las cartas que deseas sustituir. Si una carta no está en el `database.json`, el juego mantendrá su nombre original por defecto de forma automática sin errores.
 
 ---
 
@@ -145,13 +150,30 @@ Crea una subcarpeta llamada `photos`.
    - `card_01.png`
    - `card_10.png`
    - `card_13.png`
-2. **Formato:** PNG con fondo transparente (recorte del jugador) o JPG/WebP con fondo.
+2. **Formato:** PNG con fondo transparente (recorte del futbolista) recomendado para aprovechar los fondos temáticos. También admite JPG/WebP.
 3. **Resolución recomendada:** `720 x 960 px` (proporción 3:4).
 4. **Optimización móvil:** Se recomienda pasar las imágenes por herramientas gratuitas como [TinyPNG](https://tinypng.com/) para que el paquete pese poco y descargue en segundos.
 
 ---
 
-### D. La carpeta de banderas `flags/` (Opcional)
+### D. Fondos Personalizados (Champions League, Estadios, Efectos Galácticos)
+JuegoTCG renderiza las cartas mediante **3 capas visuales independientes**:
+1. **Capa 1 (Fondo):** Imagen temática personalizada (`background.png` o `backgrounds/{cardId}.png`).
+2. **Capa 2 (Recorte de Jugador):** El futbolista en PNG con fondo transparente (`photos/{cardId}.png`).
+3. **Capa 3 (Marco Oficial + HUD):** Marco de rareza oficial, efectos holográficos, stats, bandera y OVR.
+
+#### Dos Formas de Añadir Fondos:
+- **Opción A: Fondo Global del Pack (¡Súper Recomendado por Peso y Velocidad!):**
+  Coloca un archivo de fondo llamado `background.png` en la raíz del paquete (o `backgrounds/default.png`). Este fondo se aplicará automáticamente a todas las cartas del paquete que tengan recorte de jugador.
+  > *Ventaja brutal:* ¡Un solo archivo de ~500 KB decora 100 cartas diferentes sin tener que duplicar el fondo en cada imagen!
+- **Opción B: Fondos Individuales por Carta:**
+  Crea una subcarpeta llamada `backgrounds/` y coloca imágenes nombradas con el `cardId` correspondiente (ej: `backgrounds/card_01.png`).
+  > *Ideal para:* Cartas especiales, premios Balón de Oro, ediciones de leyenda o cartas con fondos temáticos diferentes según su liga o posición.
+- **Resolución recomendada para fondos:** `720 x 960 px` (formato PNG o JPG).
+
+---
+
+### E. La carpeta de banderas `flags/` (Opcional)
 Si deseas suministrar banderas personalizadas o en mayor definición para naciones específicas:
 1. Crea una subcarpeta llamada `flags`.
 2. Guarda los archivos usando el código ISO-2 en mayúsculas:
@@ -249,8 +271,9 @@ Una vez guardado en Firebase:
 ## Checklist Final antes de Publicar
 
 - [ ] `manifest.json` tiene `"schemaVersion": 2`.
-- [ ] `database.json` contiene únicamente `cardId`, `playerName`, `initials`, `teamName` y `position` (sin estadísticas ni nacionalidades).
-- [ ] Todas las fotos en `photos/` tienen exactamente el mismo nombre que su `cardId` (ej. `card_10.png`).
+- [ ] `database.json` contiene únicamente `cardId`, `playerName`, `initials` y `position` (sin equipos, estadísticas ni nacionalidades).
+- [ ] Todas las fotos en `photos/` tienen exactamente el mismo nombre que su `cardId` (ej. `card_10.png`), preferiblemente recortes PNG transparentes.
+- [ ] Si incluye fondos temáticos, se incluyó `background.png` en la raíz (fondo global) o la carpeta `backgrounds/` con los `cardId` correspondientes.
 - [ ] El archivo `.zip` tiene los archivos directamente en la raíz (no dentro de una subcarpeta doble).
 - [ ] El enlace `downloadUrl` es de descarga directa HTTP/HTTPS.
 - [ ] El documento fue creado en la colección `datapacks_catalog` de Firestore.

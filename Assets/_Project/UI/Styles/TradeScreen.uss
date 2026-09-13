@@ -1189,6 +1189,18 @@
     -unity-text-align: middle-center;
 }
 
+.trade-card-art-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: scale-and-crop;
+    picking-mode: ignore;
+}
+
 .trade-card-art-photo {
     position: absolute;
     top: 0;

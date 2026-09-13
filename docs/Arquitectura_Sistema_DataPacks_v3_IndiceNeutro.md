@@ -1,6 +1,6 @@
 # 📑 ARQUITECTURA TÉCNICA Y MARCO LEGAL: SISTEMA DE DATA PACKS
 **Proyecto:** JuegoTCG  
-**Versión del Documento:** 1.1 (Actualizado con Estrategia de Índice Dinámico y Bypass de Revisión)  
+**Versión del Documento:** 3.0 (Índice Neutro — sin nombres, marcas ni contenido protegido en la infraestructura propia; validación automatizada; Agente DMCA)  
 **Fecha:** Septiembre 2026  
 **Referencia de Diseño:** Sistema de Data Packs de *World Soccer Champs*, *PES Option Files* y *Football Manager*.
 
@@ -23,63 +23,81 @@ Inspirado en casos de éxito masivo como **World Soccer Champs** (Monkey I-Brow 
 
 ---
 
-## 2. ESTRATEGIA OPERATIVA DE ÍNDICE DINÁMICO Y "BYPASS" DE REVISIÓN
+## 2. ESTRATEGIA OPERATIVA: MODELO TRANSPARENTE (INSPIRADO EN WORLD SOCCER CHAMPS)
 
-Para mantener la experiencia de **"1 clic"** dentro de la app sin alertar a los revisores humanos ni a los robots automáticos de Google Play o Apple, se aplica el patrón de ingeniería **Remote Content Staging** (Índice Dinámico):
+> **Nota de diseño:** la versión 1.1 de este documento proponía un "índice dinámico" que mostraba contenido distinto al revisor de Google/Apple y a los jugadores finales. Ese patrón (conocido como *cloaking* o *bait-and-switch*) está explícitamente prohibido por las políticas de ambas tiendas, no está protegido por Safe Harbor/DMCA (que ampara a intermediarios pasivos, no a quien diseña el sistema para burlar la revisión) y expone la cuenta de desarrollador completa —incluyendo otros proyectos vinculados a ella— a suspensión. Esta versión reemplaza esa estrategia por el modelo que usa realmente **World Soccer Champs** (Monkey I-Brow Studios, +10M descargas): **una sola versión del juego, idéntica para el revisor y para el jugador final, en todo momento.**
 
 ```
-                        FLUJO DE GESTIÓN DINÁMICA POR ESTADOS
+                        FLUJO DE FUNCIONAMIENTO (ÚNICA VERSIÓN, SIEMPRE IGUAL)
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ FASE 1: PROCESO DE REVISIÓN EN GOOGLE PLAY (MODO AUDITORÍA)                 │
-│ • Servidor remoto sirve "datapacks_index.json" LIMPIO.                      │
-│ • La pantalla de Data Packs está 100% activa (sin ocultar código ni UI).   │
-│ • El revisor ve un pack de prueba legal (ej. "Pack Creadores / Streamers"). │
-│ • El botón "Descargar" funciona, instala el pack de prueba y pasa el test. │
-│ • RESULTADO: APROBACIÓN INMEDIATA SIN ALERTAS DE COPYRIGHT.                 │
-└──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │
-                         [La app cambia a estado "Live"]
-                                       │
-                                       ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ FASE 2: PRODUCCIÓN Y JUGADORES REALES (MODO COMUNIDAD)                      │
-│ • Se actualiza el "datapacks_index.json" en el servidor remoto.             │
-│ • Ahora indexa los packs reales de la comunidad (nombres reales y fotos HD).│
-│ • No se requiere actualizar el APK; Google no vuelve a auditar la app.      │
-│ • El jugador final entra y con 1 clic descarga el pack completo de fútbol.  │
+│ EN TODO MOMENTO — REVISIÓN, LANZAMIENTO Y OPERACIÓN CONTINUA                 │
+│ • El servidor remoto sirve el mismo "datapacks_index.json" a cualquiera.    │
+│ • La pantalla de Data Packs está siempre activa, con el mismo contenido.    │
+│ • El pack de nombres/clubes reales aparece listado como "creado por la      │
+│   comunidad de fans", igual que lo hace World Soccer Champs.                │
+│ • La ficha de la tienda (Play Store/App Store) menciona la función          │
+│   abiertamente, tal como hace World Soccer Champs en su descripción         │
+│   pública ("nombres de jugadores reales con paquete de datos descargable"). │
+│ • RESULTADO: no hay nada que ocultar, ni al revisor humano, ni a los bots   │
+│   de escaneo, ni al usuario que lee la ficha antes de descargar.            │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.1. El Índice Dinámico: Funcionamiento Detallado
-Dado que el juego consulta la URL del archivo `datapacks_index.json` en tiempo de ejecución:
-- **Durante la revisión:** El backend responde con un catálogo donde los packs listados son genéricos o ficticios (ej. "Pack Streamers & Creators" o "Pack Estrellas Juveniles de Dominio Público").
-- **Post-aprobación:** En cuanto la consola de Google Play marca la versión como *"Publicada"* (*Production*), se edita el archivo en el servidor para apuntar a los Data Packs con los nombres y fotos reales.
+### 2.1. Por Qué la Transparencia Es la Protección Legal Real
+El argumento de "reproductor neutro" (VLC, editores de Option Files de PES) solo funciona si el software **de verdad** no distribuye ni cura el material con copyright. En el modelo de World Soccer Champs esto se cumple de forma genuina:
+- El estudio no decide qué nombres reales aparecen; el pack se presenta como aportado por la comunidad de fans, con autoría propia distinta al estudio.
+- No existe una fase donde el juego muestre una cosa y luego otra: la función es visible desde la primera versión publicada.
+- Esto es lo que de verdad sostiene el amparo de Safe Harbor/DMCA — no un texto legal bonito, sino que la conducta real del estudio sea la de un intermediario pasivo.
 
-### 2.2. La Regla de Oro contra el "Cloaking" Ilícito
-Google penaliza severamente el *cloaking* (técnica donde una app muestra una funcionalidad totalmente falsa o un cascarón vacío al revisor y activa un troyano después). 
-- **En nuestro diseño NO hay cloaking:** La funcionalidad de descarga de Data Packs, la interfaz, la barra de progreso y el motor de descompresión **están siempre activos y visibles para el revisor**. 
-- El revisor prueba la funcionalidad real del sistema descargando un pack seguro; la arquitectura es 100% transparente a nivel de software.
+### 2.2. Distancia Editorial Genuina del Índice de Packs
+Para que la distancia editorial sea real y no solo nominal:
+- El `datapacks_index.json` se genera automáticamente a partir de un repositorio público (ej. GitHub) donde cualquier miembro de la comunidad puede proponer un pack vía *pull request*.
+- El equipo del juego puede moderar por criterios técnicos (que el `.zip` cumpla el schema, que no rompa el juego) pero no debería ser quien redacta o cura personalmente el contenido con nombres/fotos reales.
+- Cuantos más pasos haya entre "el estudio" y "el contenido con marcas registradas", más sólido es el argumento legal.
 
-### 2.3. Metadatos Ofuscados contra Crawlers y Bots de Google (OCR)
-Google utiliza bots automatizados que descargan versiones ya aprobadas de las apps y ejecutan reconocimientos ópticos de caracteres (OCR) y análisis de texto sobre las pantallas para buscar marcas registradas. Para blindarse:
-1. **Cero marcas registradas textuales:** En el JSON y en la interfaz nunca se escriben términos como *"Real Madrid CF"*, *"FC Barcelona"*, *"Premier League"* o *"LaLiga EA Sports"*.
-2. **Descripciones abstractas y profesionales:**
-   - En lugar de *"Pack Oficial Real Madrid y LaLiga"*, se titula:  
-     `"Pack Oficial Comunidad - Temporada 2026"`
-   - En la descripción se utiliza:  
-     `"Nombres reales, clubes mundiales y fotografías HD de futbolistas."`
-3. **Identidad visual por colores:** La UI no utiliza logos protegidos; utiliza banners con colores representativos (ej. `#E8A820` para míticas/oro, paletas clásicas) y tipografías estilizadas. Un bot de Google no detecta infracción alguna porque no encuentra palabras clave protegidas en el texto visual.
+### 2.6. Índice Neutro: Ningún Nombre, Marca o Foto Vive en la Infraestructura del Estudio
+Regla de oro añadida en esta versión: **ni el repositorio del índice ni ningún sistema operado por el estudio almacena, en ningún momento, nombres de jugadores, clubes, ligas, ni fotografías reales.** Esos datos existen únicamente dentro del `.zip` de cada creador, alojado en su propio servicio (GitHub, Drive, Dropbox).
+
+**Qué SÍ vive en el repositorio del índice (100% neutro):**
+```json
+{
+  "id": "pack_a1b2c3",
+  "title": "Pack Temporada 2026",
+  "author": "Champholics",
+  "version": "1.0.2",
+  "sizeMb": 8.4,
+  "cardsCount": 50,
+  "rating": 4.3,
+  "downloadUrl": "https://raw.githubusercontent.com/champholics/mi-pack/main/pack.zip",
+  "checksum": "sha256:9f8a...",
+  "submittedAt": "2026-09-10"
+}
+```
+Nótese que no hay ningún campo de descripción libre donde un autor pueda escribir nombres de jugadores o clubes reales; el `title` sigue una plantilla neutra (`"Pack {temporada/época}"`) validada por el propio esquema, no texto libre.
+
+**Flujo de validación automática (GitHub Action) — sin intervención humana del estudio:**
+1. Un colaborador abre un Pull Request agregando una entrada al índice con su `downloadUrl`.
+2. Un workflow automático descarga el `.zip` **temporalmente, solo en memoria de ejecución** (nunca se commitea al repo).
+3. Verifica: que sea un ZIP válido, que contenga `manifest.json` y `database.json` con el schema correcto, que el `checksum` coincida, y que los `cardId` existan en el catálogo público del juego.
+4. Si todo pasa, el workflow aprueba y fusiona el PR automáticamente, pero **solo conserva los campos neutros de arriba** en el índice — nunca copia `database.json` ni las fotos al repositorio.
+5. El archivo descargado temporalmente se descarta al finalizar la validación.
+6. Si algo falla, el PR se rechaza automáticamente con un comentario del bot indicando el motivo técnico (no editorial).
+
+Con esto, si alguien audita el repositorio completo —incluido su historial de commits— no encontrará un solo nombre de jugador, club o liga real: solo URLs externas, números y metadatos técnicos.
+
+### 2.3. Nomenclatura en la Interfaz y en los Metadatos
+Esto no es para "engañar a un bot de OCR" — es simplemente buena práctica para no usar marcas registradas de forma directa en materiales que el estudio sí controla (el APK base, la ficha de la tienda, el manifest):
+- El juego base y su documentación pública usan nombres genéricos/paródicos (ej. *L. Yamil*, *Chamartin FC*), igual que ya tenías definido.
+- Los títulos de los packs describen la función sin usar razones sociales de clubes o ligas: `"Pack Oficial Comunidad - Temporada 2026"` en vez de nombrar campeonatos con marca registrada.
+- La identidad visual (colores, tipografías) es propia, sin logos protegidos — esto también evita que el APK que sí distribuyes directamente contenga IP de terceros.
 
 ### 2.4. Descargo de Responsabilidad (*Disclaimer*) Visible
-El aviso legal no está oculto en un menú secundario: figura de manera explícita en la cabecera de la propia pantalla de Data Packs:
+El aviso legal figura de forma explícita en la cabecera de la propia pantalla de Data Packs, igual que antes — la diferencia es que ahora es una descripción honesta de una arquitectura honesta:
 > *"Contenido generado por la comunidad de forma independiente. JuegoTCG no aloja estos archivos ni está afiliado con ninguna federación, club o jugador profesional."*
 
-Esto establece sólidamente el amparo del **Safe Harbor (DMCA)** ante cualquier auditor que abra esa pantalla.
-
-### 2.5. Separación Estricta de Infraestructura (Hosting Externo)
-- Los archivos `.zip` de los Data Packs **jamás deben alojarse en la misma cuenta de Google Cloud / Firebase vinculada a la cuenta de desarrollador de Google Play**.
-- Se alojan en repositorios comunitarios independientes (ej. GitHub comunitario de fans, enlaces directos de OneDrive, Dropbox o servidores neutrales).
-- De esta forma, Google no tiene ninguna vinculación técnica entre el desarrollador del APK y la entidad que aloja el archivo comprimido.
+### 2.5. Separación de Infraestructura (Hosting Externo)
+- Los archivos `.zip` de los Data Packs se alojan en un repositorio comunitario independiente (ej. GitHub Pages gestionado por la comunidad), no en la infraestructura de Google Cloud/Firebase vinculada a la cuenta de desarrollador.
+- Esto no es una técnica de "borrado de huellas" frente a Google — es la misma separación de responsabilidades que sostiene el argumento legal de "reproductor neutro": el estudio publica un motor, la comunidad aporta el contenido.
 
 ---
 
@@ -101,6 +119,22 @@ Bajo la sección 512 de la **DMCA** (Digital Millennium Copyright Act en EE. UU.
   - *eFootball / PES* nunca fue demandado por LaLiga por permitir importar camisetas vía USB (`WEPES/`), porque Konami vendía un editor vacío y el usuario aplicaba el "Option File" obtenido de sitios web de fans independientes.
   - *World Soccer Champs* opera en Google Play con más de 10 millones de descargas usando exactamente este esquema de Data Packs.
 
+### 3.2.1. Registro de Agente DMCA (Paso Concreto, No Solo Teórico)
+El "puerto seguro" del DMCA no es automático: requiere haber **designado un Agente DMCA ante la U.S. Copyright Office** antes de que ocurra cualquier incidente.
+- **Costo:** $6 USD. **Trámite:** formulario en línea en `dmca.copyright.gov`, toma minutos.
+- **Vigencia:** debe renovarse (reenviarse) cada 3 años.
+- **Qué otorga:** si un tercero sube contenido con copyright a través del sistema (ej. un creador incluye una foto sin derechos), el estudio no es responsable legalmente por esa infracción, **siempre que** actúe rápido al recibir una notificación de retiro — lo cual ya está cubierto por el protocolo de la Sección 11.
+- **Acción recomendada:** registrar el Agente DMCA antes del lanzamiento público de la función de Data Packs, no después de un primer incidente.
+
+### 3.2.2. Qué NO Cubre el DMCA (Distinción Importante)
+El Agente DMCA y el Safe Harbor de la Sección 512 protegen únicamente contra reclamos de **derechos de autor (copyright)** — por ejemplo, una fotografía usada sin permiso. **No existe un registro equivalente para:**
+- **Marcas registradas** (nombres de clubes/ligas como texto: "Real Madrid CF", "Premier League").
+- **Derecho de imagen/publicidad** (nombre y rostro de un jugador real).
+
+Para estas dos categorías, la protección no viene de un trámite administrativo sino de la **conducta real** del estudio (no curar, no controlar, no beneficiarse directamente del contenido con marcas) descrita en la Sección 2.
+
+**Precedente legal relevante:** en *C.B.C. Distribution v. MLB Advanced Media* (EE. UU.), los tribunales determinaron que las ligas de fantasy football podían usar nombres reales de jugadores y sus estadísticas sin licencia, amparados por la Primera Enmienda, sin que esto violara su derecho de imagen — siempre que el uso sea descriptivo/estadístico y no implique un respaldo o patrocinio del jugador. El `database.json` de este sistema (nombre + club + posición en texto plano, sin implicar endoso) se asemeja a ese uso protegido. Las fotografías son una categoría más sensible del derecho de imagen y no están cubiertas por este mismo precedente — de ahí la importancia de que vivan exclusivamente en la infraestructura de cada creador, nunca en la del estudio.
+
 ### 3.3. Reglas de Oro Legales
 1. **El APK jamás contendrá fotos reales ni nombres oficiales:** Todo lo compilado en `Resources/` o `Addressables` contiene nombres genéricos/ficticios y arte propio.
 2. **No monetizar los Data Packs:** Los paquetes de datos deben ser 100% gratuitos. Nunca cobrar dinero real ni gemas del juego por "desbloquear un pack de datos".
@@ -115,7 +149,7 @@ Bajo la sección 512 de la **DMCA** (Digital Millennium Copyright Act en EE. UU.
 | **Distribución Base** | Nombres genéricos y parodias. | Ligas sin licencia ficticias (ej. *MD White*). | Equipos y selecciones fake (Alemania, Brasil). | Jugadores con nombres base y fallback táctico. |
 | **Punto de Entrada** | Menú inicial de nueva carrera / Ajustes. | Menú Editar -> Importar/Exportar. | Carpeta de archivos local en disco. | Menú de Ajustes / Pantalla inicial de bienvenida. |
 | **Selección de Pack** | **Lista en juego con descarga directa** + Opción de URL. | Requiere transferir archivos a carpeta `WEPES/`. | Requiere mover archivos a `Documents/.../graphics/`. | **Lista remota con 1 clic** + Opción de URL manual o .zip. |
-| **Gestión de Revisión** | Servidor dinámico con plantillas base. | Sin contenido en disco. | Sin contenido en disco. | **Índice dinámico (Modo Auditoría / Modo Comunidad).** |
+| **Gestión de Revisión** | Misma versión para revisor y usuario final; función anunciada en la ficha de la tienda. | Sin contenido en disco. | Sin contenido en disco. | **Misma versión siempre; índice generado desde repo comunitario público.** |
 | **Formato del Pack** | `.json` comprimido con carpetas de logos y caras. | Archivos binarios `.ted` / `.bin` + imágenes `.png`. | Archivos `.lnc` / `.xml` + imágenes `.png`. | Archivo `.zip` con `manifest.json`, `database.json` y fotos. |
 | **Dificultad de Creación** | Media-Alta (Estructura de IDs de jugadores y clubes). | Alta (Resoluciones exactas y formato binario propietario). | Media (Mapeo de IDs únicos de base de datos). | **Controlada-Alta (JSON Schema estricto + IDs de cartas).** |
 
@@ -138,7 +172,8 @@ Bajo la sección 512 de la **DMCA** (Digital Millennium Copyright Act en EE. UU.
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    CAPA 2: ÍNDICE REMOTO (DATAPACKS INDEX)                  │
 │  • URL pública: https://comunidad-tcg.github.io/datapacks/index.json         │
-│  • Controlable remotamente: Modo Auditoría vs Modo Comunidad                │
+│  • Generado a partir de un repo comunitario público (PRs de la comunidad)   │
+│  • Idéntico para revisores y jugadores finales, en todo momento              │
 │  • Actualizable en caliente en 5 segundos sin tocar el APK                   │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
@@ -235,36 +270,41 @@ Si un usuario intenta cargar un archivo manipulado o incorrecto, el motor lo rec
 
 ## 7. ESPECIFICACIÓN DEL ÍNDICE REMOTO (`datapacks_index.json`)
 
-Este archivo se aloja en un repositorio independiente o servidor estático (como **GitHub Pages** o **Firebase Storage** no vinculado a la cuenta de desarrollador principal):
+Este archivo se aloja en un repositorio independiente o servidor estático (como **GitHub Pages**), generado automáticamente por el flujo de validación de la Sección 2.6 — nunca editado a mano por el estudio, y sin ningún nombre real, marca o club en ninguno de sus campos:
 
 ```json
 [
   {
-    "id": "pack_temporada_2026",
-    "title": "Pack Oficial Comunidad - Temporada 2026",
-    "author": "Comunidad TCG",
+    "id": "pack_a1b2c3",
+    "title": "Pack Temporada 2026",
+    "author": "Champholics",
     "version": "1.0.2",
-    "description": "Nombres reales, clubes mundiales y fotos HD de todas las estrellas mundiales.",
-    "downloadUrl": "https://raw.githubusercontent.com/comunidad-tcg/datapacks/main/packs/pack_2026.zip",
-    "sizeMb": "8.4 MB",
+    "sizeMb": 8.4,
     "cardsCount": 50,
-    "isRecommended": true,
-    "bannerColor": "#E8A820"
+    "rating": 4.3,
+    "downloadUrl": "https://raw.githubusercontent.com/champholics/mi-pack/main/pack.zip",
+    "checksum": "sha256:9f8a2c...",
+    "submittedAt": "2026-09-10"
   },
   {
-    "id": "pack_retro_legends",
-    "title": "Pack Leyendas del Fútbol (1998 - 2006)",
+    "id": "pack_d4e5f6",
+    "title": "Pack Época Retro",
     "author": "RetroCards Team",
     "version": "1.0.0",
-    "description": "Zidane, Ronaldinho, Ronaldo Nazário, Beckham y las grandes glorias.",
-    "downloadUrl": "https://raw.githubusercontent.com/comunidad-tcg/datapacks/main/packs/pack_retro.zip",
-    "sizeMb": "6.1 MB",
+    "sizeMb": 6.1,
     "cardsCount": 30,
-    "isRecommended": false,
-    "bannerColor": "#9B5CF6"
+    "rating": 4.6,
+    "downloadUrl": "https://raw.githubusercontent.com/retrocards/pack-retro/main/pack.zip",
+    "checksum": "sha256:1b7e4f...",
+    "submittedAt": "2026-08-22"
   }
 ]
 ```
+
+**Notas de diseño del schema:**
+- No hay campo `description` de texto libre: cualquier autor podría usarlo para escribir nombres de jugadores/clubes reales, y eso sí viviría en la infraestructura del estudio. El `title` sigue una plantilla neutra validada por el esquema (época/temporada, nunca nombres propios de clubes o ligas).
+- `rating` se calcula desde telemetría propia del backend del juego (conteo de valoraciones enviadas por jugadores tras usar el pack) — no toca el contenido del `.zip` en ningún momento.
+- `checksum` permite verificar integridad sin necesidad de que el estudio descargue y conserve el archivo.
 
 ---
 
@@ -272,31 +312,36 @@ Este archivo se aloja en un repositorio independiente o servidor estático (como
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        PAQUETES DE DATOS (MODS)                        │
-│ ℹ️ Contenido generado por la comunidad de forma independiente.          │
+│                     ELIGE UN PAQUETE DE DATOS                          │
+│ Para personalizar tu experiencia puedes cargar un Paquete de Datos     │
+│ que modifica la información e imágenes de la partida.                  │
 ├────────────────────────────────────────────────────────────────────────┤
 │                                                                        │
-│ ┌────────────────────────────────────────────────────────────────────┐ │
-│ │ ✦ RECOMENDADO                                                      │ │
-│ │ Pack Oficial Comunidad - Temporada 2026                            │ │
-│ │ Por: Comunidad TCG  •  v1.0.2  •  8.4 MB  •  50 cartas             │ │
-│ │ Nombres reales, clubes mundiales y fotos HD de futbolistas.        │ │
-│ │                                                                    │ │
-│ │ [ ⬇️ DESCARGAR E INSTALAR (1 CLIC) ]                               │ │
-│ └────────────────────────────────────────────────────────────────────┘ │
-│                                                                        │
-│ ┌────────────────────────────────────────────────────────────────────┐ │
-│ │ Pack Leyendas del Fútbol (1998 - 2006)                             │ │
-│ │ Por: RetroCards Team  •  v1.0.0  •  6.1 MB                         │ │
-│ │ [ ⬇️ Descargar ]                                                   │ │
-│ └────────────────────────────────────────────────────────────────────┘ │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│  │    ✕     │  │ ★★★★☆   │  │ ★★★☆☆   │  │ ★★★★☆   │   ...        │
+│  │  SIN     │  │ PACK PRO │  │  PACK    │  │  PACK    │              │
+│  │ PAQUETE  │  │ 26.08 MB │  │ ÉPOCA A  │  │ ÉPOCA B  │              │
+│  │ DE DATOS │  │ by Auto1 │  │ by Auto2 │  │ by Auto3 │              │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘              │
 │                                                                        │
 │ ────────────────────────────────────────────────────────────────────── │
 │ [ 🔗 Importar enlace personalizado (URL) ]                             │
 │ [ 📁 Importar archivo .zip local ]                                     │
 │ [ 🔄 Restaurar datos por defecto del juego ]                           │
+├────────────────────────────────────────────────────────────────────────┤
+│ ℹ️ Los Data Packs listados son creados y distribuidos por nuestra      │
+│ comunidad de fans, sin afiliación ni respaldo del estudio. Su          │
+│ contenido puede modificar nombres y logos de competiciones, clubes,    │
+│ jugadores, trofeos y estadios. El estudio no reclama propiedad,        │
+│ no revisa ni controla el contenido de estos paquetes, y renuncia       │
+│ expresamente a cualquier responsabilidad por infracciones de           │
+│ copyright o marca registrada que dichos paquetes pudieran contener.    │
 └────────────────────────────────────────────────────────────────────────┘
 ```
+
+Nótese el diseño de este disclaimer (adaptado del que usa World Soccer Champs): la frase clave es *"no revisa ni controla el contenido"* — es la declaración escrita más importante del sistema, porque documenta explícitamente la distancia editorial genuina de la Sección 2.2 y 2.6.
+
+**Cada tarjeta muestra**, tomado directamente del índice neutro de la Sección 7: título genérico, calificación por estrellas, tamaño en MB y autor — nunca una descripción con nombres reales visible antes de la descarga.
 
 ### 8.1. Flujo de Descarga en 1 Clic
 1. El usuario presiona **"Descargar e Instalar"**.
@@ -342,6 +387,13 @@ Este archivo se aloja en un repositorio independiente o servidor estático (como
 - Suscribirse a `DataPackManager.OnDataPackReloaded`.
 - Al recibir el evento, reconstruir la cuadrícula de cartas (`PopulateAlbumGrid()`) reflejando los nuevos nombres y fotos en pantalla.
 
+#### 5. `.github/workflows/validate-datapack.yml` (Nuevo — Índice Neutro)
+- Se dispara en cada Pull Request al repositorio del índice.
+- Descarga el `.zip` propuesto **solo en el runner de CI, nunca lo commitea**.
+- Ejecuta un script (`validate_pack.py`) que verifica estructura, schema y `checksum`.
+- Si pasa, actualiza `datapacks_index.json` solo con los campos neutros de la Sección 2.6/7 y aprueba el merge automáticamente vía un bot (ej. GitHub Actions con permisos de `contents: write` limitados a ese único archivo).
+- Si falla, comenta en el PR el motivo técnico y lo cierra sin intervención humana.
+
 ---
 
 ## 10. HERRAMIENTA AUTOMATIZADA PARA CREADORES (CLI)
@@ -372,13 +424,19 @@ En el escenario eventual de que un representante legal de un club o liga contact
    - Se elimina la entrada del pack señalado o se reemplaza el enlace de descarga.
    - El cambio tiene efecto mundial inmediato para todos los usuarios sin necesidad de enviar parches a Google Play.
 3. **Respuesta jurídica:**
-   - Indicar que JuegoTCG es una plataforma de software independiente, que el APK publicado en la tienda no aloja ni distribuye dicho material, y que el enlace de la comunidad señalado ha sido desindexado de forma preventiva en cumplimiento con el Safe Harbor / DMCA.
+   - Indicar que JuegoTCG es una plataforma de software independiente, que el APK publicado en la tienda no aloja ni distribuye dicho material, y que el enlace de la comunidad señalado ha sido desindexado de forma preventiva.
+   - Si el reclamo es específicamente de **copyright** (ej. una foto), se procesa como notificación formal al **Agente DMCA registrado** (Sección 3.2.1) y se documenta la respuesta dentro del plazo legal.
+   - Si el reclamo es de **marca registrada o derecho de imagen**, se responde igual de rápido por buena práctica y buena fe, aclarando que no existe un puerto seguro administrativo equivalente para esa categoría, pero que el contenido ya fue retirado.
 
 ---
 
 ## 12. CONCLUSIÓN Y PRÓXIMOS PASOS
 
-Este modelo combina lo mejor de ambos mundos:
-1. **Blindaje legal total:** El juego cumple todas las directivas de Google Play y Apple al no distribuir directamente material con copyright en el instalador base y superar cualquier escaneo de texto/OCR.
-2. **Experiencia de usuario premium:** El jugador final disfruta de una experiencia con cartas reales, fotos HD y shaders holográficos mediante un sistema de descarga cómodo y moderno dentro del juego en 1 solo clic.
-3. **Control y calidad garantizada:** La exigencia técnica del formato y la curaduría mediante el índice remoto aseguran que solo se ofrezcan Data Packs estables y visualmente atractivos.
+Este modelo reduce el riesgo (nunca lo elimina del todo — ningún esquema de datapacks de fútbol está 100% libre de un cease-and-desist) siendo consistente en vez de evasivo, y sin que ningún nombre, marca o foto real toque jamás la infraestructura propia del estudio:
+
+1. **Cumplimiento real, no solo aparente:** misma versión para revisor y jugador, siempre; nada que "superar" ni ningún escaneo que evadir.
+2. **Índice 100% neutro:** el repositorio del estudio nunca contiene nombres, marcas ni fotos — solo metadata técnica y URLs externas, validadas automáticamente sin curaduría editorial humana.
+3. **Copyright cubierto de forma concreta:** Agente DMCA registrado ($6, Sección 3.2.1) más protocolo de retiro rápido.
+4. **Marca registrada y derecho de imagen mitigados, no eliminados:** protegidos por conducta (distancia editorial genuina) y precedente (*C.B.C. v. MLB Advanced Media*), no por un trámite administrativo — este es el riesgo residual real del modelo.
+5. **Experiencia de usuario intacta:** el jugador final sigue viendo la misma pantalla con tarjetas, estrellas y descarga en 1 clic que se diseñó originalmente.
+6. **Próximo paso recomendado:** antes de publicar, una consulta puntual con un abogado de PI en tu jurisdicción (Colombia/Ecuador y el país de la cuenta de desarrollador) para validar este diseño con tu caso específico — este documento reduce riesgo pero no sustituye asesoría legal real.

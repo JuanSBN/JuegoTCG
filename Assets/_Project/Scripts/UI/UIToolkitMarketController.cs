@@ -1161,6 +1161,7 @@ namespace JuegoTCG.UI
 
             Sprite defaultArt = asset != null ? asset.defaultArt : null;
             Sprite resolvedArt = DataPackManager.GetCardArt(cardId, defaultArt);
+            Sprite resolvedBg = DataPackManager.GetCardBackground(cardId);
 
             Rarity cardRarity = asset != null ? asset.rarity : ParseRarity(rarityStr);
             string displayCardName = !string.IsNullOrEmpty(cardName) ? cardName : (asset != null ? asset.playerName : "Carta");
@@ -1173,6 +1174,15 @@ namespace JuegoTCG.UI
                 // 1. Contenedor de Arte
                 var artContainer = new VisualElement();
                 artContainer.AddToClassList("card-art-container");
+
+                // 1b. Fondo personalizado del Data Pack (si existe)
+                if (resolvedBg != null)
+                {
+                    var bgEl = new VisualElement();
+                    bgEl.AddToClassList("card-art-bg");
+                    bgEl.style.backgroundImage = new StyleBackground(resolvedBg);
+                    artContainer.Add(bgEl);
+                }
 
                 // 2. Foto del Jugador (scale-and-crop)
                 var photo = new VisualElement();

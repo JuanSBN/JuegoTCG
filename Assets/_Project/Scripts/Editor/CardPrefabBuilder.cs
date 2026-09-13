@@ -86,7 +86,18 @@ namespace JuegoTCG.EditorTools
             Mask cardMask = bgBaseGO.AddComponent<Mask>();
             cardMask.showMaskGraphic = true;
 
-            // 2. Player Photo Image (Spans the ENTIRE card, clipped by card mask)
+            // 2. Background Image (Data Pack theme, e.g. Champions League / Stadium, clipped by card mask)
+            GameObject bgArtGO = new GameObject("CardBackgroundImage");
+            bgArtGO.transform.SetParent(bgBaseGO.transform, false);
+            RectTransform bgArtRect = bgArtGO.AddComponent<RectTransform>();
+            bgArtRect.anchorMin = Vector2.zero;
+            bgArtRect.anchorMax = Vector2.one;
+            bgArtRect.sizeDelta = Vector2.zero;
+            Image bgArtImg = bgArtGO.AddComponent<Image>();
+            bgArtImg.preserveAspect = false;
+            bgArtGO.SetActive(false);
+
+            // 3. Player Photo Image (Spans the ENTIRE card, clipped by card mask)
             GameObject photoGO = new GameObject("PlayerArtImage");
             photoGO.transform.SetParent(bgBaseGO.transform, false);
             RectTransform photoRect = photoGO.AddComponent<RectTransform>();
@@ -306,6 +317,7 @@ namespace JuegoTCG.EditorTools
             so.FindProperty("frontContainer").objectReferenceValue = frontGO;
             so.FindProperty("backContainer").objectReferenceValue = backGO;
             so.FindProperty("frameImage").objectReferenceValue = frameImg;
+            so.FindProperty("cardBackgroundImage").objectReferenceValue = bgArtImg;
             so.FindProperty("playerArtImage").objectReferenceValue = photoImg;
             so.FindProperty("placeholderAvatar").objectReferenceValue = placeholderGO;
             so.FindProperty("playerInitialsText").objectReferenceValue = initialsTMP;

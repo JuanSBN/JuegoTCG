@@ -14,6 +14,13 @@ namespace JuegoTCG.Cards
     /// </summary>
     public static class DataPackIndexService
     {
+        /// <summary>
+        /// URL del índice neutro mantenido por la comunidad externa.
+        /// No aloja contenido en la infraestructura del juego ni almacena marcas de terceros en el código base.
+        /// </summary>
+        public const string DefaultCommunityIndexUrl = 
+            "https://raw.githubusercontent.com/tcg-community-packs/datapacks/main/datapacks_index.json";
+
         public static string FirestoreCatalogUrl => 
             $"https://firestore.googleapis.com/v1/projects/{Networking.FirebaseRestClient.ProjectId}/databases/(default)/documents/datapacks_catalog";
 
@@ -58,11 +65,11 @@ namespace JuegoTCG.Cards
         }
 
         /// <summary>
-        /// Corutina para descargar el catálogo remoto desde Firestore o URL personalizada con fallback automático.
+        /// Corutina para descargar el catálogo remoto desde el índice neutro de la comunidad o URL personalizada.
         /// </summary>
         public static IEnumerator FetchIndexRoutine(Action<List<DataPackIndexItem>> onSuccess, Action<string> onError, string customUrl = null)
         {
-            string url = !string.IsNullOrWhiteSpace(customUrl) ? customUrl : FirestoreCatalogUrl;
+            string url = !string.IsNullOrWhiteSpace(customUrl) ? customUrl : DefaultCommunityIndexUrl;
 
             using (UnityWebRequest req = UnityWebRequest.Get(url))
             {
@@ -207,7 +214,7 @@ namespace JuegoTCG.Cards
                     author = "Comunidad TCG",
                     version = "1.0.0",
                     description = "Sustituye los nombres ficticios por futbolistas reales, añade fotos HD y banderas nacionales oficiales.",
-                    downloadUrl = "https://raw.githubusercontent.com/JuanSBN/JuegoTCG/main/DataPacks/datapack_real_names_v1.zip",
+                    downloadUrl = "https://raw.githubusercontent.com/tcg-community-packs/datapacks/main/packs/datapack_real_names_v1.zip",
                     sizeMb = "12.4 MB",
                     cardsCount = 18,
                     isRecommended = true,
@@ -220,7 +227,7 @@ namespace JuegoTCG.Cards
                     author = "RetroTCG Fans",
                     version = "0.9.0",
                     description = "Versión estética de leyendas mundiales y fotos clásicas de época.",
-                    downloadUrl = "https://raw.githubusercontent.com/JuanSBN/JuegoTCG/main/DataPacks/datapack_legends_v1.zip",
+                    downloadUrl = "https://raw.githubusercontent.com/tcg-community-packs/datapacks/main/packs/datapack_legends_v1.zip",
                     sizeMb = "8.1 MB",
                     cardsCount = 12,
                     isRecommended = false,

@@ -1116,6 +1116,28 @@ namespace JuegoTCG.UI
             }
             Sprite defaultArt = asset != null ? asset.defaultArt : null;
             Sprite resolvedArt = DataPackManager.GetCardArt(card.cardId, defaultArt);
+            Sprite resolvedBg = DataPackManager.GetCardBackground(card.cardId);
+
+            VisualElement bg = box != null ? box.Q<VisualElement>(className: "trade-card-art-bg") : null;
+            if (bg == null && box != null && resolvedBg != null)
+            {
+                bg = new VisualElement();
+                bg.AddToClassList("trade-card-art-bg");
+                box.Insert(0, bg);
+            }
+            if (bg != null)
+            {
+                if (resolvedBg != null)
+                {
+                    bg.style.backgroundImage = new StyleBackground(resolvedBg);
+                    bg.style.display = DisplayStyle.Flex;
+                }
+                else
+                {
+                    bg.style.backgroundImage = StyleKeyword.Null;
+                    bg.style.display = DisplayStyle.None;
+                }
+            }
 
             int rIndex = (int)card.rarity;
             bool isHolo = (card.rarity == Rarity.Epica || card.rarity == Rarity.Legendaria || card.rarity == Rarity.Mitica || card.rarity == Rarity.FullArt);
@@ -1248,12 +1270,22 @@ namespace JuegoTCG.UI
             }
             Sprite defaultArt = asset != null ? asset.defaultArt : null;
             Sprite resolvedArt = DataPackManager.GetCardArt(card.cardId, defaultArt);
+            Sprite resolvedBg = DataPackManager.GetCardBackground(card.cardId);
 
             int rIndex = (int)card.rarity;
             bool isHolo = (card.rarity == Rarity.Epica || card.rarity == Rarity.Legendaria || card.rarity == Rarity.Mitica || card.rarity == Rarity.FullArt);
 
             if (resolvedArt != null)
             {
+                // Fondo personalizado si existe
+                if (resolvedBg != null)
+                {
+                    var bgEl = new VisualElement();
+                    bgEl.AddToClassList("trade-card-art-bg");
+                    bgEl.style.backgroundImage = new StyleBackground(resolvedBg);
+                    cardEl.Add(bgEl);
+                }
+
                 // Foto de la carta
                 var photo = new VisualElement();
                 photo.AddToClassList("trade-card-art-photo");

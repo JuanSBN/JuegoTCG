@@ -17,6 +17,7 @@ namespace JuegoTCG.Cards
         [Header("Frame & Artwork")]
         [SerializeField] private Image frameImage;
         [SerializeField] private Sprite[] rarityFrames; // Index maps to (int)Rarity
+        [SerializeField] private Image cardBackgroundImage;
         [SerializeField] private Image playerArtImage;
         [SerializeField] private GameObject placeholderAvatar;
         [SerializeField] private TMP_Text playerInitialsText;
@@ -144,7 +145,42 @@ namespace JuegoTCG.Cards
                 }
             }
 
-            // 2. Player Artwork vs Placeholder
+            // 2. Background Artwork (Data Pack Theme / Tournament / Stadium)
+            Sprite bg = DataPackManager.GetCardBackground(data.cardId);
+            if (cardBackgroundImage == null && playerArtImage != null && playerArtImage.transform.parent != null)
+            {
+                Transform bgT = playerArtImage.transform.parent.Find("CardBackgroundImage");
+                if (bgT != null) cardBackgroundImage = bgT.GetComponent<Image>();
+                else if (bg != null)
+                {
+                    GameObject bgGO = new GameObject("CardBackgroundImage", typeof(RectTransform), typeof(Image));
+                    bgGO.transform.SetParent(playerArtImage.transform.parent, false);
+                    bgGO.transform.SetSiblingIndex(playerArtImage.transform.GetSiblingIndex()); // Colocar detrás de la foto
+                    RectTransform rt = bgGO.GetComponent<RectTransform>();
+                    rt.anchorMin = Vector2.zero;
+                    rt.anchorMax = Vector2.one;
+                    rt.sizeDelta = Vector2.zero;
+                    cardBackgroundImage = bgGO.GetComponent<Image>();
+                    cardBackgroundImage.type = Image.Type.Simple;
+                    cardBackgroundImage.preserveAspect = false;
+                }
+            }
+
+            if (cardBackgroundImage != null)
+            {
+                if (bg != null)
+                {
+                    cardBackgroundImage.sprite = bg;
+                    cardBackgroundImage.preserveAspect = false;
+                    cardBackgroundImage.gameObject.SetActive(true);
+                }
+                else
+                {
+                    cardBackgroundImage.gameObject.SetActive(false);
+                }
+            }
+
+            // 3. Player Artwork vs Placeholder
             Sprite art = data.DisplayArt;
             if (art != null)
             {

@@ -76,12 +76,21 @@ namespace JuegoTCG.UI
             }
 
             UpdateActivePackVisuals();
+            Hide();
         }
 
         public void Show()
         {
             if (modalRoot == null) return;
             modalRoot.RemoveFromClassList("modal-hidden");
+            modalRoot.style.display = DisplayStyle.Flex;
+
+            var parent = modalRoot.parent;
+            if (parent != null)
+            {
+                parent.style.display = DisplayStyle.Flex;
+            }
+
             UpdateActivePackVisuals();
             FetchCatalog();
         }
@@ -90,6 +99,13 @@ namespace JuegoTCG.UI
         {
             if (modalRoot == null) return;
             modalRoot.AddToClassList("modal-hidden");
+            modalRoot.style.display = DisplayStyle.None;
+
+            var parent = modalRoot.parent;
+            if (parent != null)
+            {
+                parent.style.display = DisplayStyle.None;
+            }
         }
 
         private void UpdateActivePackVisuals()

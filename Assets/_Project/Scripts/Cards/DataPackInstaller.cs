@@ -99,6 +99,8 @@ namespace JuegoTCG.Cards
             IsBusy = true;
             onProgress?.Invoke(0f, "Conectando al servidor...");
 
+            url = NormalizeDirectDownloadUrl(url);
+
             string tempDir = Path.Combine(DataPackManager.TempDirectory, "download");
             if (!Directory.Exists(tempDir))
             {
@@ -290,6 +292,39 @@ namespace JuegoTCG.Cards
             }
 
             yield return null;
+        }
+
+        /// <summary>
+        /// Normaliza enlaces de servicios en la nube (Dropbox, Google Drive, OneDrive) a descargas directas binarias.
+        /// </summary>
+        public static string NormalizeDirectDownloadUrl(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url)) return url;
+            url = url.Trim();
+
+            // Dropbox: convertir vista previa a descarga binaria directa
+            if (url.Contains("dropbox.com"))
+            {
+                if (url.Contains("dl=0"))
+                {
+                    url = url.Replace("dl=0", "dl=1");
+                }
+                else if (!url.Contains("dl=1"))
+                {
+                    url += (url.Contains("?") ? "&" : "?") + "dl=1";
+                }
+            }
+            // Google Drive: convertir enlace de compartir a descarga binaria directa
+            else if (url.Contains("drive.google.com/file/d/"))
+            {
+                var match = System.Text.RegularExpressions.Regex.Match(url, @"drive\.google\.com/file/d/([a-zA-Z0-9_-]+)");
+                if (match.Success)
+                {
+                    url = $"https://drive.google.com/uc?export=download&id={match.Groups[1].Value}";
+                }
+            }
+
+            return url;
         }
     }
 }
